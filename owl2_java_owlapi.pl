@@ -170,6 +170,9 @@ expr_method(dataSomeValuesFrom,getOWLDataSomeRestriction).
 
   HIGHLY INCOMPLETE!!
 
+  Set your CLASSPATH to include owlapi-bin.jar, pellet.jar, ...
+
+  start SWI
 
 ---+ Details
 
