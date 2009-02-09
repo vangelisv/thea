@@ -732,6 +732,11 @@ objectExactCardinality(exactCardinality(C,OPE)):-
 	number(C),
 	C>=0,
 	objectPropertyExpression(OPE).
+% NON-NORMATIVE: we accept this in order to maximize compatibility with Thea1
+objectExactCardinality(cardinality(C,OPE)):-
+	number(C),
+	C>=0,
+	objectPropertyExpression(OPE).
 
 
 %% dataIntersectionOf(+DR:dataIntersectionOf) is semidet
@@ -819,6 +824,11 @@ dataExactCardinality(exactCardinality(C,DPE)):-
 	number(C),
 	C>=0,
 	dataPropertyExpression(DPE).
+% NON-NORMATIVE: we accept this in order to maximize compatibility with Thea1
+dataExactCardinality(cardinality(C,OPE)):-
+	number(C),
+	C>=0,
+	objectPropertyExpression(OPE).
 
 dataPropertyExpressions(DPEs) :-
 	(   is_list(DPEs)

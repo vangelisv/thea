@@ -81,11 +81,11 @@ owl_parse_rdf(F,Opts):-
 	debug(owl_parser,'parsed ~w',[F]).
 
 
-% owl_parse: Top level predicate to parse a set of RDF triples
-%  	     and produce an Abstract Syntax representation of an
-%	     OWL ontology.
+%% owl_parse(+URL, +RDF_Load_Mode, +OWL_Parse_Mode, +Imports)
+%
+%  Top level predicate to parse a set of RDF triples and produce an
+%  Abstract Syntax representation of an OWL ontology.
 %		    
-% owl_parse(+URL, +RDF_Load_Mode, +OWL_Parse_Mode, +Imports)
 %	Calls the rdf_load_stream predicate to parse RDF stream in URL. 
 %       If RDF_Load_Mode = complete it first retacts all rdf triples.
 %       If Imports = true it handles owl:import clause at RDF level.
@@ -130,7 +130,7 @@ owl_parse_all_axioms(Pred/Arity) :-
 %                                UTILITY Predicates
 % -----------------------------------------------------------------------
 
-%       owl_parser_log(+Log)
+%%       owl_parser_log(+Log)
 %
 %       Log is a list; together with a timestamp it is asserted as
 %       an owl_parser_log/2 term.
@@ -141,7 +141,7 @@ owl_parser_log(Log) :-
 	assertz(owl_parser_log(TS, Log)).
 
 
-%       owl_clear_as.
+%%       owl_clear_as.
 %
 %       Clears the prolog terms that store the Abstract Syntax
 %       implementation of the OWL ontology.
@@ -156,7 +156,7 @@ predspec_head(Pred/A,Head) :- functor(Head,Pred,A).
 convert(T,V,typed_value(T,V)).     
 
 
-%	rdf_2_owl.     
+%%	rdf_2_owl.     
 %       
 %       Converts RDF triples to OWL/4 triples so that
 %	their use can tracked by the OWL parser.
@@ -175,7 +175,7 @@ rdf_2_owl :-
 	owl_parser_log(['Number of owl triples copied: ',Z]).
 
 
-%       rdf_load_stream(+URL, +ImportedList)
+%%       rdf_load_stream(+URL, +ImportedList)
 %	
 %	This predicate calls the rdf parser to parse the RDF/XML URL
 %	into RDF triples. URL can be a local file or a URL.
@@ -202,7 +202,7 @@ rdf_load_stream(URL,Imported,Imports) :-
 	  ; true).
 
 
-%	fix_no(+A,-B)  
+%%	fix_no(+A,-B)  
 %
 %	This is used to correct an RDF parser error: 
 %       To remove duplicate ## from a URL.
@@ -222,14 +222,14 @@ owl_fix_no(A,A).
 */
  
 
-%	owl_count(?U). 
+%%	owl_count(?U). 
 %       Returns/Checks the number of unused OWL triples. 
 
 owl_count(U) :- 
 	findall(1,owl(_,_,_,not_used),X), length(X,U).
 
 
-%       test_use_owl(?S,?P,?O)   
+%%       test_use_owl(?S,?P,?O)   
 %	As use_owl/3, but does not consume the triple
 
 test_use_owl(X1,Y1,Z1) :- 
@@ -245,7 +245,7 @@ test_use_owl(X1,Y1,Z1,named) :-
 	owl(X,Y,Z, not_used),
 	not(sub_string(X,0,2,_,'__')).
 
-%       use_owl(+Triples:list)   
+%%       use_owl(+Triples:list)   
 %	Marks a list of OWL triples as used, but only if all match. Expands the S,P,O.
 
 use_owl(Triples) :-
@@ -254,7 +254,7 @@ use_owl(Triples) :-
         forall(member(owl(S,P,O),Triples),
                use_owl(S,P,O)).
 
-%       use_owl(?S,?P,?O)   
+%%       use_owl(?S,?P,?O)   
 %	Marks an OWL triple as used. Expands the S,P,O.
 
 use_owl(X1,Y1,Z1) :- 
@@ -267,7 +267,7 @@ use_owl(X1,Y1,Z1) :-
 	assert(owl(X,Y,Z,used)).
 
 
-%	use_owl(?S,?P,?O,named). 
+%%	use_owl(?S,?P,?O,named). 
 %
 %       Same as use_owl/3, but marks only if S 	is Named URI (i.e. non blank node).
 
@@ -281,7 +281,7 @@ use_owl(X1,Y1,Z1,named) :-
 	assert(owl(X,Y,Z,used)).
 
 
-%       expand_ns(+NS_URL, ?Full_URL)
+%%       expand_ns(+NS_URL, ?Full_URL)
 %
 %       Expands a 'namespaced' URI of the form ns:fragment to a full URI
 %       substituting the full expansion for ns from the ns/2 facts
@@ -295,7 +295,7 @@ expand_ns(NS_URL, Full_URL) :-
 expand_ns(URL, URL).
 
 
-%       collapse_ns(+FullURL, ?NSURL, +Options)
+%%       collapse_ns(+FullURL, ?NSURL, +Options)
 %
 %	Collapses a full URI of the form Path#fragment to a Namespaced
 %	URI NS:fragment substituting the full expansion for ns from
@@ -329,7 +329,7 @@ collapse_ns(URL, URL,_,_).
 
 
 
-%       uri_split(+URI,-Namespace,-Term,+Split_Char) :-
+%%       uri_split(+URI,-Namespace,-Term,+Split_Char) :-
 %
 %       Splits a URI into the Namespace and the Term parts 
 %       separated by the Split_Char character.
@@ -342,7 +342,7 @@ uri_split(URI,Namespace,Term,Split_Char) :-
 	sub_atom(URI,Start1,After,_,Term). 
 
 	
-%       owl_collect_linked_nodes(+Node,+Predicate, +InList,-OutList)
+%%       owl_collect_linked_nodes(+Node,+Predicate, +InList,-OutList)
 
 %	Appends Node to the InList, and recursively, all other
 %	Nodes that are linked with the Predicate to the Node. The
@@ -368,7 +368,7 @@ owl_collect_linked_nodes(_,_,List, List) :- !.
 %                OWL Parser implementation predicates	       
 % ----------------------------------------------------------------
 
-%       owl_deprecated_class(+CID,-Deprecated).
+%%       owl_deprecated_class(+CID,-Deprecated).
 %
 %       Deprecated is set to true if Class CID is defined as deprecated.
 %       false otherwise.
@@ -377,7 +377,7 @@ owl_deprecated_class(CID,Deprecated) :-
 	use_owl(CID,'rdf:type','owl:DeprecatedClass'), Deprecated = true,!; 
 	Deprecated = false.
 
-%       owl_deprecated_property(+PID,-Deprecated).
+%%       owl_deprecated_property(+PID,-Deprecated).
 %
 %	Deprecated is set to true if Property PID is defined as
 %	deprecated; false otherwise.
@@ -386,7 +386,7 @@ owl_deprecated_property(PID,Deprecated) :-
 	use_owl(PID,'rdf:type','owl:DeprecatedProperty'), Deprecated = true,!; 
 	Deprecated = false.
 
-%       owl_get_bnode(+Node,+Description)
+%%       owl_get_bnode(+Node,+Description)
 %
 %	if Node is a blank (not named) node, then it is asserted in
 %	the database as a blanknode(Node,Description,used) term.
@@ -400,7 +400,7 @@ owl_get_bnode(Node,Description) :-
 
 owl_get_bnode(_,_).
 
-%       owl_optional_type(+D).
+%%       owl_optional_type(+D).
 %
 %	It simply consumes any optional owl:Class or
 %	rdfs:Class type triples for description D
