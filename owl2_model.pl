@@ -137,6 +137,7 @@ valid_axiom(datatype(A)) :- subsumed_by([A],[iri]).
 
 %% property(?IRI)
 % Properties connect individuals with either other individuals or with literals
+% 
 % @see dataProperty/1, objectProperty/1, annotationProperty/1
 property(A) :- dataProperty(A).
 property(A) :- objectProperty(A).
@@ -202,7 +203,7 @@ valid_axiom(axiom(A)) :- subsumed_by([A],[axiom]).
 
 %% classAxiom(?Axiom)
 % OWL 2 provides axioms that allow relationships to be established between class expressions. This predicate reifies the actual axiom
-% @see equivalentClasses/1, disjointClasses/1, subClassOf/2, disjointUnion/1
+% @see equivalentClasses/1, disjointClasses/1, subClassOf/2, disjointUnion/2
 classAxiom(equivalentClasses(A)) :- equivalentClasses(A).
 classAxiom(disjointClasses(A)) :- disjointClasses(A).
 classAxiom(subClassOf(A, B)) :- subClassOf(A, B).
@@ -651,7 +652,9 @@ classExpression(CE):-
     dataMinCardinality(CE) ; dataMaxCardinality(CE) ; dataExactCardinality(CE).
 
 %% objectIntersectionOf(+CE) is semidet
-% An intersection class expression IntersectionOf( CE1 ... CEn ) contains all individuals that are instances of all class expressions CEi for 1 <= i <= n
+% true if CE is a term intersectionOf(ClassExpression:list)
+%
+% An intersection class expression IntersectionOf( CE1 ... CEn ) contains all individuals that are instances of all class expressions CEi for 1 <= i <= n.
 objectIntersectionOf(intersectionOf(CEs)) :-
 	forall(member(CE,CEs),
 	       classExpression(CE)).
@@ -859,6 +862,18 @@ assert_axiom(Axiom) :-
 ---+ Synopsis
 
   A model for OWL2
+
+  Example OWL2 ontology in prolog:
+==
+class(organism).
+class(animal).
+class(carnivore).
+class(herbivore).
+objectProperty(eats).
+subClassOf(animal,organism).
+equivalentClasses([carnivore,intersectionOf(animal,someValuesFrom(eats,animal))]).
+disjointClasses([herbivore,carnivore]).
+==
   
 ---+ Details
 
@@ -871,7 +886,7 @@ This model is intended to closely parallel Structural Specification and Function
 * Axioms with variable arguments are modeled as prolog predicates that take prolog lists as arguments (e.g. equivalentClasses/1)
 * For programmatic convenience we provide additional abstract predicates that do not necessarily correspond to the OWL syntax (e.g. property/1,fact/1)
  
- ---++ Axioms
+---++ Axioms
 
  Extensional predicates are declared for all terminal axiom symbols in the functional syntax;  i.e. subPropertyOf/2, subClassOf/2.
  These can be directly asserted, or compiled from a prolog file.
@@ -883,7 +898,7 @@ This model is intended to closely parallel Structural Specification and Function
  - satisfaction of this predicate is determined at runtime based on
  type-checking, if subPropertyOf/2 holds
 
- ---++ Expressions and Type checking
+---++ Expressions and Type checking
 
  OWL Axioms can take either entities or expressions as arguments.
  Entities are simply prolog atoms corresponding to the IRI.
@@ -899,7 +914,7 @@ This model is intended to closely parallel Structural Specification and Function
 
  We can also make checks for specific types: e.g objectIntersectionOf/1
 
-  ---++ Annotations
+---++ Annotations
 
   In OWL Syntax, axiom annotations are written using an optional annotation list argument.
   We opt not to do this here; instead we use axiomAnnotation/3 where the first argument is the reified predicate head.
@@ -910,7 +925,7 @@ subClassOf(cat,mammal).
 axiomAnnotation(SubClassOf(cat,mammal),author,Linnaeus).
 ==
 
-  ---+++ Punning
+---+++ Punning
 
   OWL2 allows classes to act as individuals, so this is legal (TODO: check!):
 
@@ -932,7 +947,7 @@ ontology(linnaenTaxonomy).
 
 TODO: check edge cases, eg two ontologies have the same axioms but different annotations
 
-  ---++ IRIs
+---++ IRIs
 
 By default there is no type checking of IRIs, so =|class(polar_bear)|=
 is allowed, even though "polar_bear" is not an IRI - this makes for
@@ -940,11 +955,11 @@ convenience in working with example ontologies
 
 ---+ Open Issues
 
-  ---++ Structure Sharing
+---++ Structure Sharing
 
   Should we allow bnode IDs as arguments of predicate axioms for expressions?
 
-  ---++ Enumeration of expressions
+---++ Enumeration of expressions
 
   We provide semi-deterministic predicates of the form
   ?type(+Expression).  Should the mode be extended to allow
@@ -952,14 +967,14 @@ convenience in working with example ontologies
   require forcing all expressions to be bnodes OR possibly recursively
   analyzing the term Axiom in a call axiom(Axiom)
 
-  ---++ Type checking
+---++ Type checking
 
   Is Tom Schrijvers type checking system going to be integrated into SWI and Yap? Should we use that?
 
   I am attempting to put as much typing info in the pldoc comments,
   but unsure of the conventions for complex terms
 
-  ---++ Ontologies
+---++ Ontologies
 
   continue using ontologyAxiom/2? Alternatively use builtin prolog module mechanism..? 
    
