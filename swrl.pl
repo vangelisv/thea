@@ -31,6 +31,7 @@ owl_model:axiom(implies(A,C)):- implies(A,C).
 
 %% swrlAtom(?SWRLAtom)
 % true if SWRLAtom is a term consistent with SWRL atom syntax
+%==
 % atom ::= description '(' i-object ')'
 %	 | dataRange '(' d-object ')'
 %	 | individualvaluedPropertyID '(' i-object i-object ')'
@@ -38,13 +39,15 @@ owl_model:axiom(implies(A,C)):- implies(A,C).
 %	 | sameAs '(' i-object i-object ')'
 %	 | differentFrom '(' i-object i-object ')'
 %	 | builtIn '(' builtinID { d-object } ')'
+%==
 %
 % for named descriptions we allow prolog terms, e.g. animal('?x'), eats('?x','?y').
 % for class expressions this would lead to illegal prolog terms, so we
 % instead prolog-reify this as description(CE,I_Obj); e.g.
 % =|Artist(?x) & (<=1 artistStyle)(?x) & creator(?z,?x) -> (<= 1 style/period)(?z)|=
 % is translated as
-% ==
+%
+%==
 % implies([
 %   artist(i(x)),
 %   description(maxCardinality(1,artistStyle),i(x)),
@@ -186,13 +189,15 @@ subgoals_to_intersection([A|AL],V,[D|DL]) :-
 
 %% prolog_term_to_swrl_rule( +Term, ?SWRLAtom:swrlAtom )
 %
-% == 
+% Prolog Terms are clauses of the form
+%== 
 % hasUncle(X1,X3):- hasParent(X1,X2),hasBrother(X2,X3)
-% ==
+%==
+% 
+% These are translated to SWRL Rules
 % 
 % complex atoms still require wrapping:
-% 
-% ==
+%==
 % description(maxCardinality(1,'style/period'),Z) :-
 %   artist(X),
 %   description(maxCardinality(1,artistStyle),X),
@@ -296,19 +301,19 @@ pred_swrlb(downcase_atom,lowerCase).
 
   ---+ Synopsis
 
+  Example SWRL Rule set in prolog:
 ==
-:- use_module(swrl).
-
-% 
-demo:-
-  nl.
-  
-
+implies([hasParent(v(x),v(y)),hasBrother(v(y),v(z))],[hasUncle(v(x),v(z))]).
 ==
 
 ---+ Details
 
+    This extends the owl2_model.pl collection of allowed axioms (see axiom/1) with the implies/2 axiom.
+    
 http://www.w3.org/Submission/SWRL/
+
+This module also intends to allow for easy conversion between a natural prolog style and SWRL axioms.
+ See for example prolog_term_to_swrl_rule/2
 
 ---+ Additional Information
 
