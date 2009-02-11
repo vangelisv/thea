@@ -75,6 +75,10 @@
            
            axiompred/1,
 
+           anyPropertyAssertion/3,
+           equivalent_to/2,
+           labelAnnotation_value/2,
+           
            assert_axiom/1
 	  ]).
 :- require([ is_list/1
@@ -631,7 +635,8 @@ inverseObjectProperty(inverseOf(OP)) :- objectProperty(OP).
 
 dataPropertyExpression(E) :- dataProperty(E).
 
-datatype(IRI) :- iri(IRI).
+%already declared as entity
+%datatype(IRI) :- iri(IRI).
 
 %% dataRange(+DR) is semidet
 dataRange(DR) :-
@@ -843,6 +848,25 @@ dataPropertyExpressions(DPEs) :-
 % true if Axiom passes typechecking
 
 /****************************************
+  VIEW PREDICATES
+  ****************************************/
+
+%% equivalent_to(?X,?Y)
+equivalent_to(X,Y) :- equivalentClasses(L),member(X,L),member(Y,L),X\=Y.
+equivalent_to(X,Y) :- equivalentProperties(L),member(X,L),member(Y,L),X\=Y.
+
+%% anyPropertyAssertion(?Property,?Entity,?Value)
+% subsumes propertyAssertion/3 and annotationAssertion/3
+anyPropertyAssertion(P,E,V) :- propertyAssertion(P,E,V).
+anyPropertyAssertion(P,E,V) :- annotationAssertion(P,E,V).
+
+
+labelAnnotation_value(X,Val) :- 
+        anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(type(_,Val))).
+labelAnnotation_value(X,Val) :- 
+        anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(lang(_,Val))).
+
+/****************************************
   UTILITY
   ****************************************/
 
@@ -855,6 +879,7 @@ dataPropertyExpressions(DPEs) :-
 assert_axiom(Axiom) :-
         debug(owl2,'asserting ~w',[Axiom]),
         assert(Axiom).
+
 
 
 /** <module> OWL2

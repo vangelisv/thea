@@ -99,4 +99,26 @@ propertyAssertion(P,A,B) :- subPropertyOf(propertyChain([P1|PL]),P),propertyAsse
 propertyAssertion_chain([],_,_).
 propertyAssertion_chain([P|PL],A,B) :- propertyAssertion(P,A,C),propertyAssertion_chain(PL,C,B).
 
+% todo: translate to sameIndividuals/1
+sameAs(A,B) :- propertyAssertion(P,X,A),functionalProperty(P),propertyAssertion(P,X,B).
+sameAs(A,B) :- propertyAssertion(P,A,X),inverseFunctionalProperty(P),propertyAssertion(P,B,X).
 
+illegal(P) :- propertyAssertion(P,A,A),irreflexiveProperty(P).
+illegal(P) :- propertyAssertion(P,A,B),asymmetricProperty(P),propertyAssertion(P,B,A).
+
+
+
+/** <module> 
+
+  ---+ Synopsis
+
+
+---+ Details
+
+See http://www.w3.org/TR/2008/WD-owl2-profiles-20081202/#Reasoning_in_OWL_2_RL_and_RDF_Graphs_using_Rules
+
+---+ Additional Information
+
+
+
+*/

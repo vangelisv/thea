@@ -867,8 +867,9 @@ owl_parse_axiom(classAssertion(CX,I)) :-
 
 dothislater(propertyAssertion/3).
 owl_parse_axiom(propertyAssertion(PX,A,B)) :-
-        use_owl(A,P,B), % B can be literal or individual
+        test_use_owl(A,P,B), % B can be literal or individual
         \+ annotationProperty(P),
+        use_owl(A,P,B), % consume now
         owl_property_expression(P,PX). % can also be inverse
 
 owl_parse_axiom(negativePropertyAssertion(PX,A,B)) :-
