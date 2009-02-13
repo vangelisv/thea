@@ -6,7 +6,8 @@
            swrlAtom/1,
            swrl_to_owl_axioms/2,
            prolog_term_to_swrl_rule/2,
-           prolog_source_to_swrl_rules/2
+           prolog_source_to_swrl_rules/2,
+           prolog_source_to_axioms/2
           ]
     ).
 
@@ -118,6 +119,8 @@ normalize_swrl_atom(A, A).
 % * subClassOf/2 between a class and an intersectionOf class description
 % * subPropertyOf/2 between property IDs
 % * subPropertyOf/2 involving role chains
+% * classAssertion/1 based on antecedent-free rules
+% * propertyAssertion/1 based on antecedent-free rules
 swrl_to_owl_axioms(Rule, Axioms) :-
         normalize_swrl_rule(Rule,implies(A,Cs)),
         findall(Axiom,
@@ -159,6 +162,14 @@ swrl_to_owl(AL,C,subClassOf(Sub,intersectionOf(DL))) :-
 swrl_to_owl(AL,C,subClassOf(Sub,D)) :-
         C=..[Sub,v(X)],
         subgoals_to_intersection(AL,X,[D]),
+        !.
+swrl_to_owl([],description(C,I),classAssertion(C,I)) :-
+        I\=v(_),
+        !.
+swrl_to_owl([],C,propertyAssertion(P,X,Y)) :-
+        C=..[P,X,Y],
+        X\=v(_),
+        Y\=v(_),
         !.
 
 %% subgoals_to_property_chain(+Terms,?Properties,+StartVar,?EndVar)
@@ -216,9 +227,12 @@ prolog_term_to_swrl_rule2( ('->'(A,C)), implies(Ax,Cx) ):-
         !,
         prolog_term_to_swrl_atom(C,Cx),
         prolog_term_to_swrl_atom(A,Ax).
+prolog_term_to_swrl_rule2(C, implies([],Cx) ):- % fact
+        !,
+        prolog_term_to_swrl_atom(C,Cx).
 
 prolog_term_to_swrl_atom( A, AX ):-
-        prolog_term_to_swrl_hook(A,AX).
+        prolog_term_to_swrl_hook(A,AX). % extendable
 prolog_term_to_swrl_atom( (A,B), [Ax|Bx] ):-
         !,
         prolog_term_to_swrl_atom(A,Ax),
@@ -263,6 +277,9 @@ prolog_term_to_swrl_atom( A, A ):-
 prolog_term_to_swrl_atom( A, A) :-
         atom(A),
         !.
+prolog_term_to_swrl_atom( A, A) :-
+        number(A),
+        !.
         
 %% prolog_source_to_swrl_rules(+File,?Rules)
 %
@@ -280,6 +297,16 @@ prolog_terms_to_swrl_rules([T|Terms],[R|Rules]) :-
 prolog_terms_to_swrl_rules([T|Terms],Rules) :-
         format(user_error,'Cannot translate: ~q~n',[T]),
         prolog_terms_to_swrl_rules(Terms,Rules).
+
+prolog_source_to_axioms(File,Axioms) :-
+        prolog_source_to_swrl_rules(File,Rules),
+        findall(Axiom,
+                (   member(Rule,Rules),
+                    (   swrl_to_owl_axioms(Rule,Axioms),
+                        Axioms\=[]
+                    ->  member(Axiom,Axioms)
+                    ;   Axiom=Rule)),
+                Axioms).
 
 
 %% goal_swrl(+Goal,?Swrl)

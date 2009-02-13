@@ -70,6 +70,7 @@
     ontologyImport/2,
     ontologyVersionInfo/2,
 
+           classExpression/1,
            objectIntersectionOf/1,
            dataIntersectionOf/1,
            
@@ -78,6 +79,9 @@
            anyPropertyAssertion/3,
            equivalent_to/2,
            labelAnnotation_value/2,
+
+           axiom_directly_references/2,
+           axiom_references/2,
            
            assert_axiom/1
 	  ]).
@@ -865,6 +869,37 @@ labelAnnotation_value(X,Val) :-
         anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(type(_,Val))).
 labelAnnotation_value(X,Val) :- 
         anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(lang(_,Val))).
+
+/****************************************
+  META-PREDICATES
+  ****************************************/
+
+axiom_directly_about(Ax,About) :-
+        Ax =.. [_,Arg1|_],
+        (   is_list(Arg1)
+        ->  member(About,Arg1)
+        ;   About=Arg1).
+
+axiom_directly_references(Ax,Ref) :-
+        Ax =.. [_|Args],
+        member(Arg,Args),
+        (   is_list(Arg)
+        ->  member(Ref,Arg)
+        ;   Ref=Arg).
+
+axiom_about(Ax,About) :-
+        axiom_directly_about(Ax,About).
+axiom_about(Ax,About) :-
+        axiom_directly_about(Ax,X),
+        axiom_about(X,About).
+
+axiom_references(Ax,Ref) :-
+        axiom_directly_references(Ax,Ref).
+axiom_references(Ax,Ref) :-
+        axiom_directly_references(Ax,X),
+        axiom_references(X,Ref).
+
+        
 
 /****************************************
   UTILITY
