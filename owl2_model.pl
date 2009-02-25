@@ -98,11 +98,15 @@
 % @param PredSpec Predicate/Arity
 % (metamodeling) true if PredSpec is a predicate that defines an axiom
 :- multifile axiompred/1.
+
+% The ext/1 directive is used to declare a predicate extensional. Extensional predicates are dynamic, because we may
+% wish to modify the database at run time. They are multifile, as we may wish to load from multiple sources.
+% In tabled prologs such as Yap, extensional predicates are tabled, because they may be entailed as well as asserted.
 user:term_expansion((:- ext(Pred)),
                     [(   :- multifile Pred),(:- dynamic Pred),axiompred(Pred)]) :- current_prolog_flag(dialect,swi).
 
 user:term_expansion((:- ext(Pred)),
-                    [(:- table Pred),(:- multifile Pred),axiompred(Pred)]) :- current_prolog_flag(dialect,yap).
+                    [(:- table(Pred)),(:- multifile Pred),axiompred(Pred)]) :- current_prolog_flag(dialect,yap).
 
 :- discontiguous valid_axiom/1, axiompred/1, relation/2, attribute/4.
 
