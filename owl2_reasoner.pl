@@ -108,6 +108,7 @@ illegal(P) :- propertyAssertion(P,A,B),asymmetricProperty(P),propertyAssertion(P
 
 
 
+
 /** <module> 
 
   ---+ Synopsis
