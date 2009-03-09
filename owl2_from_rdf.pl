@@ -562,6 +562,7 @@ owl_parse_axiom(annotationProperty(C)) :-
                  owl(X,'owl:predicate','rdf:type'),
                  owl(X,'owl:object','owl:AnnotationProperty')]).
 
+% TODO: check this. do we need to assert individual axioms if all we have is an rdf:type?
 owl_parse_axiom(namedIndividual(D)) :-
         use_owl(D,'rdf:type','owl:NamedIndividual').
 owl_parse_axiom(namedIndividual(C)) :-
@@ -697,32 +698,38 @@ owl_restriction_type(E, P, hasSelf(PX)) :-
         owl_property_expression(P, PX).
 
 % changed from Thea: cardinality->exactCardinality
-owl_restriction_type(E, P,exactCardinality(C,PX)) :- 
-	use_owl(E, 'owl:cardinality',C),
+owl_restriction_type(E, P,exactCardinality(N,PX)) :- 
+	use_owl(E, 'owl:cardinality',Lit),
+        literal_integer(Lit,N),
         owl_property_expression(P, PX).
 
-owl_restriction_type(E, P,exactCardinality(C,PX,DX)) :- 
-	use_owl(E, 'owl:qualifiedCardinality',C),
+owl_restriction_type(E, P,exactCardinality(N,PX,DX)) :- 
+	use_owl(E, 'owl:qualifiedCardinality',Lit),
+        literal_integer(Lit,N),
 	use_owl(E, 'owl:onClass',D),
 	owl_description(D, DX),!,
         owl_property_expression(P, PX).
 
-owl_restriction_type(E, P, minCardinality(C,PX)) :- 
-	use_owl(E, 'owl:minCardinality',C),
+owl_restriction_type(E, P, minCardinality(N,PX)) :- 
+	use_owl(E, 'owl:minCardinality',Lit),
+        literal_integer(Lit,N),
         owl_property_expression(P, PX).
 
-owl_restriction_type(E, P, minCardinality(C,PX,DX)) :- 
-	use_owl(E, 'owl:minQualifiedCardinality',C),
+owl_restriction_type(E, P, minCardinality(N,PX,DX)) :- 
+	use_owl(E, 'owl:minQualifiedCardinality',Lit),
+        literal_integer(Lit,N),
 	use_owl(E, 'owl:onClass',D),
 	owl_description(D, DX),!,
         owl_property_expression(P, PX).
 
-owl_restriction_type(E, P, maxCardinality(C,PX)) :- 
-	use_owl(E, 'owl:maxCardinality',C),
+owl_restriction_type(E, P, maxCardinality(N,PX)) :- 
+	use_owl(E, 'owl:maxCardinality',Lit),
+        literal_integer(Lit,N),
         owl_property_expression(P, PX).
 
-owl_restriction_type(E, P, maxCardinality(C,PX,DX)) :- 
-	use_owl(E, 'owl:maxQualifiedCardinality',C),
+owl_restriction_type(E, P, maxCardinality(N,PX,DX)) :- 
+	use_owl(E, 'owl:maxQualifiedCardinality',Lit),
+        literal_integer(Lit,N),
 	use_owl(E, 'owl:onClass',D),
 	owl_description(D, DX),!,
         owl_property_expression(P, PX).
@@ -1017,6 +1024,7 @@ owl_parse_unnamed_individuals:-
 
 owl_parse_unnamed_individuals.
 
+literal_integer(literal(type,N),N).
 
 
 

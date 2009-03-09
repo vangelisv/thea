@@ -46,6 +46,10 @@ write_axioms(P/A):-
 write_axioms(H):-
         forall(H,format('~q.~n',[H])).
 
+retract_axioms :-
+        findall(A,axiom(A),Axioms),
+        maplist(retract,Axioms).
+
 remove_namespaces:-
         translate_IRIs(remove_ns).
 
@@ -129,3 +133,28 @@ write_owl_class(Class,_) :-
 
 
 
+/** <module> Various utility predicates for OWL ontologies
+
+  ---+ Synopsis
+
+==
+:- use_module(bio(owl2_util)).
+
+% 
+demo:-
+  nl.
+  
+
+==
+
+---+ Details
+
+This is a collection of very ad-hoc predicates for doing things with OWL.
+This should not be regarded as stable.
+
+
+---+ Additional Information
+
+
+
+*/
