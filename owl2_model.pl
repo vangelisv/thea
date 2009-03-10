@@ -4,6 +4,7 @@
 	  [
            
            entity/1,
+           declarationAxiom/1,
            class/1,
            datatype/1,
            property/1,
@@ -203,6 +204,7 @@ valid_axiom(annotationProperty(A)) :- subsumed_by([A],[iri]).
 % @see anonymousIndividual/1, namedIndividual/1
 individual(A) :- anonymousIndividual(A).
 individual(A) :- namedIndividual(A).
+individual(A) :- nonvar(A),iri(A). % TODO
 axiom_arguments(individual,[iri]).
 valid_axiom(individual(A)) :- subsumed_by([A],[iri]).
 
@@ -436,7 +438,7 @@ valid_axiom(objectPropertyRange(A, B)) :- subsumed_by([A, B],[objectPropertyExpr
 
 %% dataPropertyRange(?ObjectPropertyExpression, ?DataRange)
 % A data property range axiom PropertyRange( DPE DR ) states that the range of the data property expression DPE is the data range DR - that is, if some individual is connected by DPE with a literal x, then x is in DR. The arity of DR MUST be one
-dataPropertyRange(A, B) :- propertyRange(A, B),subsumed_by([A, B],[objectPropertyExpression, dataRange]).
+dataPropertyRange(A, B) :- propertyRange(A, B),subsumed_by([A, B],[dataPropertyExpression, dataRange]).
 axiom_arguments(dataPropertyRange,[objectPropertyExpression, dataRange]).
 valid_axiom(dataPropertyRange(A, B)) :- subsumed_by([A, B],[objectPropertyExpression, dataRange]).
 
@@ -583,9 +585,9 @@ valid_axiom(objectPropertyAssertion(A, B, C)) :- subsumed_by([A, B, C],[objectPr
 
 %% dataPropertyAssertion(?ObjectPropertyExpression, ?SourceIndividual:Individual, ?TargetValue:Literal)
 % A positive data property assertion PropertyAssertion( DPE a lt ) states that the individual a is connected by the data property expression DPE to the literal lt
-dataPropertyAssertion(A, B, C) :- propertyAssertion(A, B, C),subsumed_by([A, B, C],[objectPropertyExpression, individual, literal]).
+dataPropertyAssertion(A, B, C) :- propertyAssertion(A, B, C),subsumed_by([A, B, C],[dataPropertyExpression, individual, literal]).
 axiom_arguments(dataPropertyAssertion,[objectPropertyExpression, individual, literal]).
-valid_axiom(dataPropertyAssertion(A, B, C)) :- subsumed_by([A, B, C],[objectPropertyExpression, individual, literal]).
+valid_axiom(dataPropertyAssertion(A, B, C)) :- subsumed_by([A, B, C],[dataPropertyExpression, individual, literal]).
 
 %% negativePropertyAssertion(?PropertyExpression, ?SourceIndividual:Individual, ?TargetIndividual:Individual)
 % A negative object property assertion NegativePropertyAssertion( OPE a1 a2 ) states that the individual a1 is not connected by the object property expression OPE to the individual a2
@@ -707,6 +709,10 @@ subsumed_by([I|IL],[T|TL]) :-
 	!,
 	subsumed_by(I,T),
 	subsumed_by(IL,TL).
+subsumed_by(L,list(T)):-
+        !,
+        forall(member(I,L),
+               subsumed_by(I,T)).
 subsumed_by(I,T):-
         !,
 	G=..[T,I],
@@ -719,11 +725,13 @@ iri(IRI) :- atomic(IRI).	%
 
 %% literal(?Lit)
 % true if Lit is an rdf literal
-literal(_).			% TODO 
+%literal(_).			% TODO 
+literal(literal(_)).			% TODO 
 
 
 %% objectPropertyExpression(?OPE)
 % true if OPE is an ObjectPropertyExpression
+% ObjectPropertyExpression := ObjectProperty | InverseObjectProperty
 objectPropertyExpression(E) :- objectProperty(E) ; inverseObjectProperty(E).
 
 objectPropertyExpressionOrChain(propertyChain(PL)) :- forall(member(P,PL),objectPropertyExpression(P)).
@@ -733,6 +741,12 @@ objectPropertyExpressionOrChain(PE) :- objectPropertyExpression(PE).
 inverseObjectProperty(inverseOf(OP)) :- objectProperty(OP).
 
 dataPropertyExpression(E) :- dataProperty(E).
+
+% give benefit of doubt; e.g. rdfs:label
+% in the OWL2 spec we have DataProperty := IRI
+% here dataProperty/1 is an asserted fact
+dataPropertyExpression(E) :- nonvar(E),iri(E).
+objectPropertyExpression(E) :- nonvar(E),iri(E).
 
 %already declared as entity
 %datatype(IRI) :- iri(IRI).
@@ -748,6 +762,7 @@ dataRange(DR) :-
 
 %% classExpression(+CE) is semidet
 classExpression(CE):-
+        iri(CE) ;               % NOTE: added to allow cases where class is not imported
     class(CE) ;
     objectIntersectionOf(CE) ; objectUnionOf(CE) ; objectComplementOf(CE) ; objectOneOf(CE) ;
     objectSomeValuesFrom(CE) ; objectAllValuesFrom(CE) ; objectHasValue(CE) ; objectHasSelf(CE) ;
@@ -962,6 +977,7 @@ anyPropertyAssertion(P,E,V) :- propertyAssertion(P,E,V).
 anyPropertyAssertion(P,E,V) :- annotationAssertion(P,E,V).
 
 
+%% labelAnnotation_value(?X,?Val)
 labelAnnotation_value(X,Val) :- 
         anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(type(_,Val))).
 labelAnnotation_value(X,Val) :- 
