@@ -697,8 +697,18 @@ owl_restriction_type(E, P, hasSelf(PX)) :-
 	use_owl(E, 'owl:hasSelf', true),
         owl_property_expression(P, PX).
 
+% Not in spec but some ontologies alloows this; e.g. Hydrology.owl
+% we must process this first
+owl_restriction_type(E, P, exactCardinality(N,PX,DX)) :-
+	test_use_owl(E, 'owl:cardinality',Lit),
+	use_owl(E,'http://www.w3.org/2006/12/owl2#onClass',D),
+	owl_description(D, DX),!,
+	use_owl(E, 'owl:cardinality',Lit),
+        literal_integer(Lit,N),
+        owl_property_expression(P, PX).
+
 % changed from Thea: cardinality->exactCardinality
-owl_restriction_type(E, P,exactCardinality(N,PX)) :- 
+owl_restriction_type(E, P, exactCardinality(N,PX)) :- 
 	use_owl(E, 'owl:cardinality',Lit),
         literal_integer(Lit,N),
         owl_property_expression(P, PX).
@@ -708,6 +718,17 @@ owl_restriction_type(E, P,exactCardinality(N,PX,DX)) :-
         literal_integer(Lit,N),
 	use_owl(E, 'owl:onClass',D),
 	owl_description(D, DX),!,
+        owl_property_expression(P, PX).
+
+
+% Not in spec but some ontologies alloows this; e.g. Hydrology.owl
+% we must process this first
+owl_restriction_type(E, P, minCardinality(N,PX,DX)) :- 
+	test_use_owl(E, 'owl:minCardinality',Lit),
+	use_owl(E,'http://www.w3.org/2006/12/owl2#onClass',D),
+	owl_description(D, DX),!,
+	use_owl(E, 'owl:minCardinality',Lit),
+        literal_integer(Lit,N),
         owl_property_expression(P, PX).
 
 owl_restriction_type(E, P, minCardinality(N,PX)) :- 
@@ -720,6 +741,16 @@ owl_restriction_type(E, P, minCardinality(N,PX,DX)) :-
         literal_integer(Lit,N),
 	use_owl(E, 'owl:onClass',D),
 	owl_description(D, DX),!,
+        owl_property_expression(P, PX).
+
+% Not in spec but some ontologies alloows this; e.g. Hydrology.owl
+% we must process this first
+owl_restriction_type(E, P, maxCardinality(N,PX,DX)) :- 
+	test_use_owl(E, 'owl:maxCardinality',Lit),
+	use_owl(E,'http://www.w3.org/2006/12/owl2#onClass',D),
+	owl_description(D, DX),!,
+	use_owl(E, 'owl:maxCardinality',Lit),
+        literal_integer(Lit,N),
         owl_property_expression(P, PX).
 
 owl_restriction_type(E, P, maxCardinality(N,PX)) :- 
@@ -1024,7 +1055,8 @@ owl_parse_unnamed_individuals:-
 
 owl_parse_unnamed_individuals.
 
-literal_integer(literal(type,N),N).
+literal_integer(literal(type,A),N) :- atom_number(A,N).
+literal_integer(literal(type(_,A)),N) :- atom_number(A,N).
 
 
 
