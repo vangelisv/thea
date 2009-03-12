@@ -10,9 +10,12 @@
            save_ontology/3,
            create_reasoner/3,
            reasoner_classify/1,
+           reasoner_classify/2,
            reasoner_classify/3,
+           reasoner_classify_using/3,
            is_consistent/1,
            inconsistent_class/2,
+           reasoner_nr_subClassOf/4,
            reasoner_subClassOf/4,
            reasoner_equivalent_to/4,
            add_axiom/5
@@ -26,7 +29,17 @@
 prefix('org.semanticweb.owl.model').
 
 atom_javaURI(X,U):-
+        sub_atom(X,_,_,_,':'),
+        !,
         jpl_call('java.net.URI',create,[X],U).
+atom_javaURI(X,U):-
+        ontology(Ont),
+        !,
+        concat_atom([Ont,X],'#',X2),
+        jpl_call('java.net.URI',create,[X2],U).
+atom_javaURI(X,U):-
+        concat_atom(['http://foo.org',X],'#',X2),
+        jpl_call('java.net.URI',create,[X2],U).
 
 %% create_manager(?Manager)
 create_manager(Manager) :-
@@ -87,12 +100,22 @@ reasoner_factory(pellet,'org.mindswap.pellet.owlapi.PelletReasonerFactory').
 reasoner_factory(factpp,'org.semanticweb.reasonerfactory.factpp.FaCTPlusPlusReasonerFactory').
 
 reasoner_classify(Reasoner) :-
+        debug(owl2,'classifying...',[]),
         jpl_call(Reasoner,classify,[],_).
 
+reasoner_classify(Reasoner,Ont) :-
+        reasoner_classify(Reasoner,Man,Ont).
+
 reasoner_classify(Reasoner,Man,Ont) :-
+        require_manager(Man),
         jpl_call(Man,getImportsClosure,[Ont],IC),
         jpl_call(Reasoner,loadOntologies,[IC],_),
         reasoner_classify(Reasoner).
+
+reasoner_classify_using(Reasoner,Ont,RN) :-
+        require_manager(Man),
+        create_reasoner(Man,RN,Reasoner),
+        reasoner_classify(Reasoner,Man,Ont).
 
 
 is_consistent(Reasoner) :-
@@ -101,35 +124,138 @@ is_consistent(Reasoner) :-
 inconsistent_class(Reasoner,Class) :-
         jpl_call(Reasoner,getInconsistentClasses,[],JOWLClasses),
         member(JOWLClass,JOWLClasses),
-        java_owlclass(JOWLClass,Class).
+        java_namedentity(JOWLClass,Class).
 
-java_owlclass(J,C) :-
+java_namedentity(J,C) :-
         jpl_call(J,getURI,[],URI),
         jpl_call(URI,toString,[],C).
 
-reasoner_subClassOf(R,Fac,C,P) :-
-        owlterm_java(Fac,_,class(C),JC),
-        jpl_call(R,getSuperClasses,[JC],JPSetSet),
+ecsets_class(JPSetSet,P) :-
         jpl_call(JPSetSet,toArray,[],JPSetArr),
         jpl_array_to_list(JPSetArr,JPSets),
         member(JPSet,JPSets),
         jpl_call(JPSet,toArray,[],JPArr),
         jpl_array_to_list(JPArr,JPs),
         (   JPs=[JP],
-            java_owlclass(JP,P)
+            java_namedentity(JP,P)
         ->  true
         ;   JPs=[]
         ->  fail
-        ;   maplist(java_owlclass,JPs,Ps),
+        ;   maplist(java_namedentity,JPs,Ps),
             P=equivalentClasses(Ps)).
+
+cxj(Fac,C,JC) :-
+        (   atom(C)
+        ->  owlterm_java(Fac,_,class(C),JC)
+        ;   translate_arg_to_java(Fac,C,_,JC)).
+
+
+%% reasoner_nr_subClassOf(+R,+Fac,?C,?P)
+% ?C ?P - find superclasses for all named classes C
+% +C ?P - find superclasses
+% ?C +P - find subclasses
+%
+% an unbound variable may be bound to a named class
+% or to a class expression using equivalentClasses/1 -- TODO - this is an axiom not expression        
+        
+% reasoner_nr_subClassOf(+R,+Fac,?C,?P)
+reasoner_nr_subClassOf(R,Fac,C,P) :-
+        var(C),
+        var(P),
+        !,
+        class(C),
+        reasoner_nr_subClassOf(R,Fac,C,P).
+
+% reasoner_nr_subClassOf(+R,+Fac,+C,?P) 
+reasoner_nr_subClassOf(R,Fac,C,P) :-
+        nonvar(C),
+        !,
+        cxj(Fac,C,JC),
+        jpl_call(R,getSuperClasses,[JC],JPSetSet),
+        ecsets_class(JPSetSet,P).
+
+% reasoner_nr_subClassOf(+R,+Fac,?C,+P) 
+reasoner_nr_subClassOf(R,Fac,C,P) :-
+        nonvar(P),
+        !,
+        cxj(Fac,P,PC),
+        jpl_call(R,getSubClasses,[JP],JCSetSet),
+        ecsets_class(JCSetSet,C).
+
+
+%% reasoner_subClassOf(+R,+Fac,?C,?P)
+% ?C ?P - find superclasses for all named classes C
+% +C ?P - find superclasses
+% ?C +P - find subclasses
+
+% reasoner_subClassOf(+R,+Fac,?C,?P)
+reasoner_subClassOf(R,Fac,C,P) :-
+        var(C),
+        var(P),
+        !,
+        class(C),
+        reasoner_subClassOf(R,Fac,C,P).
+
+% reasoner_subClassOf(+R,+Fac,+C,?P) 
+reasoner_subClassOf(R,Fac,C,P) :-
+        nonvar(C),
+        !,
+        cxj(Fac,C,JC),
+        jpl_call(R,getAncestorClasses,[JC],JPSetSet),
+        ecsets_class(JPSetSet,P).
+
+% reasoner_subClassOf(+R,+Fac,?C,+P) 
+reasoner_subClassOf(R,Fac,C,P) :-
+        nonvar(P),
+        !,
+        cxj(Fac,P,JP),
+        jpl_call(R,getDescendantClasses,[JP],JCSetSet),
+        ecsets_class(JCSetSet,C).
+
+reasoner_nr_individualOf(R,Fac,I,C) :-
+        reasoner_individualOf(R,Fac,I,C,true).
+reasoner_individualOf(R,Fac,I,C) :-
+        reasoner_individualOf(R,Fac,I,C,false).
+
+reasoner_individualOf(R,Fac,I,C,IsDirect) :-
+        nonvar(C),
+        nonvar(I),
+        !,
+        individual(I),
+        reasoner_individualOf(R,Fac,I,C,IsDirect).
+
+reasoner_individualOf(R,Fac,I,C,IsDirect) :-
+        nonvar(C),
+        !,
+        cxj(Fac,C,JC),
+        (   IsDirect
+        ->  Bool='@'(true)
+        ;   Bool='@'(false)),
+        jpl_call(R,getIndividuals,[JC,Bool],ISet),
+        jset_member(ISet,JI),
+        java_namedentity(JI,I).
+
+reasoner_individualOf(R,Fac,I,C,IsDirect) :-
+        nonvar(I),
+        !,
+        cxj(Fac,I,JI),
+        (   IsDirect
+        ->  Bool='@'(true)
+        ;   Bool='@'(false)),
+        jpl_call(R,getTypes,[IC,Bool],JCSetSet),
+        ecsets_class(JCSetSet,C).
+
+% java util
+jset_member(JPSet,JP) :-
+        jpl_call(JPSet,toArray,[],JPArr),
+        jpl_array_to_list(JPArr,JPs),
+        member(JP,JPs).
 
 reasoner_equivalent_to(R,Fac,C,C2) :-
         owlterm_java(Fac,_,class(C),JC),
         jpl_call(R,getEquivalentClasses,[JC],JPSet),
-        jpl_call(JPSet,toArray,[],JPArr),
-        jpl_array_to_list(JPArr,JPs),
-        member(JP,JPs),
-        java_owlclass(JP,P).
+        jset_member(JPSet,JP),
+        java_namedentity(JP,P).
 
 %% add_axiom(+Manager,+Factory,+Ont,+Axiom,?Obj) is det
 add_axiom(Manager,Factory,Ont,Axiom,JAx) :-
@@ -236,7 +362,7 @@ translate_arg_to_java(Fac,L,list(T),Set) :-
                jpl_call(Set,add,[Obj],_)),
         debug(owl2,' made set: ~w ',[Set]).
 
-translate_arg_to_java(_Fac,X,int,X) :- !.
+translate_arg_to_java(_Fac,X,T,X) :- nonvar(T),T=int,!.
 
 translate_arg_to_java(Fac,X,classExpression,Obj) :-
         atom(X),
@@ -358,6 +484,9 @@ axiom_method(disjointClasses,getOWLDisjointClassesAxiom).
 axiom_method(inverseProperties,getOWLInverseObjectPropertiesAxiom).
 
 axiom_method(symmetricProperty,getOWLSymmetricObjectPropertyAxiom).
+axiom_method(asymmetricProperty,getOWLAsymmetricObjectPropertyAxiom).
+axiom_method(reflexiveProperty,getOWLReflexiveObjectPropertyAxiom).
+axiom_method(irreflexiveProperty,getOWLIrreflexiveObjectPropertyAxiom).
 
 axiom_method(functionalObjectProperty,getOWLFunctionalObjectPropertyAxiom).
 axiom_method(dataObjectProperty,getOWLFunctionalDataPropertyAxiom).
@@ -448,7 +577,7 @@ save_ontology(Man,Ont,'file:///tmp/foo').
 [owl2_model].
 [owl2_java_owlapi].
 [owl2_from_rdf].
-owl_parse_rdf('testfiles/wine.owl'),
+owl_parse_rdf('testfiles/music_ontology.owl'),
 create_factory(Man,Fac),
 build_ontology(Man,Fac,Ont),
 writeln(classifying),
@@ -460,6 +589,12 @@ writeln(c=C),
 reasoner_subClassOf(Reasoner,Fac,C,P),
 writeln(p=P).
 ==  
+
+queries:
+
+==
+someValuesFrom('http://purl.org/ontology/mo/performed','http://purl.org/ontology/mo/Performance')
+==
 
 ---+ Use
 
