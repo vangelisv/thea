@@ -28,7 +28,7 @@
 % Version 0.5.5: March 07: Changes to the use_module and definitions for Thea 0.5.5 release. 
 % To do        Check and report for purely Internal (DL errors) 
 %              Inferences 
-%
+%  Changes for GIT
 % **********************************************************************
 
 :- module(owl2_from_rdf,
@@ -59,9 +59,13 @@
 :- dynamic(owl_parser_log/2).
 :- dynamic(blanknode_gen/2).
 :- dynamic(outstream/1).
+:- dynamic(ap/1).
+:- dynamic(annotation/3).
 
 % we make this discontiguous so that the code can follow the structure of the document as much as possible
+
 :- discontiguous owl_parse_axiom/1.
+:- discontiguous owl_parse_axiom/3.
 
 
 % -----------------------------------------------------------------------		    
@@ -107,11 +111,16 @@ owl_parse_2(OWL_Parse_Mode) :-
 	rdf_2_owl,
 %	(   OWL_Parse_Mode=complete,!,owl_clear_as; true),
 	(   OWL_Parse_Mode=complete -> owl_clear_as ; true),
-        owl_parse_all_axioms(ontology/1),
+        owl_parse_nonannotated_axioms(ontology/1),
         forall((axiompred(PredSpec),\+dothislater(PredSpec),\+omitthis(PredSpec)),
-               owl_parse_all_axioms(PredSpec)),
+               owl_parse_annotated_axioms(PredSpec)),
         forall((axiompred(PredSpec),dothislater(PredSpec),\+omitthis(PredSpec)),
-               owl_parse_all_axioms(PredSpec)).
+               owl_parse_annotated_axioms(PredSpec)),
+
+	forall((axiompred(PredSpec),\+dothislater(PredSpec),\+omitthis(PredSpec)),
+               owl_parse_nonannotated_axioms(PredSpec)),
+        forall((axiompred(PredSpec),dothislater(PredSpec),\+omitthis(PredSpec)),
+               owl_parse_nonannotated_axioms(PredSpec)).
 
 
 omitthis(ontology/1).
@@ -119,11 +128,22 @@ omitthis(ontology/1).
 :- discontiguous dothislater/1.
 
 
-owl_parse_all_axioms(Pred/Arity) :-
+owl_parse_annotated_axioms(Pred/Arity) :-
         debug(owl_parser_detail,'Parsing all of type: ~w',[Pred]),
         functor(Head,Pred,Arity),
-        forall(owl_parse_axiom(Head),
-               assert(Head)).
+	forall(owl_parse_axiom(Head,true,Annotations), 
+	       (   assert(Head), 
+		   forall(member(X,Annotations),
+			  forall(annotation(X,AP,AV),assert(annotation(Head,AP,AV)))
+			 )
+	       )
+	      ).
+owl_parse_nonannotated_axioms(Pred/Arity) :-
+        debug(owl_parser_detail,'Parsing all of type: ~w',[Pred]),
+        functor(Head,Pred,Arity),
+	forall(owl_parse_axiom(Head,false,_), 
+	       assert(Head)
+	      ).
 
 
 % -----------------------------------------------------------------------		    
@@ -521,8 +541,11 @@ triple_replacements(owl(X,'rdf:type','owl:SymmetricProperty'),[owl(X,'rdf:type',
 % See table 7.
 % http://www.w3.org/TR/2008/WD-owl2-mapping-to-rdf-20081202/
 
-owl_parse_axiom(class(C)) :-
+owl_parse_axiom(class(C),AnnMode,List) :-
+	test_use_owl(C,'rdf:type','owl:Class'),
+	valid_axiom_annotation_mode(AnnMode,C,'rdf:type','owl:Class',List),
         (   use_owl(C,'rdf:type','owl:Class',named) ; use_owl(C,'rdf:type','rdfs:Class',named)).
+
 owl_parse_axiom(class(C)) :-
         use_owl([owl(X,'rdf:type','owl:Axiom'),
                  owl(X,'owl:subject',C),
@@ -745,8 +768,24 @@ owl_restriction_type(E, P, hasValue(PX,Value)) :-
 
 % CLASS AXIOMS
 
-owl_parse_axiom(subClassOf(DX,DY)) :- 
-	use_owl(X,'rdfs:subClassOf',Y),	
+
+valid_axiom_annotation_mode(Mode,S,P,O,List) :-
+	findall(Node,(test_use_owl(Node,'rdf:type','owl:Axiom'),
+		      test_use_owl(Node,'owl:subject',S),
+		      test_use_owl(Node,'owl:predicate',P),
+		      test_use_owl(Node,'owl:object',O),
+		      use_owl([owl(Node,'rdf:type','owl:Axiom'),
+			       owl(Node,'owl:subject',S),
+			       owl(Node,'owl:predicate',P),
+			       owl(Node,'owl:object',O)])),
+		List),
+	(   Mode = true, List = [_|_],!; Mode = false, List = []).
+		      
+
+
+owl_parse_axiom(subClassOf(DX,DY),AnnMode,List) :- 
+	test_use_owl(X,'rdfs:subClassOf',Y),
+	valid_axiom_annotation_mode(AnnMode,X,'rdfs:subClassOf',Y,List),
         owl_description(X,DX),
 	owl_description(Y,DY).
 
@@ -754,6 +793,7 @@ owl_parse_axiom(equivalentClasses(DL)) :-
         maximally_connected_subgraph_over('owl:equivalentClass',L),
         maplist(owl_description,L,DL),
         debug(owl_parser_detail,'equivalentClasses Descs: ~w',[DL]).
+
 owl_parse_axiom(equivalentClasses([C,D])) :-
         % TODO: this could be made more efficient by enforcing order of building
         (   test_use_owl(C,'rdf:type','owl:Class',named)
@@ -1017,9 +1057,64 @@ owl_parse_unnamed_individuals:-
 
 owl_parse_unnamed_individuals.
 
+%       ann(?X, -Extension List)
+%       
+%       Implements function ANN(x) 3.2.2 Table 10
+
+
+ann2(X,Y,Z,X1) :-
+	test_use_owl(W,'rdf:type','owl:Annotation'),
+	test_use_owl(W,'owl:subject',X),
+	test_use_owl(W,'owl:object',Z),
+	use_owl([owl(W,'rdf:type','owl:Annotation'),
+		 owl(W,'owl:subject',X),
+		 owl(W,'owl:predicate',Y),
+		 owl(W,'owl:object',Z)]),
+	print(w-W),nl,
+	ann(W,annotation(X1,Y,Z),Term),u_assert(Term),
+	print('==='-Term),nl.
+
+ann2(_,_,_,_).
+
+ann(X,X1, annotation(X1,Y,Z)) :-  
+	ap(Y),use_owl(X,Y,Z), 
+	% print(annotation(X-Y-Z-X1)),nl,
+	u_assert(annotation(X1,Y,Z)),
+	ann2(X,Y,Z,X1).
+
+
+ann(X,Y) :-
+	ann(X,X,Y).
 
 
 
+	
+
+
+u_assert(Term) :- 
+	call(Term), !; assert(Term).
+    	
+
+
+
+
+% 
+% go
+% 
+
+	
+go :- 
+	retractall(annotation(_,_,_)),
+	retractall(owl(_,_,_,_)),
+	retractall(class(_)),
+	retractall(subClassOf(_,_)),
+	consult('test2.owl'),
+	findall(_,ann(_,_),_),
+        owl_parse_annotated_axioms(class/1),
+	owl_parse_annotated_axioms(subClassOf/2),
+	owl_parse_nonannotated_axioms(class/1),
+	owl_parse_nonannotated_axioms(subClassOf/2).
+	
 
 
 

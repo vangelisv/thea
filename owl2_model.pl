@@ -98,11 +98,13 @@
 % @param PredSpec Predicate/Arity
 % (metamodeling) true if PredSpec is a predicate that defines an axiom
 :- multifile axiompred/1.
-user:term_expansion((:- ext(Pred)),
-                    [(   :- multifile Pred),(:- dynamic Pred),axiompred(Pred)]) :- current_prolog_flag(dialect,swi).
 
 user:term_expansion((:- ext(Pred)),
+                    [( :- multifile Pred),(:- dynamic Pred),axiompred(Pred)]). %  :- current_prolog_flag(dialect,swi).
+/*
+user:term_expansion((:- ext(Pred)),
                     [(:- table Pred),(:- multifile Pred),axiompred(Pred)]) :- current_prolog_flag(dialect,yap).
+*/
 
 :- discontiguous valid_axiom/1, axiompred/1, relation/2, attribute/4.
 
