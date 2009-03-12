@@ -697,11 +697,15 @@ owl_restriction_type(E, P, hasSelf(PX)) :-
 	use_owl(E, 'owl:hasSelf', true),
         owl_property_expression(P, PX).
 
+% support older deprecated versions of OWL2 spec
+onClass(E,D) :- use_owl(E,'http://www.w3.org/2006/12/owl2#onClass',D).
+onClass(E,D) :- use_owl(E,'owl:onClass',D).
+
 % Not in spec but some ontologies alloows this; e.g. Hydrology.owl
 % we must process this first
 owl_restriction_type(E, P, exactCardinality(N,PX,DX)) :-
 	test_use_owl(E, 'owl:cardinality',Lit),
-	use_owl(E,'http://www.w3.org/2006/12/owl2#onClass',D),
+        onClass(E,D),
 	owl_description(D, DX),!,
 	use_owl(E, 'owl:cardinality',Lit),
         literal_integer(Lit,N),
@@ -716,7 +720,7 @@ owl_restriction_type(E, P, exactCardinality(N,PX)) :-
 owl_restriction_type(E, P,exactCardinality(N,PX,DX)) :- 
 	use_owl(E, 'owl:qualifiedCardinality',Lit),
         literal_integer(Lit,N),
-	use_owl(E, 'owl:onClass',D),
+        onClass(E,D),
 	owl_description(D, DX),!,
         owl_property_expression(P, PX).
 
@@ -725,7 +729,7 @@ owl_restriction_type(E, P,exactCardinality(N,PX,DX)) :-
 % we must process this first
 owl_restriction_type(E, P, minCardinality(N,PX,DX)) :- 
 	test_use_owl(E, 'owl:minCardinality',Lit),
-	use_owl(E,'http://www.w3.org/2006/12/owl2#onClass',D),
+        onClass(E,D),
 	owl_description(D, DX),!,
 	use_owl(E, 'owl:minCardinality',Lit),
         literal_integer(Lit,N),
@@ -739,7 +743,7 @@ owl_restriction_type(E, P, minCardinality(N,PX)) :-
 owl_restriction_type(E, P, minCardinality(N,PX,DX)) :- 
 	use_owl(E, 'owl:minQualifiedCardinality',Lit),
         literal_integer(Lit,N),
-	use_owl(E, 'owl:onClass',D),
+        onClass(E,D),
 	owl_description(D, DX),!,
         owl_property_expression(P, PX).
 
