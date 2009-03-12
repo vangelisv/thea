@@ -34,6 +34,8 @@ owlpredicate_typed(functionalProperty,functionalDataProperty).
 
 owlpredicate_typed(subPropertyOf,subObjectPropertyOf).
 owlpredicate_typed(subPropertyOf,subDataPropertyOf).
+owlpredicate_typed(subPropertyOf, subAnnotationPropertyOf).
+
 owlpredicate_typed(disjointProperties,disjointObjectProperties).
 owlpredicate_typed(disjointProperties,disjointDataProperties).
 owlpredicate_typed(equivalentProperties,equivalentObjectProperties).
@@ -46,6 +48,12 @@ owlpredicate_typed(propertyRange,dataPropertyRange).
 
 owlpredicate_typed(propertyAssertion,objectPropertyAssertion).
 owlpredicate_typed(propertyAssertion,dataPropertyAssertion).
+
+owlpredicate_typed(datatype, datatypeRestriction).
+owlpredicate_typed(negativePropertyAssertion, negativeObjectPropertyAssertion).
+owlpredicate_typed(propertyRange, annotationPropertyRange).
+owlpredicate_typed(propertyDomain, annotationPropertyDomain).
+owlpredicate_typed(negativePropertyAssertion, negativeDataPropertyAssertion).
 
 owlpredicate_arguments(objectIntersectionOf,[list(classExpression)]).
 owlpredicate_arguments(dataIntersectionOf,[list(dataExpression)]).
@@ -80,6 +88,8 @@ owlpredicate_arguments(objectPropertyRange,[objectPropertyExpression, classExpre
 
 owlpredicate_arguments(subObjectPropertyOf,[objectPropertyExpressionOrChain, objectPropertyExpression]).
 owlpredicate_arguments(subDataPropertyOf,[dataPropertyExpression, dataPropertyExpression]).
+owlpredicate_arguments(subAnnotationPropertyOf, [annotationProperty, annotationProperty]).
+
 owlpredicate_arguments(disjointObjectProperties,[list(objectPropertyExpression)]).
 owlpredicate_arguments(disjointDataProperties,[list(dataPropertyExpression)]).
 owlpredicate_arguments(equivalentObjectProperties,[list(objectPropertyExpression)]).
@@ -88,6 +98,11 @@ owlpredicate_arguments(equivalentDataProperties,[list(dataPropertyExpression)]).
 owlpredicate_arguments(annotationAssertion,[annotationProperty, iri, value]).
 owlpredicate_arguments(objectPropertyAssertion,[objectPropertyExpression, individual, individual]).
 owlpredicate_arguments(dataPropertyAssertion,[dataPropertyExpression, individual, literal]).
+
+owlpredicate_arguments(negativeObjectPropertyAssertion, [objectPropertyExpression, individual, individual]).
+owlpredicate_arguments(annotationPropertyRange, [annotationProperty, iri]).
+owlpredicate_arguments(annotationPropertyDomain, [annotationProperty, iri]).
+owlpredicate_arguments(negativeDataPropertyAssertion, [dataPropertyExpression, individual, literal]).
 
 
 /** <module> 
