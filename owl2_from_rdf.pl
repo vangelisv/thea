@@ -63,6 +63,9 @@
 % we make this discontiguous so that the code can follow the structure of the document as much as possible
 :- discontiguous owl_parse_axiom/1.
 
+% hookable
+:- multifile owl_parse_axiom/1.
+
 
 % -----------------------------------------------------------------------		    
 %                                Top Level  Predicates
@@ -123,7 +126,11 @@ owl_parse_all_axioms(Pred/Arity) :-
         debug(owl_parser_detail,'Parsing all of type: ~w',[Pred]),
         functor(Head,Pred,Arity),
         forall(owl_parse_axiom(Head),
-               assert(Head)).
+               (   debug(owl_parser_detail,' parsed: ~w',[Head]),
+                   assert(Head))),
+        forall(owl_parse_axiom(Mod:Head),
+               (   debug(owl_parser_detail,' parsed: [~w] ~w',[Mod,Head]),
+                   assert(Mod:Head))).
 
 
 % -----------------------------------------------------------------------		    
@@ -902,7 +909,7 @@ owl_parse_axiom(differentIndividuals(L)) :-
         use_owl(X,'owl:distinctMembers',L1),
         owl_individual_list(L1,L).
 
-dothislater(classAssertion/3).
+dothislater(classAssertion/2).
 owl_parse_axiom(classAssertion(CX,I)) :-
         use_owl(I,'rdf:type',C),
         owl_description(C,CX).
