@@ -7,6 +7,7 @@
            rdf_file_to_prolog/1,
            rdf_file_to_prolog/2,
            write_owl_as_prolog/0,
+           write_owl_as_plsyn/0,
            remove_namespaces/0,
            use_labels_for_IRIs/0,
            treeview/1,
@@ -14,6 +15,7 @@
           ]).
 
 :- use_module(owl2_model).
+:- use_module(owl2_metamodel).
 :- use_module(owl2_from_rdf).
 :- use_module(owl2_xml).
 :- use_module(owl2_basic_reasoner).
@@ -37,6 +39,17 @@ rdf_file_to_prolog(F,Opts):-
 write_owl_as_prolog:-
         forall(axiompred(PS),
                write_axioms(PS)).
+
+write_owl_as_plsyn:-
+        ensure_loaded(owl2_plsyn),
+        forall(axiompred(PS),
+               write_axioms_as_plsyn(PS)).
+
+write_axioms_as_plsyn(P/A):-
+        !,
+        functor(H,P,A),
+        forall(H,(plsyn_owl(Pl,H),format('~q.~n',[Pl]))).
+
 
 write_axioms(P/A):-
         !,
@@ -84,6 +97,36 @@ entityLabel(X,Label) :-
 % TODO: deprecate
 entityLabel(X,Label) :-
         propertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(type(_,Label))).
+
+write_new_preds:-
+        typedg(_,_),
+        fail.
+
+typedg(TG,G) :-
+        export_list(owl2_model,EL),
+        member(TP/Arity,EL),
+        functor(TG,TP,Arity),
+        clause(TG,(G,_)),
+        owl2_model:axiompred(P/Arity),
+        functor(G,P,Arity),
+        (   owlpredicate_typed(P2,TP),
+            P2\=P
+        ->  format('**** ~w ~w ~w~n',[P,P2,TP])
+        ;   true),
+        \+ owlpredicate_typed(_,TP),
+        format('~q.~n',[owlpredicate_typed(P,TP)]).
+
+owlpredargs :-
+        export_list(owl2_model,EL),
+        member(TP/Arity,EL),
+        functor(TG,TP,Arity),
+        clause(TG,(_,subsumed_by(_,L))),
+        \+ owlpredicate_arguments(TP,_),
+        format('~q.~n',[owlpredicate_arguments(TP,L)]),
+        fail.
+
+
+
 
 treeview(Class) :-
         forall(treeview(Class,X-Y-subClassOf(X,Y),_,[]),
