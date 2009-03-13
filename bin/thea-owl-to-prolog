@@ -2,6 +2,8 @@
 
 :- use_module(library('thea2/owl2_util')).
 :- use_module(library('thea2/owl2_from_rdf')).
+:- use_module(library('thea2/swrl_rdf_hooks')).
+:- use_module(library('thea2/swrl')).
 
 main :-
         current_prolog_flag(argv, Arguments),
