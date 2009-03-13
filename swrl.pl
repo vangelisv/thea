@@ -28,7 +28,7 @@
 owl2_model:axiompred(implies/2).
 :- dynamic implies/2.
 :- multifile implies/2.
-owl_model:axiom(implies(A,C)):- implies(A,C).
+owl2_model:axiom(implies(A,C)):- implies(A,C).
 
 %% swrlAtom(?SWRLAtom)
 % true if SWRLAtom is a term consistent with SWRL atom syntax
@@ -187,10 +187,11 @@ subgoals_to_intersection([],_,[]).
 subgoals_to_intersection([A|AL],V,[D|DL]) :-
         A=description(D,V),
         subgoals_to_intersection(AL,V,DL).
-subgoals_to_intersection([A|AL],V,[D|DL]) :-
-        C=..[P,v(X),v(Y)],
-        A=someValuesFrom(D,Y),
-        subgoals_to_intersection(AL,V,DL).
+% TODO:
+%subgoals_to_intersection([A|AL],V,[D|DL]) :-
+%        C=..[P,v(X),v(Y)],
+%        A=someValuesFrom(D,Y),
+%        subgoals_to_intersection(AL,V,DL).
 
 
 %% prolog_term_to_swrl_hook( +Term, ?SWRLAtom:swrlAtom )
@@ -251,7 +252,7 @@ prolog_term_to_swrl_atom( AneqB, differentFrom(AX,BX) ):-
         !,
         prolog_term_to_swrl_atom( A, AX),
         prolog_term_to_swrl_atom( B, BX).
-prolog_term_to_swrl_atom( Goal, builtin(B,[Return|ArgsX]) ):-
+prolog_term_to_swrl_atom( Goal, builtin(B,[Return|ArgsX2]) ):-
         Goal=..[P|Args],
         pred_swrlb(P,B),
         !,
@@ -268,7 +269,7 @@ prolog_term_to_swrl_atom( A, description(F,BX) ):-
         A=..[F,B],
         !,
         prolog_term_to_swrl_atom( B, BX).
-prolog_term_to_swrl_atom( A, A ):-
+prolog_term_to_swrl_atom( A, AX ):-
         A=..[F,B,C],
         !,
         prolog_term_to_swrl_atom( B, BX),
@@ -310,13 +311,14 @@ prolog_source_to_axioms(File,Axioms) :-
 
 
 %% goal_swrl(+Goal,?Swrl)
+% builtins
 % TODO: incomplete
-goal_swrlb(concat_atom(L,A),B):-
+goal_swrlb(concat_atom(L,A),G):-
         G=..[stringConcat,A|L].
-goal_swrlb(X is A+B,add(A,B)).
-goal_swrlb(X is A-B,subtract(A,B)).
-goal_swrlb(X is A*B,multiply(A,B)).
-goal_swrlb(X is A/B,divide(A,B)).
+goal_swrlb(X is A+B,add(A,B,X)).
+goal_swrlb(X is A-B,subtract(A,B,X)).
+goal_swrlb(X is A*B,multiply(A,B,X)).
+goal_swrlb(X is A/B,divide(A,B,X)).
 
 pred_swrlb(=,stringEqualIgnoreCase). % TODO: detect
 pred_swrlb(atom_length,stringLength).
