@@ -25,6 +25,8 @@
 :- use_module(owl2_model).
 :- use_module(owl2_metamodel).
 
+:- multifile owlterm_java/4.
+
 
 prefix('org.semanticweb.owl.model').
 
