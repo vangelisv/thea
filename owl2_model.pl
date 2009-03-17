@@ -93,6 +93,7 @@
 
            anyPropertyAssertion/3,
            equivalent_to/2,
+           disjoint_with/2,
            labelAnnotation_value/2,
 
            axiom_directly_references/2,
@@ -734,6 +735,11 @@ literal(literal(_)).			% TODO
 % ObjectPropertyExpression := ObjectProperty | InverseObjectProperty
 objectPropertyExpression(E) :- objectProperty(E) ; inverseObjectProperty(E).
 
+% give benefit of doubt; e.g. rdfs:label
+% in the OWL2 spec we have DataProperty := IRI
+% here dataProperty/1 is an asserted fact
+objectPropertyExpression(E) :- nonvar(E),iri(E).
+
 objectPropertyExpressionOrChain(propertyChain(PL)) :- forall(member(P,PL),objectPropertyExpression(P)).
 objectPropertyExpressionOrChain(PE) :- objectPropertyExpression(PE).
 
@@ -746,7 +752,6 @@ dataPropertyExpression(E) :- dataProperty(E).
 % in the OWL2 spec we have DataProperty := IRI
 % here dataProperty/1 is an asserted fact
 dataPropertyExpression(E) :- nonvar(E),iri(E).
-objectPropertyExpression(E) :- nonvar(E),iri(E).
 
 %already declared as entity
 %datatype(IRI) :- iri(IRI).
@@ -971,6 +976,8 @@ dataPropertyExpressions(DPEs) :-
 equivalent_to(X,Y) :- equivalentClasses(L),member(X,L),member(Y,L),X\=Y.
 equivalent_to(X,Y) :- equivalentProperties(L),member(X,L),member(Y,L),X\=Y.
 
+disjoint_with(X,Y) :- disjointClasses(L),member(X,L),member(Y,L),X\=Y.
+
 %% anyPropertyAssertion(?Property,?Entity,?Value)
 % subsumes propertyAssertion/3 and annotationAssertion/3
 anyPropertyAssertion(P,E,V) :- propertyAssertion(P,E,V).
@@ -1018,6 +1025,8 @@ axiom_references(Ax,Ref) :-
   UTILITY
   ****************************************/
 
+:- multifile assert_axiom_hook.
+
 %% assert_axiom(+Axiom:axiom)
 %
 % writes an axiom to the prolog database.
@@ -1025,8 +1034,13 @@ axiom_references(Ax,Ref) :-
 % will have different backing stores (rdf_db, sql), and in these cases calls to
 % this predicate will perform the appropriate actions
 assert_axiom(Axiom) :-
+        assert_axiom_hook(Axiom),
+        !.
+assert_axiom(Axiom) :-
         debug(owl2,'asserting ~w',[Axiom]),
-        assert(Axiom).
+        assert(Axiom),
+        !.
+
 
 
 
