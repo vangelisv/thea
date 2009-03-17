@@ -10,10 +10,12 @@
            write_owl_as_plsyn/0,
            remove_namespaces/0,
            use_labels_for_IRIs/0,
+           write_ontology_summary/0,
            treeview/1,
            treeview/2
           ]).
 
+:- use_module(swrl). % required for retracting swrl rules
 :- use_module(owl2_model).
 :- use_module(owl2_metamodel).
 :- use_module(owl2_from_rdf).
@@ -66,6 +68,9 @@ retract_axioms :-
 remove_namespaces:-
         translate_IRIs(remove_ns).
 
+
+%% use_labels_for_IRIs/0
+% uses rdfs:label if available, if not uses local part of URI
 use_labels_for_IRIs:-
         translate_IRIs(use_label_as_IRI).
 
@@ -75,7 +80,10 @@ use_label_as_IRI(IRI,X) :-
         entityLabel(IRI,X),
         !.
 use_label_as_IRI(IRI,X) :-
-        remove_ns(IRI,X).
+        remove_ns(IRI,X),
+        !.
+use_label_as_IRI(X,X).
+
 
 translate_IRIs(Goal):-
         findall(A,axiom(A),Axioms),
@@ -89,14 +97,29 @@ map_IRIs(G,X,X2) :-
         !.
 map_IRIs(G,X,X2) :-
         X=..[F|Args],
+        Args\=[],
+        !,
         maplist(map_IRIs(G),Args,Args2),
-        X2=..[F|Args2].
+        call(G,F,F2),           % swrl axioms use IRIs as functors
+        X2=..[F2|Args2].
+map_IRIs(G,X,X2) :-
+        call(G,X,X2),
+        !.
 
 entityLabel(X,Label) :-
         annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(type(_,Label))).
 % TODO: deprecate
 entityLabel(X,Label) :-
         propertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(type(_,Label))).
+
+write_ontology_summary:-
+        forall(axiompred(PS),
+               write_axiom_summary(PS)).
+
+write_axiom_summary(P/A) :-
+        functor(H,P,A),
+        aggregate(count,H,H,Count),
+        format('Axiom: ~w count = ~w',[P,Count]).
 
 write_new_preds:-
         typedg(_,_),
