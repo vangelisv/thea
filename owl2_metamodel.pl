@@ -69,12 +69,18 @@ owlpredicate_arguments(objectOneOf,[list(individual)]).
 owlpredicate_arguments(dataOneOf,[list(dataRange)]).
 owlpredicate_arguments(objectHasValue,[objectPropertyExpression,individual]). % TODO
 owlpredicate_arguments(dataHasValue,[dataPropertyExpression,dataRange]).
-owlpredicate_arguments(objectMinCardinality,[int,objectPropertyExpression,classExpression]). % TODO: non-QCR
-owlpredicate_arguments(dataMinCardinality,[int,dataPropertyExpression,dataRange]). % TODO: non-QCR
-owlpredicate_arguments(objectMaxCardinality,[int,objectPropertyExpression,classExpression]). % TODO: non-QCR
-owlpredicate_arguments(dataMaxCardinality,[int,dataPropertyExpression,dataRange]). % TODO: non-QCR
-owlpredicate_arguments(objectExactCardinality,[int,objectPropertyExpression,classExpression]). % TODO: non-QCR
-owlpredicate_arguments(dataExactCardinality,[int,dataPropertyExpression,dataRange]). % TODO: non-QCR
+owlpredicate_arguments(objectMinCardinality,[int,objectPropertyExpression,classExpression]). % TEST-ME: non-QCR
+owlpredicate_arguments(objectMinCardinality,[int,objectPropertyExpression]). % TEST-ME: non-QCR
+owlpredicate_arguments(dataMinCardinality,[int,dataPropertyExpression,dataRange]). % TEST-ME: non-QCR
+owlpredicate_arguments(dataMinCardinality,[int,dataPropertyExpression]). % TEST-ME: non-QCR
+owlpredicate_arguments(objectMaxCardinality,[int,objectPropertyExpression,classExpression]). % TEST-ME: non-QCR
+owlpredicate_arguments(objectMaxCardinality,[int,objectPropertyExpression]). % TEST-ME: non-QCR
+owlpredicate_arguments(dataMaxCardinality,[int,dataPropertyExpression,dataRange]). % TEST-ME: non-QCR
+owlpredicate_arguments(dataMaxCardinality,[int,dataPropertyExpression]). % TEST-ME: non-QCR
+owlpredicate_arguments(objectExactCardinality,[int,objectPropertyExpression,classExpression]). % TEST-ME: non-QCR
+owlpredicate_arguments(objectExactCardinality,[int,objectPropertyExpression]). % TEST: non-QCR
+owlpredicate_arguments(dataExactCardinality,[int,dataPropertyExpression,dataRange]). % TEST-ME: non-QCR
+owlpredicate_arguments(dataExactCardinality,[int,dataPropertyExpression]). % TEST: non-QCR
 
 owlpredicate_arguments(inverseOf,[objectProperty]).
 
