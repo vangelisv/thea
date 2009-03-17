@@ -12,11 +12,10 @@
 
 :- rdf_register_ns(swrl,'http://www.w3.org/2003/11/swrl#',[force(true)]).
 
-:- multifile owl2_from_rdf:owl_parse_axiom(X).
-owl2_from_rdf:owl_parse_axiom(X) :-
+:- multifile owl2_from_rdf:owl_parse_axiom_hook/1.
+owl2_from_rdf:owl_parse_axiom_hook(X) :-
         debug(owl2,'trying swrl hooks for: ~w',[X]),
-        owl_parse_axiom(X),
-        !.
+        owl_parse_axiom(X).
 
 use_owl(A,B,C) :-
         owl2_from_rdf:use_owl(A,B,C).
@@ -24,12 +23,16 @@ test_use_owl(A,B,C) :-
         owl2_from_rdf:test_use_owl(A,B,C).
 
 owl_parse_axiom(swrl:implies(Body,Head)) :-
+        debug(swrl,'Testing swrl:Imp ',[]),
         use_owl(X,'rdf:type','swrl:Imp'), % TODO: named rules
-        !,
+        debug(swrl,'Parsing swrl:Imp ~w',[X]),
         use_owl(X,'swrl:body',RdfBody),
         use_owl(X,'swrl:head',RdfHead),
         swrl_description_list(RdfBody,Body),
-        swrl_description_list(RdfHead,Head).
+        debug(swrl,'   Body ~w',[Body]),
+        swrl_description_list(RdfHead,Head),
+        debug(swrl,'   Head ~w',[Head]).
+
 
 swrl_description_list('http://www.w3.org/1999/02/22-rdf-syntax-ns#nil',[]) :- !.
 swrl_description_list(X,[F|R]) :-
@@ -45,6 +48,7 @@ swrl_description(X,i(X)) :-
         !.
 swrl_description(X,G) :-
         use_owl(X,'rdf:type','swrl:IndividualPropertyAtom'),
+        !,
         use_owl(X,'swrl:propertyPredicate',P),
         use_owl(X,'swrl:argument1',A1),
         use_owl(X,'swrl:argument2',A2),
@@ -52,6 +56,31 @@ swrl_description(X,G) :-
         swrl_description(A1,A1P),
         swrl_description(A2,A2P),
         G=..[PP,A1P,A2P].
+swrl_description(X,G) :-
+        use_owl(X,'rdf:type','swrl:DifferentIndividualsAtom'),
+        !,
+        use_owl(X,'swrl:argument1',A1),
+        use_owl(X,'swrl:argument2',A2),
+        swrl_description(A1,A1P),
+        swrl_description(A2,A2P),
+        G=differentFrom(A1P,A2P).
+swrl_description(X,G) :-
+        use_owl(X,'rdf:type','swrl:SameIndividualAtom'),
+        !,
+        use_owl(X,'swrl:argument1',A1),
+        use_owl(X,'swrl:argument2',A2),
+        swrl_description(A1,A1P),
+        swrl_description(A2,A2P),
+        G=sameAs(A1P,A2P).
+swrl_description(X,G) :-
+        use_owl(X,'rdf:type','swrl:ClassAtom'),
+        !,
+        use_owl(X,'swrl:classPredicate',P),
+        use_owl(X,'swrl:argument1',A1),
+        swrl_description(P,PP),
+        swrl_description(A1,A1P),
+        G=description(PP,A1P).
+%        G=..[PP,A1P].
 swrl_description(X,X) :- !.
 
 
