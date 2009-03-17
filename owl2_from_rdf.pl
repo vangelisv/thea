@@ -64,7 +64,7 @@
 :- discontiguous owl_parse_axiom/1.
 
 % hookable
-:- multifile owl_parse_axiom/1.
+:- multifile owl_parse_axiom_hook/1.
 
 
 % -----------------------------------------------------------------------		    
@@ -578,6 +578,10 @@ owl_parse_axiom(namedIndividual(C)) :-
                  owl(X,'owl:predicate','rdf:type'),
                  owl(X,'owl:object','owl:NamedIndividual')]).
 
+owl_parse_axiom(A) :-
+        owl_parse_axiom_hook(A).
+
+
 % Table 8. Identifying Anonymous Individuals in Reification
 % TODO
 
@@ -674,6 +678,10 @@ owl_description(D,Restriction) :-
 	use_optional_type(D),
 	owl_get_bnode(D,Restriction).
 
+% support older deprecated versions of OWL2 spec
+onClass(E,D) :- use_owl(E,'http://www.w3.org/2006/12/owl2#onClass',D).
+onClass(E,D) :- use_owl(E,'owl:onClass',D).
+
 % TODO: datatype restriction
 
 
@@ -703,10 +711,6 @@ owl_restriction_type(E, P, allValuesFrom(PX,Descr)) :-
 owl_restriction_type(E, P, hasSelf(PX)) :- 
 	use_owl(E, 'owl:hasSelf', true),
         owl_property_expression(P, PX).
-
-% support older deprecated versions of OWL2 spec
-onClass(E,D) :- use_owl(E,'http://www.w3.org/2006/12/owl2#onClass',D).
-onClass(E,D) :- use_owl(E,'owl:onClass',D).
 
 % Not in spec but some ontologies alloows this; e.g. Hydrology.owl
 % we must process this first
@@ -812,7 +816,7 @@ owl_parse_axiom(equivalentClasses([C,D])) :-
         C\=D.
 
 owl_parse_axiom(disjointClasses([DX,DY])) :- 
-	use_owl(X,'owl:disjointClass',Y),	
+	use_owl(X,'owl:disjointWith',Y),	
         owl_description(X,DX),
 	owl_description(Y,DY).
 
