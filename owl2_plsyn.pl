@@ -25,6 +25,9 @@
 
                      ]).
 
+:- use_module(owl2_model).
+:- use_module(swrl).
+
 :- op(1200,xfy,(--)).
 :- op(1150,fx,individual).
 
@@ -45,6 +48,7 @@
 :- op(150,xfy,some).
 :- op(150,xfy,only).
 :- op(150,xfy,value).
+:- op(100,fx,(?)).
 
 plsyn_owl(Pl,Owl) :-
         nonvar(Pl),
@@ -128,8 +132,40 @@ owl2plsyn(intersectionOf(Args),Pl) :-
 owl2plsyn(unionOf(Args),Pl) :-
         maplist(owl2plsyn,Args,Args2),
         list_to_chain(Args2,or,Pl).
+owl2plsyn(implies(A,C),(A2->C2)) :-
+        swrlatoms2plsyn(A,A2),
+        swrlatoms2plsyn(C,C2).
 owl2plsyn(X,X) :- !.
 
+swrlatoms2plsyn(A,A2) :-
+        is_list(A),
+        !,
+        maplist(swrlatom2plsyn,A,AL),
+        list_to_chain(AL,(,),A2).
+swrlatoms2plsyn(A,A2) :-
+        !,
+        swrlatom2plsyn(A,A2).
+
+swrlatom2plsyn(description(CE,I),H) :-
+        !,
+        swrlatom2plsyn(I,I2),
+        H=..[CE,I2].
+swrlatom2plsyn(differentFrom(X,Y),X2 \= Y2) :-
+        !,
+        swrlatom2plsyn(X,X2),
+        swrlatom2plsyn(Y,Y2).
+swrlatom2plsyn(IPA,IPA2) :-
+        IPA=..[P,X,Y],
+        !,
+        swrlatom2plsyn(X,X2),
+        swrlatom2plsyn(Y,Y2),
+        IPA2=..[P,X2,Y2].
+
+swrlatom2plsyn(i(V),?V) :- !.
+swrlatom2plsyn(X,X) :- !.
+
+
+        
 list_to_chain([X],_,X) :- !.
 list_to_chain([X1|L],Op,Pl) :-
         !,
@@ -146,7 +182,7 @@ plpred2owlpred(only,allValuesFrom).
 
 
 plpred2owlpred(<,subClassOf).
-plpred2owlpred(->,subPropertyOf).
+plpred2owlpred(@<,subPropertyOf).
 
 plpred2owlpred_list(\=,differentIndividuals). 
 plpred2owlpred_list(\=,disjointClasses). 
