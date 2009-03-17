@@ -89,6 +89,12 @@ plsyn2owl(A==B,equivalentClasses(ECs)) :-
 plsyn2owl(A=@=B,equivalentProperties(ECs)) :-
         !,
         plsyn2owl_ec(A=@=B,(=@=),ECs).
+plsyn2owl(A and B,intersectionOf(ECs)) :-
+        !,
+        plsyn2owl_ec(A and B,and,ECs).
+plsyn2owl(A or B,unionOf(ECs)) :-
+        !,
+        plsyn2owl_ec(A or B,or,ECs).
 plsyn2owl(X,X) :- !.
 
 
@@ -116,6 +122,12 @@ owl2plsyn(equivalentClasses(Args),Pl) :-
 owl2plsyn(sameIndividuals(Args),Pl) :-
         maplist(owl2plsyn,Args,Args2),
         list_to_chain(Args2,(=),Pl).
+owl2plsyn(intersectionOf(Args),Pl) :-
+        maplist(owl2plsyn,Args,Args2),
+        list_to_chain(Args2,and,Pl).
+owl2plsyn(unionOf(Args),Pl) :-
+        maplist(owl2plsyn,Args,Args2),
+        list_to_chain(Args2,or,Pl).
 owl2plsyn(X,X) :- !.
 
 list_to_chain([X],_,X) :- !.
@@ -130,7 +142,7 @@ plpred2owlpred(transitive,transitiveProperty).
 %plpred2owlpred(inverseOf,inverseProperties).
 
 plpred2owlpred(some,someValuesFrom).
-plpred2owlpred(all,allValuesFrom).
+plpred2owlpred(only,allValuesFrom).
 
 
 plpred2owlpred(<,subClassOf).
