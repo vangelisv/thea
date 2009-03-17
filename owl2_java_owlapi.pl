@@ -536,13 +536,19 @@ expr_method(dataOneOf,getOWLDataOneOf).
 
 expr_method(inverseOf,getOWLObjectPropertyInverse).
 
-% TODO: non-QCR
+
 expr_method(objectMinCardinality,getOWLObjectMinCardinalityRestriction,[N,P,CE],[P,N,CE]).
+expr_method(objectMinCardinality,getOWLObjectMinCardinalityRestriction,[N,P],[P,N]).
 expr_method(dataMinCardinality,getOWLDataMinCardinalityRestriction,[N,P,CE],[P,N,CE]).
+expr_method(dataMinCardinality,getOWLDataMinCardinalityRestriction,[N,P],[P,N]).
 expr_method(objectMaxCardinality,getOWLObjectMaxCardinalityRestriction,[N,P,CE],[P,N,CE]).
+expr_method(objectMaxCardinality,getOWLObjectMaxCardinalityRestriction,[N,P],[P,N]).
 expr_method(dataMaxCardinality,getOWLDataMaxCardinalityRestriction,[N,P,CE],[P,N,CE]).
+expr_method(dataMaxCardinality,getOWLDataMaxCardinalityRestriction,[N,P],[P,N]).
 expr_method(objectExactCardinality,getOWLObjectExactCardinalityRestriction,[N,P,CE],[P,N,CE]).
+expr_method(objectExactCardinality,getOWLObjectExactCardinalityRestriction,[N,P],[P,N]).
 expr_method(dataExactCardinality,getOWLDataExactCardinalityRestriction,[N,P,CE],[P,N,CE]).
+expr_method(dataExactCardinality,getOWLDataExactCardinalityRestriction,[N,P],[P,N]).
 
 
 
