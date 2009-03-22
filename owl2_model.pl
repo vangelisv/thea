@@ -1148,8 +1148,8 @@ TODO: check edge cases, eg two ontologies have the same axioms but different ann
 
 ---++ IRIs
 
-By default there is no type checking of IRIs, so =|class(polar_bear)|=
-is allowed, even though "polar_bear" is not an IRI - this makes for
+By default there is no type checking of IRIs, so =|class(polarBear)|=
+is allowed, even though "polarBear" is not an IRI - this makes for
 convenience in working with example ontologies
 
 ---+ Open Issues
