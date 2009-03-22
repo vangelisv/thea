@@ -702,6 +702,17 @@ axiom_arguments(ontologyVersionInfo,[ontology, iri]).
 valid_axiom(ontologyVersionInfo(A, B)) :- subsumed_by([A, B],[ontology, iri]).
 
 /****************************************
+  RESTRICTIONS ON AXIOMS
+  ****************************************/
+
+% 11.1
+% An object property expression OPE is simple in Ax if, for each object property expression OPE' such that OPE' ->* OPE holds, OPE' is not composite.
+% (The property hierarchy relation ->* is the reflexive-transitive closure of ->)
+%simpleObjectPropertyExpresion(OPE) :-
+%        objectPropertyExpression(OPE),
+        
+
+/****************************************
   EXPRESSIONS
   ****************************************/
 
