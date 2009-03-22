@@ -4,10 +4,11 @@
 :- use_module(library('thea2/owl2_from_rdf')).
 :- use_module(library('thea2/swrl_rdf_hooks')).
 :- use_module(library('thea2/swrl')).
+:- use_module(library('semweb/rdf_turtle')).
+
 
 main :-
         current_prolog_flag(argv, Arguments),
         append(_SytemArgs, [--|Args], Arguments), !,
         maplist(owl_parse_rdf,Args),
-        %use_labels_for_IRIs,
         write_owl_as_prolog.
