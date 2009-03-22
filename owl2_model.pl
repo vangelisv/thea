@@ -1128,9 +1128,9 @@ axiomAnnotation(SubClassOf(cat,mammal),author,linnaeus).
   OWL2 allows classes to act as individuals, so this is legal (TODO: check!):
 
 ==
-class(polar_bear).
+class(polarBear).
 class(endangered).
-classAssertion(endangered,polar_bear).
+classAssertion(endangered,polarBear).
 ==
   
   ---++ Ontologies
