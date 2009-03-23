@@ -1036,7 +1036,7 @@ axiom_references(Ax,Ref) :-
   UTILITY
   ****************************************/
 
-:- multifile assert_axiom_hook.
+:- multifile assert_axiom_hook/1.
 
 %% assert_axiom(+Axiom:axiom)
 %
@@ -1069,7 +1069,7 @@ class(carnivore).
 class(herbivore).
 objectProperty(eats).
 subClassOf(animal,organism).
-equivalentClasses([carnivore,intersectionOf(animal,someValuesFrom(eats,animal))]).
+equivalentClasses([carnivore,intersectionOf([animal,someValuesFrom(eats,animal)])]).
 disjointClasses([herbivore,carnivore]).
 ==
   
@@ -1171,13 +1171,18 @@ convenience in working with example ontologies
   Is Tom Schrijvers type checking system going to be integrated into SWI and Yap? Should we use that?
 
   I am attempting to put as much typing info in the pldoc comments,
-  but unsure of the conventions for complex terms
+  but unsure of the conventions for complex terms.
+
+  LATEST: see owl2_metamodel.pl
 
 ---++ Ontologies
 
   continue using ontologyAxiom/2? Alternatively use builtin prolog module mechanism..? 
    
+---+ See Also
 
+* owl2_from_rdf.pl
+* swrl.pl
   
 ---+ Additional Information
 
