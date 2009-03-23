@@ -99,7 +99,8 @@
            axiom_directly_references/2,
            axiom_references/2,
            
-           assert_axiom/1
+           assert_axiom/1,
+           retract_all_axioms/0
 	  ]).
 :- require([ is_list/1
 	   , current_prolog_flag/2
@@ -1052,6 +1053,9 @@ assert_axiom(Axiom) :-
         assert(Axiom),
         !.
 
+retract_all_axioms :-
+        findall(A,axiom(A),Axioms),
+        maplist(retract,Axioms).
 
 
 
