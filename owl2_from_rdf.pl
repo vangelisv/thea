@@ -1073,6 +1073,34 @@ owl_parse_unnamed_individuals.
 literal_integer(literal(type,A),N) :- atom_number(A,N).
 literal_integer(literal(type(_,A)),N) :- atom_number(A,N).
 
+/** <module> Translates an RDF database to OWL2 axioms
+
+  ---+ Synopsis
+
+==
+:- use_module(bio(owl2_from_rdf)).
+
+% 
+demo:-
+  nl.
+  
+
+==
+
+---+ Details
+
+---++ Hooks
+
+* owl_parse_axiom_hook/1
+
+---+ See Also
+
+The file owl2_from_rdf.plt has some examples
+
+
+
+
+*/
 
 
 

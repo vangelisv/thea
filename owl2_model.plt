@@ -54,6 +54,6 @@ swipl
 
 ---+ Details
 
-This is a test module for the module owl2_from_rdf.pl 
+This is a test module for the module owl2_model.pl 
 
 */
