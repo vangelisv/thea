@@ -2,7 +2,7 @@
 
 :- use_module(owl2_model).
 
-:- begin_tests(owl2_model,[setup(init_axioms)]).
+:- begin_tests(owl2_model,[setup(init_axioms),cleanup(retract_all_axioms)]).
 
 init_axioms :-
         Axioms=[
@@ -20,6 +20,7 @@ init_axioms :-
                 equivalentClasses([auto_carnivore,hasSelf(eats)]),
                 disjointClasses([herbivore,carnivore])
                ],
+        retract_all_axioms,
         maplist(assert_axiom,Axioms).
 
 test(loaded) :-
@@ -28,6 +29,13 @@ test(loaded) :-
 test(subclasses) :-
         findall(A-B,subClassOf(A,B),Axs),
         Axs\=[].
+
+test(objectProperty, all(OP == [eats])) :-
+        objectProperty(OP).
+
+test(class, all(C == [organism,animal,carnivore,herbivore])) :-
+        class(C).
+
 
 :- end_tests(owl2_model).
 
