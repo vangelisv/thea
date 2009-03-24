@@ -5,7 +5,7 @@
 :- use_module(owl2_from_rdf).
 :- use_module(swrl_rdf_hooks).
 
-:- begin_tests(family,[setup(load_swrlfile)]).
+:- begin_tests(family,[setup(load_swrlfile),cleanup(retract_all_axioms)]).
 
 load_swrlfile :-
         owl_parse_rdf('testfiles/family.owl').
@@ -22,7 +22,7 @@ expected(implies(['http://www.owl-ontologies.com/Ontology1172270693.owl#has_fost
 
 :- end_tests(family).
 
-:- begin_tests(ancestor,[setup(load_swrlfile)]).
+:- begin_tests(ancestor,[setup(load_swrlfile),cleanup(retract_all_axioms)]).
 
 load_swrlfile :-
         owl_parse_rdf('testfiles/dl-safe-ancestor.owl').
