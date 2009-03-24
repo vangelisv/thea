@@ -2,6 +2,8 @@
 
 :- module(owl2_to_prolog_dlp,
           [
+           owl_write_all_dlpterms/0,
+           owl_write_all_dlpterms/1,
            owl_dlpterm/2,
            owl_dlpterm/3,
            owl_write_dlpterm/2,
@@ -10,6 +12,17 @@
 
 :- use_module(owl2_model).
 :- use_module(owl2_from_rdf,[collapse_ns/4]).
+
+%% owl_write_all_dlpterms
+% as owl_write_all_dlpterms/1
+owl_write_all_dlpterms :-
+        owl_write_all_dlpterms([]).
+
+%% owl_write_all_dlpterms(+Opts:list)
+% writes all axiom/1 as dlpterms on output stream using owl_write_dlpterm/2
+owl_write_all_dlpterms(Opts) :-
+        forall(axiom(Ax),
+               owl_write_dlpterm(Ax,Opts)).
 
 %% owl_dlpterm(+OwlAsTerm,?DlpTerm)
 owl_dlpterm(OwlAsTerm,R) :- 
@@ -40,7 +53,7 @@ owl_write_dlpterm(OwlAsTerm,Options) :-
         format('% ~w ~n',[OwlAsTerm]),
 	owl_write_prolog_code(R,Options),
         !.
-owl_as2prolog(OwlAsTerm,_) :- 
+owl_write_dlpterm(OwlAsTerm,_) :- 
         throw(thea(cannot_write(OwlAsTerm))).
 
 
@@ -382,7 +395,18 @@ owl_as2prolog(description_list([Descr|Rest],X,Separator),T,Param) :-
 %  d. Handle property attributes in process_pt_list predicate
 %
 
-owl_as2prolog(subPropertyOf(P,SuperP),(property(SuperP,x,y) :- property(P,x,y)),_).
+% TODO: property expressions - inverseOf, propertyChain; other places e.g. inverseProperties
+%owl_as2prolog(subPropertyOf(P,inverseOf(SuperP)),(property(SuperP,y,x) :- property(P,x,y)),_).
+%owl_as2prolog(subPropertyOf(inverseOf(P),SuperP),(property(SuperP,x,y) :- property(P,y,x)),_).
+%owl_as2prolog(subPropertyOf(P,SuperP),(property(SuperP,x,y) :- property(P,x,y)),_).
+
+owl_as2prolog(subPropertyOf(P,SuperP),(PE :- SPE),_) :-
+        owl_as2prolog(propertyExpression(P),PE,head),
+        owl_as2prolog(propertyExpression(SuperP),SPE,body).
+
+owl_as2prolog(propertyExpression(inverseOf(P)),property(P,y,x), _).
+owl_as2prolog(propertyExpression(P),property(P,x,y), _).
+
 
 owl_as2prolog(propertyDomain(P,D),(L :- property(P,x,var)), _) :-
         map_description(head,_,D,L).
@@ -435,11 +459,26 @@ owl_as2prolog(functionalProperty(P), (property(sameIndividuals,x,y) :- (property
 owl_as2prolog(inverseFunctionalProperty(P), (property(sameIndividuals,x,y) :- (property(P,z,x),property(P,y,z))),_).
 owl_as2prolog(transitiveProperty(P), (property(P,x,y) :- (property(P,x,y),property(P,y,z))),_).
 owl_as2prolog(symmetricProperty(P), (property(P,x,y) :- property(P,y,x)),_).
-owl_as2prolog(inverseProperties(P,Inv),[(property(P,x,y) :- property(Inv,y,x)),
-                                        (property(Inv,x,y) :- property(P,y,x))],_).
+%owl_as2prolog(inverseProperties(P,Inv),[(property(P,x,y) :- property(Inv,y,x)),
+%                                        (property(Inv,x,y) :- property(P,y,x))],_).
+owl_as2prolog(inverseProperties(P,inverseOf(P)),none,_).
+owl_as2prolog(inverseProperties(inverseOf(P),P),none,_).
+owl_as2prolog(inverseProperties(P,Inv),[(PE :- IPE),(IPE2 :- PE2)], _) :-
+        owl_as2prolog(propertyExpression(P),PE,head),
+        owl_as2prolog(propertyExpression(inverseOf(Inv)),IPE,body),
+        owl_as2prolog(propertyExpression(inverseOf(P)),PE2,body),
+        owl_as2prolog(propertyExpression(Inv),IPE2,head).
+
+
 
 % TODO: new OWL2 properties
 
+% SWRL
+
+owl_as2prolog(implies(A,C),(CP :- AP), _) :-
+              owl_as2prolog(swrl(A),AP,body),
+              owl_as2prolog(swrl(C),CP,head).
+% TODO
 
 /** <module> generates logic programs from OWL2 ontologies
 
