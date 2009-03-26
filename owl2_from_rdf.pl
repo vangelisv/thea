@@ -42,7 +42,6 @@
 	   
 	    blanknode/3,
 	    blanknode_gen/2,
-
 	    owl_parser_log/2
 	  ]).
 
@@ -60,6 +59,8 @@
 :- dynamic(blanknode_gen/2).
 :- dynamic(outstream/1).
 :- dynamic(annotation/3). % implements the ANN(X) function.
+:- dynamic(owl_repository/2). % implements a simple OWL repository: if URL not found, Ontology is read from a repository (local) RURL
+
 
 % we make this discontiguous so that the code can follow the structure of the document as much as possible
 
@@ -96,21 +97,46 @@ owl_parse_rdf(F,Opts):-
 % owl_parse(+OWL_Parse_Mode).
             					       
 
-owl_parse(URL, RDF_Load_Mode, OWL_Parse_Mode,Imports) :-
+owl_parse(URL, RDF_Load_Mode, OWL_Parse_Mode,ImportFlag) :-
 %	(   RDF_Load_Mode=complete,!,rdf_retractall(_,_,_); true),
 	(   RDF_Load_Mode=complete -> rdf_retractall(_,_,_) ; true),
 	retractall(rdf_db:rdf_source(_,_,_,_)),
         debug(owl_parser,'Loading stream ~w',[URL]),
-	rdf_load_stream(URL,[URL],Imports),
-	owl_parse_2(OWL_Parse_Mode).
-	        
-    
-owl_parse_2(OWL_Parse_Mode) :-
-        debug(owl_parser,'Commencing rdf_2_owl. Generating owl/4',[]),
-	rdf_2_owl,
-%	(   OWL_Parse_Mode=complete,!,owl_clear_as; true),
+	owl_canonical_parse_2([URL],URL,ImportFlag,[],ProcessedIRI),
 	(   OWL_Parse_Mode=complete -> owl_clear_as ; true),
+	owl_canonical_parse_3(ProcessedIRI).
+	        
+
+owl_canonical_parse_2([],_,_,Processed,Processed) :- !.
+
+owl_canonical_parse_2([IRI|ToProcessRest],ImportFlag,Parent,ProcessedIn,ProcessedOut) :-
+	member(IRI,ProcessedIn),!,
+	owl_canonical_parse_2(ToProcessRest,ImportFlag,Parent,ProcessedIn,ProcessedOut).
+
+owl_canonical_parse_2([IRI|ToProcessRest],Parent,ImportFlag,ProcessedIn,ProcessedOut) :-
+	% Get rdf triples, *Ontology* and Imports 
+	rdf_load_stream(IRI,O,Imports),
+	%	process(IRI,O,Imports),!,
+	( nonvar(O) -> Ont = O; Ont = Parent, retractall(rdf(Parent,'http://www.w3.org/2002/07/owl#imports',IRI)) ),
+	rdf_2_owl(IRI), % move the RDF triples into the owl-Ont/4 facts
+	% print(IRI-triples-processed-into-Ont),nl,
+	(   ImportFlag = true -> owl_canonical_parse_2(Imports,Ont,ImportFlag,[IRI|ProcessedIn],ProcessedIn1) ; 
+	ProcessedIn1=[IRI|ProcessedIn]),
+	owl_canonical_parse_2(ToProcessRest,Parent,ImportFlag,ProcessedIn1,ProcessedOut).
+
+
+owl_canonical_parse_3([]).
+
+owl_canonical_parse_3([IRI|Rest]) :-
+        debug(owl_parser,'Commencing rdf_2_owl. Generating owl/4',[]),
+	% Remove anyu existing not used owl fact
+	retractall(owl(_,_,_,not_used)),
+	% Copy the owl facts of the IRI document to the 'not_used'
+	forall(owl(S,P,O,IRI),assert(owl(S,P,O,not_used))),
+	% continue with parsing using the rules...
         owl_parse_nonannotated_axioms(ontology/1),
+	
+	findall(_,ann(_,_),_), % finad all annotations, assert annotation(X,AP,AV) axioms.
         forall((axiompred(PredSpec),\+dothislater(PredSpec),\+omitthis(PredSpec)),
                owl_parse_annotated_axioms(PredSpec)),
         forall((axiompred(PredSpec),dothislater(PredSpec),\+omitthis(PredSpec)),
@@ -119,7 +145,8 @@ owl_parse_2(OWL_Parse_Mode) :-
 	forall((axiompred(PredSpec),\+dothislater(PredSpec),\+omitthis(PredSpec)),
                owl_parse_nonannotated_axioms(PredSpec)),
         forall((axiompred(PredSpec),dothislater(PredSpec),\+omitthis(PredSpec)),
-               owl_parse_nonannotated_axioms(PredSpec)).
+               owl_parse_nonannotated_axioms(PredSpec)),!,
+	owl_canonical_parse_3(Rest).
 
 
 omitthis(ontology/1).
@@ -172,53 +199,58 @@ owl_clear_as :-
 
 predspec_head(Pred/A,Head) :- functor(Head,Pred,A).
 
+u_assert(Term) :- 
+	call(Term), !; assert(Term).
+
+
 convert(T,V,typed_value(T,V)).     
 
 
-%%	rdf_2_owl.     
+%%	rdf_2_owl/1.     
 %       
 %       Converts RDF triples to OWL/4 triples so that
 %	their use can tracked by the OWL parser.
 
 
-rdf_2_owl :-
+rdf_2_owl(Ont) :-
 	owl_parser_log(['Removing existing owl triples']),
 	retractall(owl(_,_,_,_)),
 	owl_parser_log('Copying RDF triples to OWL triples'), 
 	rdf(X,Y,Z), 
 %	owl_fix_no(X,X1), owl_fix_no(Y,Y1), owl_fix_no(Z,Z1),
-	assert(owl(X,Y,Z,not_used)), fail.
+	assert(owl(X,Y,Z,Ont)), fail.
 
-rdf_2_owl :-
+rdf_2_owl(_Ont) :-
 	owl_count(Z),
 	owl_parser_log(['Number of owl triples copied: ',Z]).
 
 
-%%       rdf_load_stream(+URL, +ImportedList)
+%%       rdf_load_stream(+URL, -Ontology, -Imports)
 %	
 %	This predicate calls the rdf parser to parse the RDF/XML URL
 %	into RDF triples. URL can be a local file or a URL.
-%	The predicate recursively calls itself for all URLs that need to 
-%	be imported, ie. are objects to an owl:imports predicate. 
-%	The ImportedList argument contains the imported so far URLs,
-%	to avoid re-visiting the same URLs. (Empty List in 1st call).
+%	The predicate returns all Imports based on the 	owl:imports predicate. 
+%	Also the Ontology of the URL if an owl:Ontology exists, var
+%	otherise. 
 
-rdf_load_stream(URL,Imported,Imports) :- 
-  	(sub_string(URL,0,4,_,'http'), !,
-	 http_open(URL,RDF_Stream,[]), 
-         % rdf_load(RDF_Stream,[blank_nodes(noshare),convert_typed_literal(convert)]), 
-	 rdf_load(RDF_Stream,[if(true),blank_nodes(noshare),result(Action, Triples, MD5)]),
-         debug(owl_parser,' Loaded ~w stream: ~w Action: ~w Triples:~w MD5: ~w',[URL,RDF_Stream,Action,Triples,MD5]),
-	 close(RDF_Stream) 
-	 ;
-	 RDF_Stream = URL, rdf_load(RDF_Stream,[blank_nodes(noshare)])
-	 ),
-	(   Imports = true,
-	    rdf(_,'http://www.w3.org/2002/07/owl#imports',Import_URL),
-	    not( member(Import_URL, Imported)),!,
-	    debug(owl_parser,'Imports: ~w',[Import_URL]),
-            rdf_load_stream(Import_URL,[Import_URL|Imported],Imports)
-	  ; true).
+
+rdf_load_stream(URL,Ontology,Imports) :- 
+  	(sub_string(URL,0,4,_,'http'), !, 
+	 catch((http_open(URL,RDF_Stream,[]),		
+		rdf_load(RDF_Stream,[if(true),blank_nodes(noshare),result(Action, Triples, MD5)]),
+		debug(owl_parser,' Loaded ~w stream: ~w Action: ~w Triples:~w MD5: ~w',[URL,RDF_Stream,Action,Triples,MD5]),
+		close(RDF_Stream)),
+	       Message, 
+	       (owl_repository(URL,RURL),!,rdf_load_stream(RURL,Ontology,Imports) ;
+	         print(Message),nl)) 
+	;
+	 RDF_Stream = URL, rdf_load(RDF_Stream,[blank_nodes(noshare),if(true)])
+	),
+	(   rdf(Ontology,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type','http://www.w3.org/2002/07/owl#Ontology'),
+	    findall(I,rdf(Ontology,'http://www.w3.org/2002/07/owl#imports',I),Imports) 
+	; 
+	    Imports = []
+	).
 
 
 %%	fix_no(+A,-B)  
@@ -1235,105 +1267,11 @@ extend_set_over(P,L,L2):-
 extend_set_over(_,L,L):- !.
 
 	
-%	owl_annotation(+C,annotation(-APID,-Value)
-%  
-%	For a given name id (C) it returns an annotation construct.
-%       APID is either an existing annotation Property, or it is a new
-%       one. 
-%       Predefined annotation properties are rdfs:comment, rdfs:label, 
-%	rdfs:seeAlso.
-
-owl_annotation(C,annotation(APID,Value)) :- 
-	annotationProperty(APID),
-	use_owl(C,APID,Value).
-
-owl_annotation(C,annotation(APID,Value)) :-
-	use_owl(APID,'rdf:type','owl:AnnotationProperty'),
-	(   use_owl(APID,'rdf:type','rdf:Property'),! ; true),
-	not(sub_string(APID,0,2,_,'__')), 
-	not(annotationProperty(APID)),  
-	assert(annotationProperty(APID)),
-	use_owl(C,APID,Value).
-
-owl_annotation(C, annotation('rdfs:comment',CA)) :-
-  	use_owl(C,'rdfs:comment',CA).	
-
-owl_annotation(O, annotation('rdfs:label',OA)) :-
-  	use_owl(O,'rdfs:label',OA).		     
-
-owl_annotation(O, annotation('rdfs:seeAlso',OA)) :-
-  	use_owl(O,'rdfs:seeAlso',OA).	
-
-
-%	owl_parse_annotationPropery.
-%  
-%	It creates an annotationProperty term for each occurence of an  
-%	owl:AnnotationProperty typed ID.
-%	Range properies for annotation are not processed yet.
- 
-owl_parse_annotationProperty :- 
-	use_owl(PID, 'rdf:type', 'owl:AnnotationProperty'),
-	not(sub_string(PID,0,2,_,'__')), 
-	not(annotationProperty(PID)),  
-	assert(annotationProperty(PID)),
-	% get all range clauses for annotation but don't do anything at the moment
-	findall(Dr, (use_owl(PID,'rdfs:range',Xr),owl_description(Xr,Dr)), _),
-
-	% use_owl(PID, 'rdf:type','rdf:Property'); true,
-	fail.
-
-owl_parse_annotationProperty.
-
-
-% --------------------------------------------------------------------
-%                             Individuals
-%
-%       owl_parse_named_individuals
-%  
-%	Any named node not defined as an individual is sserted into the
-%	database as a individual/5 term with all types, properties and
-%	annotations defined with this named individual as a subject. 
-%	Note that the construction of an individual term cannot
-%	be done incrementally, i.e. we cannot add types,
-%	properties or annotations to an existing individual.
-
-
-owl_parse_named_individuals :- 
-	owl(I,_,_,not_used),
-	not(sub_string(I,0,2,_,'__')), not(individual(I,_,_,_)),
-	findall(T, (use_owl(I,'rdf:type',T1),owl_description(T1,T)),ITList),
-	findall(value(P,V), ((property(P,_,_,_,_,_,_);			    
-			     annotationProperty(P)),use_owl(I,P,V)), IVList),
- 	findall(A,(owl_annotation(I,A)), AnnotationList), 
-	assert(individual(I,AnnotationList,ITList,IVList)),fail.
-
-owl_parse_named_individuals.
-
-
-%       owl_parse_unnamed_individuals
-%  
-%	Same as above for unnamed individuals.
-
-owl_parse_unnamed_individuals:-
-	owl(I,_,_,not_used),not(individual(I,_,_,_)),
-	findall(T, (use_owl(I,'rdf:type',T1),owl_description(T1,T)),ITList),
-	findall(value(P,V), ((property(P,_,_,_,_,_,_);			    
-			     annotationProperty(P)),use_owl(I,P,V)), IVList),
-	findall(A,(owl_annotation(I,A)), AnnotationList), 
-	assert(individual(I,AnnotationList,ITList,IVList)),fail.
-
-owl_parse_unnamed_individuals.
-
-
-   
-u_assert(Term) :- 
-	call(Term), !; assert(Term).
-    	
+   	
 
 % 
 % go
 % 
-
 	
 go :- 
 	retractall(annotation(_,_,_)),
@@ -1347,8 +1285,3 @@ go :-
 	owl_parse_nonannotated_axioms(class/1),
 	owl_parse_nonannotated_axioms(subClassOf/2).
 	
-
-
-
-
-
