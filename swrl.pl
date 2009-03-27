@@ -30,7 +30,7 @@ owl2_model:axiompred(implies/2).
 :- multifile implies/2.
 owl2_model:axiom(implies(A,C)):- implies(A,C).
 
-:- multifile owl2_model:assert_axiom_hook.
+:- multifile owl2_model:assert_axiom_hook/1.
 owl2_model:assert_axiom_hook(implies(A,C)) :-
         assert(swrl:implies(A,C)).
 
