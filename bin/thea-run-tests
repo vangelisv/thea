@@ -5,7 +5,10 @@ main :-
         append(_SytemArgs, [--|Args], Arguments), !,
         writeln(args=Args),
         maplist(use_module,Args),
-        set_prolog_flag(verbose,normal),
+        %set_prolog_flag(verbose,normal),
         set_test_options([silent(false)]),
         load_test_files([]),
-        run_tests.
+        (   run_tests
+        ->  halt(0)
+        ;   halt(1)).
+
