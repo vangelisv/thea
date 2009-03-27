@@ -12,18 +12,21 @@
 
 :- rdf_register_ns(swrl,'http://www.w3.org/2003/11/swrl#',[force(true)]).
 
-:- multifile owl2_from_rdf:owl_parse_axiom_hook/1.
-owl2_from_rdf:owl_parse_axiom_hook(X) :-
-        debug(owl2,'trying swrl hooks for: ~w',[X]),
-        owl_parse_axiom(X).
+:- multifile owl2_from_rdf:owl_parse_axiom_hook/3.
+owl2_from_rdf:owl_parse_axiom_hook(X,AnnMode,List) :-
+        debug(swrl,'trying swrl hooks for: ~w',[X]),
+        swrl_parse_axiom(X,AnnMode,List).
 
 use_owl(A,B,C) :-
         owl2_from_rdf:use_owl(A,B,C).
 test_use_owl(A,B,C) :-
         owl2_from_rdf:test_use_owl(A,B,C).
 
-owl_parse_axiom(swrl:implies(Body,Head)) :-
+%owl_parse_axiom(swrl:implies(Body,Head),AnnMode,List) :-
+swrl_parse_axiom(implies(Body,Head),AnnMode,List) :-
         debug(swrl,'Testing swrl:Imp ',[]),
+        test_use_owl(X,'rdf:type','swrl:Imp'), % TODO: named rules
+        valid_axiom_annotation_mode(AnnMode,X,'rdf:type','swrl:Imp',List),
         use_owl(X,'rdf:type','swrl:Imp'), % TODO: named rules
         debug(swrl,'Parsing swrl:Imp ~w',[X]),
         use_owl(X,'swrl:body',RdfBody),
