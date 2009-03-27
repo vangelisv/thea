@@ -164,6 +164,16 @@ owl_write_prolog_code(property(P,X,Y),Options) :- !,
 	),
 	write(')').
 
+owl_write_prolog_code(swrlproperty(P,X,Y),Options) :- !, 
+	collapse_ns(P,P1,'_',Options),collapse_ns(Y,Y1,'_',[no_base(_)]),collapse_ns(X,X1,'_',[no_base(_)]),
+        upcase_atom(X1,X2),
+        upcase_atom(Y1,Y2),
+	writeq(P1),  write('('),
+	write(X2),
+        write(','),
+	write(Y2),
+	write(')').
+
 %
 % none generates nothing.
 %
@@ -478,6 +488,21 @@ owl_as2prolog(inverseProperties(P,Inv),[(PE :- IPE),(IPE2 :- PE2)], _) :-
 owl_as2prolog(implies(A,C),(CP :- AP), _) :-
               owl_as2prolog(swrl(A),AP,body),
               owl_as2prolog(swrl(C),CP,head).
+
+owl_as2prolog(swrl(L),PL, Type) :-
+         is_list(L),
+         !,
+         findall(P,(member(A,L),owl_as2prolog(swrl(A),P,Type)),PL). % TODO: body list
+
+owl_as2prolog(swrl(A),swrlproperty(P,PX,PY), Type) :-
+        A=..[P,X,Y],
+        !,
+        owl_as2prolog(swrl(X),PX,Type),
+        owl_as2prolog(swrl(Y),PY,Type).
+owl_as2prolog(swrl(i(V)),V,_).
+
+                 
+
 % TODO
 
 /** <module> generates logic programs from OWL2 ontologies
