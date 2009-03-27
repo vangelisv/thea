@@ -627,6 +627,7 @@ valid_axiom(annotationAssertion(A, B, C)) :- subsumed_by([A, B, C],[annotationPr
 %% annotation(?IRI)
 %
 % @see annotationAnnotation/3, ontologyAnnotation/3, axiomAnnotation/3
+% TODO: make this ext
 annotation(annotationAnnotation(A, B, C)) :- annotationAnnotation(A, B, C).
 annotation(ontologyAnnotation(A, B, C)) :- ontologyAnnotation(A, B, C).
 annotation(axiomAnnotation(A, B, C)) :- axiomAnnotation(A, B, C).
