@@ -123,6 +123,7 @@ owl_canonical_parse_2([IRI|ToProcessRest],Parent,ImportFlag,ProcessedIn,Processe
 	rdf_load_stream(IRI,O,Imports),
 	%	process(IRI,O,Imports),!,
 	( nonvar(O) -> Ont = O; Ont = Parent, retractall(rdf(Parent,'http://www.w3.org/2002/07/owl#imports',IRI)) ),
+        debug(owl_parser,'Commencing rdf_2_owl. Generating owl/4',[]),
 	rdf_2_owl(IRI), % move the RDF triples into the owl-Ont/4 facts
 	% print(IRI-triples-processed-into-Ont),nl,
 	(   ImportFlag = true -> owl_canonical_parse_2(Imports,Ont,ImportFlag,[IRI|ProcessedIn],ProcessedIn1) ; 
@@ -133,15 +134,30 @@ owl_canonical_parse_2([IRI|ToProcessRest],Parent,ImportFlag,ProcessedIn,Processe
 owl_canonical_parse_3([]).
 
 owl_canonical_parse_3([IRI|Rest]) :-
-        debug(owl_parser,'Commencing rdf_2_owl. Generating owl/4',[]),
 	% Remove any existing not used owl fact
 	retractall(owl(_,_,_,not_used)),
 	% Copy the owl facts of the IRI document to the 'not_used'
 	forall(owl(S,P,O,IRI),assert(owl(S,P,O,not_used))),
+
+	% remove triples based on pattern match (Table 5)
+	forall(triple_remove(Pattern,Remove),
+	       (   test_use_owl(Pattern),forall(member(owl(S,P,O),Remove),use_owl(S,P,O)))),
+
+	% replace matched patterns (Table 6)
+	forall(triple_replace(Pattern,Remove),
+	       (   use_owl(Pattern),forall(member(owl(S,P,O),Remove),assert(use_owl(S,P,O,not_used))))),
+	
 	% continue with parsing using the rules...
         owl_parse_nonannotated_axioms(ontology/1),
 	
-	findall(_,ann(_,_),_), % finad all annotations, assert annotation(X,AP,AV) axioms.
+	% Table 8, get the set of RIND - anonymous individuals in reification
+	findall(X, (member(Y,['owl:Axiom','owl:Annotation',
+			      'owl:AllDisjointClasses','owl:AllDisjointProperties',
+			      'owl:AllDifferent','owl:NegativePropertyAssertion']),
+		    test_use_owl(X,'rdf:type',Y)), RIND),
+	nb_setval(rind,RIND),
+	
+	findall(_,ann(_,_),_), % find all annotations, assert annotation(X,AP,AV) axioms.
         debug(owl_parser_detail,'Commencing parse of annotated axioms',[]),
         forall((axiompred(PredSpec),\+dothislater(PredSpec),\+omitthis(PredSpec)),
                owl_parse_annotated_axioms(PredSpec)),
@@ -152,7 +168,9 @@ owl_canonical_parse_3([IRI|Rest]) :-
 	forall((axiompred(PredSpec),\+dothislater(PredSpec),\+omitthis(PredSpec)),
                owl_parse_nonannotated_axioms(PredSpec)),
         forall((axiompred(PredSpec),dothislater(PredSpec),\+omitthis(PredSpec)),
-               owl_parse_nonannotated_axioms(PredSpec)),!,
+               owl_parse_nonannotated_axioms(PredSpec)),	
+	% annotation Assertion
+	parse_annotation_assertions,!,
 	owl_canonical_parse_3(Rest).
 
 
@@ -225,7 +243,7 @@ convert(T,V,typed_value(T,V)).
 
 rdf_2_owl(Ont) :-
 	owl_parser_log(['Removing existing owl triples']),
-	retractall(owl(_,_,_,_)),
+	retractall(owl(_,_,_,Ont)),
 	owl_parser_log('Copying RDF triples to OWL triples'), 
 	rdf(X,Y,Z), 
 %	owl_fix_no(X,X1), owl_fix_no(Y,Y1), owl_fix_no(Z,Z1),
@@ -291,9 +309,15 @@ owl_count(U) :-
 	findall(1,owl(_,_,_,not_used),X), length(X,U).
 
 
-%%       test_use_owl(?S,?P,?O)   
-%	As use_owl/3, but does not consume the triple
+%%       test_use_owl(+Triples:list)   
+%	As use_owl/1, but does not consume the triple	
+test_use_owl(Triples) :-
+        forall(member(owl(S,P,O),Triples),
+               test_use_owl(S,P,O)).
 
+
+%%       test_use_owl(?S,?P,?O)   
+%	As use_owl/3, but does not consume the triple. Expands the S,P,O.
 test_use_owl(X1,Y1,Z1) :- 
 	expand_ns(X1,X),
 	expand_ns(Y1,Y),
@@ -581,32 +605,44 @@ owl_datatype_restriction_list(X,[W-L|R]) :-
 % 3.1 Extracting Declarations and the IRIs of the Directly Imported Ontology Documents
 % This section specifies the result of step CP-2.2 of the canonical parsing process on an RDF graph G
 
+
 % 3.1.2 Parsing of the Ontology Header and Declarations
 
+%  Table 4.
 owl_parse_axiom(ontology(O),AnnMode,List) :-
         test_use_owl(O,'rdf:type','owl:Ontology'),
 	valid_axiom_annotation_mode(AnnMode,O,'rdf:type','owl:Ontology',List),
         use_owl(O,'rdf:type','owl:Ontology'),
-        nb_setval(current_ontology,O).
+        nb_setval(current_ontology,O),
+	forall(use_owl(O,'owl:imports',IRI), assert_axiom(ontologyImport(O,IRI))),
+	forall(use_owl(O,'owl:versionInfo',IRI2), assert_axiom(ontologyVersionInfo(O,IRI2))).
 
-% TODO
-owl_parse_axiom(ontologyImport(O,IRI)) :-
-        use_owl(O,'owl:imports',IRI).
-
-owl_parse_axiom(ontologyVersionInfo(O,IRI)) :-
-        use_owl(O,'owl:versionInfo',IRI).
 
 % See table 5.
-% TODO
+% triple_remove(Patter,Remove)
+triple_remove([owl(X,'rdf:type','owl:Ontology')],[owl(X,'rdf:type','owl:Ontology')]).
+triple_remove([owl(X,'rdf:type','owl:Class'),owl(X,'rdf:type','rdfs:Class')],[owl(X,'rdf:type','rdfs:Class')]).
+triple_remove([owl(X,'rdf:type','rdfs:Datatype'),owl(X,'rdf:type','rdfs:Class')],[owl(X,'rdf:type','rdfs:Class')]).
+triple_remove([owl(X,'rdf:type','owl:DataRange'),owl(X,'rdf:type','rdfs:Class')],[owl(X,'rdf:type','rdfs:Class')]).
+triple_remove([owl(X,'rdf:type','owl:Restriction'),owl(X,'rdf:type','rdfs:Class')],[owl(X,'rdf:type','rdfs:Class')]).
+triple_remove([owl(X,'rdf:type','owl:Restriction'),owl(X,'rdf:type','owl:Class')],[owl(X,'rdf:type','owl:Class')]).
+triple_remove([owl(X,'rdf:type','owl:ObjectProperty'),owl(X,'rdf:type','rdf:Property')],[owl(X,'rdf:type','rdf:Property')]).
+triple_remove([owl(X,'rdf:type','owl:FunctionalProperty'),owl(X,'rdf:type','rdf:Property')],[owl(X,'rdf:type','rdf:Property')]).
+triple_remove([owl(X,'rdf:type','owl:InverseFunctionalProperty'),owl(X,'rdf:type','rdf:Property')],[owl(X,'rdf:type','rdf:Property')]).
+triple_remove([owl(X,'rdf:type','owl:TransitiveProperty'),owl(X,'rdf:type','rdf:Property')],[owl(X,'rdf:type','rdf:Property')]).
+triple_remove([owl(X,'rdf:type','owl:DatatypeProperty'),owl(X,'rdf:type','rdf:Property')],[owl(X,'rdf:type','rdf:Property')]).
+triple_remove([owl(X,'rdf:type','owl:AnnotationProperty'),owl(X,'rdf:type','rdf:Property')],[owl(X,'rdf:type','rdf:Property')]).
+triple_remove([owl(X,'rdf:type','owl:OntologyProperty'),owl(X,'rdf:type','rdf:Property')],[owl(X,'rdf:type','rdf:Property')]).
+triple_remove([owl(X,'rdf:type','rdf:List'),owl(X,'rdf:first',_Y),owl(X,'rdf:rest',_Z)],[owl(X,'rdf:type','rdf:List')]).
 
-%% triple_remove(L,T)
+
 
 % See table 6.
 % http://www.w3.org/TR/2008/WD-owl2-mapping-to-rdf-20081202/
-triple_replacements(owl(X,'rdf:type','owl:OntologyProperty'),[owl(X,'rdf:type','owl:AnnotationProperty')]).
-triple_replacements(owl(X,'rdf:type','owl:InverseFunctionalProperty'),[owl(X,'rdf:type','owl:ObjectProperty'),owl(X,'rdf:type','owl:InverseFunctionalProperty')]).
-triple_replacements(owl(X,'rdf:type','owl:TransitiveProperty'),[owl(X,'rdf:type','owl:ObjectProperty'),owl(X,'rdf:type','owl:TransitiveProperty')]).
-triple_replacements(owl(X,'rdf:type','owl:SymmetricProperty'),[owl(X,'rdf:type','owl:ObjectProperty'),owl(X,'rdf:type','owl:SymmetricProperty')]).
+triple_replace([owl(X,'rdf:type','owl:OntologyProperty')],[owl(X,'rdf:type','owl:AnnotationProperty')]).
+triple_replace([owl(X,'rdf:type','owl:InverseFunctionalProperty')],[owl(X,'rdf:type','owl:ObjectProperty'),owl(X,'rdf:type','owl:InverseFunctionalProperty')]).
+triple_replace([owl(X,'rdf:type','owl:TransitiveProperty')],[owl(X,'rdf:type','owl:ObjectProperty'),owl(X,'rdf:type','owl:TransitiveProperty')]).
+triple_replace([owl(X,'rdf:type','owl:SymmetricProperty')],[owl(X,'rdf:type','owl:ObjectProperty'),owl(X,'rdf:type','owl:SymmetricProperty')]).
 
 
 % DECLARATIONS
@@ -1329,6 +1365,20 @@ owl_parse_axiom(A,AnnMode,List) :-
         owl_parse_axiom_hook(A,AnnMode,List).
 
 
+
+% Parsing annotationAssertions
+% 
+
+parse_annotation_assertions :-
+	( nb_current(rind,RIND) -> true ; RIND = []) ; 
+	forall((annotation(X,AP,AV),findall(annotation(annotation(X,AP,AV),AP1,AV1),
+					    annotation(annotation(X,AP,AV),AP1,AV1),ANN), \+member(X,RIND)),
+	       (   assert_axiom(annotationAssertion(AP,X,AV)),
+	       forall(member(annotation(_,AP1,AV1),ANN), 
+		      assert_axiom(annotation(annotationAssertion(AP,X,AV),AP1,AV1))))
+	      ).
+	       
+
 % UTIL
 
 %% maximally_connected_subgraph_over(+P,?ConnectedSets) is semidet
@@ -1369,23 +1419,6 @@ extend_set_over(_,L,L):- !.
 literal_integer(literal(type,A),N) :- atom_number(A,N).
 literal_integer(literal(type(_,A)),N) :- atom_number(A,N).
 
-
-% 
-% go
-% 
-	
-go :- 
-	retractall(annotation(_,_,_)),
-	retractall(owl(_,_,_,_)),
-	retractall(class(_)),
-	retractall(subClassOf(_,_)),
-	consult('test2.owl'),
-	findall(_,ann(_,_),_),
-        owl_parse_annotated_axioms(class/1),
-	owl_parse_annotated_axioms(subClassOf/2),
-	owl_parse_nonannotated_axioms(class/1),
-	owl_parse_nonannotated_axioms(subClassOf/2).
-	
 
 
 /** <module> Translates an RDF database to OWL2 axioms
