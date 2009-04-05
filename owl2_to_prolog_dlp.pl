@@ -258,14 +258,17 @@ owl_as2prolog(disjointClasses(L),RL,_) :- !,
                     owl_as2prolog(subClassOf(intersectionOf([C,D]),'owl:nothing'),R,_)),
                 RL).
 
+owl_as2prolog(differentIndividuals(_),none,_) :- !.
+
 
 % 
 % Subclass(Class,Superclass) ==> C(X) implies S(X) or S(X) :- C(X).
 %
 
-owl_as2prolog(subClassOf(A,B),R,_) :- !,     
+owl_as2prolog(subClassOf(A,B),R,_) :- 
      owl_as2prolog(description(A,_),Rb,body),
      owl_as2prolog(description(B,_),Rh,head),
+     !,     
      R = (:-(Rh,Rb)).
 
 % 
@@ -362,26 +365,27 @@ owl_as2prolog(description(someValuesFrom(PropertyID,Descr),_),R,body) :-  !,
 
 owl_as2prolog(description(maxCardinality(_,_),_),false,_) :-  !.
 owl_as2prolog(description(minCardinality(_,_),_),false,_) :-  !.
-owl_as2prolog(description(cardinality(_,_),_),false,_) :-  !.
+owl_as2prolog(description(exactCardinality(_,_),_),false,_) :-  !.
 
 % QCRs: added in OWL2
 owl_as2prolog(description(maxCardinality(_,_,_),_),false,_) :-  !.
 owl_as2prolog(description(minCardinality(_,_,_),_),false,_) :-  !.
-owl_as2prolog(description(cardinality(_,_,_),_),false,_) :-  !.
+owl_as2prolog(description(exactCardinality(_,_,_),_),false,_) :-  !.
 
 
 %
 % Any other description is taken to be a named class
 %
 
-owl_as2prolog(description(Any,X),class(Any,X),_).
+owl_as2prolog(description(Any,X),class(Any,X),_) :- !.
+
 
 
 %
 % Handling of description lists in head and bodies of rules
 %
 
-owl_as2prolog(description_list([],_,_),[],_) :-!.
+owl_as2prolog(description_list([],_,_),[],_) :- !.
 
 owl_as2prolog(description_list([Descr],X,_),R,body) :- !,
 	owl_as2prolog(description(Descr,X),R,body).
@@ -410,24 +414,24 @@ owl_as2prolog(description_list([Descr|Rest],X,Separator),T,Param) :-
 %owl_as2prolog(subPropertyOf(inverseOf(P),SuperP),(property(SuperP,x,y) :- property(P,y,x)),_).
 %owl_as2prolog(subPropertyOf(P,SuperP),(property(SuperP,x,y) :- property(P,x,y)),_).
 
-owl_as2prolog(subPropertyOf(P,SuperP),(PE :- SPE),_) :-
+owl_as2prolog(subPropertyOf(P,SuperP),(PE :- SPE),_) :- !,
         owl_as2prolog(propertyExpression(P),PE,head),
         owl_as2prolog(propertyExpression(SuperP),SPE,body).
 
-owl_as2prolog(propertyExpression(inverseOf(P)),property(P,y,x), _).
-owl_as2prolog(propertyExpression(P),property(P,x,y), _).
+owl_as2prolog(propertyExpression(inverseOf(P)),property(P,y,x), _) :- !.
+owl_as2prolog(propertyExpression(P),property(P,x,y), _) :- !.
 
 
-owl_as2prolog(propertyDomain(P,D),(L :- property(P,x,var)), _) :-
+owl_as2prolog(propertyDomain(P,D),(L :- property(P,x,var)), _) :- !,
         map_description(head,_,D,L).
 
-owl_as2prolog(propertyRange(P,D),(L :- property(P,var,x)), _) :-
+owl_as2prolog(propertyRange(P,D),(L :- property(P,var,x)), _) :- !,
         map_description(head,_,D,L).
 
 
-owl_as2prolog(objectProperty(_),[],_).
-owl_as2prolog(dataProperty(_),[],_).
-owl_as2prolog(annotationProperty(_),[],_).
+owl_as2prolog(objectProperty(_),[],_) :- !.
+owl_as2prolog(dataProperty(_),[],_) :- !.
+owl_as2prolog(annotationProperty(_),[],_) :- !.
 
 % 
 %  Mapping individuals
@@ -436,24 +440,14 @@ owl_as2prolog(annotationProperty(_),[],_).
 %  list. 
 %
 
-owl_as2prolog(classAssertion(C,I),L,_) :-
+owl_as2prolog(classAssertion(C,I),L,_) :- !,
         map_description(fact,I,C,L).
 
 owl_as2prolog(propertyAssertion(P,I,J), :-(property(P,I,J),none),_) :- !.
 
-owl_as2prolog(owl(_,_,_,_),[],_).
-owl_as2prolog(ontology(_,_),[],_).
+owl_as2prolog(owl(_,_,_,_),[],_) :- !.
+owl_as2prolog(ontology(_,_),[],_) :- !.
 
-% 
-% Mapping functions (Perform convert operations on each element in a
-% list).
-% 
-
-map_description(fact,X,Description,:-(DMap,none)) :- !,
-	owl_as2prolog(description(Description,X),DMap,fact).
-
-map_description(Type,X,Description,DMap) :-
-	owl_as2prolog(description(Description,X),DMap,Type).
 
 	
 % 
@@ -465,15 +459,15 @@ map_description(Type,X,Description,DMap) :-
 %  Inverse  : p(X,Y) :- inv(Y,X) and inv(X,Y) :- p(Y,X).
 %
 
-owl_as2prolog(functionalProperty(P), (property(sameIndividuals,x,y) :- (property(P,z,x),property(P,z,y))),_).
-owl_as2prolog(inverseFunctionalProperty(P), (property(sameIndividuals,x,y) :- (property(P,z,x),property(P,y,z))),_).
-owl_as2prolog(transitiveProperty(P), (property(P,x,y) :- (property(P,x,y),property(P,y,z))),_).
-owl_as2prolog(symmetricProperty(P), (property(P,x,y) :- property(P,y,x)),_).
+owl_as2prolog(functionalProperty(P), (property(sameIndividuals,x,y) :- (property(P,z,x),property(P,z,y))),_) :- !.
+owl_as2prolog(inverseFunctionalProperty(P), (property(sameIndividuals,x,y) :- (property(P,z,x),property(P,y,z))),_) :- !.
+owl_as2prolog(transitiveProperty(P), (property(P,x,y) :- (property(P,x,y),property(P,y,z))),_) :- !.
+owl_as2prolog(symmetricProperty(P), (property(P,x,y) :- property(P,y,x)),_) :- !.
 %owl_as2prolog(inverseProperties(P,Inv),[(property(P,x,y) :- property(Inv,y,x)),
-%                                        (property(Inv,x,y) :- property(P,y,x))],_).
-owl_as2prolog(inverseProperties(P,inverseOf(P)),none,_).
-owl_as2prolog(inverseProperties(inverseOf(P),P),none,_).
-owl_as2prolog(inverseProperties(P,Inv),[(PE :- IPE),(IPE2 :- PE2)], _) :-
+%                                        (property(Inv,x,y) :- property(P,y,x))],_) :- !.
+owl_as2prolog(inverseProperties(P,inverseOf(P)),none,_) :- !. % REDUNDANT - do nothing
+owl_as2prolog(inverseProperties(inverseOf(P),P),none,_) :- !. % REDUNDANT - do nothing
+owl_as2prolog(inverseProperties(P,Inv),[(PE :- IPE),(IPE2 :- PE2)], _) :- !,
         owl_as2prolog(propertyExpression(P),PE,head),
         owl_as2prolog(propertyExpression(inverseOf(Inv)),IPE,body),
         owl_as2prolog(propertyExpression(inverseOf(P)),PE2,body),
@@ -485,22 +479,32 @@ owl_as2prolog(inverseProperties(P,Inv),[(PE :- IPE),(IPE2 :- PE2)], _) :-
 
 % SWRL
 
-owl_as2prolog(implies(A,C),(CP :- AP), _) :-
+owl_as2prolog(implies(A,C),(CP :- AP), _) :- !,
               owl_as2prolog(swrl(A),AP,body),
               owl_as2prolog(swrl(C),CP,head).
 
-owl_as2prolog(swrl(L),PL, Type) :-
+owl_as2prolog(swrl(L),PL, Type) :- !,
          is_list(L),
          !,
          findall(P,(member(A,L),owl_as2prolog(swrl(A),P,Type)),PL). % TODO: body list
 
-owl_as2prolog(swrl(A),swrlproperty(P,PX,PY), Type) :-
+owl_as2prolog(swrl(A),swrlproperty(P,PX,PY), Type) :- !,
         A=..[P,X,Y],
         !,
         owl_as2prolog(swrl(X),PX,Type),
         owl_as2prolog(swrl(Y),PY,Type).
-owl_as2prolog(swrl(i(V)),V,_).
+owl_as2prolog(swrl(i(V)),V,_) :- !.
 
+% 
+% Mapping functions (Perform convert operations on each element in a
+% list).
+% 
+
+map_description(fact,X,Description,:-(DMap,none)) :- !,
+	owl_as2prolog(description(Description,X),DMap,fact).
+
+map_description(Type,X,Description,DMap) :- !,
+	owl_as2prolog(description(Description,X),DMap,Type).
                  
 
 % TODO
