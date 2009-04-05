@@ -1008,12 +1008,14 @@ labelAnnotation_value(X,Val) :-
   ****************************************/
 
 axiom_directly_about(Ax,About) :-
+        axiom(Ax),
         Ax =.. [_,Arg1|_],
         (   is_list(Arg1)
         ->  member(About,Arg1)
         ;   About=Arg1).
 
 axiom_directly_references(Ax,Ref) :-
+        axiom(Ax),
         Ax =.. [_|Args],
         member(Arg,Args),
         (   is_list(Arg)
