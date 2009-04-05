@@ -1,6 +1,22 @@
 /* -*- Mode: Prolog -*- */
 
-:- module(owl2_manchester_parser,[]).
+:- module(owl2_manchester_parser,
+          [
+           owl_parse_manchester_syntax_file/1,
+           owl_parse_manchester_syntax_file/2
+           ]).
+
+:- multifile owl2_io:load_axioms_hook/3.
+owl2_io:load_axioms_hook(File,mansyn,Opts) :-
+        owl_parse_manchester_syntax_file(File,Opts).
+
+owl_parse_manchester_syntax_file(File) :-
+        owl_parse_manchester_syntax_file(File,[]).
+
+owl_parse_manchester_syntax_file(File,_Opts) :-
+        read_file_to_codes(File,Codes),
+        atom_codes(A,Codes),
+        manchester_atom_ontology(A,_).
 
 tokens_ontology(Toks,Ont) :-
         ontologyDocument( Ont, Toks ).
