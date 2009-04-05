@@ -77,8 +77,15 @@
 %                                Top Level  Predicates
 % -----------------------------------------------------------------------
 
+:- multifile owl2_io:load_axioms_hook/3.
+owl2_io:load_axioms_hook(File,owl,Opts) :-
+        owl_parse_rdf(File,Opts).
+
 owl_parse_rdf(F):-
 	owl_parse_rdf(F,[]).
+
+%% owl_parse_rdf(+File,+Opts:list)
+% @param Opts imports(Boolean) if true, follow imports
 owl_parse_rdf(F,Opts):-
 	(   member(imports(Imports),Opts)
 	->  true
@@ -90,14 +97,14 @@ owl_parse_rdf(F,Opts):-
 	debug(owl_parser,'parsed ~w',[F]).
 
 
-%% owl_parse(+URL, +RDF_Load_Mode, +OWL_Parse_Mode, +Imports)
+%% owl_parse(+URL, +RDF_Load_Mode, +OWL_Parse_Mode, +ImportFlag:boolean)
 %
 %  Top level predicate to parse a set of RDF triples and produce an
 %  Abstract Syntax representation of an OWL ontology.
 %		    
 %	Calls the rdf_load_stream predicate to parse RDF stream in URL. 
 %       If RDF_Load_Mode = complete it first retacts all rdf triples.
-%       If Imports = true it handles owl:import clause at RDF level.
+%       If ImportFlag = true it handles owl:import clause at RDF level.
 %
 % owl_parse(+OWL_Parse_Mode).
             					       
@@ -236,7 +243,7 @@ rdf_2_owl(_Ont) :-
 	owl_parser_log(['Number of owl triples copied: ',Z]).
 
 
-%%       rdf_load_stream(+URL, -Ontology, -Imports)
+%%       rdf_load_stream(+URL, -Ontology, -Imports:list)
 %	
 %	This predicate calls the rdf parser to parse the RDF/XML URL
 %	into RDF triples. URL can be a local file or a URL.
@@ -1318,11 +1325,11 @@ owl_parse_axiom(annotationAssertion('owl:deprecated', X, true),AnnMode,List) :-
 
 dothislater(annotationAssertion/3).
 % TODO - only on unnannotated pass?
-%owl_parse_axiom(annotationAssertion(P,A,B),AnnMode,List) :-
-%        use_owl(A,P,B), % B can be literal or individual
-%        annotationProperty(P),
-%        valid_axiom_annotation_mode(AnnMode,A,P,B,List).
-
+owl_parse_axiom(annotationAssertion(P,A,B),AnnMode,List) :-
+        annotationProperty(P),
+        test_use_owl(A,P,B),         % B can be literal or individual
+        valid_axiom_annotation_mode(AnnMode,A,P,B,List),
+        use_owl(A,P,B).
 
 % process hooks; SWRL etc
 owl_parse_axiom(A,AnnMode,List) :-
