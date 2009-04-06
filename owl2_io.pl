@@ -8,6 +8,8 @@
            save_axioms/3
           ]).
 
+:- use_module(owl2_io).
+
 :- multifile load_axioms_hook/3.
 :- multifile save_axioms_hook/3.
 
@@ -15,6 +17,11 @@ load_axioms(File) :-
         load_axioms(File,_).
 load_axioms(File,Fmt) :-
         load_axioms(File,Fmt,[]).
+load_axioms(File,Fmt,_Opts) :-
+        nonvar(Fmt),
+        Fmt=prolog,
+        !,
+        owl2_model:consult(File).
 load_axioms(File,Fmt,Opts) :-
         load_handler(read,Fmt),
         load_axioms_hook(File,Fmt,Opts),
@@ -33,7 +40,9 @@ save_axioms(File,Fmt,Opts) :-
 
 load_handler(Dir,Fmt) :-
         forall(format_module(Dir,Fmt,Mod),
-               ensure_loaded(Mod)).
+               (   atom_concat('thea2/',Mod,TMod),
+                   ensure_loaded(library(TMod)))).
+
 
 :- multifile format_module/3.
 format_module(read,rdf,owl2_from_rdf).
