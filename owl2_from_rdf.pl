@@ -1284,12 +1284,11 @@ owl_parse_axiom(differentIndividuals(L),_AnnMode,[X]) :-
         owl_individual_list(L1,L).
 
 dothislater(classAssertion/2).
-owl_parse_axiom(classAssertion(CX,I),AnnMode,List) :-
-	test_use_owl(I,'rdf:type',C),
+owl_parse_axiom(classAssertion(CX,X),AnnMode,List) :-
+	test_use_owl(X,'rdf:type',C),
 	valid_axiom_annotation_mode(AnnMode,X,'rdf:type',C,List),
 	use_owl(X,'rdf:type',C),	
         owl_description(C,CX).
-
 
 dothislater(propertyAssertion/3).
 owl_parse_axiom(propertyAssertion(PX,A,B),AnnMode,List) :-
@@ -1375,6 +1374,19 @@ extend_set_over(_,L,L):- !.
 
 literal_integer(literal(type,A),N) :- atom_number(A,N).
 literal_integer(literal(type(_,A)),N) :- atom_number(A,N).
+
+%% time_goal(+Goal,?Time)
+%  calls Goal and unifies Time with the cputime taken
+time_goal(Goal,Time):-
+        statistics(cputime,T1),
+        Goal,
+        statistics(cputime,T2),
+        Time is T2-T1.
+
+timed_forall(Cond,Action) :-
+        forall(Cond,
+               (   time_goal(Action,Time),
+                   debug(owl2_bench,'Goal: ~w Time:~w',[Action,Time]))).
 
 
 % 
