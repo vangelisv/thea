@@ -21,7 +21,8 @@ owl_write_all_dlpterms :-
 %% owl_write_all_dlpterms(+Opts:list)
 % writes all axiom/1 as dlpterms on output stream using owl_write_dlpterm/2
 owl_write_all_dlpterms(Opts) :-
-        forall(axiom(Ax),
+        setof(Ax,axiom(Ax),Axs),
+        forall(member(Ax,Axs),
                owl_write_dlpterm(Ax,Opts)).
 
 %% owl_dlpterm(+OwlAsTerm,?DlpTerm)
@@ -50,7 +51,7 @@ owl_dlpterm(OwlAsTerm,R,_) :-
 
 owl_write_dlpterm(OwlAsTerm,Options) :- 
 	owl_as2prolog(OwlAsTerm,R,_),
-        format('% ~w ~n',[OwlAsTerm]),
+        format('% ~q ~n',[OwlAsTerm]),
 	owl_write_prolog_code(R,Options),
         !.
 owl_write_dlpterm(OwlAsTerm,_) :- 
@@ -145,7 +146,11 @@ owl_write_prolog_code(class(X,Y),Options) :- !,
 % Generate code for a 'property' predicate: P(X,Y) or
 % P(class,individual) or P(individual, individual).
 % 
-	
+
+owl_write_prolog_code(property(_,_,literal(_)),Options) :-
+        member(suppress_literals(true),Options),
+        write(true),
+        !.
 owl_write_prolog_code(property(P,X,Y),Options) :- !, 
 	collapse_ns(P,P1,'_',Options),collapse_ns(Y,Y1,':',[]),collapse_ns(X,X1,':',[]),
 	writeq(P1),  write('('),
@@ -448,6 +453,8 @@ owl_as2prolog(propertyAssertion(P,I,J), :-(property(P,I,J),none),_) :- !.
 owl_as2prolog(owl(_,_,_,_),[],_) :- !.
 owl_as2prolog(ontology(_,_),[],_) :- !.
 
+owl_as2prolog(annotationAssertion(_,_,_), [], _) :- !.
+
 
 	
 % 
@@ -461,7 +468,7 @@ owl_as2prolog(ontology(_,_),[],_) :- !.
 
 owl_as2prolog(functionalProperty(P), (property(sameIndividuals,x,y) :- (property(P,z,x),property(P,z,y))),_) :- !.
 owl_as2prolog(inverseFunctionalProperty(P), (property(sameIndividuals,x,y) :- (property(P,z,x),property(P,y,z))),_) :- !.
-owl_as2prolog(transitiveProperty(P), (property(P,x,y) :- (property(P,x,y),property(P,y,z))),_) :- !.
+owl_as2prolog(transitiveProperty(P), (property(P,x,y) :- (property(P,x,z),property(P,z,y))),_) :- !.
 owl_as2prolog(symmetricProperty(P), (property(P,x,y) :- property(P,y,x)),_) :- !.
 %owl_as2prolog(inverseProperties(P,Inv),[(property(P,x,y) :- property(Inv,y,x)),
 %                                        (property(Inv,x,y) :- property(P,y,x))],_) :- !.
