@@ -72,6 +72,8 @@
 % hookable
 :- multifile owl_parse_axiom_hook/3.
 
+owl_repository('http://www.w3.org/TR/2003/PR-owl-guide-20031209/food','testfiles/food.owl').
+owl_repository('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine','testfiles/wine.owl').
 
 % -----------------------------------------------------------------------		    
 %                                Top Level  Predicates
@@ -108,7 +110,9 @@ owl_parse(URL, RDF_Load_Mode, OWL_Parse_Mode,ImportFlag) :-
 	retractall(rdf_db:rdf_source(_,_,_,_)),
         debug(owl_parser,'Loading stream ~w',[URL]),
 	owl_canonical_parse_2([URL],URL,ImportFlag,[],ProcessedIRI),
-	(   OWL_Parse_Mode=complete -> owl_clear_as ; true),
+	(   OWL_Parse_Mode=complete -> owl_clear_as ; true),!,
+	findall(O,owl2_from_rdf:owl(_,_,_,O),OL),list_to_set(OL,OS),
+	print(OS),nl,
 	owl_canonical_parse_3(ProcessedIRI).
 	        
 
@@ -120,14 +124,14 @@ owl_canonical_parse_2([IRI|ToProcessRest],ImportFlag,Parent,ProcessedIn,Processe
 
 owl_canonical_parse_2([IRI|ToProcessRest],Parent,ImportFlag,ProcessedIn,ProcessedOut) :-
 	% Get rdf triples, *Ontology* and Imports 
-	rdf_load_stream(IRI,O,Imports),
+	rdf_load_stream(IRI,O,BaseURI,Imports),
 	%	process(IRI,O,Imports),!,
-	( nonvar(O) -> Ont = O; Ont = Parent, retractall(rdf(Parent,'http://www.w3.org/2002/07/owl#imports',IRI)) ),
+	( nonvar(O) -> Ont = O; Ont = Parent), % in the include case we may need to remove the import...
         debug(owl_parser,'Commencing rdf_2_owl. Generating owl/4',[]),
-	rdf_2_owl(IRI), % move the RDF triples into the owl-Ont/4 facts
+	rdf_2_owl(BaseURI,O), % move the RDF triples into the owl-Ont/4 facts
 	% print(IRI-triples-processed-into-Ont),nl,
-	(   ImportFlag = true -> owl_canonical_parse_2(Imports,Ont,ImportFlag,[IRI|ProcessedIn],ProcessedIn1) ; 
-	ProcessedIn1=[IRI|ProcessedIn]),
+	(   ImportFlag = true -> owl_canonical_parse_2(Imports,Ont,ImportFlag,[O|ProcessedIn],ProcessedIn1) ; 
+	ProcessedIn1=[O|ProcessedIn]),
 	owl_canonical_parse_2(ToProcessRest,Parent,ImportFlag,ProcessedIn1,ProcessedOut).
 
 
@@ -140,12 +144,12 @@ owl_canonical_parse_3([IRI|Rest]) :-
 	forall(owl(S,P,O,IRI),assert(owl(S,P,O,not_used))),
 
 	% remove triples based on pattern match (Table 5)
-	forall(triple_remove(Pattern,Remove),
-	       (   test_use_owl(Pattern),forall(member(owl(S,P,O),Remove),use_owl(S,P,O)))),
+	forall((triple_remove(Pattern,Remove), test_use_owl(Pattern)),
+	       forall(member(owl(S,P,O),Remove),use_owl(S,P,O))),
 
 	% replace matched patterns (Table 6)
-	forall(triple_replace(Pattern,Remove),
-	       (   use_owl(Pattern),forall(member(owl(S,P,O),Remove),assert(use_owl(S,P,O,not_used))))),
+	forall((triple_replace(Pattern,Remove), use_owl(Pattern)),
+	       forall(member(owl(S,P,O),Remove),assert(owl(S,P,O,not_used)))),
 	
 	% continue with parsing using the rules...
         owl_parse_nonannotated_axioms(ontology/1),
@@ -241,20 +245,20 @@ convert(T,V,typed_value(T,V)).
 %	their use can tracked by the OWL parser.
 
 
-rdf_2_owl(Ont) :-
+rdf_2_owl(Base,Ont) :-
 	owl_parser_log(['Removing existing owl triples']),
 	retractall(owl(_,_,_,Ont)),
 	owl_parser_log('Copying RDF triples to OWL triples'), 
-	rdf(X,Y,Z), 
+	rdf(X,Y,Z,Base:_), 
 %	owl_fix_no(X,X1), owl_fix_no(Y,Y1), owl_fix_no(Z,Z1),
 	assert(owl(X,Y,Z,Ont)), fail.
 
-rdf_2_owl(_Ont) :-
+rdf_2_owl(_,_Ont) :-
 	owl_count(Z),
 	owl_parser_log(['Number of owl triples copied: ',Z]).
 
 
-%%       rdf_load_stream(+URL, -Ontology, -Imports)
+%%       rdf_load_stream(+URL, -Ontology, -BaseURI, -Imports)
 %	
 %	This predicate calls the rdf parser to parse the RDF/XML URL
 %	into RDF triples. URL can be a local file or a URL.
@@ -263,20 +267,20 @@ rdf_2_owl(_Ont) :-
 %	otherise. 
 
 
-rdf_load_stream(URL,Ontology,Imports) :- 
+rdf_load_stream(URL,Ontology,BaseURI,Imports) :- 
   	(sub_string(URL,0,4,_,'http'), !, 
 	 catch((http_open(URL,RDF_Stream,[]),		
-		rdf_load(RDF_Stream,[if(true),blank_nodes(noshare),result(Action, Triples, MD5)]),
+		rdf_load(RDF_Stream,[if(true),base_uri(BaseURI),blank_nodes(noshare),result(Action, Triples, MD5)]),
 		debug(owl_parser,' Loaded ~w stream: ~w Action: ~w Triples:~w MD5: ~w',[URL,RDF_Stream,Action,Triples,MD5]),
 		close(RDF_Stream)),
 	       Message, 
-	       (owl_repository(URL,RURL),!,rdf_load_stream(RURL,Ontology,Imports) ;
+	       (owl_repository(URL,RURL),!,rdf_load_stream(RURL,Ontology,BaseURI,Imports) ;
 	         print(Message),nl)) 
 	;
-	 RDF_Stream = URL, rdf_load(RDF_Stream,[blank_nodes(noshare),if(true)])
+	 RDF_Stream = URL, rdf_load(RDF_Stream,[blank_nodes(noshare),if(true),base_uri(BaseURI)])
 	),
-	(   rdf(Ontology,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type','http://www.w3.org/2002/07/owl#Ontology'),
-	    findall(I,rdf(Ontology,'http://www.w3.org/2002/07/owl#imports',I),Imports) 
+	(   rdf(Ontology,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type','http://www.w3.org/2002/07/owl#Ontology',BaseURI:_),
+	    findall(I,rdf(Ontology,'http://www.w3.org/2002/07/owl#imports',I,BaseURI:_),Imports),! 
 	; 
 	    Imports = []
 	).
