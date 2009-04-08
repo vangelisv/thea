@@ -72,8 +72,15 @@
 % hookable
 :- multifile owl_parse_axiom_hook/3.
 
+/*
 owl_repository('http://www.w3.org/TR/2003/PR-owl-guide-20031209/food','testfiles/food.owl').
 owl_repository('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine','testfiles/wine.owl').
+*/
+
+owl_repository('http://www.semanticweb.gr/elevator.owl','testfiles/elevator5-tbox.owl').
+owl_repository('http://www.kleemann.gr/elevator/data','testfiles/elevator5-abox.owl').
+owl_repository('http://www.theoldtile.gr/data','testfiles/elevator5-tiles.owl').
+
 
 % -----------------------------------------------------------------------		    
 %                                Top Level  Predicates
@@ -128,8 +135,7 @@ owl_canonical_parse_2([IRI|ToProcessRest],Parent,ImportFlag,ProcessedIn,Processe
 	%	process(IRI,O,Imports),!,
 	( nonvar(O) -> Ont = O; Ont = Parent), % in the include case we may need to remove the import...
         debug(owl_parser,'Commencing rdf_2_owl. Generating owl/4',[]),
-	rdf_2_owl(BaseURI,O), % move the RDF triples into the owl-Ont/4 facts
-	% print(IRI-triples-processed-into-Ont),nl,
+	rdf_2_owl(BaseURI,O),  	% move the RDF triples into the owl-Ont/4 facts
 	(   ImportFlag = true -> owl_canonical_parse_2(Imports,Ont,ImportFlag,[O|ProcessedIn],ProcessedIn1) ; 
 	ProcessedIn1=[O|ProcessedIn]),
 	owl_canonical_parse_2(ToProcessRest,Parent,ImportFlag,ProcessedIn1,ProcessedOut).
@@ -144,15 +150,15 @@ owl_canonical_parse_3([IRI|Rest]) :-
 	forall(owl(S,P,O,IRI),assert(owl(S,P,O,not_used))),
 
 	% remove triples based on pattern match (Table 5)
-	forall((triple_remove(Pattern,Remove), test_use_owl(Pattern)),
-	       forall(member(owl(S,P,O),Remove),use_owl(S,P,O))),
+	%forall((triple_remove(Pattern,Remove), test_use_owl(Pattern)),
+	%       forall(member(owl(S,P,O),Remove),use_owl(S,P,O))),
 
 	% replace matched patterns (Table 6)
 	forall((triple_replace(Pattern,Remove), use_owl(Pattern)),
 	       forall(member(owl(S,P,O),Remove),assert(owl(S,P,O,not_used)))),
-	
+
 	% continue with parsing using the rules...
-        owl_parse_nonannotated_axioms(ontology/1),
+        owl_parse_annotated_axioms(ontology/1),
 	
 	% Table 8, get the set of RIND - anonymous individuals in reification
 	findall(X, (member(Y,['owl:Axiom','owl:Annotation',
@@ -253,8 +259,8 @@ rdf_2_owl(Base,Ont) :-
 %	owl_fix_no(X,X1), owl_fix_no(Y,Y1), owl_fix_no(Z,Z1),
 	assert(owl(X,Y,Z,Ont)), fail.
 
-rdf_2_owl(_,_Ont) :-
-	owl_count(Z),
+rdf_2_owl(_,Ont) :-
+	owl_count(Ont,Z),
 	owl_parser_log(['Number of owl triples copied: ',Z]).
 
 
@@ -309,8 +315,8 @@ owl_fix_no(A,A).
 %%	owl_count(?U). 
 %       Returns/Checks the number of unused OWL triples. 
 
-owl_count(U) :- 
-	findall(1,owl(_,_,_,not_used),X), length(X,U).
+owl_count(O,U) :- 
+	findall(1,owl(_,_,_,O),X), length(X,U).
 
 
 %%       test_use_owl(+Triples:list)   
@@ -1080,7 +1086,7 @@ valid_axiom_annotation_mode(Mode,S,P,O,List) :-
 		      test_use_owl(Node,'owl:predicate',P),
 		      test_use_owl(Node,'owl:object',O)),
 		List),
-	(   Mode = true, List = [_|_],!; Mode = false, List = []),
+	(   Mode = true, List = [_|_],! ;  List = []),
 	forall(member(Node,List), use_owl([owl(Node,'rdf:type','owl:Axiom'),
 					   owl(Node,'owl:subject',S),
 					   owl(Node,'owl:predicate',P),
@@ -1156,7 +1162,6 @@ owl_parse_axiom(disjointUnion(DX,DY),AnnMode,List) :-
 	use_owl(X,'owl:disjointUnionOf',Y),
         owl_description(X,DX),
         owl_description_list(Y,DY).
-
 
 
 % PROPERTY AXIOMS
@@ -1367,7 +1372,6 @@ dothislater(annotationAssertion/3).
 % process hooks; SWRL etc
 owl_parse_axiom(A,AnnMode,List) :-
         owl_parse_axiom_hook(A,AnnMode,List).
-
 
 
 % Parsing annotationAssertions
