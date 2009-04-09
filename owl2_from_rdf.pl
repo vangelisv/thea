@@ -62,6 +62,7 @@
 :- dynamic(outstream/1).
 :- dynamic(annotation/3). % implements the ANN(X) function.
 :- dynamic(owl_repository/2). % implements a simple OWL repository: if URL not found, Ontology is read from a repository (local) RURL
+:- multifile(owl_repository/2).
 
 
 % we make this discontiguous so that the code can follow the structure of the document as much as possible
@@ -125,8 +126,6 @@ owl_parse(URL, RDF_Load_Mode, OWL_Parse_Mode,ImportFlag) :-
         debug(owl_parser,'Loading stream ~w',[URL]),
 	owl_canonical_parse_2([URL],URL,ImportFlag,[],ProcessedIRI),
 	(   OWL_Parse_Mode=complete -> owl_clear_as ; true),!,
-	findall(O,owl2_from_rdf:owl(_,_,_,O),OL),list_to_set(OL,OS),
-	print(OS),nl,
 	owl_canonical_parse_3(ProcessedIRI).
 	        
 
@@ -156,9 +155,9 @@ owl_canonical_parse_3([IRI|Rest]) :-
 	% Copy the owl facts of the IRI document to the 'not_used'
 	forall(owl(S,P,O,IRI),assert(owl(S,P,O,not_used))),
 
-	% remove triples based on pattern match (Table 5)
-	%forall((triple_remove(Pattern,Remove), test_use_owl(Pattern)),
-	%       forall(member(owl(S,P,O),Remove),use_owl(S,P,O))),
+	% remove triples based on pattern match (Table 5)	
+	forall((triple_remove(Pattern,Remove), test_use_owl(Pattern)),
+	       forall(member(owl(S,P,O),Remove),use_owl(S,P,O))),
 
 	% replace matched patterns (Table 6)
 	forall((triple_replace(Pattern,Remove), use_owl(Pattern)),
@@ -173,7 +172,6 @@ owl_canonical_parse_3([IRI|Rest]) :-
 			      'owl:AllDifferent','owl:NegativePropertyAssertion']),
 		    test_use_owl(X,'rdf:type',Y)), RIND),
 	nb_setval(rind,RIND),
-	
 	findall(_,ann(_,_),_), % find all annotations, assert annotation(X,AP,AV) axioms.
         debug(owl_parser_detail,'Commencing parse of annotated axioms',[]),
         forall((axiompred(PredSpec),\+dothislater(PredSpec),\+omitthis(PredSpec)),
@@ -185,9 +183,9 @@ owl_canonical_parse_3([IRI|Rest]) :-
 	forall((axiompred(PredSpec),\+dothislater(PredSpec),\+omitthis(PredSpec)),
                owl_parse_nonannotated_axioms(PredSpec)),
         forall((axiompred(PredSpec),dothislater(PredSpec),\+omitthis(PredSpec)),
-               owl_parse_nonannotated_axioms(PredSpec)),	
+               owl_parse_nonannotated_axioms(PredSpec)),!,	
 	% annotation Assertion
-	parse_annotation_assertions,!,
+	parse_annotation_assertions,
 	owl_canonical_parse_3(Rest).
 
 
@@ -338,7 +336,7 @@ test_use_owl(Triples) :-
 test_use_owl(X1,Y1,Z1) :- 
 	expand_ns(X1,X),
 	expand_ns(Y1,Y),
-	expand_ns(Z1,Z),
+	expand_ns(Z1,Z),!,
 	owl(X,Y,Z, not_used).
 
 test_use_owl(X1,Y1,Z1,named) :- 
@@ -671,7 +669,8 @@ triple_replace([owl(X,'rdf:type','owl:SymmetricProperty')],[owl(X,'rdf:type','ow
 owl_parse_axiom(class(C),AnnMode,List) :-
 	test_use_owl(C,'rdf:type','owl:Class'),
 	valid_axiom_annotation_mode(AnnMode,C,'rdf:type','owl:Class',List),
-        (   use_owl(C,'rdf:type','owl:Class',named) ; use_owl(C,'rdf:type','rdfs:Class',named)).
+        (   use_owl(C,'rdf:type','owl:Class',named) -> true ; use_owl(C,'rdf:type','rdfs:Class',named)),
+	not(class(C)).
 
 
 %owl_parse_axiom(class(C)) :-
@@ -896,6 +895,7 @@ owl_description(C,D) :-
 owl_description(D,intersectionOf(L)) :- 
 	use_owl(D,'owl:intersectionOf',L1),
 	owl_description_list(L1,L),
+	\+L = [],
 	owl_get_bnode(D,intersectionOf(L)).
 
 owl_description(D,unionOf(L)) :- 
@@ -1097,7 +1097,7 @@ valid_axiom_annotation_mode(Mode,S,P,O,List) :-
 	forall(member(Node,List), use_owl([owl(Node,'rdf:type','owl:Axiom'),
 					   owl(Node,'owl:subject',S),
 					   owl(Node,'owl:predicate',P),
-					   owl(Node,'owl:object',O)])).
+					   owl(Node,'owl:object',O)])),!.
 	       
 
 owl_parse_axiom(subClassOf(DX,DY),AnnMode,List) :- 
@@ -1369,12 +1369,15 @@ owl_parse_axiom(annotationAssertion('owl:deprecated', X, true),AnnMode,List) :-
 
 dothislater(annotationAssertion/3).
 % TODO - only on unnannotated pass?
+% 
+
 owl_parse_axiom(annotationAssertion(P,A,B),AnnMode,List) :-
         annotationProperty(P),
         test_use_owl(A,P,B),         % B can be literal or individual
         valid_axiom_annotation_mode(AnnMode,A,P,B,List),
         use_owl(A,P,B).
 
+	
 % process hooks; SWRL etc
 owl_parse_axiom(A,AnnMode,List) :-
         owl_parse_axiom_hook(A,AnnMode,List).
@@ -1384,12 +1387,13 @@ owl_parse_axiom(A,AnnMode,List) :-
 % 
 
 parse_annotation_assertions :-
-	( nb_current(rind,RIND) -> true ; RIND = []) ; 
+	( nb_current(rind,RIND) -> true ; RIND = []),!,
 	forall((annotation(X,AP,AV),findall(annotation(annotation(X,AP,AV),AP1,AV1),
 					    annotation(annotation(X,AP,AV),AP1,AV1),ANN), \+member(X,RIND)),
 	       (   assert_axiom(annotationAssertion(AP,X,AV)),
-	       forall(member(annotation(_,AP1,AV1),ANN), 
-		      assert_axiom(annotation(annotationAssertion(AP,X,AV),AP1,AV1))))
+		   retract(annotation(X,AP,AV)),
+		   forall(member(annotation(_,AP1,AV1),ANN), 
+			  assert_axiom(annotation(annotationAssertion(AP,X,AV),AP1,AV1))))
 	      ).
 	       
 
