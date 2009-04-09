@@ -7,7 +7,6 @@
            rdf_file_to_prolog/1,
            rdf_file_to_prolog/2,
            write_owl_as_prolog/0,
-           write_owl_as_plsyn/0,
            remove_namespaces/0,
            use_labels_for_IRIs/0,
            write_ontology_summary/0,
@@ -42,15 +41,7 @@ write_owl_as_prolog:-
         forall(axiompred(PS),
                write_axioms(PS)).
 
-write_owl_as_plsyn:-
-        ensure_loaded(owl2_plsyn),
-        forall(axiompred(PS),
-               write_axioms_as_plsyn(PS)).
 
-write_axioms_as_plsyn(P/A):-
-        !,
-        functor(H,P,A),
-        forall(H,(plsyn_owl(Pl,H),format('~q.~n',[Pl]))).
 
 
 write_axioms(P/A):-
@@ -77,7 +68,7 @@ use_labels_for_IRIs:-
 remove_ns(IRI,X) :-
         concat_atom([_,X],'#',IRI).
 use_label_as_IRI(IRI,X) :-
-        entityLabel(IRI,X),
+        labelAnnotation_value(IRI,X),
         !.
 use_label_as_IRI(IRI,X) :-
         remove_ns(IRI,X),
@@ -106,11 +97,6 @@ map_IRIs(G,X,X2) :-
         call(G,X,X2),
         !.
 
-entityLabel(X,Label) :-
-        annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(type(_,Label))).
-% TODO: deprecate
-entityLabel(X,Label) :-
-        propertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(type(_,Label))).
 
 write_ontology_summary:-
         forall(axiompred(PS),
@@ -147,6 +133,7 @@ owlpredargs :-
         \+ owlpredicate_arguments(TP,_),
         format('~q.~n',[owlpredicate_arguments(TP,L)]),
         fail.
+
 
 
 
@@ -191,7 +178,7 @@ writetab([_|L]):-
         writetab(L).
 
 write_owl_class(Class,_) :-
-        entityLabel(Class,Label),
+        labelAnnotation_value(Class,Label),
         !,
         write(Label).
 write_owl_class(Class,_) :-

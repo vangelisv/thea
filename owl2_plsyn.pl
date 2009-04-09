@@ -1,6 +1,8 @@
 /* -*- Mode: Prolog -*- */
 
 :- module(owl2_plsyn,[
+                      write_owl_as_plsyn/0,
+
                       plsyn_owl/2,
                       
                       op(1200,xfy,(--)),
@@ -15,6 +17,7 @@
                                 % 700 <
                                 % 700 =
                       op(700,xfy,(->)),
+                      op(650,xfy,(::)),
                       op(600,xfy,not),
                       op(500,xfy,or),
                       op(200,xfy,and),
@@ -24,6 +27,7 @@
                       op(150,xfy,value)
 
                      ]).
+
 
 :- use_module(owl2_model).
 :- use_module(swrl).
@@ -41,6 +45,7 @@
 % 700 <
 % 700 =
 :- op(700,xfy,(->)).
+:- op(650,xfy,(::)).
 :- op(600,xfy,not).
 :- op(500,xfy,or).
 :- op(200,xfy,and).
@@ -49,6 +54,20 @@
 :- op(150,xfy,only).
 :- op(150,xfy,value).
 :- op(100,fx,(?)).
+
+:- multifile owl2_io:load_axioms_hook/3.
+owl2_io:load_axioms_hook(File,plsyn,Opts) :-
+        owl_parse_plsyn(File,Opts). % TODO
+
+
+write_owl_as_plsyn:-
+        forall(axiompred(PS),
+               write_axioms_as_plsyn(PS)).
+
+write_axioms_as_plsyn(P/A):-
+        !,
+        functor(H,P,A),
+        forall(H,(plsyn_owl(Pl,H),format('~q.~n',[Pl]))).
 
 plsyn_owl(Pl,Owl) :-
         nonvar(Pl),
@@ -181,6 +200,7 @@ plpred2owlpred(some,someValuesFrom).
 plpred2owlpred(only,allValuesFrom).
 
 
+plpred2owlpred(::,classAssertion).
 plpred2owlpred(<,subClassOf).
 plpred2owlpred(@<,subPropertyOf).
 

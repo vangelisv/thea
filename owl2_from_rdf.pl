@@ -86,8 +86,15 @@ owl_repository('http://www.theoldtile.gr/data','testfiles/elevator5-tiles.owl').
 %                                Top Level  Predicates
 % -----------------------------------------------------------------------
 
+:- multifile owl2_io:load_axioms_hook/3.
+owl2_io:load_axioms_hook(File,owl,Opts) :-
+        owl_parse_rdf(File,Opts).
+
 owl_parse_rdf(F):-
 	owl_parse_rdf(F,[]).
+
+%% owl_parse_rdf(+File,+Opts:list)
+% @param Opts imports(Boolean) if true, follow imports
 owl_parse_rdf(F,Opts):-
 	(   member(imports(Imports),Opts)
 	->  true
@@ -99,14 +106,14 @@ owl_parse_rdf(F,Opts):-
 	debug(owl_parser,'parsed ~w',[F]).
 
 
-%% owl_parse(+URL, +RDF_Load_Mode, +OWL_Parse_Mode, +Imports)
+%% owl_parse(+URL, +RDF_Load_Mode, +OWL_Parse_Mode, +ImportFlag:boolean)
 %
 %  Top level predicate to parse a set of RDF triples and produce an
 %  Abstract Syntax representation of an OWL ontology.
 %		    
 %	Calls the rdf_load_stream predicate to parse RDF stream in URL. 
 %       If RDF_Load_Mode = complete it first retacts all rdf triples.
-%       If Imports = true it handles owl:import clause at RDF level.
+%       If ImportFlag = true it handles owl:import clause at RDF level.
 %
 % owl_parse(+OWL_Parse_Mode).
             					       
@@ -1322,12 +1329,11 @@ owl_parse_axiom(differentIndividuals(L),_AnnMode,[X]) :-
         owl_individual_list(L1,L).
 
 dothislater(classAssertion/2).
-owl_parse_axiom(classAssertion(CX,I),AnnMode,List) :-
-	test_use_owl(I,'rdf:type',C),
+owl_parse_axiom(classAssertion(CX,X),AnnMode,List) :-
+	test_use_owl(X,'rdf:type',C),
 	valid_axiom_annotation_mode(AnnMode,X,'rdf:type',C,List),
 	use_owl(X,'rdf:type',C),	
         owl_description(C,CX).
-
 
 dothislater(propertyAssertion/3).
 owl_parse_axiom(propertyAssertion(PX,A,B),AnnMode,List) :-
@@ -1363,11 +1369,11 @@ owl_parse_axiom(annotationAssertion('owl:deprecated', X, true),AnnMode,List) :-
 
 dothislater(annotationAssertion/3).
 % TODO - only on unnannotated pass?
-%owl_parse_axiom(annotationAssertion(P,A,B),AnnMode,List) :-
-%        use_owl(A,P,B), % B can be literal or individual
-%        annotationProperty(P),
-%        valid_axiom_annotation_mode(AnnMode,A,P,B,List).
-
+owl_parse_axiom(annotationAssertion(P,A,B),AnnMode,List) :-
+        annotationProperty(P),
+        test_use_owl(A,P,B),         % B can be literal or individual
+        valid_axiom_annotation_mode(AnnMode,A,P,B,List),
+        use_owl(A,P,B).
 
 % process hooks; SWRL etc
 owl_parse_axiom(A,AnnMode,List) :-
@@ -1426,6 +1432,19 @@ extend_set_over(_,L,L):- !.
 
 literal_integer(literal(type,A),N) :- atom_number(A,N).
 literal_integer(literal(type(_,A)),N) :- atom_number(A,N).
+
+%% time_goal(+Goal,?Time)
+%  calls Goal and unifies Time with the cputime taken
+time_goal(Goal,Time):-
+        statistics(cputime,T1),
+        Goal,
+        statistics(cputime,T2),
+        Time is T2-T1.
+
+timed_forall(Cond,Action) :-
+        forall(Cond,
+               (   time_goal(Action,Time),
+                   debug(owl2_bench,'Goal: ~w Time:~w',[Action,Time]))).
 
 
 

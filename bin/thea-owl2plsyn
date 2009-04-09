@@ -12,4 +12,4 @@ main :-
         append(_SytemArgs, [--|Args], Arguments), !,
         maplist(owl_parse_rdf,Args),
         use_labels_for_IRIs,
-        write_owl_as_plsyn.
+        write_owl_as_plsyn([]).

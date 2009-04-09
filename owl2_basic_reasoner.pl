@@ -15,12 +15,26 @@
 % true if Axiom is entailed
 entailed(A) :- entailed(A,[]).
 
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% level 1: subproperties
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 %% entailed(?Axiom,+AlreadyEntailed)
+
+% asserted subprops
 entailed(subPropertyOf(X,Y),_) :- subPropertyOf(X,Y).
+
+% transitivity of subprops
 entailed(subPropertyOf(X,Y),EL) :- subPropertyOf(X,Z),\+member(X<Z,EL),entailed(subPropertyOf(X,Y),[X<Z|EL]). % TODO: cycles
 
 entailed(A,EL) :- entailed_2(A,EL).
 
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% level 2:
+%  
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+% 
 entailed_2(subClassOf(X,Y),EL) :-
         pairwise_equivalent_class(Y,intersectionOf(DL)),
         \+ member(X<Y,EL),
@@ -46,9 +60,18 @@ entailed_2(classAssertion(C,I),EL) :-
 % NEXT LEVEL
 entailed_2(A,EL) :- entailed_5(A,EL).
 
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% level 5:
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+% asserted
 entailed_5(subClassOf(X,Y),_) :- subClassOf(X,Y).
+
+% transitivity of subclass
 entailed_5(subClassOf(X,Y),EL) :- subClassOf(X,Z),\+member(X<Z,EL),entailed(subClassOf(Z,Y),[X<Z|EL]). % TODO: cycles
 
+% subclass over existential restrictions
+% X < P some Y :- X < P some YY, YY < Y
 entailed_5(subClassOf(X,someValuesFrom(P,Y)), EL) :-
         subClassOf(X,someValuesFrom(P,YY)),
         subClassOf(YY,Y),
@@ -57,7 +80,9 @@ entailed_5(subClassOf(X,someValuesFrom(P,Y)), EL) :-
 
 
 
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 % UTIL
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 pairwise_equivalent_class(X,Y) :- equivalentClasses(L),member(X,L),member(Y,L).
 pairwise_disjoint_class(X,Y) :- disjointClasses(L),member(X,L),member(Y,L).
@@ -88,5 +113,25 @@ propertyAssertion(P,A,B) :- subPropertyOf(propertyChain([P1|PL]),P),propertyAsse
 propertyAssertion_chain([],_,_).
 propertyAssertion_chain([P|PL],A,B) :- propertyAssertion(P,A,C),propertyAssertion_chain(PL,C,B).
 
+
+*/
+
+/** <module> simple backward chaining
+
+  ---+ Synopsis
+
+==
+:- use_module(bio(owl2_basic_reasoner)).
+
+% 
+demo:-
+  nl.
+  
+
+==
+
+---+ Details
+
+Use a simple incomplete backward chaining algorithm to find entailed axioms
 
 */

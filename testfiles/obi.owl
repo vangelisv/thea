@@ -981,7 +981,7 @@
     <IAO_0000116 xml:lang="en">NMR instrument</IAO_0000116>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400197</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400197</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000111 xml:lang="en">AVANCE II spectrometer</IAO_0000111>
     <IAO_0000116 xml:lang="en">msi_400197</IAO_0000116>
@@ -1551,7 +1551,7 @@ TCCG/CCTG at the ADH1B</IAO_0000112>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400203</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400203</IAO_0000119>
     <IAO_0000116 xml:lang="en">msi_400203</IAO_0000116>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0200067"><!-- _unclassified -->
@@ -1629,7 +1629,8 @@ HAS MADE_UP_OF RELATION WITH POLYPEPTIDE CONCEPT.  JAMES</IAO_0000116>
     <rdfs:label xml:lang="en">average linkage hierarchical clustering</rdfs:label>
     <IAO_0000117 xml:lang="en">Elisabetta Manduchi</IAO_0000117>
   </owl:Class>
-  <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000577"><!-- NIL -->
+  <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000577"><!-- molecular concentration -->
+    <rdfs:label xml:lang="en">molecular concentration</rdfs:label>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Discussion in Karslruhe, Oct 2008, with, among others, Alan Rector, Stefan Schulz, Marijke Keet, Melanie Courtot, and Alan Ruttenberg.</IAO_0000119>
     <IAO_0000112 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -1972,7 +1973,7 @@ Finally, note that there is no such thing as a concentration of 0. A concentrati
     <IAO_0000115 xml:lang="en">There is a wide range of detectors available for both GC and LC each having their own particular areas of application. In general the more catholic the response, the less sensitive the detector and the most sensitive detectors are those that have a specific response. The performance of all detectors should be properly specified so that the user can determine which is most suitable for a specific application. Such specifications are also essential to compare the performance of different detectors supplied by alternative instrument manufactures. Detector specifications should be presented in a standard form and in standard units, so that detectors can be compared that function on widely different principles.</IAO_0000115>
     <IAO_0000119 xml:lang="en">WEB:&lt;http://www.chromatography-online.org/Principles/Basic-Chromatograph/Detector/rs56.html&gt;</IAO_0000119>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01077</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01077</IAO_0000119>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000481"/><!-- chromatography detector -->
     </rdfs:subClassOf>
@@ -2385,7 +2386,7 @@ Finally, note that there is no such thing as a concentration of 0. A concentrati
     <IAO_0000115 xml:lang="en">The electron capture detector is a GC detector that uses a radioactive Beta emitter (electrons) to ionize some of the carrier gas and produce a current between a biased pair of electrodes. When organic molecules that contain electronegative functional groups, such as halogens, phosphorous, and nitro groups pass by the detector, they capture some of the electrons and reduce the current measured between the electrodes.</IAO_0000115>
     <IAO_0000116 xml:lang="en"></IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01085</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01085</IAO_0000119>
     <IAO_0000116 xml:lang="en">msi_01085</IAO_0000116>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000118 xml:lang="en">ECD</IAO_0000118>
@@ -2512,7 +2513,7 @@ Finally, note that there is no such thing as a concentration of 0. A concentrati
     <IAO_0000116 xml:lang="en"></IAO_0000116>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01073</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01073</IAO_0000119>
     <IAO_0000111 xml:lang="en">fraction collector</IAO_0000111>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000115 xml:lang="en">A fraction detector is a device that allows regular or specified samples to be taken from a column eluate and stored in a retrievable form. The storage vessels are usually small sample tubes or vials that are oriented in a rotating disk or in a moving belt, there movement usually being controlled by a microprocessor. On receiving a signal from the microprocessor, the next vial is placed under the column outlet and the eluate collected until receiving another signal from the computer. Once the properties of the chromatogram that describes the separation has been ascertained, then the collection program can be defined. The fractions can be collected on a basis of time either at regular intervals or a specific times to collect specific peaks. Alternatively the fractions can be collected by monitoring the detector output and when a peak starts to elute the fraction collector is activated and the peak collected in a specific vial. When the peak returns to base line the column eluate is then directed to waste until the next peak starts eluting. Fraction collectors are in common use with most liquid chromatographs. They are used to collect samples for further purification, subsequent exmination by spectroscopic techniques or for biological or organoleptic testing.</IAO_0000115>
@@ -2858,7 +2859,7 @@ illiterate subject. PharmPK Discussion, http://www.boomer.org/pkin/PK06/PK200625
     <IAO_0000116 xml:lang="en">msi_400131</IAO_0000116>
     <IAO_0000116 xml:lang="en">NMR device</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400131</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400131</IAO_0000119>
     <IAO_0000115 xml:lang="en">An NMR probe that allows the automatized flow-through of a sample. The sample is aspirated via a syringe pump into the Flow probe, the NMR spectrum is acquired and when the experiment is complete, the sample is returned to back to an external source (well plate) or flushed to waste. Sometimes pulsed field gradients (PFG) can be established in flow probes.</IAO_0000115>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000516"/><!-- NMR probe -->
@@ -2885,7 +2886,7 @@ illiterate subject. PharmPK Discussion, http://www.boomer.org/pkin/PK06/PK200625
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000116 xml:lang="en">msi_01082</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01082</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01082</IAO_0000119>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000463"/><!-- column chromatography detector -->
     <rdfs:label xml:lang="en">evaporative light scattering detector</rdfs:label>
     <IAO_0000111 xml:lang="en">evaporative light scattering detector</IAO_0000111>
@@ -2900,7 +2901,7 @@ illiterate subject. PharmPK Discussion, http://www.boomer.org/pkin/PK06/PK200625
     </rdfs:subClassOf>
     <rdfs:label xml:lang="en">chromatography detector filter</rdfs:label>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01121</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01121</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000116 xml:lang="en"></IAO_0000116>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
@@ -3162,7 +3163,7 @@ illiterate subject. PharmPK Discussion, http://www.boomer.org/pkin/PK06/PK200625
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000589"/><!-- chromatography pump system -->
     </rdfs:subClassOf>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01048</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01048</IAO_0000119>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000116 xml:lang="en"></IAO_0000116>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
@@ -3549,7 +3550,7 @@ Ann N Y Acad Sci. 2008 Aug;1137:36-40. PMID: 18837922</IAO_0000112>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000111 xml:lang="en">liquid chromatography autosampler</IAO_0000111>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01061</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01061</IAO_0000119>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <rdfs:label xml:lang="en">liquid chromatography autosampler</rdfs:label>
     <rdfs:subClassOf>
@@ -5077,7 +5078,7 @@ function of m/Q.</IAO_0000115>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000111 xml:lang="en">anion trap column</IAO_0000111>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01277</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01277</IAO_0000119>
     <IAO_0000115 xml:lang="en">An anion trap column is a trap column and ion-exchange column which contains cationic anion-exchange resins.</IAO_0000115>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <rdfs:label xml:lang="en">anion trap column</rdfs:label>
@@ -5279,7 +5280,7 @@ function of m/Q.</IAO_0000115>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <rdfs:label xml:lang="en">Bruker UltraShield NMR magnet</rdfs:label>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400187</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400187</IAO_0000119>
     <IAO_0000119 xml:lang="en">WEB:&lt;http://www.bruker-biospin.com/nmr_magnets_us.html?&amp;print=http%3A%2Fitsupportunit.com%2Fawstats%2Ficon%2Fnisum%2Fivuj%2F&gt;</IAO_0000119>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000116 xml:lang="en">msi_400187</IAO_0000116>
@@ -5317,7 +5318,7 @@ function of m/Q.</IAO_0000115>
     <IAO_0000118 xml:lang="en">PAD</IAO_0000118>
     <IAO_0000115 xml:lang="en">A chromatography detector as used by high-performance anion exchange chromatography that provides sensitive and specific detection of carbohydrates. Pulsed Electrochemical Detection (PED) allows simple, sensitive, and direct detection of numerous polar aliphatic compounds, especially carbohydrates. This technique exploits the electrocatalytic activity of noble metal electrode surfaces to oxidize various polar functional groups. In PED, multi-step potential-time waveforms at Au and Pt electrodes realize amperometric/coulometric detection while maintaining uniform and reproducible electrode activity. The response mechanisms in PED are dominated by the surface properties of the electrode, and, as a consequence, members of each chemical class of compounds produce virtually identical voltammetric responses. Thus, the full potential is realized when combined with high performance liquid chromatography (HPLC). </IAO_0000115>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01240</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01240</IAO_0000119>
     <IAO_0000119 xml:lang="en">WEB:&lt;http://adsabs.harvard.edu/abs/2004SPIE.5261..103L&gt;</IAO_0000119>
     <IAO_0000116 xml:lang="en">msi_01240</IAO_0000116>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
@@ -5450,7 +5451,7 @@ Biomed Mater. 2008 Sep;3(3):034104. PMID: 18689916</IAO_0000112>
     <IAO_0000111 xml:lang="en">Bruker high resolution probe</IAO_0000111>
     <IAO_0000115 xml:lang="en">BRUKER BIOSPIN's experienced Research &amp; Development group not only delivers top-performance probes for the more common experiments, but also a wealth of special probes for almost any application. For high resolution (HR) NMR we offer probes with a variety of important characteristics and features.\n   defprov: Bruker website</IAO_0000115>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400223</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400223</IAO_0000119>
     <IAO_0000118 xml:lang="en">HR Probe</IAO_0000118>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
@@ -5519,7 +5520,7 @@ Biomed Mater. 2008 Sep;3(3):034104. PMID: 18689916</IAO_0000112>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000111 xml:lang="en">splitless GC injector</IAO_0000111>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01060</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01060</IAO_0000119>
     <IAO_0000119 xml:lang="en">WEB:&lt;http://en.wikipedia.org/wiki/Gas_chromatography&gt;</IAO_0000119>
     <IAO_0000116 xml:lang="en">msi_01060</IAO_0000116>
     <rdfs:label xml:lang="en">splitless GC injector</rdfs:label>
@@ -5755,7 +5756,7 @@ Biomed Mater. 2008 Sep;3(3):034104. PMID: 18689916</IAO_0000112>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000111 xml:lang="en">JEOL ECA NMR spectrometer</IAO_0000111>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400228</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400228</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <rdfs:label xml:lang="en">JEOL ECA NMR spectrometer</rdfs:label>
     <rdfs:subClassOf>
@@ -6037,7 +6038,7 @@ Neurosurgery. 2008 Jun;62(6 Suppl 3):1042-8.PMID: 18695524</IAO_0000112>
     <IAO_0000116 xml:lang="en">msi_01040</IAO_0000116>
     <IAO_0000116 xml:lang="en"></IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01040</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01040</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000115 xml:lang="en">The glass liner can be fitted with a separate heater and the volatalization temperature can, thus, be controlled. This flash heater system is available in most chromatographs. By using a syringe with a long needle, the tip can be made to penetrate past the liner and discharge its contents directly into the column packing. This procedure is called 'on-column injection' and, as it reduces peak dispersion on injection and thus, provides higher column efficiencies, is often the preferred procedure.</IAO_0000115>
@@ -6521,7 +6522,7 @@ Oncologist. 2008 Jun;13(6):679-89. PMID: 18586923</IAO_0000112>
     <IAO_0000111 xml:lang="en">JEOL NMR probe</IAO_0000111>
     <IAO_0000116 xml:lang="en">msi_400232</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400232</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400232</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
@@ -6616,7 +6617,7 @@ where β0 is the intercept ("constant" term), the βis are the respective parame
     <IAO_0000116 xml:lang="en">msi_01058</IAO_0000116>
     <IAO_0000115 xml:lang="en">A gas chromatography device that can auto-inject a small number of samples an inlet.</IAO_0000115>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01058</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01058</IAO_0000119>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000504"/><!-- sample injection system -->
     </rdfs:subClassOf>
@@ -6930,7 +6931,7 @@ where β0 is the intercept ("constant" term), the βis are the respective parame
     <owl:disjointWith>
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0200140"/><!-- mathematical feature -->
     </owl:disjointWith>
-    <IAO_0000119 xml:lang="en">ARTICLE: Bagwell C.B. (2006), "Hyperlog - a flexible log-like  transform for negative, zero, and positive valued data", Cytometry A 64, 34-42."</IAO_0000119>
+    <IAO_0000119 xml:lang="en">ARTICLE: Bagwell C.B. (2006), "Hyperlog - a flexible log-like  transform for negative, zero, and positive valued data", Cytometry A 64, 34-42.</IAO_0000119>
     <owl:disjointWith>
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0200052"/><!-- probabilistic algorithm -->
     </owl:disjointWith>
@@ -7630,7 +7631,7 @@ Hum Mutat. 2008 Mar;29(3):398-408. PMID: 18058796</IAO_0000112>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000116 xml:lang="en">msi_400193</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400193</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400193</IAO_0000119>
     <IAO_0000111 xml:lang="en">Bruker solid magic angle spinning probe</IAO_0000111>
     <rdfs:label xml:lang="en">Bruker solid magic angle spinning probe</rdfs:label>
     <rdfs:subClassOf>
@@ -7715,7 +7716,7 @@ Hum Mutat. 2008 Mar;29(3):398-408. PMID: 18058796</IAO_0000112>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000116 xml:lang="en">msi_01105</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01105</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01105</IAO_0000119>
     <IAO_0000115 xml:lang="en">An ion exchange column is a chromatography column that is used in ion exchange chromatography and anion or cation exchange resins to enable separation.</IAO_0000115>
     <rdfs:label xml:lang="en">ion exchange column</rdfs:label>
     <rdfs:subClassOf>
@@ -7908,7 +7909,7 @@ Hum Mutat. 2008 Mar;29(3):398-408. PMID: 18058796</IAO_0000112>
     <rdfs:label xml:lang="en">thermal conductivity detector</rdfs:label>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01084</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01084</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000637"/><!-- gas chromatography detector -->
@@ -8131,7 +8132,7 @@ Hum Mutat. 2008 Mar;29(3):398-408. PMID: 18058796</IAO_0000112>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000492"><!-- Bruker B-ACS system -->
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400210</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400210</IAO_0000119>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000119 xml:lang="en">WEB:&lt;http://www.bruker-biospin.com/automation.html&gt;</IAO_0000119>
     <IAO_0000115 xml:lang="en">The Bruker Automatic Sample Changer (B-ACS 60/120), used in conjunction with Bruker DISNMR, UXNMR or XWIN-NMR software, provides dialog-guided facilities which allow the user to easily and effectively perform automatic (continuous) experiments. Features include a 60 or 120 sample capacity, random accessing of samples, positive sample identification with the optional bar code reader, and temperature control of individual samples with the optional sample heater unit.</IAO_0000115>
@@ -8156,7 +8157,7 @@ Hum Mutat. 2008 Mar;29(3):398-408. PMID: 18058796</IAO_0000112>
     <IAO_0000111 xml:lang="en">Bruker LC-NMR/MS platform</IAO_0000111>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400277</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400277</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000115 xml:lang="en">Includes the connection to a high-resolution TOF-LC-MS system.</IAO_0000115>
   </owl:Class>
@@ -8625,7 +8626,7 @@ population.</IAO_0000115>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000116 xml:lang="en">msi_400236</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400236</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400236</IAO_0000119>
     <IAO_0000116 xml:lang="en">NMR instrument</IAO_0000116>
     <IAO_0000111 xml:lang="en">Varian UNITY INOVA spectrometer</IAO_0000111>
     <IAO_0000119 xml:lang="en">WEB:&lt;http://www.varianinc.com/cgi-bin/nav?products/nmr/spectromet/inova/index&amp;cid=HFIH&gt;</IAO_0000119>
@@ -8725,7 +8726,7 @@ population.</IAO_0000115>
     </rdfs:subClassOf>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400207</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400207</IAO_0000119>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000131"><!-- molecular feature identification objective -->
     <IAO_0000112 xml:lang="en">example_of_usage to be added</IAO_0000112>
@@ -9421,7 +9422,7 @@ population.</IAO_0000115>
     </rdfs:subClassOf>
     <rdfs:label xml:lang="en">gas chromatography equipment</rdfs:label>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01030</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01030</IAO_0000119>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000115 xml:lang="en">Any device used in a gas chromatography experiment.</IAO_0000115>
     <IAO_0000116 xml:lang="en">msi_01030</IAO_0000116>
@@ -9438,7 +9439,7 @@ population.</IAO_0000115>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000124"/>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01256</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01256</IAO_0000119>
     <rdfs:label xml:lang="en">_chromatography column according to separation criterium</rdfs:label>
     <IAO_0000111 xml:lang="en">_chromatography column according to separation criterium</IAO_0000111>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
@@ -9449,7 +9450,7 @@ population.</IAO_0000115>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000493"><!-- rapid resolution column -->
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01102</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01102</IAO_0000119>
     <IAO_0000111 xml:lang="en">rapid resolution column</IAO_0000111>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <rdfs:label xml:lang="en">rapid resolution column</rdfs:label>
@@ -9466,7 +9467,7 @@ population.</IAO_0000115>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000564"><!-- tecmag EAGLE probe -->
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400248</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400248</IAO_0000119>
     <IAO_0000116 xml:lang="en">msi_400248</IAO_0000116>
     <IAO_0000116 xml:lang="en">nmr probe</IAO_0000116>
     <IAO_0000111 xml:lang="en">tecmag EAGLE probe</IAO_0000111>
@@ -9970,7 +9971,7 @@ Eur J Hum Genet. 2008 Oct 15.  PMID: 18854868</IAO_0000112>
     <rdfs:label xml:lang="en">flow high resolution probe</rdfs:label>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400195</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400195</IAO_0000119>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000215"><!-- role of legally acceptable representative -->
     <rdfs:subClassOf>
@@ -10356,7 +10357,7 @@ An individual or juridicial or other body authorized under applicable law to con
     </rdfs:subClassOf>
     <IAO_0000116 xml:lang="en">msi_400132</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400132</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400132</IAO_0000119>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000047"><!-- artifact object -->
@@ -10399,7 +10400,7 @@ An individual or juridicial or other body authorized under applicable law to con
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400013</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400013</IAO_0000119>
     <IAO_0000116 xml:lang="en">msi_400013</IAO_0000116>
     <IAO_0000116 xml:lang="en">NMR instrument</IAO_0000116>
     <rdfs:subClassOf>
@@ -10869,7 +10870,7 @@ Funct Integr Genomics. 2007 Oct;7(4):335-45. Epub 2007 Jul 19. PMID: 17638031</I
     <IAO_0000115 xml:lang="en">A column jacket is a piece of column chromatography equipment that covers a column in order to ensure thermoisolation and create a controllable thermostatic microenvironment.</IAO_0000115>
     <IAO_0000116 xml:lang="en">chromatography device</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01276</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01276</IAO_0000119>
     <IAO_0000116 xml:lang="en">msi_01276</IAO_0000116>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0400011"><!-- avalanche photodiode -->
@@ -11196,7 +11197,7 @@ Proteome Sci. 2008 Dec 10;6(1):34.PMID: 19077203</IAO_0000112>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000115 xml:lang="en">The APOLLO is a compact, modular, multiple-DSP, Windows XP Professional-based console that can be equipped with up to 8 DDS-based RF transmitter channels configurable from 2 kHz to 3.5 GHz. Each transmitter channel produces a nominal 1V output and has the most agile frequency, phase and amplitude control of any system on the market. An array of additional options are available including multiple RF transmitters, linear high-power RF amplifiers, digital receiver arrays, low noise figure preamplifiers, a gradient control system, shim unit, MAS spin-speed controller, variable temperature unit, digital lock system and probe/coil interface. With its numerous options, the Apollo can be configured for any NMR, NQR or MRI application.</IAO_0000115>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400249</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400249</IAO_0000119>
     <IAO_0000116 xml:lang="en">msi_400249</IAO_0000116>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
@@ -11221,7 +11222,7 @@ Proteome Sci. 2008 Dec 10;6(1):34.PMID: 19077203</IAO_0000112>
     <IAO_0000119 xml:lang="en">WEB:&lt;http://www.chromatography-online.org/GC-Detectors/Classification/rs1.html&gt;</IAO_0000119>
     <IAO_0000115 xml:lang="en">A gas chromatography detector is a chromatography detector that locates in the dimensions of space and time, the positions of the components of a mixture that has been subjected to a gas chromatographic process and thus permits the senses to appreciate the nature of the separation. There is no LC detector that has an equivalent performance to the flame ionization detector (FID) used in GC. In general, LC detectors have sensitivities of two to three orders of magnitude less than their GC counterparts and linear dynamic ranges one to two orders of magnitude lower. Only highly specific LC detectors have sensitivities that can approach those of GC detectors. </IAO_0000115>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01083</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01083</IAO_0000119>
     <IAO_0000118 xml:lang="en">FID</IAO_0000118>
     <IAO_0000111 xml:lang="en">gas chromatography detector</IAO_0000111>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
@@ -11781,7 +11782,7 @@ Proteome Sci. 2008 Dec 10;6(1):34.PMID: 19077203</IAO_0000112>
     <IAO_0000115 xml:lang="en">A small membrane filter of defined pore size, that filters samples from a syringe.</IAO_0000115>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01122</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01122</IAO_0000119>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <rdfs:label xml:lang="en">syringe filter</rdfs:label>
     <IAO_0000111 xml:lang="en">syringe filter</IAO_0000111>
@@ -13247,7 +13248,7 @@ A dirt sample containing different populations of bacteria. A sample of martian 
     <IAO_0000115 xml:lang="en"></IAO_0000115>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000124"/>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01258</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01258</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000116 xml:lang="en">msi_01258</IAO_0000116>
     <rdfs:label xml:lang="en">_chromatography column according to packing material</rdfs:label>
@@ -13732,7 +13733,7 @@ A dirt sample containing different populations of bacteria. A sample of martian 
     <IAO_0000116 xml:lang="en">chromatography device</IAO_0000116>
     <IAO_0000116 xml:lang="en">msi_01110</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01110</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01110</IAO_0000119>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000048"/><!-- chromatography device -->
     </rdfs:subClassOf>
@@ -13762,7 +13763,7 @@ A dirt sample containing different populations of bacteria. A sample of martian 
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <rdfs:label xml:lang="en">_chromatography column according to separated component</rdfs:label>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01257</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01257</IAO_0000119>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000124"/>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
@@ -14407,7 +14408,7 @@ Phytopathology. 2007 Oct;97(10):1200-1206. PMID: 18943677</IAO_0000112>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01117</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01117</IAO_0000119>
     <IAO_0000115 xml:lang="en">A vial is a cylindrical container often made from glass tubing.</IAO_0000115>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <rdfs:label xml:lang="en">vial</rdfs:label>
@@ -15256,7 +15257,7 @@ FEBS Lett. 2006 Mar 6;580(6):1691-5. PMID: 16497300</IAO_0000112>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000486"><!-- continuous wave NMR instrument -->
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400283</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400283</IAO_0000119>
     <IAO_0000111 xml:lang="en">continuous wave NMR instrument</IAO_0000111>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000116 xml:lang="en">NMR instrument</IAO_0000116>
@@ -15476,7 +15477,7 @@ FEBS Lett. 2006 Mar 6;580(6):1691-5. PMID: 16497300</IAO_0000112>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000116 xml:lang="en">NMR instrument/NMR console</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400247</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400247</IAO_0000119>
     <rdfs:label xml:lang="en">DISCOVERY console</rdfs:label>
     <IAO_0000115 xml:lang="en">The Discovery console is a Windows XP Professional-based, integrated console designed especially for Solid-State NMR. The console includes everything needed to interface to any magnet and solids probe - from computer to cables to duplexing network\n   defprov: tecmag website</IAO_0000115>
     <rdfs:subClassOf>
@@ -16676,7 +16677,7 @@ FEBS Lett. 2006 Mar 6;580(6):1691-5. PMID: 16497300</IAO_0000112>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000584"><!-- anion exchange column -->
     <IAO_0000115 xml:lang="en">An anion exchange column is a chromatography column that is used in anion exchange chromatography and which enables the separation of anion mixtures.</IAO_0000115>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01095</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01095</IAO_0000119>
     <rdfs:label xml:lang="en">anion exchange column</rdfs:label>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000116 xml:lang="en"></IAO_0000116>
@@ -16707,7 +16708,7 @@ FEBS Lett. 2006 Mar 6;580(6):1691-5. PMID: 16497300</IAO_0000112>
     <rdfs:label xml:lang="en">column compartment</rdfs:label>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01068</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01068</IAO_0000119>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/obo/owl/PATO#PATO_0001741">
     <rdfs:label xml:lang="en">radioactive</rdfs:label>
@@ -16965,7 +16966,7 @@ FEBS Lett. 2006 Mar 6;580(6):1691-5. PMID: 16497300</IAO_0000112>
     <IAO_0000115 xml:lang="en">MERCURYplus spectrometers provide superior control, stability, and performance for high-productivity environments. Surface-mount electronics enable a small footprint without compromising data quality. Modular design allows flexible configuration. Direct digital synthesis, linear amplifiers, and other innovative RF and digital technologies enable push-button operation. </IAO_0000115>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400235</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400235</IAO_0000119>
     <IAO_0000119 xml:lang="en">WEB:&lt;http://www.varianinc.com/cgi-bin/nav?varinc/docs/products/nmr/spectromet/mercury/index&amp;cid=975JINLIKLRMPGLMNOILJ&gt;</IAO_0000119>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000116 xml:lang="en">NMR instrument</IAO_0000116>
@@ -17351,7 +17352,7 @@ sample for particles of interest based on qualities determined by gating) or dis
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000566"/><!-- NMR instrument -->
     </rdfs:subClassOf>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400234</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400234</IAO_0000119>
     <IAO_0000116 xml:lang="en">msi_400234</IAO_0000116>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <rdfs:label xml:lang="en">Varian NMR instrument</rdfs:label>
@@ -17464,7 +17465,7 @@ sample for particles of interest based on qualities determined by gating) or dis
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <rdfs:label xml:lang="en">solid NMR probe</rdfs:label>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400243</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400243</IAO_0000119>
     <IAO_0000111 xml:lang="en">solid NMR probe</IAO_0000111>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000379"><!-- mechanical function -->
@@ -17568,7 +17569,7 @@ sample for particles of interest based on qualities determined by gating) or dis
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000115 xml:lang="en">A Gel filtration column is a chromatography column for size-exclusion chromatography, in which the stationary phase is a gel. The main application of gel filtration chromatography is the fractionation of proteins and other water-soluble polymers.</IAO_0000115>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01104</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01104</IAO_0000119>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000110"><!-- pH indicator dye role -->
     <IAO_0000112 xml:lang="en">phenol red in RPMI; pH=4 indicator dye (also carries reference role)</IAO_0000112>
@@ -18307,7 +18308,7 @@ need to add mobile phase as role</IAO_0000116>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000125"/>
     <IAO_0000116 xml:lang="en">NMR instrument, TODO: same as or part of acquisition computer?</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400015</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400015</IAO_0000119>
     <rdfs:label xml:lang="en">NMR console</rdfs:label>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
@@ -18437,7 +18438,7 @@ need to add mobile phase as role</IAO_0000116>
     <IAO_0000111 xml:lang="en">electrical conductivity detector</IAO_0000111>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01239</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01239</IAO_0000119>
     <rdfs:label xml:lang="en">electrical conductivity detector</rdfs:label>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
   </owl:Class>
@@ -18606,7 +18607,7 @@ need to add mobile phase as role</IAO_0000116>
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000597"/><!-- Bruker NMR magnet -->
     </rdfs:subClassOf>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400188</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400188</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <rdfs:label xml:lang="en">Bruker Ultrastabilized NMR magnet</rdfs:label>
     <IAO_0000116 xml:lang="en">msi_400188</IAO_0000116>
@@ -18627,7 +18628,7 @@ need to add mobile phase as role</IAO_0000116>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000637"/><!-- gas chromatography detector -->
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01089</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01089</IAO_0000119>
     <IAO_0000116 xml:lang="en">msi_01089</IAO_0000116>
     <IAO_0000116 xml:lang="en"></IAO_0000116>
     <IAO_0000115 xml:lang="en">The nitrogen phosphorus detector (NPD) (sometimes called the thermionic detector) is a very sensitive, specific detector the design of which, is based on the FID. Physically the sensor appears to be very similar to the FID but, in fact, operates on an entirely different principle. The nitrogen phosphorous detector (sometimes called the thermionic detector) is a very sensitive but specific detector that responds almost exclusively to nitrogen and phosphorous compounds. It is based on the flame ionization detector but differs in that it contains a rubidium or cesium silicate (glass) bead situated in a heater coil, a little distance from the hydrogen flame. If the detector is to respond to both nitrogen and phosphorous then the hydrogen flow should be minimal so that the gas does not ignite at the jet. If the detector is to respond to phosphorous only, a large flow of hydrogen is used which is burnt at the jet. The heated bead emits electrons by thermionic emission. These electrons are collected under a potential of a few volts by an appropriately placed anode, and provides a background current. When a solute containing nitrogen or phosphorous is eluted from the column, the partially combusted nitrogen and phosphorous materials are adsorbed on the surface of the bead. The adsorbed material reduces the work function of the surface and, as consequence, the emission of electrons is increased which raises the current collected at the electrode. The sensitivity of the detector to phosphorous is about 10-12 gram per ml and for nitrogen about 10-11 gram per ml at a signal to nose ratio of 2. The alkali bead as a finite life and needs regular replacement.</IAO_0000115>
@@ -18650,7 +18651,7 @@ need to add mobile phase as role</IAO_0000116>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000622"><!-- gel permeation column -->
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01103</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01103</IAO_0000119>
     <IAO_0000116 xml:lang="en">msi_01103</IAO_0000116>
     <rdfs:label xml:lang="en">gel permeation column</rdfs:label>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
@@ -18669,7 +18670,7 @@ need to add mobile phase as role</IAO_0000116>
     <IAO_0000116 xml:lang="en">msi_400002</IAO_0000116>
     <IAO_0000115 xml:lang="en">An optional part of an NMR instrument used to hold samples prior to NMR analysis and that sequentially loads these samples into the analytical part of the NMR instrument. \n   alt The autosampler is an automatic sample changer device.</IAO_0000115>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400002</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400002</IAO_0000119>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0400002"/><!-- device -->
     </rdfs:subClassOf>
@@ -19300,7 +19301,7 @@ need to add mobile phase as role</IAO_0000116>
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0400002"/><!-- device -->
     </rdfs:subClassOf>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400212</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400212</IAO_0000119>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000115 xml:lang="en">An NMR sample holder is the part of an NMR instrument, which carries the nmr probe,sample  tube and  the nmr sample.</IAO_0000115>
     <rdfs:label xml:lang="en">NMR sample holder</rdfs:label>
@@ -19549,7 +19550,7 @@ need to add mobile phase as role</IAO_0000116>
     <rdfs:label xml:lang="en">high resolution probe with automatic tuning and matching</rdfs:label>
     <IAO_0000115 xml:lang="en">The Automatic Tuning and Matching (ATM) option for AVANCE spectrometers is available for double resonance probes in fixed-frequency and broadband tunable configurations with either direct or indirect detection. Thus, for multinuclear operation, as often required for applications in inorganic chemistry, ATM facilitates the accurate setting of 90 degree pulsewidths on both observe and decoupling channels for each chosen nucleus and each individual sample - even with full automation. Triple resonance probes in fixed-frequency configurations, as typically used for inverse detection with high-field systems.</IAO_0000115>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400224</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400224</IAO_0000119>
     <IAO_0000116 xml:lang="en">nmr probe</IAO_0000116>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
   </owl:Class>
@@ -19815,7 +19816,7 @@ Biomacromolecules. 2008 Oct 9.PMID: 18842025</IAO_0000112>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01094</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01094</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000116 xml:lang="en"></IAO_0000116>
     <rdfs:label xml:lang="en">affinity column</rdfs:label>
@@ -20140,7 +20141,7 @@ Biomacromolecules. 2008 Oct 9.PMID: 18842025</IAO_0000112>
     <IAO_0000111 xml:lang="en">atomic emmission detector</IAO_0000111>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01086</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01086</IAO_0000119>
     <IAO_0000116 xml:lang="en"></IAO_0000116>
     <rdfs:label xml:lang="en">atomic emmission detector</rdfs:label>
     <IAO_0000115 xml:lang="en">Instead of measuring simple gas phase (carbon containing) ions created in a flame as with the flame ionization detector, or the change in background current because of electronegative element capture of thermal electrons as with the electron capture detector, the AED has a much wider applicability because it is based on the detection of atomic emissions. The strength of the AED lies in the detector's ability to simultaneously determine the atomic emissions of many of the elements in analytes that elute from a GC capillary column (called eluants or solutes in some books). As eluants come off the capillary column they are fed into a microwave powered plasma (or discharge) cavity where the compounds are destroyed and their atoms are excited by the energy of the plasma. The light that is emitted by the excited particles is separated into individual lines via a photodiode array. The associated computer then sorts out the individual emission lines and can produce chromatograms made up of peaks from eluants that contain only a specific element.</IAO_0000115>
@@ -20234,7 +20235,7 @@ Biomacromolecules. 2008 Oct 9.PMID: 18842025</IAO_0000112>
     <IAO_0000116 xml:lang="en"></IAO_0000116>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01012</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01012</IAO_0000119>
   </owl:Class>
   <owl:Class rdf:about="http://www.ifomis.org/bfo/1.1/span#Process">
     <rdfs:subClassOf>
@@ -21102,7 +21103,7 @@ objectives is a planned process.</IAO_0000116>
     <IAO_0000116 xml:lang="en">msi_01087</IAO_0000116>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01087</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01087</IAO_0000119>
     <IAO_0000111 xml:lang="en">fluorine-induced chemiluminescence detector</IAO_0000111>
     <IAO_0000119 xml:lang="en">WEB:&lt;http://www.shsu.edu/~chm_tgc/publications/JPP/chasteen.htm&gt;</IAO_0000119>
     <IAO_0000116 xml:lang="en"></IAO_0000116>
@@ -21692,14 +21693,14 @@ Neurochem Res. 2008 Oct 23. PMID: 18946735</IAO_0000112>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000115 xml:lang="en">A series of older Bruker NMR magnets, now out of production. The Bruker AMX500 has proven an extremely reliable workhorse, with excellent lineshape yielding superior water suppression even without gradients. The Oxford 11.7 Tesla 5.2 cm bore magnet rests on a TMC vibration damping table. Homogeneity is controlled by a BSN-18 and BSN-2 with 19 shim controls. In addition to the 5 mm triple resonance probe, the AMX is equipped with a 10mm broadband observe probe. </IAO_0000115>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400240</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400240</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <rdfs:label xml:lang="en">Bruker AMX series NMR instrument</rdfs:label>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000597"><!-- Bruker NMR magnet -->
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400186</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400186</IAO_0000119>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000111 xml:lang="en">Bruker NMR magnet</IAO_0000111>
@@ -22354,7 +22355,7 @@ HAS MADE_UP_OF RELATION WITH PEPTIDE CONCEPT.  JAMES</IAO_0000116>
     <rdfs:label xml:lang="en">isocratic pump system</rdfs:label>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01049</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01049</IAO_0000119>
     <IAO_0000116 xml:lang="en">msi_01049</IAO_0000116>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
@@ -22657,7 +22658,7 @@ When harvesting blood from a human, isolating T cells, and then limited dilution
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01036</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01036</IAO_0000119>
     <IAO_0000111 xml:lang="en">gas purifier</IAO_0000111>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000116 xml:lang="en">gas chromatography equipment</IAO_0000116>
@@ -22814,7 +22815,7 @@ When harvesting blood from a human, isolating T cells, and then limited dilution
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000460"/><!-- _hyphenated NMR instrument platform -->
     </rdfs:subClassOf>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400276</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400276</IAO_0000119>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000119 xml:lang="en">WEB:&lt;http://www.bruker-biospin.com/hyphenation_lcnmr_ms.html&gt;</IAO_0000119>
     <IAO_0000115 xml:lang="en">The LC-NMR/MS setup was first introduced by Bruker BioSpin in 1999. An LC-NMR system including a Bruker Peak Sampling Unit (BPSU-36) was coupled with a Bruker Daltonics esquire series ion trap mass spectrometer via a Bruker NMR-MS interface (BNMI). Since October 2004 the Bruker Daltonics microTOF-LC time-of-flight mass spectrometer can also be integrated in an LC-NMR setup.</IAO_0000115>
@@ -23249,7 +23250,7 @@ When harvesting blood from a human, isolating T cells, and then limited dilution
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000601"><!-- chromatography consumable -->
     <rdfs:label xml:lang="en">chromatography consumable</rdfs:label>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01115</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01115</IAO_0000119>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000116 xml:lang="en">msi_01115</IAO_0000116>
     <IAO_0000115 xml:lang="en">A chromatography consumableis a consumable that is used in a chromatography experiment.</IAO_0000115>
@@ -23369,7 +23370,7 @@ When harvesting blood from a human, isolating T cells, and then limited dilution
     </rdfs:subClassOf>
     <IAO_0000115 xml:lang="en">A rotor device that holds the nmr sample and enables the adjustment of the orientation of the rotation axis for a sample in a NMR instrument in the magic angle.</IAO_0000115>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400130</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400130</IAO_0000119>
     <IAO_0000118 xml:lang="en">MAS rotor</IAO_0000118>
     <rdfs:label xml:lang="en">magic angle spinning rotor</rdfs:label>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
@@ -24027,7 +24028,7 @@ Eur J Cancer Prev. 2008 Nov;17(6):561-71. PMID: 18941378</IAO_0000112>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01063</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01063</IAO_0000119>
     <rdfs:label xml:lang="en">dual loop autosampler</rdfs:label>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000494"/><!-- liquid chromatography autosampler -->
     <IAO_0000116 xml:lang="en">msi_01063</IAO_0000116>
@@ -24605,7 +24606,7 @@ Eur J Cancer Prev. 2008 Nov;17(6):561-71. PMID: 18941378</IAO_0000112>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000555"/><!-- autosampler -->
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400209</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400209</IAO_0000119>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
   </owl:Class>
   <owl:Class rdf:about="http://www.ifomis.org/bfo/1.1/span#TemporalRegion">
@@ -25552,7 +25553,7 @@ PMID: 18605936</IAO_0000112>
     <rdfs:label xml:lang="en">open tubular column</rdfs:label>
     <IAO_0000119 xml:lang="en">WEB:&lt;http:www.iupac.org/publications/pac/1993/pdf/6504x0819.pdf&gt;</IAO_0000119>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01219</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01219</IAO_0000119>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0400075"><!-- MoFlo -->
     <IAO_0000111 xml:lang="en">MoFlo</IAO_0000111>
@@ -25573,7 +25574,7 @@ PMID: 18605936</IAO_0000112>
     <IAO_0000115 xml:lang="en">An NMR instrument that is manufactured by tecmag.</IAO_0000115>
     <IAO_0000116 xml:lang="en">msi_400250</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400250</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400250</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000116 xml:lang="en">NMR instrument</IAO_0000116>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
@@ -25630,7 +25631,7 @@ http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1887478&amp;group_i
     <IAO_0000116 xml:lang="en">msi_400280</IAO_0000116>
     <IAO_0000116 xml:lang="en">NMR device</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400280</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400280</IAO_0000119>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0500016"><!-- fractional factorial design -->
     <IAO_0000115 xml:lang="en">A fractional factorial design is_a study design in which only an adequately chosen fraction of the treatment combinations required for the complete factorial experiment is selected to be run</IAO_0000115>
@@ -26430,7 +26431,7 @@ J Proteome Res. 2009 Jan 5. PMID: 19123788</IAO_0000112>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000116 xml:lang="en">NMR instrument</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400014</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400014</IAO_0000119>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0400068"><!-- LSR2 -->
     <rdfs:label xml:lang="en">LSR2</rdfs:label>
@@ -27203,7 +27204,7 @@ J Proteome Res. 2009 Jan 5. PMID: 19123788</IAO_0000112>
     <rdfs:label xml:lang="en">column adapter</rdfs:label>
     <IAO_0000116 xml:lang="en">msi_01113</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01113</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01113</IAO_0000119>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
@@ -27441,7 +27442,7 @@ J Proteome Res. 2009 Jan 5. PMID: 19123788</IAO_0000112>
     <IAO_0000115 xml:lang="en">A liquid chromatography device that mixes differrent solvents, e.g. under high pressure and in differrent volumes ranging from 5 ml to 5 L capacity. Powerful magnetic mixers provide vigorous agitation required for high pressure reaction chemistry.</IAO_0000115>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01072</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01072</IAO_0000119>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000485"/><!-- chromatography instrument -->
     </rdfs:subClassOf>
@@ -27484,7 +27485,7 @@ J Proteome Res. 2009 Jan 5. PMID: 19123788</IAO_0000112>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000116 xml:lang="en">chromatography device</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01236</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01236</IAO_0000119>
     <IAO_0000116 xml:lang="en">msi_01236</IAO_0000116>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000115 xml:lang="en">A device that connects two or more columns together in a functional way with leak-tight connection, low dead volume, low thermal mass and high inertness.</IAO_0000115>
@@ -27665,7 +27666,7 @@ J Proteome Res. 2009 Jan 5. PMID: 19123788</IAO_0000112>
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000507"/><!-- gas generator -->
     </rdfs:subClassOf>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01035</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01035</IAO_0000119>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000111 xml:lang="en">hydrogen generator</IAO_0000111>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
@@ -27709,7 +27710,7 @@ In this equation b0 is the regression coefficient for the intercept and the bi v
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000111 xml:lang="en">Varian GEMINI spectrometer</IAO_0000111>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400239</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400239</IAO_0000119>
     <IAO_0000116 xml:lang="en">NMR instrument</IAO_0000116>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000034"><!-- supernatant role -->
@@ -27735,7 +27736,7 @@ In this equation b0 is the regression coefficient for the intercept and the bi v
     <IAO_0000115 xml:lang="en">Carbon nanotubes (CNTs) are known to have high thermal and mechanical stability and have the potential to be high-performance separation media that utilize the nanoscale interactions. CNT can be applied in long capillary tubes for the development of gas chromatography columns. A film of CNTs can be deposited by chemical vapor deposition (CVD) to form the stationary phase in the open tubular format. Altering the CVD conditions can vary the thickness and the morphology of the CNT film, which opens the possibility of selectivity tuning. The ability to fabricate long tubes coated with CNTs can be readily employed in other gas- and liquid-phase separations as well.</IAO_0000115>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01107</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01107</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <rdfs:label xml:lang="en">carbon nanotube column</rdfs:label>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
@@ -27810,7 +27811,7 @@ Possible ecological risks of transgenic organism release when transgenes affect 
     <IAO_0000116 xml:lang="en">NMR instrument</IAO_0000116>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400204</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400204</IAO_0000119>
     <IAO_0000115 xml:lang="en">An automatic cleaning system for NMR tubes that removes previous probe and sample residues in order to allow for tube recycling.</IAO_0000115>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0400002"/><!-- device -->
@@ -28214,7 +28215,7 @@ Possible ecological risks of transgenic organism release when transgenes affect 
     <IAO_0000115 xml:lang="en">A liquid chromatography column is a chromatography column that is used in liquid chromatography, i.e. a column that is provided with a liquid sample mix.</IAO_0000115>
     <IAO_0000111 xml:lang="en">liquid chromatography column</IAO_0000111>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01227</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01227</IAO_0000119>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <rdfs:label xml:lang="en">liquid chromatography column</rdfs:label>
     <IAO_0000116 xml:lang="en">msi_01227</IAO_0000116>
@@ -28263,7 +28264,7 @@ Possible ecological risks of transgenic organism release when transgenes affect 
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000116 xml:lang="en"></IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01096</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01096</IAO_0000119>
     <IAO_0000115 xml:lang="en">An cation exchange column is a chromatography column that is used in cation exchange chromatography.</IAO_0000115>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
   </owl:Class>
@@ -28314,7 +28315,7 @@ Possible ecological risks of transgenic organism release when transgenes affect 
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000566"/><!-- NMR instrument -->
     </rdfs:subClassOf>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400198</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400198</IAO_0000119>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000115 xml:lang="en">An NMR instrument that is manufactured by Bruker.</IAO_0000115>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
@@ -28682,7 +28683,7 @@ Biochem Biophys Res Commun. 2008 Oct 18. PMID: 18940182</IAO_0000112>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <rdfs:label xml:lang="en">size exclusion column</rdfs:label>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01100</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01100</IAO_0000119>
     <IAO_0000116 xml:lang="en"></IAO_0000116>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
   </owl:Class>
@@ -29410,7 +29411,7 @@ N Engl J Med. 2008 Oct 15. PMID: 18923165</IAO_0000112>
     <IAO_0000115 xml:lang="en">A spin column is a chromatography column which is suitable for putting it into a centrifuge. A spin column enforces separation through increased G-forces while spinning the column in a centrifuge. It is often used in DNA gel extraction kits.</IAO_0000115>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01232</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01232</IAO_0000119>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000488"/><!-- _chromatography column according to column property -->
@@ -29539,7 +29540,7 @@ N Engl J Med. 2008 Oct 15. PMID: 18923165</IAO_0000112>
     <rdfs:label xml:lang="en">Bruker UltraShield Plus NMR magnet</rdfs:label>
     <IAO_0000116 xml:lang="en">msi_400190</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400190</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400190</IAO_0000119>
     <IAO_0000115 xml:lang="en">An NMR magnet of which Brukers claims it is the latest and most advanced self-shielding NMR magnet technology ever developed. These magnets are the ultimate advancement in high performance, actively-shielded NMR solutions. They offer unprecedented shielding performance whilst ensuring no compromise in system homogeneity, stability or cryogenic specifications.</IAO_0000115>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000116 xml:lang="en">NMR instrument</IAO_0000116>
@@ -29553,7 +29554,7 @@ N Engl J Med. 2008 Oct 15. PMID: 18923165</IAO_0000112>
     <rdfs:label xml:lang="en">preparative autosampler</rdfs:label>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01062</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01062</IAO_0000119>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000494"/><!-- liquid chromatography autosampler -->
     <IAO_0000116 xml:lang="en">msi_01062</IAO_0000116>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
@@ -29565,7 +29566,7 @@ N Engl J Med. 2008 Oct 15. PMID: 18923165</IAO_0000112>
     <IAO_0000116 xml:lang="en">msi_01057</IAO_0000116>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01057</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01057</IAO_0000119>
     <IAO_0000116 xml:lang="en">chromatography device</IAO_0000116>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000111 xml:lang="en">sample injection system</IAO_0000111>
@@ -29917,7 +29918,7 @@ I THINK THIS IS LIKELY A QUALITY.  JAMES</IAO_0000116>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000516"/><!-- NMR probe -->
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400231</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400231</IAO_0000119>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000115 xml:lang="en">An NMR probe that is manufactured by Bruker.</IAO_0000115>
@@ -30603,7 +30604,7 @@ Acta Ophthalmol. 2008 Oct 3. PMID: 18937822</IAO_0000112>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <rdfs:label xml:lang="en">Bruker Capillary LC-NMR platform</rdfs:label>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400279</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400279</IAO_0000119>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000119 xml:lang="en">WEB:&lt;http://www.bruker-biospin.com/hyphenation_caplcnmr.html&gt;</IAO_0000119>
     <IAO_0000116 xml:lang="en">msi_400279</IAO_0000116>
@@ -30769,7 +30770,7 @@ Acta Ophthalmol. 2008 Oct 3. PMID: 18937822</IAO_0000112>
     <rdfs:label xml:lang="en">injector lubricant</rdfs:label>
     <IAO_0000116 xml:lang="en">msi_01118</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01118</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01118</IAO_0000119>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000115 xml:lang="en">A lubricant used in liquid chromatography that eases sample injector penetration.</IAO_0000115>
@@ -31091,7 +31092,7 @@ Acta Ophthalmol. 2008 Oct 3. PMID: 18937822</IAO_0000112>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://teaching.shu.ac.uk/hwb/chemistry/tutorials/molspec/nmr3.htm&gt;</IAO_0000119>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400284</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400284</IAO_0000119>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0400032"><!-- differential pressure gauge -->
     <rdfs:subClassOf>
@@ -31306,7 +31307,7 @@ Acta Ophthalmol. 2008 Oct 3. PMID: 18937822</IAO_0000112>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000586"><!-- plunger column -->
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01108</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01108</IAO_0000119>
     <IAO_0000116 xml:lang="en"></IAO_0000116>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000488"/><!-- _chromatography column according to column property -->
@@ -31506,7 +31507,7 @@ Rheumatol Int. 2008 Oct 11. PMID: 18850100</IAO_0000112>
     <IAO_0000111 xml:lang="en">variable wavelength detector</IAO_0000111>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000463"/><!-- column chromatography detector -->
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01079</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01079</IAO_0000119>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000116 xml:lang="en"></IAO_0000116>
     <IAO_0000116 xml:lang="en">msi_01079</IAO_0000116>
@@ -31526,7 +31527,7 @@ Rheumatol Int. 2008 Oct 11. PMID: 18850100</IAO_0000112>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000115 xml:lang="en">A capillary column is a thin tube with a small inner diameter, usually around 0.5 mm.</IAO_0000115>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01066</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01066</IAO_0000119>
     <rdfs:label xml:lang="en">capillary column</rdfs:label>
     <IAO_0000116 xml:lang="en">msi_01066</IAO_0000116>
   </owl:Class>
@@ -31940,7 +31941,7 @@ Rheumatol Int. 2008 Oct 11. PMID: 18850100</IAO_0000112>
     <IAO_0000119 xml:lang="en">WEB:&lt;http://www.bruker-biospin.com/automation.html&gt;</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400208</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400208</IAO_0000119>
     <IAO_0000111 xml:lang="en">Bruker SampleJet system</IAO_0000111>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000154"><!-- role of Institutional Review Board -->
@@ -32041,7 +32042,7 @@ specimen can later be subject.</IAO_0000116>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000467"><!-- Bruker US 2 NMR magnet -->
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400189</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400189</IAO_0000119>
     <IAO_0000115 xml:lang="en">An actively-shielded superconducting magnet from Bruker that combines Bruker BioSpin's advanced, proprietary UltraShield active shielding and UltraStabilized sub-cooling technologies. This shielded and stabilized (US2) magnet system delivers high sensitivity and spectral dispersion.</IAO_0000115>
     <rdfs:label xml:lang="en">Bruker US 2 NMR magnet</rdfs:label>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000597"/><!-- Bruker NMR magnet -->
@@ -32127,7 +32128,7 @@ A novel multivalent human CTL peptide construct elicits robust cellular immune r
     <rdfs:label xml:lang="en">Bruker AC series NMR instrument</rdfs:label>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400241</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400241</IAO_0000119>
     <IAO_0000111 xml:lang="en">Bruker AC series NMR instrument</IAO_0000111>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000596"/><!-- Bruker NMR instrument -->
@@ -32152,7 +32153,7 @@ A novel multivalent human CTL peptide construct elicits robust cellular immune r
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000581"><!-- y-column connector -->
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01237</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01237</IAO_0000119>
     <IAO_0000111 xml:lang="en">y-column connector</IAO_0000111>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <rdfs:label xml:lang="en">y-column connector</rdfs:label>
@@ -32175,7 +32176,7 @@ A novel multivalent human CTL peptide construct elicits robust cellular immune r
     <IAO_0000119 xml:lang="en">WEB:&lt;http:www.iupac.org/publications/pac/1993/pdf/6504x0819.pdf&gt;</IAO_0000119>
     <IAO_0000115 xml:lang="en">A packed column is a chromatography column where the particles of the solid stationary phase or the support coated with a liquid stationary phase may fill the whole inside volume of the tube.</IAO_0000115>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01218</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01218</IAO_0000119>
     <IAO_0000116 xml:lang="en"></IAO_0000116>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
@@ -32291,7 +32292,7 @@ A novel multivalent human CTL peptide construct elicits robust cellular immune r
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <rdfs:label xml:lang="en">chromatography splitter</rdfs:label>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01041</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01041</IAO_0000119>
     <IAO_0000115 xml:lang="en">An adjustable restriction that is placed in the waste outlet to allow the necessary pressure to develop at the column inlet to force a flow (q ml/min) through the column. If the flow of mobile phase is Q ml/min then the waste flow will be (Q-q) ml/min. by adjusting the waste flow, the proportion of the sample entering the capillary column can be varied over a wide range of values and the necessary minimum permissible volume for the particular column in use can be selected for analysis. Unfortunately, the fraction taken in this way may not be representative of the original sample. This is due to the individual solutes in the mixture having different diffusivities and, thus, they distribute themselves across the sampling tube in an irregular manner. In general, the components with higher diffusivities (e.g., those solutes of lower molecular weight) will diffuse away from the bulk sample more quickly than those having lower diffusivities. </IAO_0000115>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000164"><!-- cDNA library -->
@@ -32570,7 +32571,7 @@ has_function some GO:0003824 (catalytic activity)</IAO_0000115>
     <rdfs:label xml:lang="en">sample inlet</rdfs:label>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01044</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01044</IAO_0000119>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000111 xml:lang="en">sample inlet</IAO_0000111>
     <IAO_0000119 xml:lang="en">WEB:&lt;http://en.wikipedia.org/wiki/Gas_chromatography#Inlets&gt;</IAO_0000119>
@@ -33146,7 +33147,7 @@ part_of fluidic_subsystem</IAO_0000116>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000111 xml:lang="en">needle assembly</IAO_0000111>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01065</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01065</IAO_0000119>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000048"/><!-- chromatography device -->
     </rdfs:subClassOf>
@@ -33226,7 +33227,7 @@ part_of fluidic_subsystem</IAO_0000116>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000605"><!-- chart recorder -->
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01069</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01069</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000115 xml:lang="en">The chart recorder is a device that transduces signal-intensities into a graphical peak output: As the separated components of the gas sample emerge into the detector, the change in voltage in the detecting bridge circuit causes a representative peak to be drawn on a chart recorder. The position of the peak along the time axis of the chart measures the components retention time, which identifies the component. This is directly related to carrier gas flow rate, temperature and column packing and dimensions. The area under each peak is proportional to the concentration of the component of the sample. The area of the peaks inscribed on the chart recorder can be determined by multiplying the height of the peak in mm, by the width of the peak in mm at 1/2 the peak height. The calibration curves for use with the chart recorder are therefore peak area plotted against concentration.</IAO_0000115>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
@@ -33254,7 +33255,7 @@ part_of fluidic_subsystem</IAO_0000116>
     <IAO_0000116 xml:lang="en">msi_01235</IAO_0000116>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01235</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01235</IAO_0000119>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0400171"><!-- animal cage -->
     <IAO_0000111 xml:lang="en">animal cage</IAO_0000111>
@@ -34043,7 +34044,7 @@ HAS MADE_UP_OF RELATION WITH AMINO ACID CONCEPT.  JAMES</IAO_0000116>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000118 xml:lang="en">FPD</IAO_0000118>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01091</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01091</IAO_0000119>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0900005"><!-- obsolete_labware function -->
     <IAO_0000117 xml:lang="en">Bill Bug</IAO_0000117>
@@ -34151,7 +34152,7 @@ HAS MADE_UP_OF RELATION WITH AMINO ACID CONCEPT.  JAMES</IAO_0000116>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <rdfs:label xml:lang="en">capillary pump system</rdfs:label>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01051</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01051</IAO_0000119>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <rdfs:subClassOf>
@@ -34225,7 +34226,7 @@ HAS MADE_UP_OF RELATION WITH AMINO ACID CONCEPT.  JAMES</IAO_0000116>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000116 xml:lang="en">NMR instrument</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400199</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400199</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000073"><!-- sample preparation for assay -->
@@ -34438,7 +34439,7 @@ AI: Ryan goes back to John Quinn and saks for usage example of this term.</IAO_0
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000550"><!-- nitrogen generator -->
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01034</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01034</IAO_0000119>
     <rdfs:label xml:lang="en">nitrogen generator</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000507"/><!-- gas generator -->
@@ -34615,7 +34616,7 @@ AI: Ryan goes back to John Quinn and saks for usage example of this term.</IAO_0
     <IAO_0000119 xml:lang="en">WEB:&lt;http://www.bruker-biospin.com/automation.html&gt;</IAO_0000119>
     <IAO_0000118 xml:lang="en">Bruker Efficient Sample Transfer NMR</IAO_0000118>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400206</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400206</IAO_0000119>
     <IAO_0000116 xml:lang="en">NMR instrument</IAO_0000116>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000464"/><!-- Bruker autosampler -->
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
@@ -36061,7 +36062,7 @@ J Insect Physiol. 1998 May;44(5-6):525-528. PMID: 12770172</IAO_0000112>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01039</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01039</IAO_0000119>
     <IAO_0000111 xml:lang="en">gas chromatography oven</IAO_0000111>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000542"/><!-- gas chromatography equipment -->
   </owl:Class>
@@ -36090,7 +36091,7 @@ J Insect Physiol. 1998 May;44(5-6):525-528. PMID: 12770172</IAO_0000112>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <rdfs:label xml:lang="en">trap column</rdfs:label>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01261</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01261</IAO_0000119>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000488"/><!-- _chromatography column according to column property -->
     </rdfs:subClassOf>
@@ -36117,7 +36118,7 @@ J Insect Physiol. 1998 May;44(5-6):525-528. PMID: 12770172</IAO_0000112>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400211</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400211</IAO_0000119>
     <IAO_0000115 xml:lang="en">The Bruker Multiple Adjustable Tube Clamp Holder MATCH system is a holder for 100 mm long NMR sample tubes with diameters ranging from micro tubes up to 5 mm NMR tubes. The MATCH insert fits into a standard 10 mm Bruker spinner and is suitable for all non-spinning applications.\n   The MATCH system provides an easy and cost efficient means of optimizing the signal-to-noise ratio of each sample. By matching the NMR tube diameter to the size of the sample, most of the sample can be placed in the active column of the NMR coil. This leads to an enhanced signal detection compared to diluting the same sample quantity in a larger tube.</IAO_0000115>
     <IAO_0000116 xml:lang="en">NMR instrument</IAO_0000116>
   </owl:Class>
@@ -36206,7 +36207,7 @@ J Insect Physiol. 1998 May;44(5-6):525-528. PMID: 12770172</IAO_0000112>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000568"><!-- piston-seal -->
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01116</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01116</IAO_0000119>
     <IAO_0000111 xml:lang="en">piston-seal</IAO_0000111>
     <IAO_0000115 xml:lang="en">The seal made by a piston in a diaphragm pump. The unique property of the reciprocating diaphragm pump is that the actuating piston does not come into direct contact with the mobile phase and thus, the demands on the piston-cylinder seal are not so great. The diaphragm has a relatively high surface area and thus, the movement of the diaphragm is relatively small and consequently the pump can be operated at a fairly high frequency. High frequency pumping results in a very significant reduction in pulse amplitude and, in addition, high frequency pulses are more readily damped by the column system. Nevertheless, it must be emphasized that diaphragm pumps are not pulseless.</IAO_0000115>
     <IAO_0000116 xml:lang="en">msi_01116</IAO_0000116>
@@ -36272,7 +36273,7 @@ J Insect Physiol. 1998 May;44(5-6):525-528. PMID: 12770172</IAO_0000112>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000521"><!-- flame ionization detector -->
     <IAO_0000111 xml:lang="en">flame ionization detector</IAO_0000111>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01197</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01197</IAO_0000119>
     <IAO_0000119 xml:lang="en">WEB:&lt;http://homepages.onsnet.nu/%7Ealkema/html/whatisgc.html&gt;</IAO_0000119>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000637"/><!-- gas chromatography detector -->
     <IAO_0000118 xml:lang="en">FID</IAO_0000118>
@@ -36313,7 +36314,7 @@ J Insect Physiol. 1998 May;44(5-6):525-528. PMID: 12770172</IAO_0000112>
     <IAO_0000116 xml:lang="en">msi_400246</IAO_0000116>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400246</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400246</IAO_0000119>
     <rdfs:label xml:lang="en">tecmag NMR console</rdfs:label>
     <IAO_0000111 xml:lang="en">tecmag NMR console</IAO_0000111>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000499"/><!-- NMR console -->
@@ -36321,7 +36322,7 @@ J Insect Physiol. 1998 May;44(5-6):525-528. PMID: 12770172</IAO_0000112>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000517"><!-- NMR magnet -->
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400185</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400185</IAO_0000119>
     <IAO_0000115 xml:lang="en">A magnet which induces a certain frequency (MHz) and which has a certain bore diameter.\n   alt The NMR signal is a natural physical property of the certain atomic nuclei but it can only be detected with an external magnetic field. A magnet is a fundamental part of an NMR instrument which induces an electromagnetic force field (RF pulse) and by this excites and aligns the spins of the electrons of the nmr acquisition nucleus. It is usually a big (superconducting) electromagnet which is cooled by liquid helium and can be adjusted to a frequency between 200 and 950 MHz. The magnetic field strength is measured in Tesla or Gauss.</IAO_0000115>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000116 xml:lang="en">NMR instrument</IAO_0000116>
@@ -36451,7 +36452,7 @@ J Insect Physiol. 1998 May;44(5-6):525-528. PMID: 12770172</IAO_0000112>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01097</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01097</IAO_0000119>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000472"/><!-- _chromatography column according to separation criterium -->
     <IAO_0000115 xml:lang="en">A normal phase column is a chromatography column in which the stationary phase is more polar than the mobile phase. Its counterpart is the reversed phase column.</IAO_0000115>
     <rdfs:label xml:lang="en">normal phase column</rdfs:label>
@@ -36615,7 +36616,7 @@ J Insect Physiol. 1998 May;44(5-6):525-528. PMID: 12770172</IAO_0000112>
     <IAO_0000115 xml:lang="en">A glass column is a chromatography column made out of glass that is usually used for larger scale and preparative liquid chromatography separations.</IAO_0000115>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01101</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01101</IAO_0000119>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000488"/><!-- _chromatography column according to column property -->
     </rdfs:subClassOf>
@@ -36864,7 +36865,7 @@ J Biomol NMR. 2006 Apr;34(4):259-69. PMID: 16645816</IAO_0000112>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000115 xml:lang="en">A device that binds the cromatography column and additional connector elements and / or valves or syringes into one physical unity for further processing.</IAO_0000115>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01055</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01055</IAO_0000119>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
   </owl:Class>
@@ -37413,7 +37414,7 @@ Isolation of proliferation factor of immature T-cell clone in concanavalin A-sti
     <IAO_0000116 xml:lang="en">msi_400278</IAO_0000116>
     <IAO_0000111 xml:lang="en">Bruker SPE-NMR platform</IAO_0000111>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400278</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400278</IAO_0000119>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000149"><!-- role of nutritional supplement -->
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000204"/><!-- nutrient role -->
@@ -37432,7 +37433,7 @@ Isolation of proliferation factor of immature T-cell clone in concanavalin A-sti
     <IAO_0000116 xml:lang="en">msi_01064</IAO_0000116>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01064</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01064</IAO_0000119>
     <IAO_0000116 xml:lang="en"></IAO_0000116>
     <IAO_0000115 xml:lang="en">The traditional hardware system that allows a human to inject a sample into an inlet by hand, using a syringe. </IAO_0000115>
     <IAO_0000111 xml:lang="en">manual injection system</IAO_0000111>
@@ -38461,7 +38462,7 @@ FG: Or as function.</IAO_0000116>
     <IAO_0000119 xml:lang="en">WEB:&lt;http://www.scs.uiuc.edu/nmr/instruments/u400.php&gt;</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400237</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400237</IAO_0000119>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000205"><!-- dropout role -->
@@ -38499,7 +38500,7 @@ FG: Or as function.</IAO_0000116>
     <rdfs:label xml:lang="en">gas generator</rdfs:label>
     <IAO_0000116 xml:lang="en">msi_01033</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01033</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01033</IAO_0000119>
     <IAO_0000119 xml:lang="en">WEB:&lt;http://www.chromatography-online.org/GC/Gas-Supplies/Pure-Air-Generators./rs5.html&gt;</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000111 xml:lang="en">gas generator</IAO_0000111>
@@ -38688,7 +38689,7 @@ old defintion: A mixture (collection) of cell components created by rupturing of
     <IAO_0000116 xml:lang="en"></IAO_0000116>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01099</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01099</IAO_0000119>
     <rdfs:label xml:lang="en">organic acid column</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0302716"><!-- pool of specimens -->
@@ -38985,7 +38986,7 @@ old defintion: A mixture (collection) of cell components created by rupturing of
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000506"><!-- photoionization detector -->
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01090</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01090</IAO_0000119>
     <IAO_0000111 xml:lang="en">photoionization detector</IAO_0000111>
     <rdfs:label xml:lang="en">photoionization detector</rdfs:label>
     <IAO_0000116 xml:lang="en"></IAO_0000116>
@@ -39190,7 +39191,7 @@ old defintion: A mixture (collection) of cell components created by rupturing of
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000598"><!-- ozone-induced chemiluminescence detector -->
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01088</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01088</IAO_0000119>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000637"/><!-- gas chromatography detector -->
     <IAO_0000115 xml:lang="en">Although there are many direct ozone chemiluminescent reactions with various gaseous molecules, the incorporation of a conversion step to convert various non-chemiluminescent analytes to a species capable of reacting with ozone to produce chemiluminescence broadens the horizon of this technique tremendously. The conversion of nearly all nitrogen- and sulfur-containing compounds to their respective chemiluminescent species for universal nitrogen and sulfur detection has made nitrogen/sulfur chemiluminescence detection the most widely used analytical methods based upon ozone-induced chemiluminescence. In addition to non-chromatographic applications, nitrogen/sulfur chemiluminescence detection has been adapted to various chromatographic techniques from gas chromatography to liquid and supercritical fluid chromatography as specialized element-specific detectors. The characteristics of these detectors are evaluated and compared to other element-selective detection techniques. The unique features of the chemiluminescence detectors have made them powerful tools in many diverse fields of analytical chemistry.</IAO_0000115>
@@ -39369,7 +39370,7 @@ old defintion: A mixture (collection) of cell components created by rupturing of
     <IAO_0000111 xml:lang="en">Bruker 1mm MicroProbe</IAO_0000111>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400194</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400194</IAO_0000119>
     <rdfs:label xml:lang="en">Bruker 1mm MicroProbe</rdfs:label>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000116 xml:lang="en">nmr probe</IAO_0000116>
@@ -39440,7 +39441,7 @@ the input must be specified, for example, the reagents will be in tubes which as
     <IAO_0000115 xml:lang="en">A custom made column ia a chromatography column which is specifically tailored according to the needs of the separation as requested by a scientist or working group.</IAO_0000115>
     <rdfs:label xml:lang="en">custom made column</rdfs:label>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01234</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01234</IAO_0000119>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000116 xml:lang="en">msi_01234</IAO_0000116>
@@ -39558,7 +39559,7 @@ the input must be specified, for example, the reagents will be in tubes which as
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000569"><!-- mass selective detector -->
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01198</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01198</IAO_0000119>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000637"/><!-- gas chromatography detector -->
     <IAO_0000116 xml:lang="en">msi_01198</IAO_0000116>
     <IAO_0000115 xml:lang="en">A mass selective detector is a GC detector that uses mass spectrometry. It is based upon the ionization of solute molecules in the ion source and the separation of the ions generated on the basis of their mass/charge ratio by an analyzer unit. This may be a magnetic sector analyzer, a quadruple mass filter, or an ion trap. Ions are detected by a dynode electron multiplier.</IAO_0000115>
@@ -39592,7 +39593,7 @@ the input must be specified, for example, the reagents will be in tubes which as
       <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000488"/><!-- _chromatography column according to column property -->
     </rdfs:subClassOf>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01233</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01233</IAO_0000119>
     <IAO_0000115 xml:lang="en">A high temperature column is a chromatography column which is suitable for and withstands very high temperatures in chromatography ovens.</IAO_0000115>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
@@ -39966,7 +39967,7 @@ change biomaterial to material in definition</IAO_0000116>
     <IAO_0000111 xml:lang="en">Bruker AutoClean system</IAO_0000111>
     <IAO_0000116 xml:lang="en">msi_400205</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400205</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400205</IAO_0000119>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000115 xml:lang="en">NMR tubes are often used once and discarded, creating needless waste. With the Bruker BioSpin Autoclean system you can now recycle 5mm, 3mm, or 5mm/3mm step-down (Wilmad 520-1B) NMR tubes. AutoClean NMR Tube Washing System is a simple way to recoup the substantial investment your organization makes in quality NMR tubes, and cut back on needless waste material.</IAO_0000115>
@@ -40323,8 +40324,7 @@ Short-term outcome of neuropsychiatric events in systemic lupus erythematosus up
     <owl:disjointWith rdf:resource="http://purl.obofoundry.org/obo/OBI_0000231"/><!-- enzymatic cleavage -->
     <owl:disjointWith rdf:resource="http://purl.obofoundry.org/obo/OBI_0000105"/><!-- transplantation -->
     <owl:disjointWith rdf:resource="http://purl.obofoundry.org/obo/OBI_0600058"/><!-- enzymatic amplification -->
-    <IAO_0000114 rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
-    >http://purl.obofoundry.org/obo/IAO_0000120</IAO_0000114>
+    <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <owl:disjointWith rdf:resource="http://purl.obofoundry.org/obo/OBI_0600038"/><!-- labeling -->
     <owl:disjointWith rdf:resource="http://purl.org/obo/owl/GO#GO_0010467"/>
     <owl:disjointWith>
@@ -41065,7 +41065,7 @@ It has both components, an Image cytometer and a flow cytometer.</IAO_0000115>
     <IAO_0000111 xml:lang="en">cation trap column</IAO_0000111>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01278</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01278</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000518"/><!-- trap column -->
     <IAO_0000116 xml:lang="en"></IAO_0000116>
@@ -41260,7 +41260,7 @@ It has both components, an Image cytometer and a flow cytometer.</IAO_0000115>
     <IAO_0000116 xml:lang="en"></IAO_0000116>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01209</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01209</IAO_0000119>
     <IAO_0000115 xml:lang="en">A chromatofocusing column is a chromatography column in which a resin is equilibrated at one pH and eluted at a second pH. The use of a weak ion-exchange resin causes a pH gradient to be formed at the solvent front owing to the buffering action of the resin. This pH gradient in turn leads to an ordering of proteins by isoelectric point. Molecules of charge sign opposite the resin bind; those of charge sign like the resin do not bind.</IAO_0000115>
     <IAO_0000119 xml:lang="en">WEB:&lt;http://www.bioprocessintl.com/default.asp?page=glossary&amp;TopicID=1&gt;</IAO_0000119>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000472"/><!-- _chromatography column according to separation criterium -->
@@ -41278,7 +41278,7 @@ It has both components, an Image cytometer and a flow cytometer.</IAO_0000115>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000529"/><!-- JEOL NMR probe -->
     <IAO_0000119 xml:lang="en">WEB:&lt;http://www.jeol.com/PRODUCTS/AnalyticalInstruments/NuclearMagneticResonance/CapNMRProbe/tabid/396/Default.aspx&gt;</IAO_0000119>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400233</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400233</IAO_0000119>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <rdfs:label xml:lang="en">JEOL CapNMR probe</rdfs:label>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
@@ -41632,7 +41632,7 @@ It has both components, an Image cytometer and a flow cytometer.</IAO_0000115>
     <IAO_0000115 xml:lang="en">A solvent filter that sits between the pump and the injection valve  that prevents dust particles, general debris and, to some extent, bacteria from entering the chromatography system. Contaminants can interfere with the low-pressure gradient former or the pump and particles entering valves may interfere with the proper function. The result could cause an increased baseline noise, nonrepeatable gradient forming, unreliable flow rate or other interferences. Solvent in-line filters are low-pressure filters and will allow a high flow rate due to a large surface area and large porosity.</IAO_0000115>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01123</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01123</IAO_0000119>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0600053"><!-- electrophoresis -->
     <rdfs:label xml:lang="en">electrophoresis</rdfs:label>
@@ -41752,7 +41752,7 @@ It has both components, an Image cytometer and a flow cytometer.</IAO_0000115>
     <IAO_0000111 xml:lang="en">refractive index detector</IAO_0000111>
     <IAO_0000116 xml:lang="en">msi_01081</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01081</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01081</IAO_0000119>
     <IAO_0000115 xml:lang="en">For analyzing non-UV absorbing substances, such as carbohydrates, lipids and polymers. This is also the detector of choice for gel permeation chromatography. The refractive index detector is one of the least sensitive LC detectors. It is very sensitive to changes in ambient temperature, pressure changes, flow-rate changes and can not be used for gradient elution. Despite these many disadvantages, this detector is extremely useful for detecting those compounds that are nonionic, do not adsorb in the UV, and do not fluoresce. There are many optical systems used in refractive index detectors but one of the most common is the differential refractive index detector.</IAO_0000115>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000401"><!-- environment control function -->
@@ -41819,7 +41819,7 @@ It has both components, an Image cytometer and a flow cytometer.</IAO_0000115>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0400002"/><!-- device -->
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01262</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01262</IAO_0000119>
     <IAO_0000116 xml:lang="en">msi_01262</IAO_0000116>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000262"><!-- obsolete_Chemical stressor -->
@@ -41849,7 +41849,7 @@ It has both components, an Image cytometer and a flow cytometer.</IAO_0000115>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 xml:lang="en">WEB:&lt;http://en.wikipedia.org/wiki/Column_chromatography&gt;</IAO_0000119>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01046</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01046</IAO_0000119>
     <IAO_0000116 xml:lang="en"></IAO_0000116>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000115 xml:lang="en">Better flow rates can be achieved by using a pump or by using compressed gas (e.g. air, nitrogen, or argon) to push the solvent through the column (flash column chromatography).</IAO_0000115>
@@ -41907,7 +41907,7 @@ It has both components, an Image cytometer and a flow cytometer.</IAO_0000115>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000116 xml:lang="en">chromatography device</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01070</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01070</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000451"><!-- normalized data set -->
@@ -42104,7 +42104,7 @@ It has both components, an Image cytometer and a flow cytometer.</IAO_0000115>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000480"/><!-- Bruker high resolution probe -->
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400192</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400192</IAO_0000119>
     <IAO_0000116 xml:lang="en">nmr probe</IAO_0000116>
     <IAO_0000116 xml:lang="en">msi_400192</IAO_0000116>
   </owl:Class>
@@ -42243,7 +42243,7 @@ It has both components, an Image cytometer and a flow cytometer.</IAO_0000115>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000124"/>
     <rdfs:label xml:lang="en">_chromatography column according to column property</rdfs:label>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01259</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01259</IAO_0000119>
     <IAO_0000116 xml:lang="en">msi_01259</IAO_0000116>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000038"/><!-- chromatography column -->
@@ -42259,7 +42259,7 @@ It has both components, an Image cytometer and a flow cytometer.</IAO_0000115>
     <IAO_0000115 xml:lang="en">An NMR probe that is designed for generating pictures from sample states via NMR imaging.</IAO_0000115>
     <rdfs:label xml:lang="en">imaging NMR probe</rdfs:label>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400244</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400244</IAO_0000119>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000116 xml:lang="en">msi_400244</IAO_0000116>
     <IAO_0000111 xml:lang="en">imaging NMR probe</IAO_0000111>
@@ -42494,7 +42494,7 @@ It has both components, an Image cytometer and a flow cytometer.</IAO_0000115>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000620"><!-- Bruker micro imaging probe -->
     <IAO_0000115 xml:lang="en">For medical, biological and material sciences research, avance imaging systems provide optimal object handling and performance with a variety of samples types. Two classes of imaging probes are available: in vivo probes for handling and sustaining live objects such as animals and plants, and conventional imaging probes for materials samples.</IAO_0000115>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400225</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400225</IAO_0000119>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000119 xml:lang="en">WEB:&lt;http://www.bruker-biospin.com/probes_microimaging.html&gt;</IAO_0000119>
     <rdfs:label xml:lang="en">Bruker micro imaging probe</rdfs:label>
@@ -42756,7 +42756,7 @@ It has both components, an Image cytometer and a flow cytometer.</IAO_0000115>
     <IAO_0000111 xml:lang="en">gradient pump system</IAO_0000111>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000589"/><!-- chromatography pump system -->
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01050</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01050</IAO_0000119>
     <IAO_0000116 xml:lang="en">msi_01050</IAO_0000116>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
@@ -42790,7 +42790,7 @@ Manual editing of automatically recorded data in an anesthesia information manag
     <rdfs:label xml:lang="en">Varian VXR spectrometer</rdfs:label>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400238</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400238</IAO_0000119>
     <IAO_0000116 xml:lang="en">NMR instrument</IAO_0000116>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
   </owl:Class>
@@ -42812,7 +42812,7 @@ Manual editing of automatically recorded data in an anesthesia information manag
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000111 xml:lang="en">indirect detection probe</IAO_0000111>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400281</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400281</IAO_0000119>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000516"/><!-- NMR probe -->
     <IAO_0000115 xml:lang="en">An NMR probe designed to allow the indirect detection of acquisition nuclei.</IAO_0000115>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
@@ -42946,7 +42946,7 @@ Nat Protoc. 2008;3(10):1550-8. PMID: 18802436</IAO_0000112>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000604"><!-- detector lamp -->
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01119</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01119</IAO_0000119>
     <IAO_0000116 xml:lang="en">msi_01119</IAO_0000116>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000119 xml:lang="en">WEB:&lt;http://www.chromatography-online.org/HPLC/UV-Detectors/Fixed-Wavelength/rs23.html&gt;</IAO_0000119>
@@ -43361,7 +43361,7 @@ When haplotypes are defined with relation to SNPs, the definition changes: a hap
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000600"><!-- JEOL NMR instrument -->
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400226</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400226</IAO_0000119>
     <rdfs:label xml:lang="en">JEOL NMR instrument</rdfs:label>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
@@ -43490,7 +43490,7 @@ When haplotypes are defined with relation to SNPs, the definition changes: a hap
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000116 xml:lang="en">check on definition !</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01054</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01054</IAO_0000119>
     <rdfs:label xml:lang="en">column cartridger</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000531"><!-- Bruker CryoProbe -->
@@ -43503,7 +43503,7 @@ When haplotypes are defined with relation to SNPs, the definition changes: a hap
     <IAO_0000115 xml:lang="en">The Bruker BioSpin CryoProbe is a high-performance cryogenically cooled probe developed for high-resolution applications. It has improved signal/noise (S/N) ratios obtained by reducing the operating temperature of the coil and the pre-amplifier. As a result, the efficiency of the coil is improved and the noise of the coil and the pre-amplifier are reduced.The dramatic increase in the S/N ratio by a factor of 3-4, as compared to conventional probes, leads to a possible reduction in experiment time of up to 16 or a reduction in required sample concentration by a factor of up to 4. The CryoProbes possess key characteristics for NMR analysis:\n   Significant S/N gains (with moderately salty samples also)\n   Short pulse widths\n   Short ring down times\n   Linear behavior in power response\n   Gradient capability\n   CryoProbes are available as Triple Resonance, Dual, Selective X Detection, MicroImaging, and Quad Nucleus Probes configurations at 400 MHz and higher\n   All high resolution probes have a lock circuit\n   All high resolution probes have Z-gradient.</IAO_0000115>
     <rdfs:label xml:lang="en">Bruker CryoProbe</rdfs:label>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400191</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400191</IAO_0000119>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000116 xml:lang="en">nmr probe</IAO_0000116>
   </owl:Class>
@@ -43699,7 +43699,7 @@ Documentation: "The group of eligible participants that agreed to participate in
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000116 xml:lang="en">chromatography device</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01111</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01111</IAO_0000119>
     <rdfs:label xml:lang="en">guard column</rdfs:label>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
@@ -43760,7 +43760,7 @@ Documentation: "The group of eligible participants that agreed to participate in
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000116 xml:lang="en">msi_01078</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01078</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01078</IAO_0000119>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000111 xml:lang="en">multiple wavelength detector</IAO_0000111>
   </owl:Class>
@@ -43809,7 +43809,7 @@ Documentation: "The group of eligible participants that agreed to participate in
     <IAO_0000111 xml:lang="en">_hyphenated NMR instrument platform</IAO_0000111>
     <IAO_0000116 xml:lang="en">NMR instrument</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400200</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400200</IAO_0000119>
     <IAO_0000116 xml:lang="en">msi_400200</IAO_0000116>
     <IAO_0000115 xml:lang="en">NMR Instruments used in combination with additional (hyphenated) analytical techniques combining mass spectrometry and chromatograph.</IAO_0000115>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
@@ -44250,7 +44250,7 @@ for now.</IAO_0000116>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000516"/><!-- NMR probe -->
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400242</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400242</IAO_0000119>
     <IAO_0000116 xml:lang="en">NMR device</IAO_0000116>
     <IAO_0000111 xml:lang="en">liquid NMR probe</IAO_0000111>
     <IAO_0000115 xml:lang="en">An NMR probe that is designed to hold a liquid sample.</IAO_0000115>
@@ -44536,7 +44536,7 @@ from the current definition, it sounds like an bfo:agregate object with a possib
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000510"><!-- reversed phase column -->
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01106</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01106</IAO_0000119>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000472"/><!-- _chromatography column according to separation criterium -->
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
@@ -44784,7 +44784,7 @@ AJR Am J Roentgenol. 1990 Jan;154(1):87-93.</IAO_0000112>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000589"/><!-- chromatography pump system -->
     <IAO_0000116 xml:lang="en">msi_01053</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01053</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01053</IAO_0000119>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000368"><!-- record function -->
     <owl:disjointWith rdf:resource="http://purl.obofoundry.org/obo/OBI_0000403"/><!-- sort function -->
@@ -45011,7 +45011,7 @@ FG: Get rid of it and make it a defined class under device</IAO_0000116>
     <IAO_0000115 xml:lang="en">A protein column is a chromatography column used for the separation of complex protein mixttures. Protein columns enable sample desalting, followed by chromatographic separation or fractionation of complex protein samples, e.g. immunodepleted serum or plasma proteins.</IAO_0000115>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000585"/><!-- _chromatography column according to separated component -->
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01238</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01238</IAO_0000119>
     <rdfs:label xml:lang="en">protein column</rdfs:label>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000111 xml:lang="en">protein column</IAO_0000111>
@@ -45278,7 +45278,7 @@ TO BE DEALT WITH STILL BY RICHARD.  JAMES</IAO_0000116>
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000627"><!-- quaternary pump system -->
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01047</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01047</IAO_0000119>
     <IAO_0000116 xml:lang="en">msi_01047</IAO_0000116>
     <IAO_0000116 xml:lang="en"></IAO_0000116>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
@@ -45514,7 +45514,7 @@ TO BE DEALT WITH STILL BY RICHARD.  JAMES</IAO_0000116>
     <rdfs:label xml:lang="en">nano pump system</rdfs:label>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01052</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01052</IAO_0000119>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000116 xml:lang="en">msi_01052</IAO_0000116>
     <IAO_0000115 xml:lang="en">A pump system optimized for nano flow chromatography.</IAO_0000115>
@@ -45611,7 +45611,7 @@ We need to make this a defined class when the class software is in the ontology<
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000116 xml:lang="en">msi_400227</IAO_0000116>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400227</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400227</IAO_0000119>
     <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000119 xml:lang="en">WEB:&lt;http://www.jeol.com/PRODUCTS/AnalyticalInstruments/NuclearMagneticResonance/ECX/tabid/145/Default.aspx&gt;</IAO_0000119>
     <rdfs:subClassOf rdf:resource="http://purl.obofoundry.org/obo/OBI_0000600"/><!-- JEOL NMR instrument -->
@@ -45828,7 +45828,7 @@ We need to make this a defined class when the class software is in the ontology<
     <IAO_0000116 xml:lang="en">msi_01080</IAO_0000116>
     <IAO_0000118 xml:lang="en"></IAO_0000118>
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_01080</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/CHROM.owl#msi_01080</IAO_0000119>
     <rdfs:label xml:lang="en">fluorescene detector</rdfs:label>
     <IAO_0000115 xml:lang="en">A single wavelength detector, where the excitation light wavelength is normally a mercury lamp generated high intensity UV light at 253.7 nm. Many substances that fluoresce will be excited by light of this wavelength and hence be detected.</IAO_0000115>
     <IAO_0000116 xml:lang="en"></IAO_0000116>
@@ -45883,7 +45883,7 @@ We need to make this a defined class when the class software is in the ontology<
   </owl:Class>
   <owl:Class rdf:about="http://purl.obofoundry.org/obo/OBI_0000566"><!-- NMR instrument -->
     <IAO_0000119 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >http://purl.obofoundry.org/obo/msi_400059</IAO_0000119>
+    >http://msi-ontology.sourceforge.net/ontology/NMR.owl#msi_400059</IAO_0000119>
     <IAO_0000115 xml:lang="en">An Instrument which is used to carry out a NMR analysis of some sample.</IAO_0000115>
     <IAO_0000117 xml:lang="en">PERSON:Daniel Schober</IAO_0000117>
     <IAO_0000119 xml:lang="en">GROUP:&lt;http://msi-ontology.sourceforge.net&gt;</IAO_0000119>
@@ -46115,8 +46115,7 @@ We need to make this a defined class when the class software is in the ontology<
     </rdfs:range>
     <IAO_0000111 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >has_supplier</IAO_0000111>
-    <IAO_0000114 rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
-    >http://purl.obofoundry.org/obo/IAO_0000120</IAO_0000114>
+    <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000120"/>
     <IAO_0000117 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >PERSON: Melanie Courtot</IAO_0000117>
     <IAO_0000117 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -46128,8 +46127,7 @@ We need to make this a defined class when the class software is in the ontology<
     >has_supplier</rdfs:label>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.obofoundry.org/obo/OBI_0000316"><!-- has_role -->
-    <IAO_0000114 rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
-    >http://purl.obofoundry.org/obo/IAO_0000122</IAO_0000114>
+    <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000122"/>
     <owl:inverseOf>
       <owl:ObjectProperty rdf:about="http://purl.org/obo/owl/OBO_REL#role_of"/>
     </owl:inverseOf>
@@ -46174,8 +46172,7 @@ We need to make this a defined class when the class software is in the ontology<
   <owl:ObjectProperty rdf:about="http://purl.obofoundry.org/obo/OBI_0000306"><!-- has_function -->
     <IAO_0000112 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >heart has_function to-pump-blood</IAO_0000112>
-    <IAO_0000114 rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
-    >http://purl.obofoundry.org/obo/IAO_0000122</IAO_0000114>
+    <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000122"/>
     <rdfs:domain rdf:resource="http://www.ifomis.org/bfo/1.1/snap#IndependentContinuant"/>
     <owl:inverseOf rdf:resource="http://purl.org/obo/owl/OBO_REL#function_of"/>
     <rdfs:label xml:lang="en">has_function</rdfs:label>
@@ -46221,8 +46218,7 @@ We need to make this a defined class when the class software is in the ontology<
     >A relation between an entity and a quality. For types: E has_quality Q iff: 
 for any eEt, exists qQt such that q inheres_in e at t. 
 For instances: e has_quality q at t iff q inheres_in e at t and q instance-of Quality [GOC:cjm]</IAO_0000115>
-    <IAO_0000114 rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
-    >http://purl.obofoundry.org/obo/IAO_0000122</IAO_0000114>
+    <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000122"/>
     <rdfs:label xml:lang="en">has_quality</rdfs:label>
     <rdfs:subPropertyOf>
       <owl:ObjectProperty rdf:about="http://purl.org/obo/owl/OBO_REL#bearer_of"/>
@@ -46437,8 +46433,7 @@ function 'histidine ammonia lyase activity' (GO:0004397) (note: here 'activity'
 denotes a function and not a process). We leave open the possibility of defining 
 in future the sub-relations directly_realizes (as bewteen a function and it's 
 functioning) and indirectly_realizes.</IAO_0000112>
-    <IAO_0000114 rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
-    >http://purl.obofoundry.org/obo/IAO_0000122</IAO_0000114>
+    <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000122"/>
     <IAO_0000118 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >executes</IAO_0000118>
     <IAO_0000118 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -46499,8 +46494,7 @@ instance level relation [GOC:cjm]</IAO_0000115>
     <IAO_0000117 rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >PERSON: Chris Mungall</IAO_0000117>
     <rdfs:domain rdf:resource="http://www.ifomis.org/bfo/1.1/snap#RealizableEntity"/>
-    <IAO_0000114 rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI"
-    >http://purl.obofoundry.org/obo/IAO_0000122</IAO_0000114>
+    <IAO_0000114 rdf:resource="http://purl.obofoundry.org/obo/IAO_0000122"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.obofoundry.org/obo/OBI_0000309"><!-- utilizes_reagent -->
     <rdfs:subPropertyOf rdf:resource="http://www.obofoundry.org/ro/ro.owl#has_participant"/>
