@@ -137,6 +137,7 @@ owlpredargs :-
 
 
 
+
 treeview(Class) :-
         forall(treeview(Class,X-Y-subClassOf(X,Y),_,[]),
                true).
