@@ -628,14 +628,17 @@ valid_axiom(annotationAssertion(A, B, C)) :- subsumed_by([A, B, C],[annotationPr
 %
 % @see annotationAnnotation/3, ontologyAnnotation/3, axiomAnnotation/3
 % TODO: make this ext
+:- ext(annotation/3).
+
 annotation(annotationAnnotation(A, B, C)) :- annotationAnnotation(A, B, C).
-annotation(ontologyAnnotation(A, B, C)) :- ontologyAnnotation(A, B, C).
 annotation(axiomAnnotation(A, B, C)) :- axiomAnnotation(A, B, C).
 axiom_arguments(annotation,[iri]).
 valid_axiom(annotation(A)) :- subsumed_by([A],[iri]).
 
 %% ontologyAnnotation(?Ontology, ?AnnotationProperty, ?AnnotationValue)
-:- ext(ontologyAnnotation/3).
+ontologyAnnotation(Ontology,AP,AV) :-
+	annotation(Ontology,AP,AV),
+	ontology(Ontology).	
 relation('OntologyAnnotation',3).
 attribute(1,'OntologyAnnotation','Ontology',string).
 attribute(2,'OntologyAnnotation','AnnotationProperty',string).
@@ -644,7 +647,9 @@ axiom_arguments(ontologyAnnotation,[ontology, annotationProperty, annotationValu
 valid_axiom(ontologyAnnotation(A, B, C)) :- subsumed_by([A, B, C],[ontology, annotationProperty, annotationValue]).
 
 %% axiomAnnotation(?Axiom, ?AnnotationProperty, ?AnnotationValue)
-:- ext(axiomAnnotation/3).
+axiomAnnotation(Axiom,AP,AV) :-
+	annotation(Axiom,AP,AV),
+	axiom(Axiom).
 relation('AxiomAnnotation',3).
 attribute(1,'AxiomAnnotation','Axiom',string).
 attribute(2,'AxiomAnnotation','AnnotationProperty',string).
@@ -653,7 +658,9 @@ axiom_arguments(axiomAnnotation,[axiom, annotationProperty, annotationValue]).
 valid_axiom(axiomAnnotation(A, B, C)) :- subsumed_by([A, B, C],[axiom, annotationProperty, annotationValue]).
 
 %% annotationAnnotation(?Annotation, ?AnnotationProperty, ?AnnotationValue)
-:- ext(annotationAnnotation/3).
+annotationAnnotation(Annotation,AP,AV) :-
+	annotation(Annotation,AP,AV),
+	annotation(Annotation).
 relation('AnnotationAnnotation',3).
 attribute(1,'AnnotationAnnotation','Annotation',string).
 attribute(2,'AnnotationAnnotation','AnnotationProperty',string).
@@ -1054,6 +1061,7 @@ assert_axiom(Axiom) :-
 assert_axiom(Axiom) :-
         debug(owl2,'asserting ~w',[Axiom]),
         assert(Axiom),
+	(   nb_current(current_ontology,O) -> assert(ontologyAxiom(O,Axiom)) ; true),
         !.
 
 retract_all_axioms :-
