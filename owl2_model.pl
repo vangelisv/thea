@@ -63,6 +63,7 @@
            negativeDataPropertyAssertion/3,
            annotationAssertion/3,
            annotation/1,
+           annotation/3,
            ontologyAnnotation/3,
            axiomAnnotation/3,
            annotationAnnotation/3,
@@ -624,16 +625,15 @@ attribute(3,'AnnotationAssertion','AnnotationValue',string).
 axiom_arguments(annotationAssertion,[annotationProperty, annotationSubject, annotationValue]).
 valid_axiom(annotationAssertion(A, B, C)) :- subsumed_by([A, B, C],[annotationProperty, annotationSubject, annotationValue]).
 
-%% annotation(?IRI)
+%% annotation(?IRI,?AnnotationProperty,?AnnotationValue)
 %
 % @see annotationAnnotation/3, ontologyAnnotation/3, axiomAnnotation/3
-% TODO: make this ext
 :- ext(annotation/3).
 
 annotation(annotationAnnotation(A, B, C)) :- annotationAnnotation(A, B, C).
 annotation(axiomAnnotation(A, B, C)) :- axiomAnnotation(A, B, C).
-axiom_arguments(annotation,[iri]).
-valid_axiom(annotation(A)) :- subsumed_by([A],[iri]).
+axiom_arguments(annotation,[iri,annotationProperty,annotationValue]).
+valid_axiom(annotation(A,B,C)) :- subsumed_by([A,B,C],[iri,annotationProperty,annotationValue]).
 
 %% ontologyAnnotation(?Ontology, ?AnnotationProperty, ?AnnotationValue)
 ontologyAnnotation(Ontology,AP,AV) :-
@@ -676,7 +676,7 @@ attribute(1,'Ontology','IRI',string).
 axiom_arguments(ontology,[iri]).
 valid_axiom(ontology(A)) :- subsumed_by([A],[iri]).
 
-%% ontologyDirective(?Ontology, ?IRI)
+%% ontologyDirective(?OntologyIRI,?IRI)
 % @see ontologyImport/2, ontologyAxiom/2
 ontologyDirective(A, B) :- ontologyImport(A, B).
 ontologyDirective(A, B) :- ontologyAxiom(A, B).
@@ -1009,6 +1009,8 @@ labelAnnotation_value(X,Val) :-
         anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(type(_,Val))).
 labelAnnotation_value(X,Val) :- 
         anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(lang(_,Val))).
+labelAnnotation_value(X,Val) :- 
+        anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(Val)).
 
 /****************************************
   META-PREDICATES
