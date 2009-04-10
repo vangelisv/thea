@@ -2,6 +2,7 @@
 
 :- module(owl2_plsyn,[
                       write_owl_as_plsyn/0,
+                      write_owl_as_plsyn/1,
 
                       plsyn_owl/2,
                       
@@ -9,6 +10,7 @@
                       op(1150,fx,class),
                       op(1150,fx,individual),
                       op(1150,xfy,disjointUnion),
+                      op(1150,fx,functional),
                       op(1150,fx,transitive),
                       op(1150,fx,symmetric),
                       op(1150,fx,asymmetric),
@@ -16,6 +18,7 @@
                       op(1150,fx,irreflexive),
                                 % 700 <
                                 % 700 =
+                      op(700,xfy,inverseOf),
                       op(700,xfy,(->)),
                       op(650,xfy,(::)),
                       op(600,xfy,not),
@@ -37,6 +40,7 @@
 
 :- op(1150,xfy,disjointUnion).
 
+:- op(1150,fx,functional).
 :- op(1150,fx,transitive).
 :- op(1150,fx,symmetric).
 :- op(1150,fx,asymmetric).
@@ -44,6 +48,7 @@
 :- op(1150,fx,irreflexive).
 % 700 <
 % 700 =
+:- op(700,xfy,inverseOf).
 :- op(700,xfy,(->)).
 :- op(650,xfy,(::)).
 :- op(600,xfy,not).
@@ -61,6 +66,9 @@ owl2_io:load_axioms_hook(File,plsyn,Opts) :-
 
 
 write_owl_as_plsyn:-
+        write_owl_as_plsyn([]).
+
+write_owl_as_plsyn(_Opts):-
         forall(axiompred(PS),
                write_axioms_as_plsyn(PS)).
 
@@ -184,21 +192,28 @@ swrlatom2plsyn(i(V),?V) :- !.
 swrlatom2plsyn(X,X) :- !.
 
 
-        
-list_to_chain([X],_,X) :- !.
+
+list_to_chain([X],_,Pl) :- !, owl2plsyn(X,Pl).
 list_to_chain([X1|L],Op,Pl) :-
         !,
         list_to_chain(L,Op,X2),
-        Pl=..[Op,X1,X2].
+        owl2plsyn(X1,X1Pl),
+        Pl=..[Op,X1Pl,X2].
 
 
 plpred2owlpred(transitive,transitiveProperty).
+plpred2owlpred(functional,functionalProperty).
+plpred2owlpred(symmetric,symmetricProperty).
+plpred2owlpred(reflexive,reflexiveProperty).
 
 %plpred2owlpred(inverseOf,inverseProperties).
 
 plpred2owlpred(some,someValuesFrom).
 plpred2owlpred(only,allValuesFrom).
+plpred2owlpred(not,complementOf).
 
+
+plpred2owlpred(inverseOf,inverseProperties).
 
 plpred2owlpred(::,classAssertion).
 plpred2owlpred(<,subClassOf).
