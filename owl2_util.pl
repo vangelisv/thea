@@ -9,6 +9,8 @@
            write_owl_as_prolog/0,
            remove_namespaces/0,
            use_labels_for_IRIs/0,
+           translate_IRIs/1,
+           map_IRIs/3,
            write_ontology_summary/0,
            treeview/1,
            treeview/2
@@ -76,12 +78,14 @@ use_label_as_IRI(IRI,X) :-
 use_label_as_IRI(X,X).
 
 
+:- module_transparent translate_IRIs/1.
 translate_IRIs(Goal):-
         findall(A,axiom(A),Axioms),
         maplist(map_IRIs(Goal),Axioms,Axioms2),
         maplist(retract,Axioms),
         maplist(assert_axiom,Axioms2).
 
+:- module_transparent map_IRIs/3.
 map_IRIs(G,X,X2) :-
         atom(X),
         call(G,X,X2),
