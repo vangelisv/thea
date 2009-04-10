@@ -470,6 +470,7 @@ owl_as2prolog(functionalProperty(P), (property(sameIndividuals,x,y) :- (property
 owl_as2prolog(inverseFunctionalProperty(P), (property(sameIndividuals,x,y) :- (property(P,z,x),property(P,y,z))),_) :- !.
 owl_as2prolog(transitiveProperty(P), (property(P,x,y) :- (property(P,x,z),property(P,z,y))),_) :- !.
 owl_as2prolog(symmetricProperty(P), (property(P,x,y) :- property(P,y,x)),_) :- !.
+owl_as2prolog(reflexiveProperty(P), (property(P,x,x) :- property(P,x,y)),_) :- !. % TODO -- check
 %owl_as2prolog(inverseProperties(P,Inv),[(property(P,x,y) :- property(Inv,y,x)),
 %                                        (property(Inv,x,y) :- property(P,y,x))],_) :- !.
 owl_as2prolog(inverseProperties(P,inverseOf(P)),none,_) :- !. % REDUNDANT - do nothing
