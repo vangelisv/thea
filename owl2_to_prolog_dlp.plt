@@ -45,6 +45,35 @@ test(all) :-
                    owl_write_prolog_code(Pl,[]))),
         format('% end~n').
 
+testmap(equivalentClasses([a1,a2]),
+        [(a1(X):-a2(X)),(a2(X):-a1(X))]).
+testmap(equivalentClasses([a_and_b,intersectionOf([a,b])]),
+        (   a_and_b(X):-(a(X),b(X)))).
+testmap(equivalentClasses([a_or_b,unionOf([a,b])]),
+        (   a_or_b(X):-(a(X);b(X)))).
+testmap(equivalentClasses([only_has_part_a,allValuesFrom(has_part,a)]),
+        true).
+testmap(equivalentClasses([only_has_part_a_and_b,
+                           allValuesFrom(has_part,
+                                         intersectionOf([a,b]))]),
+        true).
+testmap(equivalentClasses([ribonucleotide,
+                           allValuesFrom(has_part,
+                                         intersectionOf(['phosphate unit',
+                                                         'ribose ring',
+                                                         intersectionOf([nucleobase,
+                                                                         someValuesFrom(covalently_bonded_to,
+                                                                                        intersectionOf(['ribose ring',
+                                                                                                        someValuesFrom(covalently_bonded_to,
+                                                                                                                       'phosphate unit')]))])]))]),
+        (   true)).
+
+test(x) :-
+        forall(testmap(Owl,PlMatch),
+               (   format('owl: ~w :: expected: ~w~n',[Owl,PlMatch]),
+                   owl_dlpterm(Owl,Pl),
+                   format('  plterm: ~w~n',[Pl]),
+                   owl_write_prolog_code(Pl,[]))).
 
 
 
