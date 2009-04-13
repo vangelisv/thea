@@ -673,68 +673,37 @@ owl_parse_axiom(class(C),AnnMode,List) :-
 	not(class(C)).
 
 
-%owl_parse_axiom(class(C)) :-
-%        use_owl([owl(X,'rdf:type','owl:Axiom'),
-%                 owl(X,'owl:subject',C),
-%                 owl(X,'owl:predicate','rdf:type'),
-%                 owl(X,'owl:object','owl:Class')]).
-
 owl_parse_axiom(datatype(D), AnnMode, List) :-
         test_use_owl(D,'rdf:type','rdf:Datatype'),
         valid_axiom_annotation_mode(AnnMode,D,'rdf:type','rdf:Datatype',List),
         use_owl(D,'rdf:type','rdf:Datatype').
 
-%owl_parse_axiom(datatype(C)) :-
-%        use_owl([owl(X,'rdf:type','owl:Axiom'),
-%                 owl(X,'owl:subject',C),
-%                 owl(X,'owl:predicate','rdf:type'),
-%                 owl(X,'owl:object','owl:Datatype')]).
 
 owl_parse_axiom(objectProperty(D), AnnMode, List) :-
         test_use_owl(D,'rdf:type','owl:ObjectProperty'),
         valid_axiom_annotation_mode(AnnMode,D,'rdf:type','rdf:ObjectProperty',List),
-        use_owl(D,'rdf:type','owl:ObjectProperty').
+        use_owl(D,'rdf:type','owl:ObjectProperty'),
+	not(objectProperty(D)).
 
-%owl_parse_axiom(objectProperty(C)) :-
-%        use_owl([owl(X,'rdf:type','owl:Axiom'),
-%                 owl(X,'owl:subject',C),
-%                 owl(X,'owl:predicate','rdf:type'),
-%                 owl(X,'owl:object','owl:ObjectProperty')]).
 
 % note the difference in names between syntax and rdf
 owl_parse_axiom(dataProperty(D), AnnMode, List) :-
         test_use_owl(D,'rdf:type','owl:DatatypeProperty'),
         valid_axiom_annotation_mode(AnnMode,D,'rdf:type','rdf:DatatypeProperty',List),
-        use_owl(D,'rdf:type','owl:DatatypeProperty').
-
-%owl_parse_axiom(dataProperty(C)) :-
-%        use_owl([owl(X,'rdf:type','owl:Axiom'),
-%                 owl(X,'owl:subject',C),
-%                 owl(X,'owl:predicate','rdf:type'),
-%                 owl(X,'owl:object','owl:DatatypeProperty')]).
+        use_owl(D,'rdf:type','owl:DatatypeProperty'),
+		not(dataProperty(D)).
 
 owl_parse_axiom(annotationProperty(D), AnnMode, List) :-
         test_use_owl(D,'rdf:type','owl:AnnotationProperty'),
         valid_axiom_annotation_mode(AnnMode,D,'rdf:type','rdf:AnnotationProperty',List),
         use_owl(D,'rdf:type','owl:AnnotationProperty').
 
-%owl_parse_axiom(annotationProperty(C)) :-
-%        use_owl([owl(X,'rdf:type','owl:Axiom'),
-%                 owl(X,'owl:subject',C),
-%                 owl(X,'owl:predicate','rdf:type'),
-%                 owl(X,'owl:object','owl:AnnotationProperty')]).
 
 % TODO: check this. do we need to assert individual axioms if all we have is an rdf:type?
 owl_parse_axiom(namedIndividual(D), AnnMode, List) :-
         test_use_owl(D,'rdf:type','owl:NamedIndividual'),
         valid_axiom_annotation_mode(AnnMode,D,'rdf:type','rdf:NamedIndividual',List),
         use_owl(D,'rdf:type','owl:NamedIndividual').
-
-%owl_parse_axiom(namedIndividual(C)) :-
-%        use_owl([owl(X,'rdf:type','owl:Axiom'),
-%                 owl(X,'owl:subject',C),
-%                 owl(X,'owl:predicate','rdf:type'),
-%                 owl(X,'owl:object','owl:NamedIndividual')]).
 
 
 % Table 8. Identifying Anonymous Individuals in Reification
@@ -1245,9 +1214,10 @@ owl_parse_axiom(propertyRange(PX,CX),AnnMode,List) :-
 	test_use_owl(P,'rdfs:range',C),
 	valid_axiom_annotation_mode(AnnMode,P,'rdfs:range',C,List),
         use_owl(P,'rdfs:range',C),
-	(   annotationProperty(P), CX = C ; 
+	(   annotationProperty(P) -> PX = P, CX = C ; 
 	    owl_property_expression(P,PX),
-            (   owl_description(C,CX) ; owl_datarange(C,CX))
+	    print(PX-C),nl,
+            (   owl_description(C,CX) -> true ; owl_datarange(C,CX))
 	).
 
 
