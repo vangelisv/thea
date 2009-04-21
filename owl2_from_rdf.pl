@@ -41,6 +41,7 @@
 	    collapse_ns/4,
 
             valid_axiom_annotation_mode/5,
+	    uri_split/4,
 	   
 	    blanknode/3,
 	    blanknode_gen/2,
@@ -117,6 +118,7 @@ owl_parse(URL, RDF_Load_Mode, OWL_Parse_Mode,ImportFlag) :-
         debug(owl_parser,'Loading stream ~w',[URL]),
 	owl_canonical_parse_2([URL],URL,ImportFlag,[],ProcessedIRI),
 	(   OWL_Parse_Mode=complete -> owl_clear_as,retractall(owl(_,_,_,used(_))),retractall(owl(_,_,_,used))  ; true),!,
+	owl2_model_init,
 	owl_canonical_parse_3(ProcessedIRI).
 	        
 

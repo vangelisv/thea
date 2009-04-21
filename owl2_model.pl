@@ -100,7 +100,9 @@
            axiom_references/2,
            
            assert_axiom/1,
-           retract_all_axioms/0
+           retract_all_axioms/0,
+	   owl2_model_init/0
+	   
 	  ]).
 :- require([ is_list/1
 	   , current_prolog_flag/2
@@ -200,6 +202,7 @@ relation('AnnotationProperty',1).
 attribute(1,'AnnotationProperty','IRI',string).
 axiom_arguments(annotationProperty,[iri]).
 valid_axiom(annotationProperty(A)) :- subsumed_by([A],[iri]).
+
 
 %% individual(?IRI)
 % Individuals represent actual objects from the domain being modeled
@@ -1070,6 +1073,11 @@ assert_axiom(Axiom) :-
 retract_all_axioms :-
         findall(A,axiom(A),Axioms),
         maplist(retract,Axioms).
+
+
+owl2_model_init :-
+	assert(annotationProperty('http://www.w3.org/2000/01/rdf-schema#label')),
+	assert(annotationProperty('http://www.w3.org/2000/01/rdf-schema#comment')).
 
 
 
