@@ -1,4 +1,4 @@
-/* -*- Mode: Prolog -*- */
+% * -*- Mode: Prolog -*- */
 % **********************************************************************
 %                                OWL PARSER
 % Author: Vangelis Vassiliadis
@@ -550,7 +550,7 @@ following notation is used in the patterns:
 owl_description_list('http://www.w3.org/1999/02/22-rdf-syntax-ns#nil',[]) :- !.
 	     
 owl_description_list(X,[F|R]) :- 
-	use_owl(X,'rdf:type','rdf:List',list),
+	% use_owl(X,'rdf:type','rdf:List',list),
 	use_owl(X,'rdf:first',Element,first),
 	owl_description(Element,F),
 	use_owl(X,'rdf:rest',Y,rest),
@@ -565,7 +565,7 @@ owl_description_list(X,[F|R]) :-
 owl_individual_list('http://www.w3.org/1999/02/22-rdf-syntax-ns#nil',[]) :- !.
 
 owl_individual_list(X,[F|R]) :- 
-	use_owl(X,'rdf:type','rdf:List',list),
+	% use_owl(X,'rdf:type','rdf:List',list),
 	use_owl(X,'rdf:first',F,first),
 	use_owl(X,'rdf:rest',Y,rest),
 	!,owl_individual_list(Y,R).
@@ -578,7 +578,7 @@ owl_individual_list(X,[F|R]) :-
 owl_property_list('http://www.w3.org/1999/02/22-rdf-syntax-ns#nil',[]) :- !.
 	     
 owl_property_list(X,[F|R]) :- 
-	use_owl(X,'rdf:type','rdf:List',list),
+	% use_owl(X,'rdf:type','rdf:List',list),
 	use_owl(X,'rdf:first',Element,first),
 	owl_property_expression(Element,F),
 	use_owl(X,'rdf:rest',Y,rest),
@@ -592,7 +592,7 @@ owl_property_list(X,[F|R]) :-
 owl_datarange_list('http://www.w3.org/1999/02/22-rdf-syntax-ns#nil',[]) :- !.
 	     
 owl_datarange_list(X,[F|R]) :- 
-	use_owl(X,'rdf:type','rdf:List',list),
+	% use_owl(X,'rdf:type','rdf:List',list),
 	use_owl(X,'rdf:first',Element,first),
 	owl_datarange(Element,F),
 	use_owl(X,'rdf:rest',Y,rest),
@@ -1196,7 +1196,7 @@ owl_parse_axiom(propertyDomain(PX,CX),AnnMode,List) :-
         use_owl(P,'rdfs:domain',C),
 	(   annotationProperty(P),CX = C ; 
 	    owl_property_expression(P,PX),
-	    owl_description(C,CX)
+	    owl_description(C,CX) 
 	).
 
 % We need to distinguish here between object and data property
