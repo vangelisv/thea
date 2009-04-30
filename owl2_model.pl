@@ -399,7 +399,6 @@ axiom_arguments(inverseProperties,[objectPropertyExpression, objectPropertyExpre
 valid_axiom(inverseProperties(A, B)) :- subsumed_by([A, B],[objectPropertyExpression, objectPropertyExpression]).
 
 %% propertyDomain(?PropertyExpression, ?CE)
-%% VV --> corrected from IRI to CE...
 %  A property domain axiom PropertyDomain( PE CE ) states that the
 %  domain of the property expression PE is CE
 % (extensional predicate - can be asserted)
