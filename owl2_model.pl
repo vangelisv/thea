@@ -101,7 +101,9 @@
            axiom_references/2,
            
            assert_axiom/1,
-           retract_all_axioms/0
+           retract_all_axioms/0,
+	   owl2_model_init/0
+	   
 	  ]).
 :- require([ is_list/1
 	   , current_prolog_flag/2
@@ -201,6 +203,7 @@ relation('AnnotationProperty',1).
 attribute(1,'AnnotationProperty','IRI',string).
 axiom_arguments(annotationProperty,[iri]).
 valid_axiom(annotationProperty(A)) :- subsumed_by([A],[iri]).
+
 
 %% individual(?IRI)
 % Individuals represent actual objects from the domain being modeled
@@ -395,15 +398,18 @@ attribute(2,'InverseProperties','ObjectPropertyExpression2:ObjectPropertyExpress
 axiom_arguments(inverseProperties,[objectPropertyExpression, objectPropertyExpression]).
 valid_axiom(inverseProperties(A, B)) :- subsumed_by([A, B],[objectPropertyExpression, objectPropertyExpression]).
 
-%% propertyDomain(?PropertyExpression, ?IRI)
-% A  property domain axiom PropertyDomain( PE IRI ) states that the domain of the property expression PE is IRI
+%% propertyDomain(?PropertyExpression, ?CE)
+%% VV --> corrected from IRI to CE...
+%  A property domain axiom PropertyDomain( PE CE ) states that the
+%  domain of the property expression PE is CE
 % (extensional predicate - can be asserted)
+
 :- ext(propertyDomain/2).
 relation('PropertyDomain',2).
 attribute(1,'PropertyDomain','PropertyExpression',string).
-attribute(2,'PropertyDomain','IRI',string).
-axiom_arguments(propertyDomain,[propertyExpression, iri]).
-valid_axiom(propertyDomain(A, B)) :- subsumed_by([A, B],[propertyExpression, iri]).
+attribute(2,'PropertyDomain','ClassExpression',string).
+axiom_arguments(propertyDomain,[propertyExpression, classExpression]).
+valid_axiom(propertyDomain(A, B)) :- subsumed_by([A, B],[propertyExpression, classExpression]).
 
 %% objectPropertyDomain(?ObjectPropertyExpression, ?ClassExpression)
 % An object property domain axiom PropertyDomain( OPE CE ) states that the domain of the object property expression OPE is the class expression CE - that is, if an individual x is connected by OPE with some other individual, then x is an instance of CE
@@ -1069,6 +1075,11 @@ assert_axiom(Axiom) :-
 retract_all_axioms :-
         findall(A,axiom(A),Axioms),
         maplist(retract,Axioms).
+
+
+owl2_model_init :-
+	assert(annotationProperty('http://www.w3.org/2000/01/rdf-schema#label')),
+	assert(annotationProperty('http://www.w3.org/2000/01/rdf-schema#comment')).
 
 
 
