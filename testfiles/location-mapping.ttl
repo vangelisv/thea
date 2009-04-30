@@ -1,0 +1,5 @@
+@prefix lm: <http://jena.hpl.hp.com/2004/08/location-mapping#> .
+
+[] lm:mapping
+  [ lm:name "http://example.org/PeopleOntology" ; lm:altName "file:people.ttl" ] ,
+  [ lm:name "http://example.org/FriendOntology" ; lm:altName "file:friend.ttl" ] .
