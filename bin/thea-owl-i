@@ -8,7 +8,5 @@
 main :-
         current_prolog_flag(argv, Arguments),
         append(_SytemArgs, [--|Args], Arguments), !,
-debug(owl2),
-debug(owl_parser_detail),
         maplist(owl_parse_rdf,Args),
         prolog.
