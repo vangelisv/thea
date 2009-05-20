@@ -65,7 +65,6 @@
 :- dynamic(owl_repository/2). % implements a simple OWL repository: if URL not found, Ontology is read from a repository (local) RURL
 :- multifile(owl_repository/2).
 
-
 % we make this discontiguous so that the code can follow the structure of the document as much as possible
 
 :- discontiguous owl_parse_axiom/1. % DEPRECATED?? -- check with VV
@@ -73,7 +72,6 @@
 
 % hookable
 :- multifile owl_parse_axiom_hook/3.
-
 
 % -----------------------------------------------------------------------		    
 %                                Top Level  Predicates
