@@ -1,3 +1,5 @@
+/* -*- Mode: Prolog -*- */
+
 % **********************************************************************
 %                                OWL to RDF Generator
 % Author: Vangelis Vassiliadis
@@ -17,7 +19,16 @@
 	  ]).
 
 :- use_module(owl2_model).
+:- use_module(owl2_from_rdf).
 :- use_module(library('semweb/rdf_db')).
+
+:- multifile owl2_io:save_axioms_hook/3.
+owl2_io:save_axioms_hook(File,owl,Opts) :-
+        (   member(rdf_load_load(RDF_Load_Mode),Opts)
+        ->  true
+        ;   true),
+        owl_generate_rdf(File,RDF_Load_Mode).
+
 
 owl_generate_rdf(FileName,RDF_Load_Mode) :- 
 	(   RDF_Load_Mode=complete,rdf_retractall(_,_,_); true),
@@ -106,7 +117,7 @@ as2rdf_subclass.
 */    
 
 as2rdf_subclass :-
-	subclassOf(X,Y),
+	subClassOf(X,Y),
 	as2rdf(X,NodeX),as2rdf(Y,NodeY),
 	owl_rdf_assert(NodeX,'rdfs:subClassOf',NodeY), 
 	fail.
