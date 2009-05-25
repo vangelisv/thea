@@ -20,7 +20,9 @@ candidate_description(intersectionOf([X,someValuesFrom(P,Y)])) :-
         classAssertion(XC,XI),
         classAssertion(YC,YI),
         entailed(subClassOf(XC,X)),
-        entailed(subClassOf(YC,Y)). % TODO : subProp
+        class(X),
+        entailed(subClassOf(YC,Y)), % TODO : subProp
+        class(Y).
 
 optimal_description(D) :-
         specific_description(D),
