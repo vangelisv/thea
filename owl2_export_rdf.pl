@@ -33,15 +33,19 @@ owl2_io:save_axioms_hook(File,owl,Opts) :-
 owl_generate_rdf(FileName,RDF_Load_Mode) :- 
 	(   RDF_Load_Mode=complete,rdf_retractall(_,_,_); true),
 	retractall(blanknode_gen(_,_)),
+        debug(owl_exporter,'exporting classes',[]),
 	as2rdf_class,
+        debug(owl_exporter,'exporting subclasses',[]),
 	as2rdf_subclass,
 	%as2rdf_disjointSet,
 	%as2rdf_equivalentSet,
 	%as2rdf_property,
+        debug(owl_exporter,'exporting individuals',[]),
 	as2rdf_individual,
 	%as2rdf_ontology,
 	%as2rdf_sameIndividuals,
 	%as2rdf_differentIndividuals,
+        debug(owl_exporter,'saving',[]),
 	rdf_db:rdf_save(FileName).
 	
 
