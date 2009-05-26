@@ -8,6 +8,7 @@ main :-
         set_prolog_flag(verbose,normal),
         set_test_options([silent(false)]),
         debug(test),
+        debug(owl_exporter),
         debug(basic_reasoner),
         load_test_files([]),
         (   run_tests
