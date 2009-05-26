@@ -148,6 +148,7 @@ entity(A) :- datatype(A).
 axiom_arguments(entity,[iri]).
 valid_axiom(entity(A)) :- subsumed_by([A],[iri]).
 
+%declarationAxiom(individual(A)) :- individual(A). % TODO - check this
 declarationAxiom(namedIndividual(A)) :- namedIndividual(A).
 declarationAxiom(objectProperty(A)) :- objectProperty(A).
 declarationAxiom(dataProperty(A)) :- dataProperty(A).
@@ -210,7 +211,7 @@ valid_axiom(annotationProperty(A)) :- subsumed_by([A],[iri]).
 % @see anonymousIndividual/1, namedIndividual/1
 individual(A) :- anonymousIndividual(A).
 individual(A) :- namedIndividual(A).
-individual(A) :- nonvar(A),iri(A). % TODO
+%individual(A) :- nonvar(A),iri(A). % TODO
 axiom_arguments(individual,[iri]).
 valid_axiom(individual(A)) :- subsumed_by([A],[iri]).
 
