@@ -8,7 +8,7 @@
            save_axioms/3
           ]).
 
-:- use_module(owl2_io).
+:- use_module(owl2_model).
 
 :- multifile load_axioms_hook/3.
 :- multifile save_axioms_hook/3.
@@ -32,6 +32,14 @@ load_axioms(File,Fmt,Opts) :-
 save_axioms(File,Fmt) :-
         load_handler(write,Fmt),
         save_axioms(File,Fmt,[]).
+save_axioms(File,Fmt,_Opts) :-
+        nonvar(Fmt),
+        Fmt=prolog,
+        !,
+        tell(File),
+        forall(axiom(A),
+               format('~q.~n',[A])),
+        told.
 save_axioms(File,Fmt,Opts) :-
         save_axioms_hook(File,Fmt,Opts),
         !.
