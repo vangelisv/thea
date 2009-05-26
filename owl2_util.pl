@@ -9,6 +9,7 @@
            write_owl_as_prolog/0,
            remove_namespaces/0,
            use_labels_for_IRIs/0,
+           prefix_IRIs/1,
            translate_IRIs/1,
            map_IRIs/3,
            write_ontology_summary/0,
@@ -67,8 +68,13 @@ remove_namespaces:-
 use_labels_for_IRIs:-
         translate_IRIs(use_label_as_IRI).
 
+prefix_IRIs(X):-
+        translate_IRIs(prefix_IRI(X)).
+
+
 remove_ns(IRI,X) :-
         concat_atom([_,X],'#',IRI).
+
 use_label_as_IRI(IRI,X) :-
         labelAnnotation_value(IRI,X),
         !.
@@ -76,6 +82,12 @@ use_label_as_IRI(IRI,X) :-
         remove_ns(IRI,X),
         !.
 use_label_as_IRI(X,X).
+
+prefix_IRI(Pre,X,Y) :-
+        (   entity(X) ; ontology(X)),
+        !,
+        atom_concat(Pre,X,Y).
+prefix_IRI(_,X,X) :- !.
 
 
 :- module_transparent translate_IRIs/1.
