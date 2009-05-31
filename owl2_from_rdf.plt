@@ -90,11 +90,23 @@ expected(ontologyAxiom('http://www.w3.org/TR/2003/PR-owl-guide-20031209/food',
 :- begin_tests(hydrology,[setup(load_rdffile)]).
 
 load_rdffile :-
-        owl_parse_rdf('testfiles/Hydrology.owl').
+        owl_parse_rdf('testfiles/Hydrology.owl',[clear(complete)]).
 
 test(loaded) :-
         \+ \+ ontology(_).
 
+test(expected_count) :-
+        debug(test,'Testing counts',[]),
+        findall(Goal,
+                (   expected_count(Goal,Number),
+                    debug(test,'Testing count(~w) == ~w',[Goal,Number]),
+                    aggregate(count,Goal,Goal,ActualNumber),
+                    Number \= ActualNumber,
+                    debug(test,'** FAILED count(~w) = ~w, expected: ~w',[Goal,ActualNumber,Number])),
+                FailedGoals),
+        length(FailedGoals,NumFailed),
+        debug(test,'*** TOTAL FAILED: ~d',[NumFailed]),
+        FailedGoals=[].
 
 test(expected) :-
         findall(Ax,
@@ -107,6 +119,12 @@ test(expected) :-
         debug(test,'*** TOTAL FAILED: ~d',[NumFailed]),
         FailedAxs=[].
 
+        
+
+expected_count(class(_),186).
+
+
+
 expected(class('http://www.ordnancesurvey.co.uk/ontology/Hydrology/v2.0/Hydrology.owl#Canal')).
 
 % TODO: un-functionify literal?
@@ -114,9 +132,7 @@ expected(annotationAssertion('http://www.ordnancesurvey.co.uk/ontology/Rabbit/v1
   'http://www.ordnancesurvey.co.uk/ontology/Hydrology/v2.0/Hydrology.owl#Burn',
   literal('Every Burn is a kind of Stream.\nEvery Burn is only located in exactly 1 of Scotland or Northern England.'))).
 
-% Hydrology declares isPartOf as symmetric -- this seems bizarre but we include it as a test here
-% VV: latest version of rdf parser does not find it
-expected(symmetricProperty('http://www.ordnancesurvey.co.uk/ontology/MereologicalRelations/v0.2/MereologicalRelations.owl#isPartOf')).
+expected(symmetricProperty('http://www.ordnancesurvey.co.uk/ontology/SpatialRelations/v0.2/SpatialRelations.owl#isAdjacentTo')).
 
 % check to make sure annotationAssertions and propertyAssertions are handled correctly
 % AP:
