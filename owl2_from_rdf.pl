@@ -1093,7 +1093,10 @@ owl_restriction_type(E, P, maxCardinality(N,PX,DX)) :-
 
 % valid_axiom_annotation_mode: add clauses for the disjoint etc ....
 
-%% valid_axiom_annotation_mode(+Mode,+S,+P,+O,?List) :-
+%% valid_axiom_annotation_mode(+AnnMode,+S,+P,+O,?AnnotationNodes:list) is det
+% if AnnMode is true and annotation triples can be found then
+% unify AnnotationNodes with the Nodes that annotate the triple,
+% otherwise []
 valid_axiom_annotation_mode(Mode,S,P,O,List) :-
 	findall(Node,(test_use_owl(Node,'rdf:type','owl:Axiom'),
 		      test_use_owl(Node,'owl:subject',S),
