@@ -898,6 +898,7 @@ owl_description(C,D) :-
 	;
 	    true).
 
+% TODO: this leaves behind classAssertions of type owlClass for the bnodes
 owl_description(D,intersectionOf(L)) :- 
 	use_owl(D,'owl:intersectionOf',L1),
 	owl_description_list(L1,L),
@@ -1339,6 +1340,10 @@ owl_parse_axiom(classAssertion(CX,X),AnnMode,List) :-
 	test_use_owl(X,'rdf:type',C),
 	valid_axiom_annotation_mode(AnnMode,X,'rdf:type',C,List),
 	use_owl(X,'rdf:type',C),	
+        % I added this to avoid class assertions for bNodes. Perhaps a better
+        % way is to simply consume the owl4/ triple at the time of translating
+        % the description? --CJM
+        C\='http://www.w3.org/2002/07/owl#Class',
         owl_description(C,CX).
 
 dothislater(propertyAssertion/3).
