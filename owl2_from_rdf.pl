@@ -81,11 +81,15 @@
 owl2_io:load_axioms_hook(File,owl,Opts) :-
         owl_parse_rdf(File,Opts).
 
+%% owl_parse_rdf(+File)
+% as owl_parse_rdf/1 with empty Opts
 owl_parse_rdf(F):-
 	owl_parse_rdf(F,[]).
 
 %% owl_parse_rdf(+File,+Opts:list)
-% @param Opts imports(Boolean) if true, follow imports
+% @param Opts
+%  * imports(ImportFlag:Boolean) if true, follow imports
+%  * clear(Clear) if Clear=complete, clears all axioms in owl2_model
 owl_parse_rdf(F,Opts):-
 	(   member(imports(Imports),Opts)
 	->  true
@@ -106,20 +110,28 @@ owl_parse_rdf(F,Opts):-
 %       If RDF_Load_Mode = complete it first retacts all rdf triples.
 %       If ImportFlag = true it handles owl:import clause at RDF level.
 %
-% owl_parse(+OWL_Parse_Mode).
-            					       
-
+% This implements the mapping defined here:
+% http://www.w3.org/TR/2008/WD-owl2-mapping-to-rdf-20081202/
 owl_parse(URL, RDF_Load_Mode, OWL_Parse_Mode,ImportFlag) :-
-%	(   RDF_Load_Mode=complete,!,rdf_retractall(_,_,_); true),
-	(   RDF_Load_Mode=complete -> rdf_retractall(_,_,_) ; true),
+	(   RDF_Load_Mode=complete
+        ->  rdf_retractall(_,_,_)
+        ;   true),
 	retractall(rdf_db:rdf_source(_,_,_,_)),
         debug(owl_parser,'Loading stream ~w',[URL]),
-	owl_canonical_parse_2([URL],URL,ImportFlag,[],ProcessedIRI),
-	(   OWL_Parse_Mode=complete -> owl_clear_as,retractall(owl(_,_,_,used(_))),retractall(owl(_,_,_,used))  ; true),!,
+	owl_canonical_parse_2([URL],URL,ImportFlag,[],ProcessedIRIs),
+        debug(owl_parser,'rdf_db populated, the following IRIs were processed: ~w',[ProcessedIRIs]),
+	(   OWL_Parse_Mode=complete
+        ->  owl_clear_as,
+            retractall(owl(_,_,_,used(_))),
+            retractall(owl(_,_,_,used))
+        ;   true),
+        !,
 	owl2_model_init,
-	owl_canonical_parse_3(ProcessedIRI).
+	owl_canonical_parse_3(ProcessedIRIs).
 	        
 
+%% owl_canonical_parse_2(+IRIs:list,+ParentIRI,+ImportFlag:boolean,+ProcessedURIsIn:list,?ProcessedURIsOut:list) is det
+% recursively parses all ontologies in IRIs into rdf_db, ensuring none are processed twice.
 owl_canonical_parse_2([],_,_,Processed,Processed) :- !.
 
 owl_canonical_parse_2([IRI|ToProcessRest],ImportFlag,Parent,ProcessedIn,ProcessedOut) :-
@@ -133,8 +145,9 @@ owl_canonical_parse_2([IRI|ToProcessRest],Parent,ImportFlag,ProcessedIn,Processe
 	( nonvar(O) -> Ont = O; Ont = Parent), % in the include case we may need to remove the import...
         debug(owl_parser,'Commencing rdf_2_owl. Generating owl/4',[]),
 	rdf_2_owl(BaseURI,O),  	% move the RDF triples into the owl-Ont/4 facts
-	(   ImportFlag = true -> owl_canonical_parse_2(Imports,Ont,ImportFlag,[O|ProcessedIn],ProcessedIn1) ; 
-	ProcessedIn1=[O|ProcessedIn]),
+	(   ImportFlag = true
+        ->  owl_canonical_parse_2(Imports,Ont,ImportFlag,[O|ProcessedIn],ProcessedIn1)
+        ;   ProcessedIn1=[O|ProcessedIn]),
 	owl_canonical_parse_2(ToProcessRest,Parent,ImportFlag,ProcessedIn1,ProcessedOut).
 
 
