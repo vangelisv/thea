@@ -83,6 +83,10 @@ test(loaded) :-
 test(expected_count) :- test_expected_count.
 test(expected) :-        test_expected.
 
+% TODO: parser still needs to do extra cleaning up
+test(clean) :-
+        \+ ((classAssertion(_,BNode),
+             sub_atom(BNode,_,_,_,'#__Description'))).
         
 
 expected_count(class(_),186).
@@ -115,6 +119,11 @@ expected(ontology('http://www.ordnancesurvey.co.uk/ontology/Hydrology/v2.0/Hydro
 
 % class assertions
 expected(classAssertion('http://www.ordnancesurvey.co.uk/ontology/Hydrology/v2.0/Hydrology.owl#UKCountry', 'http://www.ordnancesurvey.co.uk/ontology/Hydrology/v2.0/Hydrology.owl#scotland')).
+
+expected(subClassOf('http://www.ordnancesurvey.co.uk/ontology/Hydrology/v2.0/Hydrology.owl#LockGate',
+                    someValuesFrom('http://www.ordnancesurvey.co.uk/ontology/MereologicalRelations/v0.2/MereologicalRelations.owl#isPartOf',
+                                   'http://www.ordnancesurvey.co.uk/ontology/Hydrology/v2.0/Hydrology.owl#Lock'))).
+
 
 :- end_tests(hydrology).
 
