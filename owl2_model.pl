@@ -211,7 +211,7 @@ valid_axiom(annotationProperty(A)) :- subsumed_by([A],[iri]).
 % @see anonymousIndividual/1, namedIndividual/1
 individual(A) :- anonymousIndividual(A).
 individual(A) :- namedIndividual(A).
-%individual(A) :- nonvar(A),iri(A). % TODO
+individual(A) :- nonvar(A),iri(A),\+property(A),\+class(A),\+ontology(A). % TODO: check: make individuals the default
 axiom_arguments(individual,[iri]).
 valid_axiom(individual(A)) :- subsumed_by([A],[iri]).
 
