@@ -122,6 +122,7 @@ test(expected) :-
         
 
 expected_count(class(_),186).
+expected_count(symmetricProperty(_),186).
 
 
 
@@ -133,6 +134,7 @@ expected(annotationAssertion('http://www.ordnancesurvey.co.uk/ontology/Rabbit/v1
   literal('Every Burn is a kind of Stream.\nEvery Burn is only located in exactly 1 of Scotland or Northern England.'))).
 
 expected(symmetricProperty('http://www.ordnancesurvey.co.uk/ontology/SpatialRelations/v0.2/SpatialRelations.owl#isAdjacentTo')).
+expected(objectProperty('http://www.ordnancesurvey.co.uk/ontology/SpatialRelations/v0.2/SpatialRelations.owl#isAdjacentTo')).
 
 % check to make sure annotationAssertions and propertyAssertions are handled correctly
 % AP:
@@ -140,6 +142,9 @@ expected(annotationAssertion('http://www.ordnancesurvey.co.uk/ontology/Rabbit/v1
 expected(annotationAssertion('http://www.w3.org/2000/01/rdf-schema#comment', 'http://www.ordnancesurvey.co.uk/ontology/Hydrology/v2.0/Hydrology.owl#MineralWater', literal('Mineral Water is a secondary concept.\nEvery Mineral Water contains Mineral Salts.'))).
 expected(annotationAssertion('http://purl.org/dc/elements/1.1/publisher', 'http://www.ordnancesurvey.co.uk/ontology/Hydrology/v2.0/Hydrology.owl', literal('Ordnance Survey'))).
 expected(annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label', 'http://www.ordnancesurvey.co.uk/ontology/Hydrology/v2.0/Hydrology.owl#Transport', literal('Transport'))).
+expected(classAssertion('http://www.ordnancesurvey.co.uk/ontology/Hydrology/v2.0/Hydrology.owl#Surface', 'http://www.ordnancesurvey.co.uk/ontology/Hydrology/v2.0/Hydrology.owl#EarthsSurface')).
+expected(propertyAssertion('http://www.ordnancesurvey.co.uk/ontology/Topography/v0.1/Topography.owl#isPartOf', 'http://www.ordnancesurvey.co.uk/ontology/Hydrology/v2.0/Hydrology.owl#Northern_England', 'http://www.ordnancesurvey.co.uk/ontology/Topography/v0.1/Topography.owl#England')).
+
 
 expected(ontology('http://www.ordnancesurvey.co.uk/ontology/Hydrology/v2.0/Hydrology.owl')).
 
