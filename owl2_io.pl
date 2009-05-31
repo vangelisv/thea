@@ -13,10 +13,22 @@
 :- multifile load_axioms_hook/3.
 :- multifile save_axioms_hook/3.
 
+%% load_axioms(+File)
+% populates owl2_model axioms from File. Attempts to guess format from extension
 load_axioms(File) :-
         load_axioms(File,_).
+
+%% load_axioms(+File,+Fmt)
+% populates owl2_model axioms from File.
+% Fmt = rdf | owlx | prolog | ...
+% (for non-standard fmts you may have to ensure the required io model is loaded
+%  so the hooks are visible)
 load_axioms(File,Fmt) :-
         load_axioms(File,Fmt,[]).
+
+%% load_axioms(+File,+Fmt,+Opts)
+% as load_axioms/2 with options
+% Opts are Fmt specific - see individual modules for details
 load_axioms(File,Fmt,_Opts) :-
         nonvar(Fmt),
         Fmt=prolog,
@@ -29,9 +41,18 @@ load_axioms(File,Fmt,Opts) :-
 load_axioms(File,Fmt,Opts) :-
         throw(owl2_io('cannot parse fmt for',File,Fmt,Opts)).
 
+%% save_axioms(+File,+Fmt)
+% saves owl2_model axioms to File.
+% Fmt = rdf | owlx | prolog | ...
+% (for non-standard fmts you may have to ensure the required io model is loaded
+%  so the hooks are visible)
 save_axioms(File,Fmt) :-
         load_handler(write,Fmt),
         save_axioms(File,Fmt,[]).
+
+%% save_axioms(+File,+Fmt,+Opts)
+% as save_axioms/2 with options
+% Opts are Fmt specific - see individual modules for details
 save_axioms(File,Fmt,_Opts) :-
         nonvar(Fmt),
         Fmt=prolog,
@@ -56,6 +77,7 @@ load_handler(Dir,Fmt) :-
 format_module(read,rdf,owl2_from_rdf).
 format_module(read,owl,owl2_from_rdf).
 format_module(read,xml,owl2_xml).
+format_module(read,owlx,owl2_xml).
 
 
 /** <module> 
@@ -63,12 +85,17 @@ format_module(read,xml,owl2_xml).
   ---+ Synopsis
 
 ==
-:- use_module(bio(owl2_io)).
+:- use_module(library('thea2/owl2_io')).
+:- use_module(library('thea2/owl2_model')).
 
-% 
-demo:-
-  nl.
-  
+% reads in RDF/OWL and serializes to other formats
+test :-
+        load_axioms('testfiles/wine.owl'), % auto-detects RDF serialization
+        save_axioms('testfiles/wine.owlpl',prolog),
+        save_axioms('testfiles/wine.pl',plsyn),
+        save_axioms('testfiles/wine.owlx',owlx),
+        save_axioms('testfiles/wine.dlp',dlp),
+        save_axioms('testfiles/wine.owlms',manchester).
 
 ==
 

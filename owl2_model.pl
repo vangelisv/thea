@@ -792,6 +792,20 @@ dataRange(DR) :-
     datatypeRestriction(DR).
 
 %% classExpression(+CE) is semidet
+%
+% true if CE is a class expression term, as defined in OWL2
+%
+% Example: =|classExpression(intersectionOf([car,someValuesFrom(hasColor,blue)])))|=
+%
+% Union of:
+%
+%    class/1 | objectIntersectionOf/1 | objectUnionOf/1 |
+%    objectComplementOf/1 | objectOneOf/1 | objectSomeValuesFrom/1 |
+%    objectAllValuesFrom/1 | objectHasValue/1 | objectHasSelf/1 |
+%    objectMinCardinality/1 | objectMaxCardinality/1 |
+%    objectExactCardinality/1 | dataSomeValuesFrom/1 |
+%    dataAllValuesFrom/1 | dataHasValue/1 | dataMinCardinality/1 |
+%    dataMaxCardinality/1 | dataExactCardinality/1
 classExpression(CE):-
         iri(CE) ;               % NOTE: added to allow cases where class is not imported
     class(CE) ;
@@ -1083,13 +1097,11 @@ owl2_model_init :-
 
 
 
-/** <module> OWL2
+/** <module> Ontology language axioms and expressions
 
 ---+ Synopsis
 
-  A model for OWL2
-
-  Example OWL2 ontology in prolog:
+    Example OWL2 ontology as a prolog database:
 ==
 class(organism).
 class(animal).
@@ -1103,6 +1115,8 @@ disjointClasses([herbivore,carnivore]).
   
 ---+ Details
 
+This module is a prolog model of the OWL2 language. It consists of predicates for both OWL2 axioms and expressions.
+
 This model is intended to closely parallel Structural Specification and Functional-Style Syntax for OWL2 (http://www.w3.org/TR/owl2-syntax).
 
 * Axioms and Declarations are modeled as prolog predicates (e.g. SubClassOf --> subClassOf/2)
@@ -1111,24 +1125,33 @@ This model is intended to closely parallel Structural Specification and Function
 * The names should correspond exactly, with the leading uppercase character substituted for a lowercase (to avoid quoting in prolog) - the one exception is Import, which maps to the prolog predicate ontologyImport/2 (to avoid confusion with prolog import/1)
 * Axioms with variable arguments are modeled as prolog predicates that take prolog lists as arguments (e.g. equivalentClasses/1)
 * For programmatic convenience we provide additional abstract predicates that do not necessarily correspond to the OWL syntax (e.g. property/1,fact/1)
- 
+
+
 ---++ Axioms
 
- Extensional predicates are declared for all terminal axiom symbols in the functional syntax;  i.e. subPropertyOf/2, subClassOf/2.
- These can be directly asserted, or compiled from a prolog file.
+Extensional predicates are declared for all terminal axiom symbols in the functional syntax;  i.e. subPropertyOf/2, subClassOf/2.
+These can be directly asserted, or compiled from a prolog file.
 
- Some predicates such as property/1 are intensional - they are defined by prolog rules, and should not be asserted.
- In this case property/1 is defined as annotationProperty/1 or dataProperty/1 or objectProperty/1.
+The terms from the OWL2 structural syntax are taken as primitive,
+i.e. they are extensional / unit-clauses, and designed to be asserted
+or compiled.
 
- We also provide intensional predicates such as subObjectPropertyOf/2
- - satisfaction of this predicate is determined at runtime based on
- type-checking, if subPropertyOf/2 holds
+Some predicates such as property/1 are intensional - these generalize
+over the OWL2 axioms are defined by prolog rules, and should not be
+asserted.  In this case property/1 is defined as annotationProperty/1
+or dataProperty/1 or objectProperty/1.
+
+For the strong typed model, we also provide intensional predicates
+such as subObjectPropertyOf/2 - satisfaction of this predicate is
+determined at runtime based on type-checking, if subPropertyOf/2 holds.
+
 
 ---++ Expressions and Type checking
 
- OWL Axioms can take either entities or expressions as arguments.
+OWL Axioms can take either entities or expressions as arguments.
  Entities are simply prolog atoms corresponding to the IRI.
- Expressions are prolog terms; e.g. =|intersectionOf(a,someValuesFrom(inverseOf(p),b))|=
+ Expressions are prolog terms;
+ e.g. =|intersectionOf(a,someValuesFrom(inverseOf(p),b))|=
 
  (Class expressions are also known as Descriptions)
  
@@ -1184,11 +1207,12 @@ convenience in working with example ontologies
 
 ---++ Structure Sharing
 
-  Should we allow bnode IDs as arguments of predicate axioms for expressions?
+Should we allow bnode IDs as arguments of predicate axioms for
+expressions? I don't think this is necessary.
 
 ---++ Enumeration of expressions
 
-  We provide semi-deterministic predicates of the form
+We provide semi-deterministic predicates of the form
   ?type(+Expression).  Should the mode be extended to allow
   enumeration of all descriptions/expressions? This would probably
   require forcing all expressions to be bnodes OR possibly recursively

@@ -20,8 +20,8 @@ There are a variety of surface forms for OWL2. The goal is to
 eventually support all of these for both parsing and writing. So far
 we have (incomplete) parsers for:
 
-* RDF : owl2_from_rdf.pl
-* OWL-XML : owl2_xml.pl
+* RDF - owl2_from_rdf.pl
+* OWL-XML - owl2_xml.pl
 
 We also allow for reading and writing from prolog factfiles
 

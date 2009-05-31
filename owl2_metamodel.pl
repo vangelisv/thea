@@ -8,6 +8,11 @@
 
 :- use_module(library(lists)). % Yap
 
+%% owlpredicate_typed(?UntypedPredicate,?TypedPredicate) is non det
+%
+% true if UntypedPredicate has a stringly typed for TypedPredicate
+% Example: =|owlpredicate_typed(intersectionOf,objectIntersectionOf)|=
+
 owlpredicate_typed(intersectionOf,objectIntersectionOf).
 owlpredicate_typed(intersectionOf,dataIntersectionOf).
 owlpredicate_typed(someValuesFrom,objectSomeValuesFrom).
@@ -54,6 +59,17 @@ owlpredicate_typed(negativePropertyAssertion, negativeObjectPropertyAssertion).
 owlpredicate_typed(propertyRange, annotationPropertyRange).
 owlpredicate_typed(propertyDomain, annotationPropertyDomain).
 owlpredicate_typed(negativePropertyAssertion, negativeDataPropertyAssertion).
+
+%% owlpredicate_arguments(?TypedPredicate,?ArgumentExpression:list) is semidet
+%
+% ArgumentExpression = [ Datatype | list(CE) | CE ]
+% where CE is a classExpression/1 and Datatype = int | ...
+%
+% This can be used for run-time checking (see valid_axiom/1) and
+% to help write parsers/writers for strongly-typed formats like OWL-XML
+%
+% Example:
+% =|owlpredicate_arguments(objectIntersectionOf,[list(classExpression)])|=
 
 owlpredicate_arguments(objectIntersectionOf,[list(classExpression)]).
 owlpredicate_arguments(dataIntersectionOf,[list(dataExpression)]).

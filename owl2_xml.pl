@@ -373,6 +373,16 @@ xmle_axiom('AnnotationAssertion',annotationAssertion(A, B, C),[A, B, C]).
 
 ---+ Synopsis
 
+Use this module via owl2_io.pl
+  
+==
+:- use_module(library('thea2/owl2_io')).
+:- use_module(library('thea2/owl2_model')).
+
+test :-
+        load_axioms('testfiles/rnao.owlx',owlx),
+        forall(axiom(A),writeln(A)).
+==
 
 ---+ Details
 
@@ -386,6 +396,9 @@ SomeValuesFrom for existential restrictions on both the object and
 data properties, the XML syntax provides two elements
 owl:ObjectSomeValuesFrom and owl:DataSomeValuesFrom.
 
+---++ Status
+
+Alpha - use owl2_from_rdf.pl and OWL-RDF serializations for reliable parsing
 
 ---+ Additional Information
 
