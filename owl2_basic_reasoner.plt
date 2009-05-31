@@ -51,6 +51,8 @@ init_axioms :-
                 propertyAssertion(eats,perch2,shrimp3),
                 propertyAssertion(eats,shrimpzilla,human1),
                 propertyAssertion(eats,shrimpzuki,human1),
+
+                objectProperty(eats),
                 
                 disjointClasses([mammal,fish])
                ],
@@ -66,12 +68,22 @@ test(query) :-
                    writeln(results=RL),
                    RL=ExpectedL)).
 
+test(foo) :-
+        forall(property_assertion_least_common_ancestor(P,XI,YI,XC,YC),
+               writeln(lca(P,XI,YI,XC,YC))),
+        nl.
+
+
 query(subClassOf(cat,X),X,[animal,mammal,organism|_]).
 
 
 expected(subClassOf(man_eating_shrimp,someValuesFrom(eats,human))).
 expected(subClassOf(man_eating_shrimp,dangerous_animal)).
 expected(subClassOf(human,organism)).
+expected(subClassOf(raptor,bird)).
+expected(subClassOfReflexive(raptor,raptor)).
+%expected(subClassOf(cat,someValuesFrom(eats,animal))).
+%expected(subClassOf(cat,carnivore)).
 expected(subClassOf(intersectionOf([mammal, someValuesFrom(eats, animal)]),
                     intersectionOf([mammal, someValuesFrom(eats, organism)]))).
 expected(classAssertion(organism,human1)).
@@ -89,8 +101,6 @@ test_for(A) :-
         ->  debug(test,'  **OK** ~w',[A])
         ;   debug(test,'  **FAIL** ~w',[A]),
             fail).
-
-
 
 :- end_tests(owl2_basic_reasoner).
 

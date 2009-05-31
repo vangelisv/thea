@@ -2,7 +2,9 @@
 
 :- module(owl2_basic_reasoner,
           [
-           entailed/1
+           entailed/1,
+           property_assertion_common_ancestor/5,
+           property_assertion_least_common_ancestor/5
           ]).
 
 :- use_module(owl2_model).
@@ -21,6 +23,8 @@ entailed(A) :-
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 %% entailed(?Axiom,+AlreadyEntailed)
+
+%entailed(A,EL):- debug(owl2_basic_reasoner,'Testing for: ~w Checked: ~w',[A,EL]),fail.
 
 % asserted subprops
 entailed(subPropertyOf(X,Y),_) :- subPropertyOf(X,Y).
@@ -150,6 +154,23 @@ unsatisfiable(X) :-
         pairwise_disjoint_class(A,B),
         entailed(subClassOf(X,A)),
         entailed(subClassOf(X,B)).
+
+% TODO: move this to a utility module
+property_assertion_common_ancestor(P,XI,YI,XC,YC) :-
+        propertyAssertion(P,XI,YI),
+        % TESTING ONLY:
+        sub_atom(XI,0,_,_,'http://ccdb.ucsd.edu/SAO/DPO/2.0/DPO.owl'),
+        debug(owl2_basic_reasoner,'Testing ~w ~w ~w',[P,XI,YI]),
+        entailed(classAssertion(XC,XI)),
+        entailed(classAssertion(YC,YI)).
+
+property_assertion_least_common_ancestor(P,XI,YI,XC,YC) :-
+        property_assertion_common_ancestor(P,XI,YI,XC,YC),
+        \+ ((property_assertion_common_ancestor(P,XI,YI,XC2,YC2),
+             entailed(subClassOfReflexive(XC2,XC)),
+             entailed(subClassOfReflexive(YC2,YC)),
+             (   XC2\=XC ; YC2\=YC))).
+
 
 % ----------------------------------------
 % ABox Reasoning
