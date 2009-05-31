@@ -3,6 +3,7 @@
 :- use_module(owl2_model).
 :- use_module(owl2_from_rdf).
 
+
 :- begin_tests(wine,[setup(load_rdffile)]).
 
 load_rdffile :-
@@ -11,21 +12,11 @@ load_rdffile :-
 test(loaded) :-
         \+ \+ ontology(_).
 
-test(subclasses) :-
-        findall(A-B,subClassOf(A,B),Axs),
-        %maplist(writeln,Axs),
-        Axs\=[].
+test(expected) :-        test_expected.
+test(expected_count) :-        test_expected_count.
 
-test(expected) :-
-        findall(Ax,
-                (   expected(Ax),
-                    debug(test,'Testing for: ~w',[Ax]),
-                    \+ Ax,
-                    debug(test,'** FAILED: ~w',[Ax])),
-                FailedAxs),
-        length(FailedAxs,NumFailed),
-        debug(test,'*** TOTAL FAILED: ~d',[NumFailed]),
-        FailedAxs=[].
+expected_count(class(_),74).
+expected_count(transitiveProperty(_),1).
 
 expected(objectProperty('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#locatedIn')).
 expected(subClassOf('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine', 'http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PotableLiquid')).
@@ -45,21 +36,15 @@ expected(ontologyAxiom('http://www.w3.org/TR/2003/CR-owl-guide-20030818/wine',
 :- begin_tests(wine_and_food,[setup(load_and_import_rdffile)]).
 
 load_and_import_rdffile :-
-        owl_parse_rdf('testfiles/wine.owl',[imports(true)]).
+        owl_parse_rdf('testfiles/wine.owl',[imports(true),clear(complete)]).
 
 test(loaded) :-
         \+ \+ ontology(_).
 
-test(expected) :-
-        findall(Ax,
-                (   expected(Ax),
-                    debug(test,'Testing for: ~w',[Ax]),
-                    \+ Ax,
-                    debug(test,'** FAILED: ~w',[Ax])),
-                FailedAxs),
-        length(FailedAxs,NumFailed),
-        debug(test,'*** TOTAL FAILED: ~d',[NumFailed]),
-        FailedAxs=[].
+test(expected) :-        test_expected.
+test(expected_count) :-        test_expected_count.
+
+expected_count(class(_),137).
 
 % these are replicated from the wine test
 expected(objectProperty('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#locatedIn')).
@@ -95,34 +80,13 @@ load_rdffile :-
 test(loaded) :-
         \+ \+ ontology(_).
 
-test(expected_count) :-
-        debug(test,'Testing counts',[]),
-        findall(Goal,
-                (   expected_count(Goal,Number),
-                    debug(test,'Testing count(~w) == ~w',[Goal,Number]),
-                    aggregate(count,Goal,Goal,ActualNumber),
-                    Number \= ActualNumber,
-                    debug(test,'** FAILED count(~w) = ~w, expected: ~w',[Goal,ActualNumber,Number])),
-                FailedGoals),
-        length(FailedGoals,NumFailed),
-        debug(test,'*** TOTAL FAILED: ~d',[NumFailed]),
-        FailedGoals=[].
-
-test(expected) :-
-        findall(Ax,
-                (   expected(Ax),
-                    debug(test,'Testing for: ~w',[Ax]),
-                    \+ Ax,
-                    debug(test,'** FAILED: ~w',[Ax])),
-                FailedAxs),
-        length(FailedAxs,NumFailed),
-        debug(test,'*** TOTAL FAILED: ~d',[NumFailed]),
-        FailedAxs=[].
+test(expected_count) :- test_expected_count.
+test(expected) :-        test_expected.
 
         
 
 expected_count(class(_),186).
-expected_count(symmetricProperty(_),186).
+expected_count(symmetricProperty(_),3). % isPartOf is declared symmetric - weird..
 
 
 
@@ -153,6 +117,49 @@ expected(ontology('http://www.ordnancesurvey.co.uk/ontology/Hydrology/v2.0/Hydro
 expected(classAssertion('http://www.ordnancesurvey.co.uk/ontology/Hydrology/v2.0/Hydrology.owl#UKCountry', 'http://www.ordnancesurvey.co.uk/ontology/Hydrology/v2.0/Hydrology.owl#scotland')).
 
 :- end_tests(hydrology).
+
+:- begin_tests(edge_cases,[setup(load_rdffile)]).
+
+load_rdffile :-
+        owl_parse_rdf('testfiles/rdfowl_test.owl',[clear(complete)]).
+
+test(loaded) :-
+        \+ \+ ontology(_).
+
+test(expected_count) :- test_expected_count.
+
+expected_count(class(_),4).
+
+:- end_tests(edge_cases).
+
+% TEST UTILITY PREDICATES
+
+:- module_transparent test_expected_count/0.
+test_expected_count :-
+        debug(test,'Testing counts',[]),
+        findall(Goal,
+                (   expected_count(Goal,Number),
+                    debug(test,'Testing count(~w) == ~w',[Goal,Number]),
+                    aggregate(count,Goal,Goal,ActualNumber),
+                    Number \= ActualNumber,
+                    debug(test,'** FAILED count(~w) = ~w, expected: ~w',[Goal,ActualNumber,Number])),
+                FailedGoals),
+        length(FailedGoals,NumFailed),
+        debug(test,'*** TOTAL FAILED: ~d',[NumFailed]),
+        FailedGoals=[].
+
+:- module_transparent test_expected/0.
+test_expected :- 
+        findall(Ax,
+                (   expected(Ax),
+                    debug(test,'Testing for: ~w',[Ax]),
+                    \+ Ax,
+                    debug(test,'** FAILED: ~w',[Ax])),
+                FailedAxs),
+        length(FailedAxs,NumFailed),
+        debug(test,'*** TOTAL FAILED: ~d',[NumFailed]),
+        FailedAxs=[].
+
 
 /** <module> tests for OWL2 RDF parser
 
