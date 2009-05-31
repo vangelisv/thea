@@ -151,6 +151,14 @@ owl_canonical_parse_2([IRI|ToProcessRest],Parent,ImportFlag,ProcessedIn,Processe
 	owl_canonical_parse_2(ToProcessRest,Parent,ImportFlag,ProcessedIn1,ProcessedOut).
 
 
+%% owl_canonical_parse_3(+IRIs:list) is det
+% translate the current rdf_db into owl2_model axioms.
+% First owl/4 facts are populated, and then these are translated
+% according to:
+% http://www.w3.org/TR/2008/WD-owl2-mapping-to-rdf-20081202/
+% (table references refer to this document).
+% we use an intermediate owl/4 database because the mapping
+% is non-monotonic, and triples are 'consumed'
 owl_canonical_parse_3([]).
 
 owl_canonical_parse_3([IRI|Rest]) :-
