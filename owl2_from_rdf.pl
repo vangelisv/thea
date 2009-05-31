@@ -172,9 +172,12 @@ owl_canonical_parse_3([IRI|Rest]) :-
 	        forall(member(owl(S,P,O),Remove),use_owl(S,P,O,removed))),
 
 	% replace matched patterns (Table 6)
-	forall((triple_replace(Pattern,Remove), use_owl(Pattern)),
-	       forall(member(owl(S,P,O),Remove),assert(owl(S,P,O,not_used)))),
-
+	forall(triple_replace(Pattern,ReplaceWith),
+               forall(use_owl(Pattern),
+                      forall(member(owl(S,P,O),ReplaceWith),
+                             (   expand_and_assert(S,P,O),
+                                 debug(owl_parser,'Replacing ~w ==> ~w [see table 6]',[Pattern,owl(S,P,O)]))))),
+        
 	% continue with parsing using the rules...
         owl_parse_annotated_axioms(ontology/1),
 	
@@ -199,7 +202,6 @@ owl_canonical_parse_3([IRI|Rest]) :-
 	% annotation Assertion
 	parse_annotation_assertions,
 	owl_canonical_parse_3(Rest).
-
 
 omitthis(ontology/1).
 
@@ -335,24 +337,42 @@ owl_fix_no(A,A).
 owl_count(O,U) :- 
 	findall(1,owl(_,_,_,O),X), length(X,U).
 
+%% expand_and_assert(S,P,O) is det
+% adds a owl(S,P,O,not_used) after expanding namespaces.
+% this is required for the triple replacement rules,
+% which use shortened rdfs/owl namespaces.
+% (or we could just use the expanded forms here which
+%  may be faster..)
+expand_and_assert(X1,Y1,Z1) :- 
+	expand_ns(X1,X),
+	expand_ns(Y1,Y),
+	expand_ns(Z1,Z),!,
+	assert(owl(X,Y,Z, not_used)).
+        
 
-%%       test_use_owl(+Triples:list)   
-%	As use_owl/1, but does not consume the triple	
-
-test_use_owl([]) :- !.
+%%       test_use_owl(+Triples:list) is nondet
+%
+%       As use_owl/1, but does not consume the triple.  If owl(S,P,O)
+%       in Triples has a non-ground variable then this will succeed
+%       non-deterministically.  If all variables are ground, then this
+%       will succeed semi-deterministically.
+test_use_owl([]).
 test_use_owl([owl(S,P,O)|Rest]) :-
-	test_use_owl(S,P,O),!,
+	test_use_owl(S,P,O),
 	test_use_owl(Rest).
 
 
 %%       test_use_owl(?S,?P,?O)   
 %	As use_owl/3, but does not consume the triple. Expands the S,P,O.
+%
+%       If any of S, P or O is non-ground then this will succeed
+%       non-deterministically.  If all variables are ground, then this
+%       will succeed semi-deterministically.
 test_use_owl(X1,Y1,Z1) :- 
 	expand_ns(X1,X),
 	expand_ns(Y1,Y),
 	expand_ns(Z1,Z),!,
 	owl(X,Y,Z, not_used).
-
 
 test_use_owl(X1,Y1,Z1,named) :- 
 	expand_ns(X1,X),
@@ -366,10 +386,14 @@ test_use_owl(X1,Y1,Z1,named) :-
 %	Marks a list of OWL triples as used, but only if all match. Expands the S,P,O.
 
 use_owl(Triples) :-
-        forall(member(owl(S,P,O),Triples),
-               test_use_owl(S,P,O)),
-        forall(member(owl(S,P,O),Triples),
-               use_owl(S,P,O)).
+        test_use_owl(Triples),
+        use_owl_2(Triples).
+
+% consume all triples; we have already tested the list and know that all match
+use_owl_2([]).
+use_owl_2([owl(S,P,O)|Triples]) :-
+        use_owl(S,P,O),
+        use_owl_2(Triples).
 
 %%       use_owl(?S,?P,?O)   
 %	Marks an OWL triple as used. Expands the S,P,O.
@@ -665,8 +689,6 @@ triple_remove([owl(X,'rdf:type','owl:AnnotationProperty'),owl(X,'rdf:type','rdf:
 triple_remove([owl(X,'rdf:type','owl:OntologyProperty'),owl(X,'rdf:type','rdf:Property')],[owl(X,'rdf:type','rdf:Property')]).
 triple_remove([owl(X,'rdf:type','rdf:List'),owl(X,'rdf:first',_Y),owl(X,'rdf:rest',_Z)],[owl(X,'rdf:type','rdf:List')]).
 
-
-
 % See table 6.
 % http://www.w3.org/TR/2008/WD-owl2-mapping-to-rdf-20081202/
 triple_replace([owl(X,'rdf:type','owl:OntologyProperty')],[owl(X,'rdf:type','owl:AnnotationProperty')]).
@@ -674,6 +696,8 @@ triple_replace([owl(X,'rdf:type','owl:InverseFunctionalProperty')],[owl(X,'rdf:t
 triple_replace([owl(X,'rdf:type','owl:TransitiveProperty')],[owl(X,'rdf:type','owl:ObjectProperty'),owl(X,'rdf:type','owl:TransitiveProperty')]).
 triple_replace([owl(X,'rdf:type','owl:SymmetricProperty')],[owl(X,'rdf:type','owl:ObjectProperty'),owl(X,'rdf:type','owl:SymmetricProperty')]).
 
+% NOTE: this is not specified in table 6. However, we treat rdfs:Classes as equivalent to owl:Classes
+triple_replace([owl(X,'rdf:type','rdfs:Class')],[owl(X,'rdf:type','owl:Class')]).
 
 % DECLARATIONS
 
