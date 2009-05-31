@@ -2,11 +2,30 @@
 
 :- module(owl2_classifier,
           [
+           generate_class_expressions/0,
            optimal_description/1
           ]).
 
 :- use_module(owl2_model).
 :- use_module(owl2_basic_reasoner).
+
+% failure-driven loop to avoid stack overflow
+generate_class_expressions :-
+        generate_class_expression(C),
+        \+ generated(C),
+        format('~q.~n',[C]),
+        assert(generated(C)),
+        fail.
+generate_class_expressions :-
+        format('%% done.~n').
+
+
+generate_class_expression( intersectionOf(XC,someValuesFrom(P,YC)) ):-
+        property_assertion_least_common_ancestor(P,_,_,XC,YC).
+
+        
+
+%% EVERYTHING BELOW HERE IS OLD
 
 description_instance(D,I) :-
         entailed(classAssertion(D,I)).
@@ -56,8 +75,6 @@ demo:-
 
 ---+ Details
 
-This is a collection of very ad-hoc predicates for doing things with OWL.
-This should not be regarded as stable.
 
 
 ---+ Additional Information
