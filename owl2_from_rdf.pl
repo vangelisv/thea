@@ -1338,44 +1338,20 @@ owl_parse_axiom(differentIndividuals(L),_AnnMode,[X]) :-
 	use_owl(X,'owl:memebrs',L1),	
         owl_individual_list(L1,L).
 
-dothislater(classAssertion/2).
-owl_parse_axiom(classAssertion(CX,X),AnnMode,List) :-
-	test_use_owl(X,'rdf:type',C),
-	valid_axiom_annotation_mode(AnnMode,X,'rdf:type',C,List),
-	use_owl(X,'rdf:type',C),	
-        % I added this to avoid class assertions for bNodes. Perhaps a better
-        % way is to simply consume the owl4/ triple at the time of translating
-        % the description? --CJM
-        C\='http://www.w3.org/2002/07/owl#Class',
-        owl_description(C,CX).
 
-dothislater(propertyAssertion/3).
-owl_parse_axiom(propertyAssertion(PX,A,B),AnnMode,List) :-
-        test_use_owl(A,P,B), % B can be literal or individual
-	valid_axiom_annotation_mode(AnnMode,A,P,B,List),		
-        \+ annotationProperty(P), % these triples should have been removed before, during ann parsing
-        use_owl(A,P,B),
-        owl_property_expression(P,PX). % can also be inverse
-
-
-owl_parse_axiom(negativePropertyAssertion(PX,A,B),_,X) :-
-        use_owl(X,'rdf:type','owl:NegativePropertyAssertion'),
-        use_owl(X,'owl:sourceIndividual',A),
-        use_owl(X,'owl:assertionProperty',P),
-        use_owl(X,'owl:targetValue',B),
-        owl_property_expression(P,PX). 
-
-
+% make sure this is done before fetching classAssertion/2;
+% this clause should precede it
 owl_parse_axiom(annotationAssertion('owl:deprecated', X, true),AnnMode,List) :-
 	test_use_owl(X, 'rdf:type', 'owl:DeprecatedClass'),
 	valid_axiom_annotation_mode(AnnMode,X,'rdf:type','owl:DeprecatedClass',List),
 	use_owl(X, 'rdf:type', 'owl:DeprecatedClass').
 
+% make sure this is done before fetching propertyAssertion/3
+% this clause should precede it
 owl_parse_axiom(annotationAssertion('owl:deprecated', X, true),AnnMode,List) :-
 	test_use_owl(X, 'rdf:type', 'owl:DeprecatedProperty'),
 	valid_axiom_annotation_mode(AnnMode,X,'rdf:type','owl:DeprecatedProperty',List),
 	use_owl(X, 'rdf:type', 'owl:DeprecatedProperty').
-
 
 	
 % Table 17. Parsing of Annotated Axioms
@@ -1390,6 +1366,35 @@ owl_parse_axiom(annotationAssertion(P,A,B),AnnMode,List) :-
         test_use_owl(A,P,B),         % B can be literal or individual
         valid_axiom_annotation_mode(AnnMode,A,P,B,List),
         use_owl(A,P,B).
+
+dothislater(classAssertion/2).
+owl_parse_axiom(classAssertion(CX,X),AnnMode,List) :-
+	test_use_owl(X,'rdf:type',C),
+        C\='http://www.w3.org/2002/07/owl#DeprecatedClass',
+	valid_axiom_annotation_mode(AnnMode,X,'rdf:type',C,List),
+	use_owl(X,'rdf:type',C),	
+        % I added this to avoid class assertions for bNodes. Perhaps a better
+        % way is to simply consume the owl4/ triple at the time of translating
+        % the description? --CJM
+        C\='http://www.w3.org/2002/07/owl#Class',
+        owl_description(C,CX).
+
+dothislater(propertyAssertion/3).
+owl_parse_axiom(propertyAssertion(PX,A,B),AnnMode,List) :-
+        test_use_owl(A,P,B), % B can be literal or individual
+        P\='http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
+	valid_axiom_annotation_mode(AnnMode,A,P,B,List),		
+        \+ annotationProperty(P), % these triples should have been removed before, during ann parsing
+        use_owl(A,P,B),
+        owl_property_expression(P,PX). % can also be inverse
+
+
+owl_parse_axiom(negativePropertyAssertion(PX,A,B),_,X) :-
+        use_owl(X,'rdf:type','owl:NegativePropertyAssertion'),
+        use_owl(X,'owl:sourceIndividual',A),
+        use_owl(X,'owl:assertionProperty',P),
+        use_owl(X,'owl:targetValue',B),
+        owl_property_expression(P,PX). 
 
 	
 % process hooks; SWRL etc
