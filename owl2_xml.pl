@@ -165,7 +165,9 @@ owl_generate_xml(File,_Opts) :-
         ;   Ont='http://example.com',Axioms2=Axioms),
         ontology_xml(Ont,Axioms2,XML),
         debug(owl_exporter,'Writing to ~w',[XML]),
-        open(File,write,IO,[dialect(xml)]),
+        (   nonvar(File)
+        ->  open(File,write,IO,[dialect(xml)])
+        ;   open(pipe(cat),write,IO,[dialect(xml)])),
         xml_write(IO,XML,[
 %                          nsmap([owlx='http://www.w3.org/2006/12/owl2-xml#'])
                          ]),
