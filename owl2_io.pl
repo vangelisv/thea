@@ -29,6 +29,11 @@ load_axioms(File,Fmt) :-
 %% load_axioms(+File,+Fmt,+Opts)
 % as load_axioms/2 with options
 % Opts are Fmt specific - see individual modules for details
+load_axioms(File,Fmt,Opts) :-
+        var(Fmt),
+        guess_format(File,Fmt,Opts),
+        !,
+        load_axioms(File,Fmt,Opts).
 load_axioms(File,Fmt,_Opts) :-
         nonvar(Fmt),
         Fmt=prolog,
@@ -57,7 +62,9 @@ save_axioms(File,Fmt,_Opts) :-
         nonvar(Fmt),
         Fmt=prolog,
         !,
-        tell(File),
+        (   nonvar(File)
+        ->  tell(File)
+        ;   true),
         forall(axiom(A),
                format('~q.~n',[A])),
         told.
@@ -72,12 +79,26 @@ load_handler(Dir,Fmt) :-
                (   atom_concat('thea2/',Mod,TMod),
                    ensure_loaded(library(TMod)))).
 
+guess_format(File,Fmt,_Opts) :-
+        concat_atom(Toks,'.',File),
+        reverse(Toks,[Suffix,_|_]),
+        suffix_format(Suffix,Fmt).
+
+suffix_format(pro,prolog).
+suffix_format(prolog,prolog).
+suffix_format(pl,prolog).
+suffix_format(plsyn,plsyn).
+suffix_format(owl,owl).
+suffix_format(owlx,owlx).
+
 
 :- multifile format_module/3.
 format_module(read,rdf,owl2_from_rdf).
 format_module(read,owl,owl2_from_rdf).
 format_module(read,xml,owl2_xml).
 format_module(read,owlx,owl2_xml).
+
+format_module(write,owlx,owl2_xml).
 
 
 /** <module> 
