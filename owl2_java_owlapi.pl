@@ -565,10 +565,10 @@ using OWLAPI to save files:
 [owl2_model].
 [owl2_java_owlapi].
 [owl2_from_rdf].
-owl_parse_rdf('testfiles/Hydrology.owl'),
+owl_parse_rdf('testfiles/Hydrology.owl'), % parse using prolog/thea
 create_factory(Man,Fac),
 build_ontology(Man,Fac,Ont),
-save_ontology(Man,Ont,'file:///tmp/foo').
+save_ontology(Man,Ont,'file:///tmp/foo'). % save using owlapi
 ==  
 
 using a reasoner:
