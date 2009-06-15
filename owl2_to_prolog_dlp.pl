@@ -101,9 +101,18 @@ owl_write_prolog_code( (A,B), Options ) :- !,
 % Generate code for a prolog rule Head :- Body 
 % 
 
-owl_write_prolog_code(:-(H,B),Options) :-!,
+owl_write_prolog_code( ( ( H1; H2) :- B), Options) :- !,
+        (   member(disjunctive_datalog(true),Options)
+        ->  owl_write_prolog_head_disjunction((H1;H2),Options),
+            write(':-'),            
+	    nl, write('     '), 
+	    owl_write_prolog_code(B,Options), 
+	    write('.'), nl
+        ;   true).
+        
+owl_write_prolog_code( (H :- B), Options) :-!,
 	(   H = false , ! 
-	; 
+	;   
 	B = false , ! 
 	; 
 	H = [], ! 
@@ -113,8 +122,11 @@ owl_write_prolog_code(:-(H,B),Options) :-!,
 	    owl_write_prolog_code(R,Options) % rewrite rule (a,b) :- c ==> a :- c and b:-c
 
 	; 
-	H = :-(H1,H2) , !, 
+	H = (H1 :- H2) , !, 
 	    owl_write_prolog_code(:-(H1,(H2,B)),Options) % rewrite rule a :- b) :- c ==> a :- b,c
+	; 
+	H = (H1 ; H2) , !, 
+	    owl_write_prolog_head_disjunction(H,Options)
 	;  
 	B = none, !, % It is a fact (no body).
 	    owl_write_prolog_code(H,Options), write('.'), nl
@@ -152,20 +164,24 @@ owl_write_prolog_code(property(_,_,literal(_)),Options) :-
         write(true),
         !.
 owl_write_prolog_code(property(P,X,Y),Options) :- !, 
-	collapse_ns(P,P1,'_',Options),collapse_ns(Y,Y1,':',[]),collapse_ns(X,X1,':',[]),
+	collapse_ns(P,P1,'_',Options),
 	writeq(P1),  write('('),
-	(   X = x, !, write('X') ; 
-	X = y, !, write('Y') ; 
-	X = z, !, write('Z') ; 
-	X = var , !, write('_'); 
-	writeq(X1)
+	(   X = x, !, write('X') 
+        ;   X = y, !, write('Y')  
+        ;   X = z, !, write('Z')  
+        ;   X = v(NX), !, write('V'),write(NX)  
+        ;   X = var , !, write('_') 
+        ;   collapse_ns(X,X1,':',[]),
+            writeq(X1)
 	),	
 	write(','),
-	(   Y = x, !, write('X') ; 
-	Y = y, !, print('Y') ; 
-	Y = z, !, print('Z') ; 
-	Y = var , !, print('_'); 
-	writeq(Y1)
+	(   Y = x, !, write('X')  
+	;   Y = y, !, print('Y')  
+	;   Y = z, !, print('Z')  
+        ;   Y = v(NY), !, write('V'),write(NY)  
+	;   Y = var , !, print('_') 
+	;   collapse_ns(Y,Y1,':',[]),
+            writeq(Y1)
 	),
 	write(')').
 
@@ -191,6 +207,24 @@ owl_write_prolog_code(none,_Options) :- !.
 
 owl_write_prolog_code(Term,_Options) :-
 	writeq(Term).
+
+owl_write_prolog_head_disjunction((H1;H2),Options) :-
+        member(head_disjunction_symbol(Op),Options),
+        !,
+        owl_write_prolog_code(H1,Options),
+        write(' '),
+        write(Op),
+        write(' '),
+        owl_write_prolog_head_disjunction(H2,Options).
+owl_write_prolog_head_disjunction(H,Options) :-
+        !,
+        owl_write_prolog_code(H,Options).
+
+
+
+
+
+
 
 %
 % used in case of conjunction in the head. Used in rewrite rule
@@ -221,7 +255,8 @@ map_head_conjunction(B,H, :-(H,B)).
 % restr value    p(ID,V)               p(ID,V)          p(ID,V) 
 % restr all      C(Y):-P(X,Y),D(X)     -                C(Y):-P(ID,Y). 
 % restr some     -		       C(X):-P(X,Y),D(Y) -
-
+%
+% Mode = head | body | fact
 
 owl_as2prolog(class(_),none,_) :- !.
 
@@ -296,11 +331,15 @@ owl_as2prolog(description(intersectionOf(DL),X),R,Param):- !,
 
 
 % 
-% Union (use of Or) cannot be handled in the head of a rule.
+% Union (use of Or) cannot be handled in the head of a rule in prolog.
+% However, we allow the possibility of translation to extensions such as disjunctive datalog.
+% Here we create a prolog term with a disjunction in the head; it is up to the prolog writing
+% part whether to exclude this or not
 %
 
-% TODO: add hook to handle this in disjunctive datalog mode
-owl_as2prolog(description(unionOf(_),_),false,head):-!.
+%owl_as2prolog(description(unionOf(_),_),false,head):-!.
+owl_as2prolog(description(unionOf(DL),X),R,head):-!,
+        owl_as2prolog(description_list(DL,X,';'),R,body). % hacky-trick to treat head as body for disjunctions
 
 % 
 % Union generates ; separated terms.
@@ -424,6 +463,12 @@ owl_as2prolog(subPropertyOf(P,SuperP),(PE :- SPE),_) :- !,
         owl_as2prolog(propertyExpression(SuperP),SPE,body).
 
 owl_as2prolog(propertyExpression(inverseOf(P)),property(P,y,x), _) :- !.
+
+%owl_as2prolog(propertyExpression(propertyChain([P1,P2])),(property(P1,x,z),property(P2,z,y)), _) :- !.
+owl_as2prolog(propertyExpression(propertyChain(PL)),ChainGoal, _) :-
+        chain_to_goal(PL,ChainGoal).
+
+
 owl_as2prolog(propertyExpression(P),property(P,x,y), _) :- !.
 
 
@@ -503,6 +548,25 @@ owl_as2prolog(swrl(A),swrlproperty(P,PX,PY), Type) :- !,
         owl_as2prolog(swrl(Y),PY,Type).
 owl_as2prolog(swrl(i(V)),V,_) :- !.
 
+% propertyChains
+chain_to_goal(PL,ChainGoal) :-
+        chain_to_goal(PL,x,v(1),ChainGoal).
+
+chain_to_goal([P],V,_,Goal) :-
+        !,
+        (   P=inverseOf(PI)
+        ->  Goal=property(PI,y,V)
+        ;   Goal=property(P,V,y)).
+chain_to_goal([P|PL],V,VN,(Goal,ChainGoal)) :-
+        !,
+        (   P=inverseOf(PI)
+        ->  Goal=property(PI,VN,V)
+        ;   Goal=property(P,V,VN)),
+        VN=v(N),
+        NPlus1 is N+1,
+        chain_to_goal(PL,VN,v(NPlus1),ChainGoal).
+
+
 % 
 % Mapping functions (Perform convert operations on each element in a
 % list).
@@ -539,9 +603,13 @@ abstract syntax terms into a Prolog program. The mapping implements the
 idea of Description Logic Programs [Grossof]. Similar work has been also
 done in the dlpconvert tool.
 
-TODO:
+This extends Thea1 and the original Grossof rules to allow for certain
+OWL2 features, currently limited to property expressions (inverse
+properties and role chains)
 
-owl2 features, e.g.
- role chains
+---++ Options
+
+ * disjunctive_datalog(DDL:boolean) - if true, will write rules in which head contains disjunctions
+ * head_disjunction_symbol(Op:atom) - if true, and if disjunctive_datalog(true) then writes disjunctive head rules using Op as separator. For DLV, set Op='v'
 
 */
