@@ -96,7 +96,8 @@ list_of_d_object(L) :- forall(member(X,L),d_object(X)).
 % true if RuleNormalized is the canonical form of Rule
 %
 % this module admits syntactic sugar shortcuts for
-% some SWRL idioms. This expands these
+% some SWRL idioms. This expands these.
+% For example foo(?x) ==> description(foo,?x)
 normalize_swrl_rule(implies(A,C),implies(AX,CX)) :-
         (   is_list(A)
         ->  maplist(normalize_swrl_atom,A,AX)
@@ -111,7 +112,7 @@ normalize_swrl_atom(A, description(Class,Ob) ) :-
 normalize_swrl_atom(A, A).
                    
 
-%% swrl_to_owl_axioms(+SWRLRule,?Axioms) is nondet
+%% swrl_to_owl_axioms(+SWRLRule,?Axioms) is semidet
 % true if SWRLRule can be translated into Axiom.
 %
 % a subset of OWL-DL can be recapitulated as rules; however, it
@@ -131,7 +132,9 @@ swrl_to_owl_axioms(Rule, Axioms) :-
                 (   member(C,Cs),
                     debug(swrl,'Translating ~w -> ~w',[A,C]),
                     swrl_to_owl(A,C,Axiom)),
-                Axioms).
+                Axioms),
+        Axioms\=[].
+
 
 
 %% swrl_to_owl(+AntecedentList:list,+Consequent,?Axiom) is nondet
@@ -158,12 +161,15 @@ swrl_to_owl(AL,C,subPropertyOf(P,propertyChain(PL))) :-
         subgoals_to_property_chain(AL,PL,X,Y),
         PL=[_,_|_],
         !.
+swrl_to_owl(AL, description(Sub,v(X)), subClassOf(Sub,intersectionOf(DL))) :-
+        subgoals_to_intersection(AL,v(X),DL),
+        !.
 swrl_to_owl(AL,C,subClassOf(Sub,intersectionOf(DL))) :-
         C=..[Sub,v(X)],
         subgoals_to_intersection(AL,X,DL),
         DL=[_,_|_],
         !.
-swrl_to_owl(AL,C,subClassOf(Sub,D)) :-
+swrl_to_owl(AL,C,subClassOf(Sub,D)) :- % non-normalized form of above rule
         C=..[Sub,v(X)],
         subgoals_to_intersection(AL,X,[D]),
         !.
@@ -185,6 +191,10 @@ subgoals_to_property_chain([],[],X,X) :- !.
 subgoals_to_property_chain(AL,[P|PL],X,Y) :-
         select(A,AL,AL2),
         A=..[P,v(X),v(Z)],
+        subgoals_to_property_chain(AL2,PL,Z,Y).
+subgoals_to_property_chain(AL,[inverseOf(P)|PL],X,Y) :-
+        select(A,AL,AL2),
+        A=..[P,v(Z),v(X)],
         subgoals_to_property_chain(AL2,PL,Z,Y).
 
 subgoals_to_intersection([],_,[]).
@@ -328,6 +338,23 @@ pred_swrlb(=,stringEqualIgnoreCase). % TODO: detect
 pred_swrlb(atom_length,stringLength).
 pred_swrlb(upcase_atom,upperCase).
 pred_swrlb(downcase_atom,lowerCase).
+
+% IO HOOKS
+:- multifile owl2_io:load_axioms_hook/3.
+owl2_io:load_axioms_hook(File,pl_swrl,Opts) :-
+        read_file_to_terms(File,Terms,Opts),
+        forall(member(Term,Terms),
+               (   prolog_term_to_swrl_rule(Term,SWRL_Rule),
+                   assert_axiom(SWRL_Rule))).
+
+owl2_io:load_axioms_hook(File,pl_swrl_owl,Opts) :-
+        read_file_to_terms(File,Terms,Opts),
+        forall(member(Term,Terms),
+               (   prolog_term_to_swrl_rule(Term,SWRL_Rule),
+                   (   swrl_to_owl_axioms(SWRL_Rule,Axioms)
+                   ->  maplist(assert_axiom,Axioms)
+                   ;   assert_axiom(SWRL_Rule)))).
+
 
 
 /** <module> Semantic Web Rules Language
