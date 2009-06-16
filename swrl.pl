@@ -197,6 +197,20 @@ swrl_to_owl([A],description(D,X),propertyDomain(P,D)) :-
 swrl_to_owl([A],description(R,X),propertyRange(P,R)) :-
         A=..[P,_,X],
         !.
+% see email to owl-del 2009-06-15
+swrl_to_owl(AL,C,Axiom) :-
+        C=..[P,X,Y],            % e.g. hasPet(x,y)
+        select(A1,AL,[A2]),     
+        A1=..[P2,X,Y],          % e.g. owns(x,y)
+        A2=..description(D,Y),  % e.g. animal(y)
+        atom(D),
+        atom_concat(D,'_p',DP), % e.g. isAnimal
+        !,
+        member(Axiom,
+               [reflexiveProperty(DP),
+                subClassOf(D,hasSelf(DP)),
+                subPropertyOf(P,propertyChain([P2,DP]))]).
+
 
 %% subgoals_to_property_chain(+Terms,?Properties,+StartVar,?EndVar)
 % true if Terms is a chain of goals P1(V0,V1),P2(V1,V2),...,Pn(Vn-1,Vn)
