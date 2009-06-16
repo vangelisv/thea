@@ -1,10 +1,11 @@
 #!/bin/sh
 
+DIRNAME=`dirname $0`
 # Give a space-separated list of classpath items RELATIVE TO THE CURRENT SCRIPT
 # These will be resolved into absolute pathnames
 # Wildcards are allowed
-CLASSPATH_RELATIVE=jars/*.jar
-
+CLASSPATH_RELATIVE=$DIRNAME/../jars/*.jar
+echo $CLASSPATH_RELATIVE
 
 for ARG in "$CLASSPATH_RELATIVE"
 do
@@ -23,4 +24,4 @@ done
 
 echo CP = $CLASSPATH
 #CLASSPATH="jars/owlapi-bin.jar:" swipl -g "[owl2_java_owlapi],create_manager(M)" $0
-swipl -g "[owl2_java_owlapi]" $0
+swipl -g "['$DIRNAME/../owl2_java_owlapi']" $0
