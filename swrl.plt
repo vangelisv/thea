@@ -42,6 +42,65 @@ expected(implies(['http://www.cs.man.ac.uk/~bparsia/2007/examples/dl-safe-ancest
 
 :- end_tests(ancestor).
 
+:- begin_tests(pl2swrl,[]).
+
+:- op(1100,xfy,<==>).
+
+
+subClassOf(ab, unionOf([a, b])) <==>
+(   (   a(X) ;   b(X)) :- ab(X)).
+
+subClassOf(x, y) <==>  (   y(X):-  x(X)).
+
+subClassOf(unionOf([a, b]), ab) <==>
+(   ab(X):- (   a(X) ;   b(X))).
+
+subPropertyOf(r, s) <==>
+(   r(X,Y):- s(X,Y)).
+
+subPropertyOf(r, inverseOf(t)) <==>
+(   r(X,Y):- t(Y,X)).
+
+subPropertyOf(r, propertyChain([s, t])) <==>
+(   r(X,Y):- s(X,V1),t(V1,Y)).
+
+subPropertyOf(r, propertyChain([s, t, u, v, inverseOf(w), x])) <==>
+(   r(X,Y):-      s(X,V1),t(V1,V2),u(V2,V3),v(V3,V4),w(V5,V4),x(V5,Y)).
+
+subPropertyOf(r, propertyChain([s, u, w])) <==>
+(   r(X,Y):-     s(X,V1),u(V1,V2),w(V2,Y)).
+
+subPropertyOf(r, propertyChain([s, inverseOf(t)])) <==>
+(   r(X,Y):-   s(X,V1),t(Y,V1)).
+
+% TODO: equivalent classes involves checking combinations of rules
+(equivalentClasses([ab,unionOf([a,b])]) <==>
+(   ab(X) :- (a(X);b(X)))).
+
+equivalentClasses([efg, intersectionOf([e, f, g])])
+<==>
+[(   e(X):- efg(X)),
+ (   f(X):- efg(X)),
+ (   g(X):- efg(X)),
+ (   efg(X):- e(X),f(X),g(X))].
+
+
+test(pl2owl) :-
+        forall( (Axiom <==> Pl),
+                pl2owl(Pl,Axiom)).
+
+pl2owl(Pl,Axiom) :-
+        prolog_clause_to_swrl_rule(Pl,Rule),
+        swrl_to_owl_axioms(Rule,[Axiom]).
+
+check(Axiom,Pl) :-
+        prolog_clause_to_swrl_rule(Pl,Rule),
+        swrl_to_owl_axioms(Rule,[Axiom]).
+
+:- end_tests(pl2swrl,[]).
+
+
+
 /** <module> tests for SWRL
 
   ---+ Synopsis
