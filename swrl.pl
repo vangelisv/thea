@@ -5,7 +5,7 @@
            implies/2,
            swrlAtom/1,
            swrl_to_owl_axioms/2,
-           prolog_term_to_swrl_rule/2,
+           prolog_clause_to_swrl_rule/2,
            prolog_source_to_swrl_rules/2,
            prolog_source_to_axioms/2
           ]
@@ -164,6 +164,16 @@ swrl_to_owl(AL,C,subPropertyOf(P,propertyChain(PL))) :-
 swrl_to_owl(AL, description(Sub,v(X)), subClassOf(Sub,intersectionOf(DL))) :-
         subgoals_to_intersection(AL,v(X),DL),
         !.
+% TODO: this is cheating to allow for round-tripping.
+% for now, when translating pl->swrl, disjunctions in body are left
+% as disjunctions. We should either (a) translate these to unionOf
+% descriptions during the parse or (b) eliminate the disjunctions
+% by rewriting the rule as a disjunctive collection of conjunctions
+swrl_to_owl([AL], description(Sub,v(X)), subClassOf(Sub,unionOf(DL))) :-
+        AL=(_;_),
+        !,
+        subgoals_to_union(AL,v(X),DL),
+        !.
 swrl_to_owl(AL,C,subClassOf(Sub,intersectionOf(DL))) :-
         C=..[Sub,v(X)],
         subgoals_to_intersection(AL,X,DL),
@@ -180,6 +190,12 @@ swrl_to_owl([],C,propertyAssertion(P,X,Y)) :-
         C=..[P,X,Y],
         X\=v(_),
         Y\=v(_),
+        !.
+swrl_to_owl([A],description(D,X),propertyDomain(P,D)) :-
+        A=..[P,X,_],
+        !.
+swrl_to_owl([A],description(R,X),propertyRange(P,R)) :-
+        A=..[P,_,X],
         !.
 
 %% subgoals_to_property_chain(+Terms,?Properties,+StartVar,?EndVar)
@@ -207,13 +223,19 @@ subgoals_to_intersection([A|AL],V,[D|DL]) :-
 %        A=someValuesFrom(D,Y),
 %        subgoals_to_intersection(AL,V,DL).
 
+subgoals_to_union((A;AL),V,[D|DL]) :-
+        !,
+        A=description(D,V),
+        subgoals_to_union(AL,V,DL).
+subgoals_to_union(description(D,_),_,[D]).
+
 
 %% prolog_term_to_swrl_hook( +Term, ?SWRLAtom:swrlAtom )
 % define this to extend the translation.
 % for example, translation of n-ary relations, lists etc
 :- multifile prolog_term_to_swrl_hook/2.
 
-%% prolog_term_to_swrl_rule( +Term, ?SWRLAtom:swrlAtom )
+%% prolog_clause_to_swrl_rule( +Term, ?SWRLAtom:swrlAtom )
 %
 % Prolog Terms are clauses of the form
 %== 
@@ -230,19 +252,22 @@ subgoals_to_intersection([A|AL],V,[D|DL]) :-
 %   creator(Z,X).
 %==
 
-prolog_term_to_swrl_rule(Term,SWRL):-
+prolog_clause_to_swrl_rule(Term,SWRL):-
         numbervars(Term,1,_,[functor_name(v)]),
-        prolog_term_to_swrl_rule2(Term,SWRL).
+        prolog_clause_to_swrl_rule2(Term,SWRL).
 
-prolog_term_to_swrl_rule2( (C:-A), implies(Ax,Cx) ):-
+% implications
+prolog_clause_to_swrl_rule2( (C:-A), implies(Ax,Cx) ):-
         !,
         prolog_term_to_swrl_atom(C,Cx),
         prolog_term_to_swrl_atom(A,Ax).
-prolog_term_to_swrl_rule2( ('->'(A,C)), implies(Ax,Cx) ):-
+% implications - alternate syntax
+prolog_clause_to_swrl_rule2( ('->'(A,C)), implies(Ax,Cx) ):-
         !,
         prolog_term_to_swrl_atom(C,Cx),
         prolog_term_to_swrl_atom(A,Ax).
-prolog_term_to_swrl_rule2(C, implies([],Cx) ):- % fact
+% facts
+prolog_clause_to_swrl_rule2(C, implies([],Cx) ):- % fact
         !,
         prolog_term_to_swrl_atom(C,Cx).
 
@@ -305,7 +330,7 @@ prolog_source_to_swrl_rules(File,Rules) :-
 
 prolog_terms_to_swrl_rules([],[]).
 prolog_terms_to_swrl_rules([T|Terms],[R|Rules]) :-
-        prolog_term_to_swrl_rule(T,R),
+        prolog_clause_to_swrl_rule(T,R),
         !,
         prolog_terms_to_swrl_rules(Terms,Rules).
 
@@ -324,9 +349,9 @@ prolog_source_to_axioms(File,Axioms) :-
                 Axioms).
 
 
-%% goal_swrl(+Goal,?Swrl)
+%% goal_swrlb(+Goal,?Swrl)
 % builtins
-% TODO: incomplete
+% TODO: currently incomplete - add more
 goal_swrlb(concat_atom(L,A),G):-
         G=..[stringConcat,A|L].
 goal_swrlb(X is A+B,add(A,B,X)).
@@ -344,13 +369,13 @@ pred_swrlb(downcase_atom,lowerCase).
 owl2_io:load_axioms_hook(File,pl_swrl,Opts) :-
         read_file_to_terms(File,Terms,Opts),
         forall(member(Term,Terms),
-               (   prolog_term_to_swrl_rule(Term,SWRL_Rule),
+               (   prolog_clause_to_swrl_rule(Term,SWRL_Rule),
                    assert_axiom(SWRL_Rule))).
 
 owl2_io:load_axioms_hook(File,pl_swrl_owl,Opts) :-
         read_file_to_terms(File,Terms,Opts),
         forall(member(Term,Terms),
-               (   prolog_term_to_swrl_rule(Term,SWRL_Rule),
+               (   prolog_clause_to_swrl_rule(Term,SWRL_Rule),
                    (   swrl_to_owl_axioms(SWRL_Rule,Axioms)
                    ->  maplist(assert_axiom,Axioms)
                    ;   assert_axiom(SWRL_Rule)))).
@@ -373,7 +398,7 @@ implies([hasParent(v(x),v(y)),hasBrother(v(y),v(z))],[hasUncle(v(x),v(z))]).
 http://www.w3.org/Submission/SWRL/
 
 This module also intends to allow for easy conversion between a natural prolog style and SWRL axioms.
- See for example prolog_term_to_swrl_rule/2
+ See for example prolog_clause_to_swrl_rule/2
 
 ---+ Additional Information
 
