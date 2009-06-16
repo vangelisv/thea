@@ -30,6 +30,7 @@ owl_dlpterm(OwlAsTerm,R) :-
 	owl_as2prolog(OwlAsTerm,R,_).
         
 %% owl_dlpterm(+OwlAsTerm,?DlpTerm,+Options:list)
+% (Options currently ignored)
 owl_dlpterm(OwlAsTerm,R,_) :- 
 	owl_as2prolog(OwlAsTerm,R,_).
 
@@ -100,6 +101,10 @@ owl_write_prolog_code( (A,B), Options ) :- !,
 %
 % Generate code for a prolog rule Head :- Body 
 % 
+
+owl_write_prolog_code( ('owl:Nothing'(_):- _), Options) :-
+        members(suppress_owl_nothing(true),Options),
+        !.
 
 owl_write_prolog_code( ( ( H1; H2) :- B), Options) :- !,
         (   member(disjunctive_datalog(true),Options)
@@ -512,7 +517,7 @@ owl_as2prolog(annotationAssertion(_,_,_), [], _) :- !.
 %
 
 owl_as2prolog(functionalProperty(P), (property(sameIndividuals,x,y) :- (property(P,z,x),property(P,z,y))),_) :- !.
-owl_as2prolog(inverseFunctionalProperty(P), (property(sameIndividuals,x,y) :- (property(P,z,x),property(P,y,z))),_) :- !.
+owl_as2prolog(inverseFunctionalProperty(P), (property(sameIndividuals,x,y) :- (property(P,z,x),property(P,z,y))),_) :- !.
 owl_as2prolog(transitiveProperty(P), (property(P,x,y) :- (property(P,x,z),property(P,z,y))),_) :- !.
 owl_as2prolog(symmetricProperty(P), (property(P,x,y) :- property(P,y,x)),_) :- !.
 owl_as2prolog(reflexiveProperty(P), (property(P,x,x) :- property(P,x,y)),_) :- !. % TODO -- check
