@@ -97,6 +97,7 @@ format_module(read,rdf,owl2_from_rdf).
 format_module(read,owl,owl2_from_rdf).
 format_module(read,xml,owl2_xml).
 format_module(read,owlx,owl2_xml).
+format_module(read,pl_swrl_owl,swrl).
 
 format_module(write,owlx,owl2_xml).
 
