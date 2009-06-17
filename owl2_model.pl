@@ -97,7 +97,9 @@
            disjoint_with/2,
            labelAnnotation_value/2,
 
+           axiom_directly_about/2,
            axiom_directly_references/2,
+           axiom_about/2,
            axiom_references/2,
            
            assert_axiom/1,
