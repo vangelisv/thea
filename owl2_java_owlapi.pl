@@ -70,16 +70,34 @@ build_ontology(Ont) :-
 % create an ontology from the current prolog db
 build_ontology(Man,Fac,Ont) :-
         require_manager(Man),
-        ontology(OntName),
+        (   ontology(OntName)
+        ->  true
+        ;   OntName='http://example.org'),
         create_ontology(Man,OntName,Ont),
         forall(axiom(Ax),
                (   debug(owl2,'Adding axiom: ~w',[Ax]),
                    add_axiom(Man,Fac,Ont,Ax,_))).
 
+:- multifile owl2_io:save_axioms_hook/3.
+owl2_io:save_axioms_hook(File,owlapi(Fmt),Opts) :-
+        create_factory(Man,Fac),
+        build_ontology(Man,Fac,Ont),
+        save_ontology(Man,Ont,File).
+
+
 %% save_ontology(+Man,+Ont,+File) is det
 save_ontology(Man,Ont,File) :-
+        (   var(File)
+        ->  tmp_file(File),
+            Tmp=true
+        ;   Tmp=fail),
         atom_javaURI(File,URI),
-        jpl_call(Man,saveOntology,[Ont,URI],_).
+        jpl_call(Man,saveOntology,[Ont,URI],_),
+        (   Tmp
+        ->  sformat(Cmd,'cat ~w',[File]),
+            shell(Cmd)
+        ;   true).
+
 
 
 %% create_factory(?Manager,?Factory) is det
