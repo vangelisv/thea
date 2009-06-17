@@ -16,4 +16,4 @@ main :-
         forall(member(Arg,Args),
                load_axioms(Arg,_,[])),
         use_labels_for_IRIs,
-        owl_write_all_dlpterms([no_base(_),suppress_literals(true)]).
+        owl_write_all_dlpterms([no_base(_)]).
