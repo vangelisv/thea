@@ -14,8 +14,13 @@
 :- use_module(owl2_from_rdf,[collapse_ns/4]).
 
 :- multifile owl2_io:save_axioms_hook/3.
-owl2_io:save_axioms_hook(_File,dlp,Opts) :-
-        owl_write_all_dlpterms(Opts).
+owl2_io:save_axioms_hook(File,dlp,Opts) :-
+        (   nonvar(File)
+        ->  tell(File)
+        ;   true),
+        owl_write_all_dlpterms(Opts),
+        told.
+
 
 
 %% owl_write_all_dlpterms
