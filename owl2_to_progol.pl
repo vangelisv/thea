@@ -9,6 +9,19 @@
 :- use_module(owl2_model).
 :- use_module(owl2_basic_reasoner).
 
+:- multifile owl2_io:save_axioms_hook/3.
+owl2_io:save_axioms_hook(File,progol,Opts) :-
+        (   nonvar(File)
+        ->  tell(File)
+        ;   true),
+        member(mode_decls(Roots),Opts),
+        write_progol_mode_decls(Roots),
+        member(head(Head),Opts),
+        member(goal(Goal),Opts),
+        member(type(TypeDecl),Opts),
+        write_progol_facts(Head,Goal,TypeDecl),
+        told.
+
 %% write_progol_facts(+Head:term,+Goal:callable,+TypeDecl:term)
 %
 % writes instance data for use as ILP training set. Also generates
