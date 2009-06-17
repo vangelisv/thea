@@ -34,6 +34,7 @@
 
 :- use_module(owl2_model).
 :- use_module(swrl).
+:- use_module(library(readutil)).
 
 :- op(1200,xfy,(--)).
 :- op(1150,fx,individual).
@@ -63,6 +64,10 @@
 :- multifile owl2_io:load_axioms_hook/3.
 owl2_io:load_axioms_hook(File,plsyn,Opts) :-
         owl_parse_plsyn(File,Opts). % TODO
+
+:- multifile owl2_io:save_axioms_hook/3.
+owl2_io:save_axioms_hook(_File,plsyn,Opts) :-
+        write_owl_as_plsyn(Opts).
 
 
 write_owl_as_plsyn:-
@@ -188,7 +193,10 @@ swrlatom2plsyn(IPA,IPA2) :-
         swrlatom2plsyn(Y,Y2),
         IPA2=..[P,X2,Y2].
 
-swrlatom2plsyn(i(V),?V) :- !.
+% TODO -- decide on correct functor for variables
+swrlatom2plsyn(v(V),X) :- !, swrlatom2plsyn(i(V),X).
+swrlatom2plsyn(i(V),X) :- number(V),!,VA is V+96,atom_codes(A,[VA]),atom_concat('?',A,X).
+swrlatom2plsyn(i(V),X) :- atom_concat('?',V,X).
 swrlatom2plsyn(X,X) :- !.
 
 
