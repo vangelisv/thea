@@ -1,6 +1,6 @@
 inverseProperties(part_of,has_part).
 transitiveProperty(part_of).
-reflexiveProperty(part_of).
+%reflexiveProperty(part_of).
 propertyAssertion(part_of,n1,c1).
 propertyAssertion(part_of,chr1,n1).
 classAssertion(nuc,n1).

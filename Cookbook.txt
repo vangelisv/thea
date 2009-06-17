@@ -10,8 +10,8 @@ A certain subset of pure prolog programs can be converted to OWL and
 reasoner over using OWL reasoners. This is currently a two-step
 process.
 
-* prolog -> SWRL
-* SWRL -> OWL
+* prolog to SWRL
+* SWRL to OWL
 
 For the first step, only binary and unary predicates are
 converted. For the second step, certain rule patterns can be
@@ -22,7 +22,7 @@ translated to OWL axioms.
 :- use_module(library('thea2/swrl')).
 
 demo :-
-   load_axioms('testfiles/dlptest.pro',pl_swrl_owl,[])),
+   load_axioms('testfiles/dlptest.pro',pl_swrl_owl,[]),
    save_axioms(_,owlpl). % TODO - change to owl once we have rdf writing
 ==
 
@@ -38,4 +38,80 @@ is first translated to a SWRL rule and then to an OWL subPropertyOf/2 axiom:
 ==
 subPropertyOf(r, propertyChain([s, inverseOf(t)])) 
 ==
+
+Currently this process is incomplete, more patterns can potentially be
+matched. In the future there will also be the option of defining hooks
+to deal with n-ary predicates.
+
+---+++ Converting OWL to Logic Programs
+
+The DLP subset of OWL2-DL can be translated to logic programs using a
+transormation defined by Grosof. See owl2_to_prolog_dlp.pl
+
+The resulting programs can be used with Prologs such as Yap and
+XSB. There are also hooks for answer set programming and disjunctive
+datalog systems such as DLV. The same programs can also be used in
+inductive logic programming systems such as ProGol. Possibly also
+probabilistic systems such as PRISM, but this has yet to be tested.
+
+The following program will convert an OWL ontology suitable for use in
+Yap or XSB:
+
+==
+:- use_module(library('thea2/owl2_io')).
+:- use_module(library('thea2/owl2_to_prolog_dlp)).
+
+demo :-
+   load_axioms('testfiles/wine.owl'),
+   save_axioms('wine.pl',dlp,[no_base(_),write_directives(table)]).
+==
+
+(You can also use bin/thea-owl-to-dlp-yap)
+
+For Yap you need explicit tabling directives (for XSB can you
+table_all), which is specified in the options list for save_axioms/3
+
+Once you have generated the above DLP you can query the ABox using Yap:
+
+==
+yap -g wine
+   ?- 'DessertWine'(Wine),locatedIn(Wine,'USRegion'),hasBody(Wine,'Light').
+Wine = 'WhitehallLanePrimavera' ? ;
+no
+==
+
+Prolog DLPs can not have disjunctions in the head of
+rules. Disjunctive datalog systems such as DLV can.
+
+The follow will translate an OWL ontology into DLV syntax:
+
+==
+:- use_module(library('thea2/owl2_io')).
+:- use_module(library('thea2/owl2_to_prolog_dlp)).
+
+demo :-
+   load_axioms('testfiles/cell.owlpl'),
+   save_axioms('cell.dlv',dlp,[disjunctive_datalog(true),head_disjunction_symbol(v),no_base(_),suppress_literals(true)]).
+==
+
+(You can also use bin/thea-owl-to-dlv)
+
+DLV uses 'v' as a disjunction symbol rather than ';'
+
+DLV tells us that the above 'cell' ontology has two stable models:
+
+==
+dlv cell.dlv 
+
+{nuc(n1), chromosome(chr1), cell(c1), cell(c2), n_cell(c1), has_part(c1,chr1), has_part(c1,n1), has_part(n1,chr1), part_of(chr1,c1), part_of(chr1,n1), part_of(n1,c1), n_cell(c2)}
+{nuc(n1), chromosome(chr1), cell(c1), cell(c2), n_cell(c1), has_part(c1,chr1), has_part(c1,n1), has_part(n1,chr1), part_of(chr1,c1), part_of(chr1,n1), part_of(n1,c1), e_cell(c2)}
+==
+
+This is because of the OWL following axiom:
+
+==
+subClassOf(cell,unionOf([e_cell,n_cell])).
+==
+
+In the abox we state =|cell(c2)|= but not the specific subtype.
 
