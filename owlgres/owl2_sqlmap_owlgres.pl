@@ -118,6 +118,8 @@ plterm_to_sqlterm(foo(P,A,B),objectPropertyAssertion(P,A,B),SQL)
 
 ---++ Status
 
+
+
 ---+ Additional Information
 
 @author  Chris Mungall
