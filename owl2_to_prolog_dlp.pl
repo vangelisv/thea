@@ -13,6 +13,11 @@
 :- use_module(owl2_model).
 :- use_module(owl2_from_rdf,[collapse_ns/4]).
 
+:- multifile owl2_io:save_axioms_hook/3.
+owl2_io:save_axioms_hook(_File,dlp,Opts) :-
+        owl_write_all_dlpterms(Opts).
+
+
 %% owl_write_all_dlpterms
 % as owl_write_all_dlpterms/1
 owl_write_all_dlpterms :-
@@ -21,9 +26,25 @@ owl_write_all_dlpterms :-
 %% owl_write_all_dlpterms(+Opts:list)
 % writes all axiom/1 as dlpterms on output stream using owl_write_dlpterm/2
 owl_write_all_dlpterms(Opts) :-
+        forall(member(write_directives(Dir),Opts),
+               write_directives(Dir,Opts)),
         setof(Ax,axiom(Ax),Axs),
         forall(member(Ax,Axs),
                owl_write_dlpterm(Ax,Opts)).
+
+write_directives(table,Opts) :-
+        forall(class(C),
+               write_table_class(C,Opts)),
+        forall(property(P),
+               write_table_property(P,Opts)).
+
+write_table_class(X,Opts) :-
+        collapse_ns(X,X1,'_',Opts),
+        format(':- table ~q/1.~n',[X1]).
+write_table_property(X,Opts) :-
+        collapse_ns(X,X1,'_',Opts),
+        format(':- table ~q/2.~n',[X1]).
+
 
 %% owl_dlpterm(+OwlAsTerm,?DlpTerm)
 owl_dlpterm(OwlAsTerm,R) :- 
@@ -198,6 +219,13 @@ owl_write_prolog_code(swrlproperty(P,X,Y),Options) :- !,
 	write(X2),
         write(','),
 	write(Y2),
+	write(')').
+
+owl_write_prolog_code(swrldescription(P,X),Options) :- !, 
+	collapse_ns(P,P1,'_',Options),collapse_ns(X,X1,'_',[no_base(_)]),
+        upcase_atom(X1,X2),
+	writeq(P1),  write('('),
+	write(X2),
 	write(')').
 
 %
@@ -541,12 +569,21 @@ owl_as2prolog(implies(A,C),(CP :- AP), _) :- !,
               owl_as2prolog(swrl(A),AP,body),
               owl_as2prolog(swrl(C),CP,head).
 
-owl_as2prolog(swrl(L),PL, Type) :- !,
-         is_list(L),
+owl_as2prolog(swrl([]), true, _Type) :- !.
+owl_as2prolog(swrl([A]), G, Type) :-
          !,
-         findall(P,(member(A,L),owl_as2prolog(swrl(A),P,Type)),PL). % TODO: body list
+         owl_as2prolog(swrl(A),G,Type). % TODO: body list
+owl_as2prolog(swrl([A|AL]), (G,Gs), Type) :-
+         !,
+         owl_as2prolog(swrl(A),G,Type),
+         owl_as2prolog(swrl(AL),Gs,Type).
 
-owl_as2prolog(swrl(A),swrlproperty(P,PX,PY), Type) :- !,
+owl_as2prolog(swrl(description(C,X)),swrldescription(C,PX), Type) :-
+        !,
+        owl_as2prolog(swrl(X),PX,Type).
+
+
+owl_as2prolog(swrl(A),swrlproperty(P,PX,PY), Type) :-
         A=..[P,X,Y],
         !,
         owl_as2prolog(swrl(X),PX,Type),
