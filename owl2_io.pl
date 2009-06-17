@@ -91,6 +91,7 @@ guess_format(File,Fmt,_Opts) :-
 suffix_format(pro,prolog).
 suffix_format(prolog,prolog).
 suffix_format(pl,prolog).
+suffix_format(owlpl,prolog).
 suffix_format(plsyn,plsyn).
 suffix_format(owl,owl).
 suffix_format(owlx,owlx).
