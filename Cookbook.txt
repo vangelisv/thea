@@ -1,0 +1,41 @@
+---+ Thea2 Cookbook
+
+Here are some recipes for doing common tasks in Thea2
+
+---++ Working with other LP systems
+
+---+++ Converting prolog to OWL
+
+A certain subset of pure prolog programs can be converted to OWL and
+reasoner over using OWL reasoners. This is currently a two-step
+process.
+
+* prolog -> SWRL
+* SWRL -> OWL
+
+For the first step, only binary and unary predicates are
+converted. For the second step, certain rule patterns can be
+translated to OWL axioms.
+
+==
+:- use_module(library('thea2/owl2_io')).
+:- use_module(library('thea2/swrl')).
+
+demo :-
+   load_axioms('testfiles/dlptest.pro',pl_swrl_owl,[])),
+   save_axioms(_,owlpl). % TODO - change to owl once we have rdf writing
+==
+
+For example, the following piece of prolog:
+
+==
+r(X,Y):-
+     s(X,Z),t(Y,Z).
+==
+
+is first translated to a SWRL rule and then to an OWL subPropertyOf/2 axiom:
+
+==
+subPropertyOf(r, propertyChain([s, inverseOf(t)])) 
+==
+
