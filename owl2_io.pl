@@ -36,7 +36,9 @@ load_axioms(File,Fmt,Opts) :-
         load_axioms(File,Fmt,Opts).
 load_axioms(File,Fmt,_Opts) :-
         nonvar(Fmt),
-        Fmt=prolog,
+        (   Fmt=prolog
+        ;   Fmt=owlpl
+        ;   Fmt=pl),
         !,
         owl2_model:consult(File).
 load_axioms(File,Fmt,Opts) :-
@@ -60,7 +62,9 @@ save_axioms(File,Fmt) :-
 % Opts are Fmt specific - see individual modules for details
 save_axioms(File,Fmt,_Opts) :-
         nonvar(Fmt),
-        Fmt=prolog,
+        (   Fmt=prolog
+        ;   Fmt=owlpl
+        ;   Fmt=pl),
         !,
         (   nonvar(File)
         ->  tell(File)
