@@ -533,6 +533,9 @@ owl_as2prolog(classAssertion(C,I),L,_) :- !,
 
 owl_as2prolog(propertyAssertion(P,I,J), :-(property(P,I,J),none),_) :- !.
 
+% TODO: ASP and variants only
+% owl_as2prolog(negativePropertyAssertion(P,I,J), :-(false,property(P,I,J),_) :- !.
+
 owl_as2prolog(owl(_,_,_,_),[],_) :- !.
 owl_as2prolog(ontology(_,_),[],_) :- !.
 
