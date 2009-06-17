@@ -45,8 +45,6 @@ write_owl_as_prolog:-
                write_axioms(PS)).
 
 
-
-
 write_axioms(P/A):-
         !,
         functor(H,P,A),
