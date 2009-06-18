@@ -13,6 +13,17 @@
 :- use_module(owl2_model).
 :- use_module(owl2_from_rdf,[collapse_ns/4]).
 
+%% closed_world_assumption
+% if this is asserted, then the CWA will be used
+% allValuesFrom/2 will be treated using negation.
+% prolog makes the CWA so be sure this is the right thing.
+% also may cause non-stratified negation in tabled prologs.
+:- dynamic closed_world_assumption/0.
+
+% USE WITH CAUTION
+%closed_world_assumption.
+
+
 :- multifile owl2_io:save_axioms_hook/3.
 owl2_io:save_axioms_hook(File,dlp,Opts) :-
         (   nonvar(File)
@@ -20,6 +31,8 @@ owl2_io:save_axioms_hook(File,dlp,Opts) :-
         ;   true),
         owl_write_all_dlpterms(Opts),
         told.
+owl2_io:save_axioms_hook(File,dlp_yap,Opts) :-
+        owl2_io:save_axioms_hook(File,dlp,[write_directives(table)|Opts]).
 
 
 
@@ -42,6 +55,11 @@ write_directives(table,Opts) :-
                write_table_class(C,Opts)),
         forall(property(P),
                write_table_property(P,Opts)).
+write_directives(dummy_fact,Opts) :-
+        forall(class(C),
+               write_dummy_class(C,Opts)),
+        forall(property(P),
+               write_dummy_property(P,Opts)).
 
 write_table_class(X,Opts) :-
         collapse_ns(X,X1,'_',Opts),
@@ -49,6 +67,12 @@ write_table_class(X,Opts) :-
 write_table_property(X,Opts) :-
         collapse_ns(X,X1,'_',Opts),
         format(':- table ~q/2.~n',[X1]).
+write_dummy_class(X,Opts) :-
+        collapse_ns(X,X1,'_',Opts),
+        format('~q(_) :- fail.~n',[X1]).
+write_dummy_property(X,Opts) :-
+        collapse_ns(X,X1,'_',Opts),
+        format('~q(_,_) :- fail.~n',[X1]).
 
 
 %% owl_dlpterm(+OwlAsTerm,?DlpTerm)
@@ -123,13 +147,21 @@ owl_write_prolog_code( (A,B), Options ) :- !,
 	write(','), 
 	owl_write_prolog_code(B,Options).
 
+% we need this because variables may be repeated if there are multiple existential clauses
+%owl_write_prolog_code(exists(A),Options) :- !,
+%	write('(\\+ \\+ ('), owl_write_prolog_code(A,Options), write(') )').
+owl_write_prolog_code(\+ (\+ (A)),Options) :- !,
+	owl_write_prolog_code(A,Options).
+owl_write_prolog_code(\+ (A),Options) :- !,
+	write('(\\+ ('), owl_write_prolog_code(A,Options), write(') )').
+
 
 %
 % Generate code for a prolog rule Head :- Body 
 % 
 
 owl_write_prolog_code( ('owl:Nothing'(_):- _), Options) :-
-        members(suppress_owl_nothing(true),Options),
+        member(suppress_owl_nothing(true),Options),
         !.
 
 owl_write_prolog_code( ( ( H1; H2) :- B), Options) :- !,
@@ -173,14 +205,15 @@ owl_write_prolog_code( (H :- B), Options) :-!,
 % 
 
 owl_write_prolog_code(class(X,Y),Options) :- !,
-	collapse_ns(X,X1,'_',Options),collapse_ns(Y,Y1,':',[]),
+	collapse_ns(X,X1,'_',Options),
 	(   var(Y), !, 	
 	    writeq(X1), write('(X)') 
-	;
-	Y = y , !,  
+	;   Y = y , !,  
 	    writeq(X1), write('('), write('Y'), write(')')
-	;
-	writeq(X1), write('('), writeq(Y1), write(')')
+	;   Y=v(VY), !,
+	    writeq(X1), write('('), write('V'),write(VY), write(')')
+        ;   collapse_ns(Y,Y1,':',[]),
+            writeq(X1), write('('), writeq(Y1), write(')')
 	).
 
 
@@ -392,7 +425,12 @@ owl_as2prolog(description(unionOf(DL),X),R,fact):-!,
 
 %
 % Complement of (Not) is not handled in this conversion
-%
+% unless CWA is set
+
+owl_as2prolog(description(complementOf(D),X),(\+ R),body) :-
+        closed_world_assumption,
+        owl_as2prolog(description(D,X),R,body),
+        !.
 
 % TODO: add hook for LP engines that support negation..
 % but be careful re open/closed world
@@ -418,6 +456,13 @@ owl_as2prolog(description(hasValue(PropertyID,Value),X),R,_) :-
 % Universal property description. See table above
 %
 
+% TODO: CWA
+owl_as2prolog(description(allValuesFrom(PropertyID,Descr),_),R,body) :-
+        closed_world_assumption,
+        !,
+	owl_as2prolog(description(Descr,y),D,body),
+	R =  (\+ (property(PropertyID,x,y),\+ D)).
+
 owl_as2prolog(description(allValuesFrom(_,_),_),false,body) :-  !.
 %owl_as2prolog(description(restriction(_,allValuesFrom(_)),_),false,body) :-  !.
 
@@ -438,8 +483,11 @@ owl_as2prolog(description(allValuesFrom(PropertyID,Descr),ID),R,fact) :-  !,
 owl_as2prolog(description(someValuesFrom(_,_),_),false,head) :-  !.
 
 owl_as2prolog(description(someValuesFrom(PropertyID,Descr),_),R,body) :-  !,
-	owl_as2prolog(description(Descr,y),D,body),
-	R =  (D,property(PropertyID,x,y)).
+        gensym('Ex_',ExV),
+	owl_as2prolog(description(Descr,v(ExV)),D,body),
+	R =  (D,property(PropertyID,x,v(ExV))).
+%	R =  exists((D,property(PropertyID,x,y))).
+
 
 %
 % Cardinalities are not handled in this conversion
@@ -516,6 +564,13 @@ owl_as2prolog(propertyDomain(P,D),(L :- property(P,x,var)), _) :- !,
 owl_as2prolog(propertyRange(P,D),(L :- property(P,var,x)), _) :- !,
         map_description(head,_,D,L).
 
+owl_as2prolog(disjointProperties(L),RL,_) :- !,
+        findall( ('owl:Nothing'(x) :- property(C,x,y),property(D,x,y)),
+                (   member(C,L),
+                    member(D,L),
+                    C@<D),
+                RL).
+
 
 owl_as2prolog(objectProperty(_),[],_) :- !.
 owl_as2prolog(dataProperty(_),[],_) :- !.
@@ -540,6 +595,7 @@ owl_as2prolog(owl(_,_,_,_),[],_) :- !.
 owl_as2prolog(ontology(_,_),[],_) :- !.
 
 owl_as2prolog(annotationAssertion(_,_,_), [], _) :- !.
+owl_as2prolog(namedIndividual(_), [], _) :- !.
 
 
 	
@@ -590,6 +646,10 @@ owl_as2prolog(swrl(description(C,X)),swrldescription(C,PX), Type) :-
         !,
         owl_as2prolog(swrl(X),PX,Type).
 
+owl_as2prolog(swrl(propertyAssertion(P,X,Y)),swrlproperty(P,PX,PY), Type) :-
+        !,
+        owl_as2prolog(swrl(X),PX,Type),
+        owl_as2prolog(swrl(Y),PY,Type).
 
 owl_as2prolog(swrl(A),swrlproperty(P,PX,PY), Type) :-
         A=..[P,X,Y],
