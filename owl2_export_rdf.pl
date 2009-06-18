@@ -60,15 +60,6 @@ owl_generate_rdf(Ontology,FileName,RDF_Load_Mode) :-
 	forall(ontologyAxiom(Ontology,Axiom),
 	       (owl2_export_axiom(Axiom,main_triple(S,P,O)),
 		owl2_export_annotation(Axiom,'owl:Axiom',S,P,O))),
-	%as2rdf_class,
-	%as2rdf_subclass,
-	%as2rdf_disjointSet,
-	%as2rdf_equivalentSet,
-	%as2rdf_property,
-	%as2rdf_individual,
-	%as2rdf_ontology,
-	%as2rdf_sameIndividuals,
-	%as2rdf_differentIndividuals,
 	rdf_db:rdf_save(FileName).
 	
 
@@ -356,9 +347,7 @@ owl2_export_axiom(exactCardinality(N,OPE,CEorDR),main_triple(BNode,'rdf:type','o
 
 owl2_export_axiom(IRI,main_triple(IRI,_,_)) :- atom(IRI),!. % better iri(IRI).
 
-
-
-owl2_export_axiom(Any,main_triple(Any,_,_)) :- print('unresolved:'-Any),nl.
+owl2_export_axiom(Any,main_triple(Any,P,Y)) :- print('unresolved:'-Any-P-Y),nl.
 
 /*
 owl2_export_annotation(Parent)
@@ -383,41 +372,6 @@ reify(SNode,PTerm,OTerm,S,P,O) :-
 	owl_rdf_assert(SNode,'owl:object',O).
 
 
-
-
-/*
-as2rdf_class_2(+Class, +CP, +DescriptionList).
-	Generates RDF triples for Class, depending on the contents 
-	of the DescriptionList and the Complete/Partial (CP) indicator
-*/    
-
-as2rdf_class_2(C,complete,[unionOf(DL)]) :- !,
-	as2rdf_list(DL,Node), 
-	owl_rdf_assert(C,'owl:unionOf',Node).
-
-as2rdf_class_2(C,complete,[complementOf(D)]) :- !,
-	as2rdf(D,Node), 
-	owl_rdf_assert(C,'owl:complementOf',Node).
-
-as2rdf_class_2(C,complete,[intersectionOf(DL)]) :- !,
-	as2rdf_list(DL,Node), 
-	owl_rdf_assert(C,'owl:intersectionOf',Node).
-
-as2rdf_class_2(C,complete,DL) :- !,
-	as2rdf_list(DL,Node),
-	owl_rdf_assert(C,'owl:intersectionOf',Node).	
-
-as2rdf_class_2(C,complete,[Description]) :- !,
-	as2rdf(Description,Node), 
-	owl_rdf_assert(C,'owl:equivalentClass',Node).
-
-
-as2rdf_class_2(C,partial,DL) :- !,
-	as2rdf_triple_list(C,'rdfs:subClassOf',DL).
-
-
-as2rdf_deprecated_class(C,Deprecated) :-
-	( Deprecated = true, !, owl_rdf_assert(C, 'rdf:type','owl:DeprecatedClass'); true).
 
 
 /*
@@ -529,44 +483,6 @@ as2rdf_set2pairs(A,[B|Rest],Predicate) :-
         as2rdf_set2pairs(A,Rest,Predicate).
 	
 
-/*
-------------------------------------------------------------------------------------------
-as2rdf_property. 
-	Generates RDF triples for Property constructs.
-*/    
-as2rdf_property :- 
-	property(PID,Deprecated,AnnotationList,PID_SuperList,
-			      PTList,PID_DomainList,PID_RangeList),
-	as2rdf_property_2(PID,Deprecated,PTList),
-	as2rdf_triple_list(PID,_,AnnotationList),
-	as2rdf_triple_list(PID,'rdfs:subPropertyOf',PID_SuperList),
-	as2rdf_triple_list(PID,'rdfs:domain',PID_DomainList),
-	as2rdf_triple_list(PID,'rdfs:range',PID_RangeList),
-	fail.
-	
-as2rdf_property.
-
-/*
-as2rdf_property_2(+PId, +Deprecated, +PropertyTypeSet) 
-	Generates RDF triples for property PID based on the type of property
-	as defined in the PropertTypeSet options list
-*/    
-as2rdf_property_2(PID,Deprecated,[OT,F,IF,T,S,iof(Inv)]) :-
-	(   Deprecated = true, !, owl_rdf_assert(PID, 'rdf:type','owl:DeprecatedProperty')
-	;
-	true),
-	( nonvar(S),
-	  owl_rdf_assert(PID,'rdf:type','owl:SymmetricProperty'),!,Defined = 'yes' ; true),	
-	( nonvar(T),owl_rdf_assert(PID,'rdf:type','owl:TransitiveProperty'),
-	  !,Defined = 'yes' ; true),
-	( nonvar(IF),owl_rdf_assert(PID,'rdf:type','owl:InverseFunctionalProperty'),
-	  !,Defined = 'yes' ; true),
-	( var(Defined), !,
-	  (   OT = objectProperty,owl_rdf_assert(PID,'rdf:type','owl:ObjectProperty'),!;
-	      OT = datatypeProperty,owl_rdf_assert(PID,'rdf:type','owl:DatatypeProperty'),!)
-	; true),
-	(   nonvar(F), owl_rdf_assert(PID,'rdf:type','owl:FunctionalProperty'),!; true),
-	(   nonvar(Inv), owl_rdf_assert(PID,'owl:inverseOf',Inv),!; true).
 
 /*
 ------------------------------------------------------------------------------------------
