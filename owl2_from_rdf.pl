@@ -99,17 +99,15 @@ owl_parse_rdf(F,Opts):-
 	owl_parse(F,Clear,Clear,Imports),
 	debug(owl_parser,'parsed ~w',[F]).
 
-
 %% owl_parse(+URL, +RDF_Load_Mode, +OWL_Parse_Mode, +ImportFlag:boolean)
 %
-%  Top level predicate to parse a set of RDF triples and produce an
-%  Abstract Syntax representation of an OWL ontology.
+%  Top level: parse a set of RDF triples and produce an
+%  AS representation of an OWL ontology.
 %		    
 %	Calls the rdf_load_stream predicate to parse RDF stream in URL. 
 %       If RDF_Load_Mode = complete it first retacts all rdf triples.
 %       If ImportFlag = true it handles owl:import clause at RDF level.
 %
-% owl_parse(+OWL_Parse_Mode).
             					       
 
 owl_parse(URL, RDF_Load_Mode, OWL_Parse_Mode,ImportFlag) :-
@@ -295,26 +293,6 @@ rdf_load_stream(URL,Ontology,BaseURI,Imports) :-
 	).
 
 
-%%	fix_no(+A,-B)  
-%
-%	This is used to correct an RDF parser error: 
-%       To remove duplicate ## from a URL.
-
-/*	Obsolete with version 5.5.x of SWI's RDF parser
-owl_fix_no(literal(X), literal(X)) :- !.
-
-owl_fix_no(A,B) :- 
-	sub_atom(A,Start,_,After,'##'),
-	sub_atom(A,0,Start,_,New_A),
-	Start1 is Start + 2,
-	sub_atom(A,Start1,After,_,B1),
-	atom_concat(New_A,'#',A1), 
-	atom_concat(A1,B1,B),!,print(A-B).
-
-owl_fix_no(A,A).
-*/
- 
-
 %%	owl_count(?U). 
 %       Returns/Checks the number of unused OWL triples. 
 
@@ -364,9 +342,6 @@ use_owl(X1,Y1,Z1) :-
 	expand_ns(X1,X),
 	expand_ns(Y1,Y),
 	expand_ns(Z1,Z),
-	(   Y1 = 'owl:intersectionOf'
-	->true;
-	true),
 	owl(X,Y,Z, not_used),
 	debug(owl_parser_detail,'using ~w ~w ~w',[X,Y,Z]),
 	retract(owl(X,Y,Z, not_used)),
@@ -526,27 +501,7 @@ owl_get_bnode(_,_).
   This section specifies the results of steps CP-2.2 and CP-3.3 of the
   canonical parsing process from Section 3.6 of the OWL 2
   Specification [OWL 2 Specification] on an ontology document D that
-  can be parsed into an RDF graph G. An OWL 2 tool MAY implement these
-  steps in any way it chooses; however, the results MUST be
-  structurally equivalent to the ones defined in the following
-  sections. These steps do not depend on the RDF syntax used to encode
-  the RDF graph in D; therefore, the ontology document D is identified
-  in this section with the corresponding RDF graph G.
-
-An RDF syntax ontology document is any sequence of octets accessible
-from some given IRI that can be parsed into an RDF graph, and that
-then be transformed into an OWL 2 ontology by the canonical parsing
-process instantiated as specified in this section.
-
-The following sections contain rules in which triple patterns are
-matched to G. If a triple pattern contains a variable number of
-triples, the maximal possible subset of G MUST be matched. The
-following notation is used in the patterns:
-
-    * The notation NN_INT(n) can be matched to any literal whose value n is a nonnegative integer.
-    * Possible conditions on the pattern are enclosed in curly braces { }.
-    * Some patterns use optional parts, which are enclosed in square brackets '[ ]'.
-    * The abbreviation T(SEQ y1 ... yn) denotes the pattern corresponding to RDF lists, as shown in Table 3.
+  can be parsed into an RDF graph G. ... 
 
   */
 
@@ -752,7 +707,6 @@ ann2(X,Y,Z,X1) :-
 ann2(_,_,_,_).
 
 
-
 % 3.2.4 Parsing of Expressions
 
 
@@ -835,22 +789,12 @@ owl_datarange(D,datatypeRestriction(DY,L)) :-
 	owl_datatype_restriction_list(L1,L),
 	owl_get_bnode(D,datatypeRestriction(DY,L)).
 
-
 % Table 13. Parsing of Class Expressions
 
 % ----------------------------------------------------------------------
 %       owl_description(+Node,-Description).
 %
 %	It implements OWL AS production rules for Descriptions.
-%       I.e. a Description can be any of
-%         - a Class ID 
-%	  - an existing blank node (in which case we have structure
-%	    sharing),
-%         - a unionOf(DescriptionList) term. 
-%         - a intersectionOf(DescriptionList) term.
-%         - a complementOf(Description) term.
-%         - a oneOf(IndividualList) term.
-%
 %         During the construction of the Description any blank node 
 %         is recorded for later structure sharing checks. 
 
@@ -1051,15 +995,9 @@ owl_restriction_type(E, P, maxCardinality(N,PX,DX)) :-
 % Table 15. Parsing of Class Expressions for Compatibility with OWL DL
 % Included into owl_dexcription clauses above
 
-
-
-
 % Table 16. Parsing of Axioms without Annotations
-
 % Declarations handled previously
-
 % CLASS AXIOMS
-
 % valid_axiom_annotation_mode: add clauses for the disjoint etc ....
 
 %% valid_axiom_annotation_mode(+Mode,+S,+P,+O,?List) :-
@@ -1103,7 +1041,6 @@ owl_parse_axiom(equivalentClasses(DL),AnnMode,List) :-
 % <owl:Class rdf:ID="WhiteWine">
 %    <owl:intersectionOf rdf:parseType="Collection">
 %      <owl:Class rdf:about="#Wine" />% Table 17. Parsing of Annotated Axioms
-
 %      <owl:Restriction>
 %        <owl:onProperty rdf:resource="#hasColor" />
 %        <owl:hasValue rdf:resource="#White" />
@@ -1149,7 +1086,6 @@ owl_parse_axiom(disjointUnion(DX,DY),AnnMode,List) :-
 
 
 % PROPERTY AXIOMS
-
 
 % introduces bnode
 owl_parse_axiom(subPropertyOf(propertyChain(PL),QX),AnnMode,List) :-
@@ -1235,18 +1171,15 @@ owl_parse_axiom(inverseProperties(PX,QX),AnnMode,List) :-
         owl_property_expression(P,PX),
         owl_property_expression(Q,QX).
 
-
 owl_parse_axiom(functionalProperty(P),AnnMode,List) :-
 	test_use_owl(P,'rdf:type','owl:FunctionalProperty'),
 	valid_axiom_annotation_mode(AnnMode,P,'rdf:type','owl:FunctionalProperty',List),	
         use_owl(P,'rdf:type','owl:FunctionalProperty').
 
-
 owl_parse_axiom(inverseFunctionalProperty(P),AnnMode,List) :-
 	test_use_owl(P,'rdf:type','owl:InverseFunctionalProperty'),
 	valid_axiom_annotation_mode(AnnMode,P,'rdf:type','owl:InverseFunctionalProperty',List),
         use_owl(P,'rdf:type','owl:InverseFunctionalProperty').
-
 
 owl_parse_axiom(reflexiveProperty(P),AnnMode,List) :-
 	test_use_owl(P,'rdf:type','owl:ReflexiveProperty'),
@@ -1288,12 +1221,10 @@ owl_parse_axiom(sameIndividual(X,Y),AnnMode,List) :-
 	valid_axiom_annotation_mode(AnnMode,X,'owl:sameAs',Y,List),
 	use_owl(X,'owl:sameAs',Y).
 
-
 owl_parse_axiom(differentIndividuals([X,Y]),AnnMode,List) :- 
 	test_use_owl(X,'owl:differentFrom',Y),
 	valid_axiom_annotation_mode(AnnMode,X,'owl:differentFrom',Y,List),
 	use_owl(X,'owl:differentFrom',Y).
-
 
 owl_parse_axiom(differentIndividuals(L),_AnnMode,[X]) :-	
 	use_owl(X,'rdf:type','owl:AllDifferent'),
@@ -1329,7 +1260,6 @@ owl_parse_axiom(negativePropertyAssertion(PX,A,B),_,X) :-
         use_owl(X,'owl:targetValue',B),
         owl_property_expression(P,PX). 
 
-
 owl_parse_axiom(annotationAssertion('owl:deprecated', X, true),AnnMode,List) :-
 	test_use_owl(X, 'rdf:type', 'owl:DeprecatedClass'),
 	valid_axiom_annotation_mode(AnnMode,X,'rdf:type','owl:DeprecatedClass',List),
@@ -1339,11 +1269,8 @@ owl_parse_axiom(annotationAssertion('owl:deprecated', X, true),AnnMode,List) :-
 	test_use_owl(X, 'rdf:type', 'owl:DeprecatedProperty'),
 	valid_axiom_annotation_mode(AnnMode,X,'rdf:type','owl:DeprecatedProperty',List),
 	use_owl(X, 'rdf:type', 'owl:DeprecatedProperty').
-
-
 	
 % Table 17. Parsing of Annotated Axioms
-
 
 dothislater(annotationAssertion/3).
 % TODO - only on unnannotated pass?
@@ -1359,7 +1286,6 @@ owl_parse_axiom(annotationAssertion(P,A,B),AnnMode,List) :-
 % process hooks; SWRL etc
 owl_parse_axiom(A,AnnMode,List) :-
         owl_parse_axiom_hook(A,AnnMode,List).
-
 
 % Parsing annotationAssertions
 % 
@@ -1400,9 +1326,6 @@ owl_parse_compatibility_DL(equivalentClasses([CEX,CEY])) :-
 	owl_description_list(Y,DL),
 	(   DL = [] -> CEY = 'owl:Nothing' ; CEY = oneOf(DL)).
 
-
-
-
 % UTIL
 
 %% maximally_connected_subgraph_over(+P,?ConnectedSets) is semidet
@@ -1429,15 +1352,13 @@ extend_set_over(P,L,L2):-
         test_use_owl(X,P,Y),
         \+ member(Y,L),
         use_owl(X,P,Y),
-        !,
-        extend_set_over(P,[Y|L],L2).
+        !,extend_set_over(P,[Y|L],L2).
 extend_set_over(P,L,L2):-
         member(X,L),
         test_use_owl(Y,P,X),
         \+ member(Y,L),
         use_owl(Y,P,X),
-        !,
-        extend_set_over(P,[Y|L],L2).
+        !,extend_set_over(P,[Y|L],L2).
 extend_set_over(_,L,L):- !.
 
 literal_integer(literal(type,A),N) :- atom_number(A,N).
@@ -1446,43 +1367,58 @@ literal_integer(literal(type(_,A)),N) :- atom_number(A,N).
 %% time_goal(+Goal,?Time)
 %  calls Goal and unifies Time with the cputime taken
 time_goal(Goal,Time):-
-        statistics(cputime,T1),
-        Goal,
-        statistics(cputime,T2),
-        Time is T2-T1.
+        statistics(cputime,T1), Goal,
+        statistics(cputime,T2), Time is T2-T1.
 
 timed_forall(Cond,Action) :-
         forall(Cond,
                (   time_goal(Action,Time),
                    debug(owl2_bench,'Goal: ~w Time:~w',[Action,Time]))).
 
-
-
 /** <module> Translates an RDF database to OWL2 axioms
-
   ---+ Synopsis
-
 ==
 :- use_module(bio(owl2_from_rdf)).
-
 % 
-demo:-
-  nl.
-  
-
 ==
-
 ---+ Details
-
 ---++ Hooks
-
 * owl_parse_axiom_hook/3
-
 ---+ See Also
-
 The file owl2_from_rdf.plt has some examples
-
-
-
-
 */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
