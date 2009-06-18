@@ -865,7 +865,16 @@
       </owl:Restriction>
     </rdfs:subClassOf>
   </owl:Class>
-    
+  
+  <!--- Replaced so that we have a unionOf construct
+        Aug 20 02 MKS, suggestion by R. Volz.  
+
+  <owl:Class rdf:ID="Fruit">
+    <rdfs:subClassOf rdf:resource="#EdibleThing" />
+  </owl:Class>
+
+  --> 
+  
   <owl:Class rdf:ID="Fruit">
     <owl:unionOf rdf:parseType="Collection">
       <owl:Class rdf:about="#SweetFruit" />

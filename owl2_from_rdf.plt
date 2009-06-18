@@ -51,6 +51,10 @@ expected(subClassOf(intersectionOf(['http://www.w3.org/TR/2003/PR-owl-guide-2003
                     hasValue('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#madeFromGrape',
                              'http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#CheninBlancGrape'))).
 
+%expected(ontologyAxiom('http://www.w3.org/TR/2003/PR-owl-guide-20031209/food',
+%		       subClassOf('http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PastaWithWhiteSauce', 
+%				  'http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Pasta'))).
+
 
 :- end_tests(wine_and_food).
 

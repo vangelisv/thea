@@ -12,27 +12,40 @@
 
 :- module(owl2_export_rdf,
 	  [ 	    	    
-	    owl_generate_rdf/2, % FileName, RDF_Load_Mode (complete/not)
+	    owl_generate_rdf/3, % Ontology,FileName, RDF_Load_Mode (complete/not)
 	    owl_rdf2n3/0 		    
 	  ]).
 
 :- use_module(owl2_model).
+:- use_module(owl2_from_rdf).
 :- use_module(library('semweb/rdf_db')).
 
-owl_generate_rdf(FileName,RDF_Load_Mode) :- 
-	(   RDF_Load_Mode=complete,rdf_retractall(_,_,_); true),
-	retractall(blanknode_gen(_,_)),
-	as2rdf_class,
-	as2rdf_subclass,
+owl2_from_rdf:owl_repository('http://www.w3.org/TR/2003/PR-owl-guide-20031209/food','testfiles/food.owl').
+t:- owl_parse('testfiles/wine.owl',complete,complete,true),
+	owl_generate_rdf('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine','testfiles/wine_g.owl',complete).
+
+t1 :-
+	owl_generate_rdf('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine','testfiles/wine_g.owl',complete).
+
+owl_generate_rdf(Ontology,FileName,RDF_Load_Mode) :- 
+	(   RDF_Load_Mode=complete -> rdf_retractall(_,_,_); true),
+	retractall(blanknode_gen(_,_)),retractall(blanknode(_,_,_)),
+	owl2_export_axiom(ontology(Ontology),_),
+	forall(ontologyAxiom(Ontology,Axiom),
+	       (owl2_export_axiom(Axiom,main_triple(S,P,O)),
+		owl2_export_annotation(Axiom,'owl:Axiom',S,P,O))),
+	%as2rdf_class,
+	%as2rdf_subclass,
 	%as2rdf_disjointSet,
 	%as2rdf_equivalentSet,
 	%as2rdf_property,
-	as2rdf_individual,
+	%as2rdf_individual,
 	%as2rdf_ontology,
 	%as2rdf_sameIndividuals,
 	%as2rdf_differentIndividuals,
 	rdf_db:rdf_save(FileName).
 	
+
 
 /*
 owl_rdf2n3
@@ -45,23 +58,305 @@ owl_rdf2n3 :-
     fail.
 
 /*
-------------------------------------------------------
-as2rdf_class. 
-	Generates RDF triples for Class constructs.
+owl2_export_axiom(X,main_triple(Node,_,_)) :-
+	blanknode_gen(Node,X),!.
+*/
+
+owl2_export_axiom(ontology(O),main_triple(O,'rdf:type','owl:Ontology')) :-
+	owl_rdf_assert(O,'rdf:type','owl:Ontology'),
+	forall(ontologyImport(O,Import),owl_rdf_assert(O,'owl:imports',Import)),!.
+
+
+owl2_export_axiom(class(C),main_triple(C,'rdf:type','owl:Class')) :-
+	owl_rdf_assert(C,'rdf:type','owl:Class'),!.
+
+owl2_export_axiom(subClassOf(C1,C2),main_triple(TC1,'rdfs:subClassOff',TC2)) :-
+	owl2_export_axiom(C1,main_triple(TC1,_,_)),
+	(   C1 = 'http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WhiteLoire' -> 
+	true 
+	;   
+	true),
+	owl2_export_axiom(C2,main_triple(TC2,_,_)),
+	owl_rdf_assert(TC1,'rdfs:subClassOf',TC2),!.
+
+owl2_export_axiom(equivalentClasses([X,Y]),main_triple(Tx,'owl:equivalentClass',Ty)) :-
+	owl2_export_axiom(X,main_triple(Tx,_,_)),
+	owl2_export_axiom(Y,main_triple(Ty,_,_)),!,
+	owl_rdf_assert(Tx,'owl:equivalentClass',Ty).
+
+owl2_export_axiom(disjointClasses([X,Y]),main_triple(Tx,'owl:disjointWith',Ty)) :-
+	owl2_export_axiom(X,main_triple(Tx,_,_)),
+	owl2_export_axiom(Y,main_triple(Ty,_,_)),!,
+	owl_rdf_assert(Tx,'owl:disjointWith',Ty).
+
+owl2_export_axiom(disjointClasses(List),main_triple(BNode,'rdf:type','owl:AlldisjointClasses')) :-
+	as2rdf_bnode(disjointClasses(List),BNode),
+	owl2_export_list(List,LNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:AlldisjointClasses'),
+	owl_rdf_assert(BNode,'owl:members',LNode),!.
+
+owl2_export_axiom(disjointUnion([C|Rest]),main_triple(Tc,'owl:disjointUnionOf',LNode)) :-
+	owl2_export_axiom(C,main_triple(Tc,_,_)),
+	owl2_export_list(Rest,LNode),
+	owl_rdf_assert(Tc,'owl:disjointUnionOf',LNode),!.
+
+owl2_export_axiom(subPropertyOf(P1,P2),main_triple(Tp1,'owl:subPropertyOf',Tp2)) :-
+	owl2_export_axiom(P1,main_triple(Tp1,_,_)),
+	owl2_export_axiom(P2,main_triple(Tp2,_,_)),
+	owl_rdf_assert(Tp1,'owl:subPropertyOf',Tp2),!.
+
+% TODO: subPropertyOf(propertyChain(Chain),P2)
+% 
+
+owl2_export_axiom(equivalentProperties([X,Y]),main_triple(Tx,'owl:equivalentProperty',Ty)) :-
+	owl2_export_axiom(X,main_triple(Tx,_,_)),
+	owl2_export_axiom(Y,main_triple(Ty,_,_)),
+	owl_rdf_assert(Tx,'owl:equivalentProperty',Ty),!.
+
+% TODO: >2 equivalent Properties
+
+owl2_export_axiom(disjointProperties([X,Y]),main_triple(Tx,'owl:propertyDisjointWith',Ty)) :-
+	owl2_export_axiom(X,main_triple(Tx,_,_)),
+	owl2_export_axiom(Y,main_triple(Ty,_,_)),
+	owl_rdf_assert(Tx,'owl:propertyDisjointWith',Ty),!.
+
+
+owl2_export_axiom(disjointProperties(List),main_triple(BNode,'rdf:type','owl:AlldisjointProperties')) :-
+	as2rdf_bnode(disjointClasses(List),BNode),
+	owl2_export_list(List,LNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:AlldisjointProperties'),
+	owl_rdf_assert(BNode,'owl:members',LNode),!.
+
+
+owl2_export_axiom(propertyDomain(PE,CE),main_triple(Tpe,'rdfs:domain',Tce)) :-
+	owl2_export_axiom(PE,main_triple(Tpe,_,_)),
+	owl2_export_axiom(CE,main_triple(Tce,_,_)),
+	owl_rdf_assert(Tpe,'rdfs:domain',Tce),!.
+
+owl2_export_axiom(propertyRange(PE,CE),main_triple(Tpe,'rdfs:range',Tce)) :-
+	owl2_export_axiom(PE,main_triple(Tpe,_,_)),
+	owl2_export_axiom(CE,main_triple(Tce,_,_)),
+	owl_rdf_assert(Tpe,'rdfs:range',Tce),!.
+
+owl2_export_axiom(inverseProperties(P1,P2),main_triple(Tp1,'owl:inverseOf',Tp2)) :-
+	owl2_export_axiom(P1,main_triple(Tp1,_,_)),
+	owl2_export_axiom(P2,main_triple(Tp2,_,_)),
+	owl_rdf_assert(Tp1,'owl:inverseOf',Tp2),!.
+
+owl2_export_axiom(functionalProperty(P),main_triple(Tp,'rdf:type','owl:FunctionalProperty')) :-
+	owl2_export_axiom(P,main_triple(Tp,_,_)),owl_rdf_assert(Tp,'rdf:type','owl:FunctionalProperty'),!.
+
+owl2_export_axiom(inverseFunctionalProperty(P),main_triple(Tp,'rdf:type','owl:InverseFunctionalProperty')) :-
+	owl2_export_axiom(P,main_triple(Tp,_,_)),owl_rdf_assert(Tp,'rdf:type','owl:InverseFunctionalProperty'),!.
+
+owl2_export_axiom(reflexiveProperty(P),main_triple(Tp,'rdf:type','owl:ReflexiveProperty')) :-
+	owl2_export_axiom(P,main_triple(Tp,_,_)),owl_rdf_assert(Tp,'rdf:type','owl:ReflexiveProperty'),!.
+
+owl2_export_axiom(irreflexiveProperty(P),main_triple(Tp,'rdf:type','owl:IrreflexiveProperty')) :-
+	owl2_export_axiom(P,main_triple(Tp,_,_)),owl_rdf_assert(Tp,'rdf:type','owl:IrreflexiveProperty'),!.
+
+owl2_export_axiom(symmetricProperty(P),main_triple(Tp,'rdf:type','owl:SymmetricProperty')) :-
+	owl2_export_axiom(P,main_triple(Tp,_,_)),owl_rdf_assert(Tp,'rdf:type','owl:SymmetricProperty'),!.
+
+owl2_export_axiom(asymmetricProperty(P),main_triple(Tp,'rdf:type','owl:AsymmetricProperty')) :-
+	owl2_export_axiom(P,main_triple(Tp,_,_)),owl_rdf_assert(Tp,'rdf:type','owl:AsymmetricProperty'),!.
+
+owl2_export_axiom(transitiveProperty(P),main_triple(Tp,'rdf:type','owl:TransitiveProperty')) :-
+	owl2_export_axiom(P,main_triple(Tp,_,_)),owl_rdf_assert(Tp,'rdf:type','owl:TransitiveProperty'),!.
+
+owl2_export_axiom(hasKey([C|Rest]),main_triple(Tc,'owl:hasKey',LNode)) :-
+	owl2_export_axiom(C,main_triple(Tc,_,_)),
+	owl2_export_list(Rest,LNode),
+	owl_rdf_assert(Tc,'owl:hasKey',LNode),!.
+
+% 
+% Individuals
+% 
+
+owl2_export_axiom(sameIndividual([X,Y]),main_triple(Tx,'owl:sameAs',Ty)) :-
+	owl2_export_axiom(X,main_triple(Tx,_,_)),
+	owl2_export_axiom(Y,main_triple(Ty,_,_)),
+	owl_rdf_assert(Tx,'owl:sameAs',Ty),!.
+
+owl2_export_axiom(differentIndividuals([X,Y]),main_triple(Tx,'owl:differentFrom',Ty)) :-
+	owl2_export_axiom(X,main_triple(Tx,_,_)),
+	owl2_export_axiom(Y,main_triple(Ty,_,_)),
+	owl_rdf_assert(Tx,'owl:differentFrom',Ty),!.
+
+owl2_export_axiom(differentIndividuals(List),main_triple(BNode,'rdf:type','owl:AllDifferent')) :-
+	as2rdf_bnode(differentIndividuals(List),BNode),
+	owl2_export_list(List,LNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:AllDifferent'),
+	owl_rdf_assert(BNode,'owl:members',LNode),!.
+
+owl2_export_axiom(classAssertion(CE,A),main_triple(Ta,'rdf:type',Tce)) :-
+	owl2_export_axiom(A,main_triple(Ta,_,_)),
+	owl2_export_axiom(CE,main_triple(Tce,_,_)),
+	owl_rdf_assert(Ta,'rdf:type',Tce),!.
+
+owl2_export_axiom(propertyAssertion(P,A1,A2),main_triple(Ta1,Tp,Ta2)) :-
+	owl2_export_axiom(P,main_triple(Tp,_,_)),
+	owl2_export_axiom(A1,main_triple(Ta1,_,_)),
+	owl2_export_axiom(A2,main_triple(Ta2,_,_)),
+	owl_rdf_assert(Ta1,Tp,Ta2),!.
+
+owl2_export_axiom(propertyAssertion(inverseOf(P),A1,A2),main_triple(Ta2,Tp,Ta1)) :-
+	owl2_export_axiom(P,main_triple(Tp,_,_)),
+	owl2_export_axiom(A1,main_triple(Ta1,_,_)),
+	owl2_export_axiom(A2,main_triple(Ta2,_,_)),
+	owl_rdf_assert(Ta2,Tp,Ta1),!.
+
+owl2_export_axiom(negativePropertyAssertion(P,A1,A2),main_triple(BNode,'rdf:type','owl:NegativePropertyAssertion')) :-
+	as2rdf_bnode(negativePropertyAssertion(P,A1,A2),BNode),
+	owl2_export_axiom(P,main_triple(Tp,_,_)),
+	owl2_export_axiom(A1,main_triple(Ta1,_,_)),
+	owl2_export_axiom(A2,main_triple(Ta2,_,_)),
+	owl_rdf_assert(BNode,'rdf:type','owl:NegativePropertyAssertion'),
+	owl_rdf_assert(BNode,'owl:sourceIndividual',Ta1),
+	owl_rdf_assert(BNode,'owl:assertionProperty',Tp),
+	owl_rdf_assert(BNode,'owl:targetIndividual',Ta2),!.
+
+
+%
+% AnnotationAssestions
+%
+
+owl2_export_axiom(annotationAssertion(AP,As,Av),main_triple(TAs,AP,TAv)) :- 
+	owl2_export_axiom(As,main_triple(TAs,_,_)),
+	owl2_export_axiom(Av,main_triple(TAv,_,_)),
+	owl_rdf_assert(TAs,AP,TAv),!.
+
+%
+% Class Expressions (Descriptions)
+%
+
+owl2_export_axiom(intersectionOf([E|Rest]),main_triple(BNode,'rdf:type',Type)) :-
+	as2rdf_bnode(intersectionOf([E|Rest]),BNode),
+	owl2_export_list([E|Rest],LNode),
+	(   classExpression(E) -> Type = 'owl:Class'; Type = 'owl:Datatype'),
+	owl_rdf_assert(BNode,'owl:intersectionOf', LNode),!.
+
+owl2_export_axiom(unionOf([E|Rest]),main_triple(BNode,'rdf:type',Type)) :-
+	as2rdf_bnode(unionOf([E|Rest]),BNode),
+	owl2_export_list([E|Rest],LNode),
+	(   classExpression(E) -> Type = 'owl:Class'; Type = 'owl:Datatype'),
+	owl_rdf_assert(BNode,'owl:unionOf', LNode),!.	  
+
+owl2_export_axiom(oneOf([E|Rest]),main_triple(BNode,'rdf:type',Type)) :-
+	as2rdf_bnode(oneOf([E|Rest]),BNode),
+	owl2_export_list([E|Rest],LNode),
+	(   classExpression(E) -> Type = 'owl:Class'; Type = 'owl:Datatype'),
+	owl_rdf_assert(BNode,'owl:oneOf', LNode),!.	  
+
+
+owl2_export_axiom(complementOf(E),main_triple(BNode,'rdf:type',Type)) :-
+	as2rdf_bnode(complementOf(E),BNode),
+	owl2_export_axiom(E,main_triple(Te,_,_)),
+	(   classExpression(E) -> Type = 'owl:complementOf'; Type = 'owl:datatypeComplementOf'),
+	owl_rdf_assert(BNode,'owl:complementOf', Te),!.	  
+
+
+
+owl2_export_axiom(someValuesFrom(PE,CEorDR),main_triple(BNode,'rdf:type','owl:Restriction')) :-
+	as2rdf_bnode(someValuesFrom(PE,CEorDR),BNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:Restriction'),
+	owl2_export_axiom(PE,main_triple(Tpe,_,_)),owl_rdf_assert(BNode,'owl:onProperty',Tpe),
+	owl2_export_axiom(CEorDR,main_triple(Tce,_,_)),owl_rdf_assert(BNode,'owl:someValuesFrom',Tce),!.
+
+
+owl2_export_axiom(allValuesFrom(PE,CEorDR),main_triple(BNode,'rdf:type','owl:Restriction')) :-
+	as2rdf_bnode(allValuesFrom(PE,CEorDR),BNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:Restriction'),
+	owl2_export_axiom(PE,main_triple(Tpe,_,_)),owl_rdf_assert(BNode,'owl:onProperty',Tpe),
+	owl2_export_axiom(CEorDR,main_triple(Tce,_,_)),owl_rdf_assert(BNode,'owl:allValuesFrom',Tce),!.
+
+owl2_export_axiom(hasValue(PE,Value),main_triple(BNode,'rdf:type','owl:Restriction')) :-
+	as2rdf_bnode(hasValue(PE,Value),BNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:Restriction'),
+	owl2_export_axiom(PE,main_triple(Tpe,_,_)),owl_rdf_assert(BNode,'owl:onProperty',Tpe),
+	owl2_export_axiom(Value,main_triple(TValue,_,_)),owl_rdf_assert(BNode,'owl:hasValue',TValue),!.
+
+owl2_export_axiom(hasSelf(OPE),main_triple(BNode,'rdf:type','owl:Restriction')) :-
+	as2rdf_bnode(hasValue(OPE),BNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:Restriction'),
+	owl2_export_axiom(OPE,main_triple(Tope,_,_)),owl_rdf_assert(BNode,'owl:onProperty',Tope),
+	owl_rdf_assert(BNode,'owl:hasSelf',	literal(type('http://www.w3.org/2001/XMLSchema#boolean','true'))),!.
+
+
+owl2_export_axiom(minCardinality(N,OPE),main_triple(BNode,'rdf:type','owl:Restriction')) :-
+	as2rdf_bnode(minCardinality(N,OPE),BNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:Restriction'),
+	owl_rdf_assert(BNode,'owl:minCardinality',literal(type('http://www.w3.org/2001/XMLSchema#nonNegativeInteger',N))),
+	owl2_export_axiom(OPE,main_triple(Tope,_,_)),owl_rdf_assert(BNode,'owl:onProperty',Tope),!.
+
+owl2_export_axiom(minCardinality(N,OPE,CEorDR),main_triple(BNode,'rdf:type','owl:Restriction')) :-
+	as2rdf_bnode(minCardinality(N,OPE,CEorDR),BNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:Restriction'),
+	owl_rdf_assert(BNode,'owl:minQualifiedCardinality',literal(type('http://www.w3.org/2001/XMLSchema#nonNegativeInteger',N))),
+	owl2_export_axiom(OPE,main_triple(Tope,_,_)),owl_rdf_assert(BNode,'owl:onProperty',Tope),
+	owl2_export_axiom(CEorDR,main_triple(Tce,_,_)),	
+	(   classExpression(CEorDR) -> owl_rdf_assert(BNode,'owl:onClass',Tce); owl_rdf_assert(BNode,'owl:onDataRange',Tce)),!.
+
+
+owl2_export_axiom(maxCardinality(N,OPE),main_triple(BNode,'rdf:type','owl:Restriction')) :-
+	as2rdf_bnode(maxCardinality(N,OPE),BNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:Restriction'),
+	owl_rdf_assert(BNode,'owl:maxCardinality',literal(type('http://www.w3.org/2001/XMLSchema#nonNegativeInteger',N))),
+	owl2_export_axiom(OPE,main_triple(Tope,_,_)),owl_rdf_assert(BNode,'owl:onProperty',Tope),!.
+
+owl2_export_axiom(maxCardinality(N,OPE,CEorDR),main_triple(BNode,'rdf:type','owl:Restriction')) :-
+	as2rdf_bnode(maxCardinality(N,OPE,CEorDR),BNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:Restriction'),
+	owl_rdf_assert(BNode,'owl:maxQualifiedCardinality',literal(type('http://www.w3.org/2001/XMLSchema#nonNegativeInteger',N))),
+	owl2_export_axiom(OPE,main_triple(Tope,_,_)),owl_rdf_assert(BNode,'owl:onProperty',Tope),
+	owl2_export_axiom(CEorDR,main_triple(Tce,_,_)),	
+	(   classExpression(CEorDR) -> owl_rdf_assert(BNode,'owl:onClass',Tce); owl_rdf_assert(BNode,'owl:onDataRange',Tce)),!.
+
+
+owl2_export_axiom(exactCardinality(N,OPE),main_triple(BNode,'rdf:type','owl:Restriction')) :-
+	as2rdf_bnode(exactCardinality(N,OPE),BNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:Restriction'),
+	owl_rdf_assert(BNode,'owl:cardinality',literal(type('http://www.w3.org/2001/XMLSchema#nonNegativeInteger',N))),
+	owl2_export_axiom(OPE,main_triple(Tope,_,_)),owl_rdf_assert(BNode,'owl:onProperty',Tope),!.
+
+owl2_export_axiom(exactCardinality(N,OPE,CEorDR),main_triple(BNode,'rdf:type','owl:Restriction')) :-
+	as2rdf_bnode(exactCardinality(N,OPE,CEorDR),BNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:Restriction'),
+	owl_rdf_assert(BNode,'owl:qualifiedCardinality',literal(type('http://www.w3.org/2001/XMLSchema#nonNegativeInteger',N))),
+	owl2_export_axiom(OPE,main_triple(Tope,_,_)),owl_rdf_assert(BNode,'owl:onProperty',Tope),
+	owl2_export_axiom(CEorDR,main_triple(Tce,_,_)),
+	(   classExpression(CEorDR) -> owl_rdf_assert(BNode,'owl:onClass',Tce); owl_rdf_assert(BNode,'owl:onDataRange',Tce)),!.
+
+
+owl2_export_axiom(IRI,main_triple(IRI,_,_)) :- atom(IRI),!. % better iri(IRI).
+
+
+
+owl2_export_axiom(Any,main_triple(Any,_,_)) :- print('unresolved:'-Any),nl.
+
+/*
+owl2_export_annotation(Parent)
+ Parent can be an axiom or an annotation itself (nested annotations)
 */    
 
-as2rdf_class :-
-	class(C),
-	owl_rdf_assert(C,'rdf:type','owl:Class'),
-	% TODO as2rdf_deprecated_class(C,Deprecated),
-	% TODO as2rdf_triple_list(C,_,AL),
-        findall(Desc,equivalent_to(C,Desc),Descs),
-	as2rdf_class_2(C,complete,Descs),
-        findall(Desc,subClassOf(C,Desc),Descs),
-	as2rdf_class_2(C,partial,Descs),
-	fail.
 
-as2rdf_class.
+owl2_export_annotation(Parent,ParentType,S,ParentP,ParentO) :-
+	(   Parent = annotation(_,ParentAP,ParentAV) -> P = ParentAP, O = ParentAV,
+	    owl_rdf_assert(S,P,O); 
+	P = ParentP, O = ParentO),
+	findall(AP-AV,annotation(Parent,AP,AV),ANNs),
+	(   ANNs = [_|_] -> as2rdf_bnode(Parent,BNode),
+	    reify(BNode,'rdf:type',ParentType,S,P,O),
+	    forall(member(ANN,ANNs),owl2_export_annotation(ANN,'owl:Annotation',BNode,_,_)); 
+	true).
+
+reify(SNode,PTerm,OTerm,S,P,O) :-
+	owl_rdf_assert(SNode,PTerm,OTerm),
+	owl_rdf_assert(SNode,'owl:subject',S),
+	owl_rdf_assert(SNode,'owl:predicate',P),
+	owl_rdf_assert(SNode,'owl:object',O).
+
+
 
 
 /*
@@ -401,19 +696,19 @@ as2rdf(ID, ID) :- !.
 
 
 /*
-as2rdf_list(+List, -Node).  
+owl2_export_list(+List, -Node).  
         Generates RDF triples for the List of construct based on
 	Abstract Syntax list transformation rules. Node represents the 
 	List in the resulting RDF graph
 */   
-as2rdf_list([],'rdf:nil').
 
-as2rdf_list([S|Rest],Node) :-
+owl2_export_list([],'rdf:nil').
+
+owl2_export_list([S|Rest],Node) :-
 	as2rdf_bnode([S|Rest],Node),
-	owl_rdf_assert(Node,'rdf:type','rdf:List'),
-	as2rdf(S,Ts),
+	owl2_export_axiom(S,main_triple(Ts,_,_)),
 	owl_rdf_assert(Node,'rdf:first', Ts),	
-	as2rdf_list(Rest,Node2),
+	owl2_export_list(Rest,Node2),
 	owl_rdf_assert(Node,'rdf:rest',Node2).
 
 /*
@@ -424,19 +719,38 @@ owl_rdf_assert(S,P,O).
 owl_rdf_assert(S,P,O) :- 
 	expand_ns(S,S1),expand_ns(P,P1),expand_ns(O,O1),
 	rdf_db:rdf_assert(S1,P1,O1), !.
-
 /*
 as2rdf_bnode(+X,-Node).  
         It generates a bnode Node for construct X in case it does not
 	exist already as a blanknode/3 clause.
 */   
 as2rdf_bnode(X,Node) :-
-	blanknode(Node,X,_),
-	assert(blanknode_gen(Node,X)),!.
+	blanknode(X,Node,_),
+	blanknode_gen(Node,X),!.
 
 as2rdf_bnode(X,Node) :-
 	rdf_db:rdf_bnode(Node),
 	assert(blanknode_gen(Node,X)),!.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -18,7 +18,7 @@
 %% class(?Class,?Deprecated,?Complete,?Annotations, ?Descriptions)
 class(C,false,true,Annotations,Descs) :-
         owl2_model:class(C),
-        (   owl2_model:equivalentClasses(ECL) -> select(C,ECL,Descs) ; Descs = []),
+        (   owl2_model:equivalentClasses(ECL),member(C,ECL) -> select(C,ECL,Descs) ; Descs = []),
 	findall(annotation(AP,AV),owl2_model:annotationAssertion(AP,C,AV),Annotations).
 
 subclassOf(X,Y) :-
