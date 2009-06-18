@@ -37,10 +37,20 @@ t:- owl_parse('testfiles/wine.owl',complete,complete,true),
 t1 :-
 	owl_generate_rdf('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine','testfiles/wine_g.owl',complete).
 
+%% owl_generate_rdf(+FileName,+RDF_Load_Mode) is det
+% see owl_generate_rdf/1 - derives ontology using ontology/1
 owl_generate_rdf(FileName,RDF_Load_Mode) :-
         ontology(Ontology),
         owl_generate_rdf(Ontology,FileName,RDF_Load_Mode).
 
+%% owl_generate_rdf(+Ontology,+FileName,+RDF_Load_Mode) is det
+%
+%   writes in-memory ontology from owl2_model to an RDF-OWL file.
+%   You can also use save_axioms/2 with Format='owl'
+%
+% @param Ontology - IRI
+% @param FileName - path to save
+% @param RDF_Load_Mode (complete/not)
 owl_generate_rdf(Ontology,FileName,RDF_Load_Mode) :- 
 	(   RDF_Load_Mode=complete -> rdf_retractall(_,_,_); true),
 	retractall(blanknode_gen(_,_)),retractall(blanknode(_,_,_)),
