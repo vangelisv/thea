@@ -57,6 +57,7 @@
 :- use_module(library('http/http_open.pl')).
 
 :- dynamic(owl/4).
+%% blanknode(Node,Description,User)
 :- dynamic(blanknode/3).
 :- dynamic(owl_parser_log/2).
 :- dynamic(blanknode_gen/2).
