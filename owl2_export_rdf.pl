@@ -68,6 +68,10 @@ owl_generate_rdf(Ontology,FileName,RDF_Load_Mode) :-
 	forall(ontologyAxiom(Ontology,Axiom),
 	       (owl2_export_axiom(Axiom,main_triple(S,P,O)),
 		owl2_export_annotation(Axiom,'owl:Axiom',S,P,O))),
+        % TODO - better way of doing this - stray axioms
+	forall((axiom(Axiom),\+ontologyAxiom(_,Axiom)),
+	       (owl2_export_axiom(Axiom,main_triple(S,P,O)),
+		owl2_export_annotation(Axiom,'owl:Axiom',S,P,O))),
         % TODO - make this a hook?
         forall(axiom(implies(A,C)),
                owl2_export_axiom(implies(A,C),_)),
@@ -262,6 +266,7 @@ owl2_export_axiom(intersectionOf([E|Rest]),main_triple(BNode,'rdf:type',Type)) :
 	as2rdf_bnode(intersectionOf([E|Rest]),BNode),
 	owl2_export_list([E|Rest],LNode),
 	(   classExpression(E) -> Type = 'owl:Class'; Type = 'owl:Datatype'),
+        %owl_rdf_assert(BNode,'rdf:type',Type),
 	owl_rdf_assert(BNode,'owl:intersectionOf', LNode),!.
 
 owl2_export_axiom(unionOf([E|Rest]),main_triple(BNode,'rdf:type',Type)) :-
@@ -370,6 +375,78 @@ owl2_export_axiom(implies(AL,CL),main_triple(RuleNode,'rdf:type','swrl:Imp')) :-
         owl_rdf_assert(RuleNode,'swrl:body', ALNode),
         owl_rdf_assert(RuleNode,'swrl:head', CLNode).
 
+
+
+
+owl2_export_axiom(IRI,main_triple(IRI,_,_)) :- atom(IRI),!. % better iri(IRI).
+
+owl2_export_axiom(Any,main_triple(Any,P,Y)) :- print('unresolved:'-Any-P-Y),nl.
+
+/*
+owl2_export_annotation(Parent)
+ Parent can be an axiom or an annotation itself (nested annotations)
+*/    
+
+
+owl2_export_annotation(Parent,ParentType,S,ParentP,ParentO) :-
+	(   Parent = annotation(_,ParentAP,ParentAV) -> P = ParentAP, O = ParentAV,
+	    owl_rdf_assert(S,P,O); 
+	P = ParentP, O = ParentO),
+	findall(AP-AV,annotation(Parent,AP,AV),ANNs),
+	(   ANNs = [_|_] -> as2rdf_bnode(Parent,BNode),
+	    reify(BNode,'rdf:type',ParentType,S,P,O),
+	    forall(member(ANN,ANNs),owl2_export_annotation(ANN,'owl:Annotation',BNode,_,_)); 
+	true).
+
+reify(SNode,PTerm,OTerm,S,P,O) :-
+	owl_rdf_assert(SNode,PTerm,OTerm),
+	owl_rdf_assert(SNode,'owl:subject',S),
+	owl_rdf_assert(SNode,'owl:predicate',P),
+	owl_rdf_assert(SNode,'owl:object',O).
+
+
+
+
+
+	
+
+
+
+
+
+/*
+owl2_export_list(+List, -Node).  
+        Generates RDF triples for the List of construct based on
+	Abstract Syntax list transformation rules. Node represents the 
+	List in the resulting RDF graph
+*/   
+
+owl2_export_list([],'rdf:nil').
+
+owl2_export_list([S|Rest],Node) :-
+	as2rdf_bnode([S|Rest],Node),
+	owl2_export_axiom(S,main_triple(Ts,_,_)),
+	owl_rdf_assert(Node,'rdf:type', 'rdf:List'),	
+	owl_rdf_assert(Node,'rdf:first', Ts),	
+	owl2_export_list(Rest,Node2),
+	owl_rdf_assert(Node,'rdf:rest',Node2).
+
+swrl_export_atom_list([],'rdf:nil').
+
+swrl_export_atom_list([S|Rest],Node) :-
+	as2rdf_bnode([S|Rest],Node),
+	swrl_export_atom(S,main_triple(Ts,_,_)),
+	owl_rdf_assert(Node,'rdf:type', 'swrl:AtomList'),	
+	owl_rdf_assert(Node,'rdf:first', Ts),	
+	swrl_export_atom_list(Rest,Node2),
+	owl_rdf_assert(Node,'rdf:rest',Node2).
+
+% in swrl.pl atom lists are weakly typed - we allow a swrl atom to
+% stand in for an atom list for convenience
+swrl_export_atom_list(X,Node) :-
+        \+ atom(X),
+        swrl_export_atom_list([X],Node).
+
 swrl_export_atom(propertyAssertion(OPE,A1,A2),main_triple(BNode,'rdf:type','swrl:IndividualPropertyAtom')) :-
         !,
 	as2rdf_bnode(propertyAssertion(OPE,A1,A2),BNode),
@@ -413,160 +490,6 @@ swrl_export_argument(d(V),T) :- swrl_export_argument(v(V),T).
 swrl_export_argument(i(V),T) :- swrl_export_argument(v(V),T).
 
 
-
-owl2_export_axiom(IRI,main_triple(IRI,_,_)) :- atom(IRI),!. % better iri(IRI).
-
-owl2_export_axiom(Any,main_triple(Any,P,Y)) :- print('unresolved:'-Any-P-Y),nl.
-
-/*
-owl2_export_annotation(Parent)
- Parent can be an axiom or an annotation itself (nested annotations)
-*/    
-
-
-owl2_export_annotation(Parent,ParentType,S,ParentP,ParentO) :-
-	(   Parent = annotation(_,ParentAP,ParentAV) -> P = ParentAP, O = ParentAV,
-	    owl_rdf_assert(S,P,O); 
-	P = ParentP, O = ParentO),
-	findall(AP-AV,annotation(Parent,AP,AV),ANNs),
-	(   ANNs = [_|_] -> as2rdf_bnode(Parent,BNode),
-	    reify(BNode,'rdf:type',ParentType,S,P,O),
-	    forall(member(ANN,ANNs),owl2_export_annotation(ANN,'owl:Annotation',BNode,_,_)); 
-	true).
-
-reify(SNode,PTerm,OTerm,S,P,O) :-
-	owl_rdf_assert(SNode,PTerm,OTerm),
-	owl_rdf_assert(SNode,'owl:subject',S),
-	owl_rdf_assert(SNode,'owl:predicate',P),
-	owl_rdf_assert(SNode,'owl:object',O).
-
-
-
-
-
-	
-
-
-
-
-
-/*
-as2rdf(+Construct, -Node).  
-        Generates RDF triples for the Construct based on AS
-	transformation rules. If not existing a blankNode is also 
-	generated to represent the construct.
-        A Construct can be any Description (incl Restrictions), URL, 
-	blanknode or literal.
-*/   
-
-as2rdf(X,Node) :-
-	blanknode_gen(Node,X),!.
-
-
-as2rdf(unionOf(DL),Node) :- !,
-	as2rdf_bnode(unionOf(DL),Node),
-	owl_rdf_assert(Node,'rdf:type','owl:Class'),
-	as2rdf_list(DL,DLNode),
-	owl_rdf_assert(Node,'owl:unionOf',DLNode).
-	
-as2rdf(intersectionOf(DL),Node) :- !,
-	as2rdf_bnode(intersectionOf(DL),Node),
-	owl_rdf_assert(Node,'rdf:type','owl:Class'),
-	as2rdf_list(DL,Node1),
-	owl_rdf_assert(Node,'owl:intersectionOf',Node1).
-
-as2rdf(complementOf(D),Node) :- !,
-	as2rdf_bnode(complementOf(D),Node),
-	owl_rdf_assert(Node,'rdf:type','owl:Class'),
-	as2rdf(D,Node1),
-	owl_rdf_assert(Node,'owl:complementOf',Node1).
-
-as2rdf(oneOf(DL),Node) :- !,
-	as2rdf_bnode(oneOf(DL),Node),
-	owl_rdf_assert(Node,'rdf:type','owl:Class'),
-	as2rdf_list(DL,Node1),
-	owl_rdf_assert(Node,'owl:oneOf',Node1).
-
-as2rdf(restriction(PropertyID,allValuesFrom(Descr)),Node) :-  !,
-	as2rdf_bnode(restriction(PropertyID,allValuesFrom(Descr)),Node),
-	owl_rdf_assert(Node,'rdf:type','owl:Restriction'),
-	owl_rdf_assert(Node,'owl:onProperty',PropertyID),
-	as2rdf(Descr,Node1),
-	owl_rdf_assert(Node,'owl:allValuesFrom',Node1).
-
-as2rdf(restriction(PropertyID,someValuesFrom(Descr)),Node) :- !,
-	as2rdf_bnode(restriction(PropertyID,someValuesFrom(Descr)),Node),
-	owl_rdf_assert(Node,'rdf:type','owl:Restriction'),
-	owl_rdf_assert(Node,'owl:onProperty',PropertyID),
-	as2rdf(Descr,Node1),
-	owl_rdf_assert(Node,'owl:someValuesFrom',Node1).
-
-as2rdf(restriction(PropertyID,value(Value)),Node) :- !,
-	as2rdf_bnode(restriction(PropertyID,value(Value)),Node),
-	owl_rdf_assert(Node,'rdf:type','owl:Restriction'),
-	owl_rdf_assert(Node,'owl:onProperty',PropertyID),
-	as2rdf(Value,Node1),
-	owl_rdf_assert(Node,'owl:hasValue',Node1).
-
-as2rdf(restriction(PropertyID,minCardinality(Min)),Node) :- !,
-	as2rdf_bnode(restriction(PropertyID,minCardinality(Min)),Node),
-	owl_rdf_assert(Node,'rdf:type','owl:Restriction'),
-	owl_rdf_assert(Node,'owl:onProperty',PropertyID),
-	owl_rdf_assert(Node,'owl:minCardinality',Min).
-
-as2rdf(restriction(PropertyID,maxCardinality(Max)),Node) :- !,
-	as2rdf_bnode(restriction(PropertyID,maxCardinality(Max)),Node),
-	owl_rdf_assert(Node,'rdf:type','owl:Restriction'),
-	owl_rdf_assert(Node,'owl:onProperty',PropertyID),
-	owl_rdf_assert(Node,'owl:maxCardinality',Max).
-
-as2rdf(restriction(PropertyID,cardinality(Card)),Node) :- !,
-	as2rdf_bnode(restriction(PropertyID,cardinality(Card)),Node),
-	owl_rdf_assert(Node,'rdf:type','owl:Restriction'),
-	owl_rdf_assert(Node,'owl:onProperty',PropertyID),
-	owl_rdf_assert(Node,'owl:cardinality',Card).
-
-as2rdf('rdfs:Literal','rdfs:Literal') :-!.
-
-as2rdf(literal(X),literal(X)):-!.
-
-as2rdf(ID, ID) :- !.
-
-
-/*
-owl2_export_list(+List, -Node).  
-        Generates RDF triples for the List of construct based on
-	Abstract Syntax list transformation rules. Node represents the 
-	List in the resulting RDF graph
-*/   
-
-owl2_export_list([],'rdf:nil').
-
-owl2_export_list([S|Rest],Node) :-
-	as2rdf_bnode([S|Rest],Node),
-	owl2_export_axiom(S,main_triple(Ts,_,_)),
-	owl_rdf_assert(Node,'rdf:type', 'rdf:List'),	
-	owl_rdf_assert(Node,'rdf:first', Ts),	
-	owl2_export_list(Rest,Node2),
-	owl_rdf_assert(Node,'rdf:rest',Node2).
-
-swrl_export_atom_list([],'rdf:nil').
-
-swrl_export_atom_list([S|Rest],Node) :-
-	as2rdf_bnode([S|Rest],Node),
-	swrl_export_atom(S,main_triple(Ts,_,_)),
-	owl_rdf_assert(Node,'rdf:type', 'swrl:AtomList'),	
-	owl_rdf_assert(Node,'rdf:first', Ts),	
-	swrl_export_atom_list(Rest,Node2),
-	owl_rdf_assert(Node,'rdf:rest',Node2).
-
-% in swrl.pl atom lists are weakly typed - we allow a swrl atom to
-% stand in for an atom list for convenience
-swrl_export_atom_list(X,Node) :-
-        \+ atom(X),
-        swrl_export_atom_list([X],Node).
-
-
 /*
 owl_rdf_assert(S,P,O).  
         Expands the NS the S, P, O terms and asserts into the RDF
@@ -575,6 +498,7 @@ owl_rdf_assert(S,P,O).
 owl_rdf_assert(S,P,O) :- 
 	expand_ns(S,S1),expand_ns(P,P1),expand_ns(O,O1),
 	rdf_db:rdf_assert(S1,P1,O1), !.
+
 /*
 as2rdf_bnode(+X,-Node).  
         It generates a bnode Node for construct X in case it does not
