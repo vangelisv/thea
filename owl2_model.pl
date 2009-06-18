@@ -156,6 +156,10 @@ declarationAxiom(objectProperty(A)) :- objectProperty(A).
 declarationAxiom(dataProperty(A)) :- dataProperty(A).
 declarationAxiom(class(A)) :- class(A).
 declarationAxiom(datatype(A)) :- datatype(A).
+% TODO: check. here we treat the ontology declaration as an axiom;
+% this liberal definition of axiom allows us to iterate over axiom/1
+% to find every piece of information in the ontology.
+declarationAxiom(ontology(A)) :- ontology(A).
 
 %% class(?IRI)
 % Classes can be understood as sets of individuals
