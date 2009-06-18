@@ -4,13 +4,15 @@
 :- use_module(owl2_model).
 :- use_module(owl2_export_rdf).
 
-:- begin_tests(wine_trip,[setup(roundtrip)]).
+:- begin_tests(wine_trip,[setup(roundtrip('testfiles/wine.owl'))]).
 
-roundtrip :-
-        load_axioms('testfiles/wine.owl'),
-        save_axioms('testfiles/temp.owl',owl),
+roundtrip(F):-
+        debug(test,'loading ~w',[F]),
+        load_axioms(F),
+        atom_concat(F,'.tmp',TempF),
+        save_axioms(TempF,owl),
         retract_all_axioms/0,
-        save_axioms('testfiles/temp.owl',owl).
+        load_axioms(TempF,owl).
 
 test(loaded) :-
         \+ \+ ontology(_).
