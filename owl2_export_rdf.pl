@@ -14,6 +14,7 @@
 
 :- module(owl2_export_rdf,
 	  [ 	    	    
+	    owl_generate_rdf/2, % FileName, RDF_Load_Mode (complete/not)
 	    owl_generate_rdf/3, % Ontology,FileName, RDF_Load_Mode (complete/not)
 	    owl_rdf2n3/0 		    
 	  ]).
@@ -35,6 +36,10 @@ t:- owl_parse('testfiles/wine.owl',complete,complete,true),
 
 t1 :-
 	owl_generate_rdf('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine','testfiles/wine_g.owl',complete).
+
+owl_generate_rdf(FileName,RDF_Load_Mode) :-
+        ontology(Ontology),
+        owl_generate_rdf(Ontology,FileName,RDF_Load_Mode).
 
 owl_generate_rdf(Ontology,FileName,RDF_Load_Mode) :- 
 	(   RDF_Load_Mode=complete -> rdf_retractall(_,_,_); true),
