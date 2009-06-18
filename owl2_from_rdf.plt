@@ -69,6 +69,10 @@ expected(subClassOf('http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PastaW
 expected(ontologyAxiom('http://www.w3.org/TR/2003/PR-owl-guide-20031209/food',
                        subClassOf('http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PastaWithWhiteSauce', 'http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Pasta'))).
 
+%expected(ontologyAxiom('http://www.w3.org/TR/2003/PR-owl-guide-20031209/food',
+%		       subClassOf('http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PastaWithWhiteSauce', 
+%				  'http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Pasta'))).
+
 
 :- end_tests(wine_and_food).
 
