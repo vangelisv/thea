@@ -16,4 +16,4 @@ main :-
         forall(member(Arg,Args),
                load_axioms(Arg,_,[])),
         use_labels_for_IRIs,
-        save_axioms(_,dlp,[no_base(_),write_directives(table)]).
+        save_axioms(_,dlp,[no_base(_),write_directives(table),write_directives(dummy_fact)]).
