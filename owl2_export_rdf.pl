@@ -25,7 +25,7 @@
 
 :- multifile owl2_io:save_axioms_hook/3.
 owl2_io:save_axioms_hook(File,owl,Opts) :-
-        (   member(rdf_load_load(RDF_Load_Mode),Opts)
+        (   member(rdf_load_mode(RDF_Load_Mode),Opts)
         ->  true
         ;   true),
         owl_generate_rdf(File,RDF_Load_Mode).
@@ -46,7 +46,9 @@ owl_generate_rdf(FileName,RDF_Load_Mode) :-
 %% owl_generate_rdf(+Ontology,+FileName,+RDF_Load_Mode) is det
 %
 %   writes in-memory ontology from owl2_model to an RDF-OWL file.
-%   You can also use save_axioms/2 with Format='owl'
+%   You can also use save_axioms/2 with Format='owl'.
+%   With save_axioms/3 use rdf_load_mode(RDF_Load_Mode) as
+%   an option.
 %
 % @param Ontology - IRI
 % @param FileName - path to save
