@@ -109,6 +109,9 @@ normalize_swrl_rule(implies(A,C),implies(AX,CX)) :-
 normalize_swrl_atom(A, description(Class,Ob) ) :-
         A=..[Class,Ob],
         !.
+normalize_swrl_atom(A, propertyAssertion(P,X,Y) ) :-
+        A=..[P,X,Y],
+        !.
 normalize_swrl_atom(A, A).
                    
 
