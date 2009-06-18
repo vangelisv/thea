@@ -70,7 +70,9 @@ save_axioms(File,Fmt,_Opts) :-
         ->  tell(File)
         ;   true),
         forall(axiom(A),
-               format('~q.~n',[A])),
+               (   A=implies(_,_)
+               ->  format('swrl:~q.~n',[A]) % ugly hack..
+               ;   format('~q.~n',[A]))),
         told.
 save_axioms(File,Fmt,Opts) :-
         save_axioms_hook(File,Fmt,Opts),
@@ -103,8 +105,10 @@ format_module(read,owl,owl2_from_rdf).
 format_module(read,xml,owl2_xml).
 format_module(read,owlx,owl2_xml).
 format_module(read,pl_swrl_owl,swrl).
+format_module(read,plsyn,owl2_plsyn).
 
 format_module(write,owlx,owl2_xml).
+format_module(write,plsyn,owl2_plsyn).
 
 
 /** <module> 
