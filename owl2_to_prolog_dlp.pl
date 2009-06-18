@@ -592,7 +592,7 @@ owl_as2prolog(propertyAssertion(P,I,J), :-(property(P,I,J),none),_) :- !.
 % owl_as2prolog(negativePropertyAssertion(P,I,J), :-(false,property(P,I,J),_) :- !.
 
 owl_as2prolog(owl(_,_,_,_),[],_) :- !.
-owl_as2prolog(ontology(_,_),[],_) :- !.
+owl_as2prolog(ontology(_),[],_) :- !.
 
 owl_as2prolog(annotationAssertion(_,_,_), [], _) :- !.
 owl_as2prolog(namedIndividual(_), [], _) :- !.
