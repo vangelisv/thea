@@ -733,6 +733,7 @@ owl2_export_list([],'rdf:nil').
 owl2_export_list([S|Rest],Node) :-
 	as2rdf_bnode([S|Rest],Node),
 	owl2_export_axiom(S,main_triple(Ts,_,_)),
+	owl_rdf_assert(Node,'rdf:type', 'rdf:List'),	
 	owl_rdf_assert(Node,'rdf:first', Ts),	
 	owl2_export_list(Rest,Node2),
 	owl_rdf_assert(Node,'rdf:rest',Node2).
