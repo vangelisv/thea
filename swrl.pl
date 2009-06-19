@@ -201,7 +201,7 @@ swrl_to_owl([A],description(D,X),propertyDomain(P,D)) :-
 swrl_to_owl([A],description(R,X),propertyRange(P,R)) :-
         A=..[P,_,X],
         !.
-% see email to owl-del 2009-06-15
+% see email to owl-dev 2009-06-15 "class specific inverse"
 swrl_to_owl(AL,C,Axiom) :-
         C=..[P,X,Y],            % e.g. hasPet(x,y)
         select(A1,AL,[A2]),     
@@ -211,8 +211,7 @@ swrl_to_owl(AL,C,Axiom) :-
         atom_concat(D,'_p',DP), % e.g. isAnimal
         !,
         member(Axiom,
-               [reflexiveProperty(DP),
-                subClassOf(D,hasSelf(DP)),
+               [subClassOf(D,hasSelf(DP)),
                 subPropertyOf(propertyChain([P2,DP]),P)]).
 
 
