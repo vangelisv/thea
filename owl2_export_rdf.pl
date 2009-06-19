@@ -224,7 +224,8 @@ owl2_export_axiom(differentIndividuals(List),main_triple(BNode,'rdf:type','owl:A
 owl2_export_axiom(classAssertion(CE,A),main_triple(Ta,'rdf:type',Tce)) :-
 	owl2_export_axiom(A,main_triple(Ta,_,_)),
 	owl2_export_axiom(CE,main_triple(Tce,_,_)),
-	owl_rdf_assert(Ta,'rdf:type',Tce),!.
+	owl_rdf_assert(Ta,'rdf:type',Tce),
+        !.
 
 owl2_export_axiom(propertyAssertion(P,A1,A2),main_triple(Ta1,Tp,Ta2)) :-
 	owl2_export_axiom(P,main_triple(Tp,_,_)),
@@ -266,9 +267,8 @@ owl2_export_axiom(intersectionOf([E|Rest]),main_triple(BNode,'rdf:type',Type)) :
 	as2rdf_bnode(intersectionOf([E|Rest]),BNode),
 	owl2_export_list([E|Rest],LNode),
 	(   classExpression(E) -> Type = 'owl:Class'; Type = 'owl:Datatype'),
-        %owl_rdf_assert(BNode,'rdf:type',Type),
-	owl_rdf_assert(BNode,'owl:intersectionOf', LNode),!.
-
+	owl_rdf_assert(BNode,'owl:intersectionOf', LNode),
+        !.
 owl2_export_axiom(unionOf([E|Rest]),main_triple(BNode,'rdf:type',Type)) :-
 	as2rdf_bnode(unionOf([E|Rest]),BNode),
 	owl2_export_list([E|Rest],LNode),
@@ -504,10 +504,13 @@ as2rdf_bnode(+X,-Node).
         It generates a bnode Node for construct X in case it does not
 	exist already as a blanknode/3 clause.
 */   
+% TODO: check this. See email to VV 2009-06-18
 as2rdf_bnode(X,Node) :-
 	blanknode(X,Node,_),
-	blanknode_gen(Node,X),!.
+	blanknode_gen(Node,X),
+        !.
 
 as2rdf_bnode(X,Node) :-
 	rdf_db:rdf_bnode(Node),
-	assert(blanknode_gen(Node,X)),!.
+	assert(blanknode_gen(Node,X)),
+        !.
