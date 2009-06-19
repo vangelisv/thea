@@ -104,6 +104,9 @@ owl2_export_axiom(ontology(O),main_triple(O,'rdf:type','owl:Ontology')) :-
 owl2_export_axiom(class(C),main_triple(C,'rdf:type','owl:Class')) :-
 	owl_rdf_assert(C,'rdf:type','owl:Class'),!.
 
+owl2_export_axiom(objectProperty(C),main_triple(C,'rdf:type','owl:ObjectProperty')) :-
+	owl_rdf_assert(C,'rdf:type','owl:ObjectProperty'),!.
+
 owl2_export_axiom(subClassOf(C1,C2),main_triple(TC1,'rdfs:subClassOff',TC2)) :-
 	owl2_export_axiom(C1,main_triple(TC1,_,_)),
 	(   C1 = 'http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WhiteLoire' -> 
