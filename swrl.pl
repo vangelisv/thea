@@ -109,9 +109,9 @@ normalize_swrl_rule(implies(A,C),implies(AX,CX)) :-
 normalize_swrl_atom(A, description(Class,Ob) ) :-
         A=..[Class,Ob],
         !.
-normalize_swrl_atom(A, propertyAssertion(P,X,Y) ) :-
-        A=..[P,X,Y],
-        !.
+%normalize_swrl_atom(A, propertyAssertion(P,X,Y) ) :-
+%        A=..[P,X,Y],
+%        !.
 normalize_swrl_atom(A, A).
                    
 
@@ -159,7 +159,7 @@ swrl_to_owl(AL,C,transitiveProperty(P)) :-
         subgoals_to_property_chain(AL,PL,X,Y),
         PL=[P,P],
         !.
-swrl_to_owl(AL,C,subPropertyOf(P,propertyChain(PL))) :-
+swrl_to_owl(AL,C,subPropertyOf(propertyChain(PL),P)) :-
         C=..[P,v(X),v(Y)],
         subgoals_to_property_chain(AL,PL,X,Y),
         PL=[_,_|_],
@@ -205,14 +205,14 @@ swrl_to_owl(AL,C,Axiom) :-
         C=..[P,X,Y],            % e.g. hasPet(x,y)
         select(A1,AL,[A2]),     
         A1=..[P2,X,Y],          % e.g. owns(x,y)
-        A2=..description(D,Y),  % e.g. animal(y)
+        A2=description(D,Y),  % e.g. animal(y)
         atom(D),
         atom_concat(D,'_p',DP), % e.g. isAnimal
         !,
         member(Axiom,
                [reflexiveProperty(DP),
                 subClassOf(D,hasSelf(DP)),
-                subPropertyOf(P,propertyChain([P2,DP]))]).
+                subPropertyOf(propertyChain([P2,DP]),P)]).
 
 
 %% subgoals_to_property_chain(+Terms,?Properties,+StartVar,?EndVar)
@@ -321,16 +321,18 @@ prolog_term_to_swrl_atom( Goal, builtin(B,ArgsX) ):-
         Builtin=..[B|Args],
         !,
         maplist(prolog_term_to_swrl_atom,Args,ArgsX).
-prolog_term_to_swrl_atom( A, description(F,BX) ):-
+prolog_term_to_swrl_atom( A, description(FX,BX) ):-
         A=..[F,B],
         !,
+        atom_concat('#',F,FX),
         prolog_term_to_swrl_atom( B, BX).
 prolog_term_to_swrl_atom( A, AX ):-
         A=..[F,B,C],
         !,
         prolog_term_to_swrl_atom( B, BX),
         prolog_term_to_swrl_atom( C, CX),
-        AX=..[F,BX,CX].
+        atom_concat('#',F,FX),
+        AX=..[FX,BX,CX].
 prolog_term_to_swrl_atom( A, A) :-
         atom(A),
         !.

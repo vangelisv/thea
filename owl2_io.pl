@@ -54,7 +54,6 @@ load_axioms(File,Fmt,Opts) :-
 % (for non-standard fmts you may have to ensure the required io model is loaded
 %  so the hooks are visible)
 save_axioms(File,Fmt) :-
-        load_handler(write,Fmt),
         save_axioms(File,Fmt,[]).
 
 %% save_axioms(+File,+Fmt,+Opts)
@@ -75,6 +74,7 @@ save_axioms(File,Fmt,_Opts) :-
                ;   format('~q.~n',[A]))),
         told.
 save_axioms(File,Fmt,Opts) :-
+        load_handler(write,Fmt),
         save_axioms_hook(File,Fmt,Opts),
         !.
 save_axioms(File,Fmt,Opts) :-

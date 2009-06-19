@@ -137,8 +137,6 @@ owl2_export_axiom(disjointUnion([C|Rest]),main_triple(Tc,'owl:disjointUnionOf',L
 	owl2_export_list(Rest,LNode),
 	owl_rdf_assert(Tc,'owl:disjointUnionOf',LNode),!.
 
-% TODO: subPropertyOf(propertyChain(Chain),P2)
-% 
 owl2_export_axiom(subPropertyOf(propertyChain(PL),P2),main_triple(Tp2,'owl:propertyChainAxiom',LNode)) :-
 	owl2_export_axiom(P2,main_triple(Tp2,_,_)),
 	owl2_export_list(PL,LNode),
