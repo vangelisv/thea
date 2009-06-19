@@ -11,7 +11,7 @@ roundtrip(F):-
         load_axioms(F),
         atom_concat(F,'.tmp',TempF),
         save_axioms(TempF,owl),
-        retract_all_axioms/0,
+        retract_all_axioms,
         load_axioms(TempF,owl).
 
 test(loaded) :-
