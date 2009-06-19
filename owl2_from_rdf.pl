@@ -1140,10 +1140,9 @@ owl_parse_axiom(disjointUnion(DX,DY),AnnMode,List) :-
 
 % introduces bnode
 owl_parse_axiom(subPropertyOf(propertyChain(PL),QX),AnnMode,List) :-
-	test_use_owl(X,'rdfs:subPropertyOf',Q),        
-	valid_axiom_annotation_mode(AnnMode,X,'rdfs:subPropertyOf',Q,List),
-	use_owl(X,'rdfs:subPropertyOf',Q),
-	use_owl(X,'owl:propertyChain',L1),
+	test_use_owl(Q,'owl:propertyChainAxiom',L1),
+	valid_axiom_annotation_mode(AnnMode,Q,'owl:propertyChainAxiom',L1,List),
+	use_owl(Q,'owl:propertyChainAxiom',L1),
 	owl_property_list(L1,PL),
         owl_property_expression(Q,QX).
 
