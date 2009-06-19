@@ -96,17 +96,20 @@ suffix_format(pl,prolog).
 suffix_format(owlpl,prolog).
 suffix_format(plsyn,plsyn).
 suffix_format(owl,owl).
+suffix_format(ttl,owl).
 suffix_format(owlx,owlx).
 
 
 :- multifile format_module/3.
 format_module(read,rdf,owl2_from_rdf).
 format_module(read,owl,owl2_from_rdf).
+format_module(read,ttl,owl2_from_rdf).
 format_module(read,xml,owl2_xml).
 format_module(read,owlx,owl2_xml).
 format_module(read,pl_swrl_owl,swrl).
 format_module(read,plsyn,owl2_plsyn).
 
+format_module(write,owl,owl2_export_rdf).
 format_module(write,owlx,owl2_xml).
 format_module(write,plsyn,owl2_plsyn).
 
