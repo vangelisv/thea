@@ -43,6 +43,8 @@ Currently this process is incomplete, more patterns can potentially be
 matched. In the future there will also be the option of defining hooks
 to deal with n-ary predicates.
 
+
+
 ---+++ Converting OWL to Logic Programs
 
 The DLP subset of OWL2-DL can be translated to logic programs using a
