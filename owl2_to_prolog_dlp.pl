@@ -544,7 +544,7 @@ owl_as2prolog(description_list([Descr|Rest],X,Separator),T,Param) :-
 %owl_as2prolog(subPropertyOf(inverseOf(P),SuperP),(property(SuperP,x,y) :- property(P,y,x)),_).
 %owl_as2prolog(subPropertyOf(P,SuperP),(property(SuperP,x,y) :- property(P,x,y)),_).
 
-owl_as2prolog(subPropertyOf(P,SuperP),(PE :- SPE),_) :- !,
+owl_as2prolog(subPropertyOf(P,SuperP),(SPE :- PE),_) :- !,
         owl_as2prolog(propertyExpression(P),PE,head),
         owl_as2prolog(propertyExpression(SuperP),SPE,body).
 
