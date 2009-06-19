@@ -519,9 +519,7 @@ as2rdf_bnode(+X,-Node).
         It generates a bnode Node for construct X in case it does not
 	exist already as a blanknode/3 clause.
 */   
-% TODO: check this. See email to VV 2009-06-18
 as2rdf_bnode(X,Node) :-
-	blanknode(X,Node,_),
 	blanknode_gen(Node,X),
         !.
 
