@@ -21,6 +21,7 @@
 
 :- use_module(owl2_model).
 :- use_module(owl2_from_rdf).
+:- use_module(swrl_rdf_hooks).
 :- use_module(library('semweb/rdf_db')).
 
 :- multifile owl2_io:save_axioms_hook/3.
@@ -496,6 +497,7 @@ swrl_export_atom(PA,T) :-
 
 
 swrl_export_argument(v(V),main_triple(V1,'rdf:type','swrl:Variable')) :-
+        !,
         (   number(V)
         ->  atom_concat('#v',V,V1)
         ;   V1=V),
@@ -503,6 +505,7 @@ swrl_export_argument(v(V),main_triple(V1,'rdf:type','swrl:Variable')) :-
 
 swrl_export_argument(d(V),T) :- swrl_export_argument(v(V),T).
 swrl_export_argument(i(V),T) :- swrl_export_argument(v(V),T).
+swrl_export_argument(V,T) :- owl2_export_axiom(V,T).
 
 
 /*
