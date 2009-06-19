@@ -12,6 +12,7 @@
     ).
 
 :- use_module(owl2_model).
+:- use_module(library('semweb/rdf_db.pl'),[rdf_register_ns/3]).
 
 :- multifile owl2_model:axiompred/1, owl2_model:axiom/1.
 
@@ -324,14 +325,14 @@ prolog_term_to_swrl_atom( Goal, builtin(B,ArgsX) ):-
 prolog_term_to_swrl_atom( A, description(FX,BX) ):-
         A=..[F,B],
         !,
-        atom_concat('#',F,FX),
+        default_ns(F,FX),
         prolog_term_to_swrl_atom( B, BX).
 prolog_term_to_swrl_atom( A, AX ):-
         A=..[F,B,C],
         !,
         prolog_term_to_swrl_atom( B, BX),
         prolog_term_to_swrl_atom( C, CX),
-        atom_concat('#',F,FX),
+        default_ns(F,FX),
         AX=..[FX,BX,CX].
 prolog_term_to_swrl_atom( A, A) :-
         atom(A),
@@ -382,6 +383,12 @@ pred_swrlb(=,stringEqualIgnoreCase). % TODO: detect
 pred_swrlb(atom_length,stringLength).
 pred_swrlb(upcase_atom,upperCase).
 pred_swrlb(downcase_atom,lowerCase).
+
+default_ns(F,FX) :-
+        rdf_register_ns('_d','http://x.org#',[force(true)]),
+        atom_concat('_d:',F,FX).
+
+
 
 % IO HOOKS
 :- multifile owl2_io:load_axioms_hook/3.
