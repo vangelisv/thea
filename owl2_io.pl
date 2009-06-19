@@ -5,7 +5,8 @@
            load_axioms/2,
            load_axioms/3,
            save_axioms/2,
-           save_axioms/3
+           save_axioms/3,
+           convert_axioms/5
           ]).
 
 :- use_module(owl2_model).
@@ -80,6 +81,10 @@ save_axioms(File,Fmt,Opts) :-
 save_axioms(File,Fmt,Opts) :-
         throw(owl2_io('cannot save fmt for',File,Fmt,Opts)).
 
+convert_axioms(FileIn,FmtIn,FileOut,FmtOut,Opts) :-
+        load_axioms(FileIn,FmtIn,Opts),
+        save_axioms(FileOut,FmtOut,Opts).
+
 load_handler(Dir,Fmt) :-
         forall(format_module(Dir,Fmt,Mod),
                (   atom_concat('thea2/',Mod,TMod),
@@ -106,12 +111,14 @@ format_module(read,owl,owl2_from_rdf).
 format_module(read,ttl,owl2_from_rdf).
 format_module(read,xml,owl2_xml).
 format_module(read,owlx,owl2_xml).
+format_module(read,pl_swrl,swrl).
 format_module(read,pl_swrl_owl,swrl).
 format_module(read,plsyn,owl2_plsyn).
 
 format_module(write,owl,owl2_export_rdf).
 format_module(write,owlx,owl2_xml).
 format_module(write,plsyn,owl2_plsyn).
+format_module(write,dl_syntax,owl2_dl_syntax).
 
 
 /** <module> 
