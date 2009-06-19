@@ -202,6 +202,7 @@ swrl_to_owl([A],description(R,X),propertyRange(P,R)) :-
         A=..[P,_,X],
         !.
 % see email to owl-dev 2009-06-15 "class specific inverse"
+% I believe this is called 'marker properties'
 swrl_to_owl(AL,C,Axiom) :-
         C=..[P,X,Y],            % e.g. hasPet(x,y)
         select(A1,AL,[A2]),     
