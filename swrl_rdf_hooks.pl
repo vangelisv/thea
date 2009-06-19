@@ -39,7 +39,7 @@ swrl_parse_axiom(implies(Body,Head),AnnMode,List) :-
 
 swrl_description_list('http://www.w3.org/1999/02/22-rdf-syntax-ns#nil',[]) :- !.
 swrl_description_list(X,[F|R]) :-
-	% use_owl(X,'rdf:type','rdf:List'), -- required?
+	% use_owl(X,'rdf:type','rdf:List'), -- required? for swrl it is swrl:AtomList
 	use_owl(X,'rdf:first',Element),
 	swrl_description(Element,F),
 	use_owl(X,'rdf:rest',Y),
