@@ -57,7 +57,11 @@
 :- use_module(library('http/http_open.pl')).
 
 :- dynamic(owl/4).
-%% blanknode(Node,Description,User)
+%% blanknode(Node,Description,Used)
+% see owl_get_bnode/2
+% Node - bNodeId
+% Description - prolog term corresponding to owl Description
+% Used - used | shared
 :- dynamic(blanknode/3).
 :- dynamic(owl_parser_log/2).
 :- dynamic(blanknode_gen/2).
