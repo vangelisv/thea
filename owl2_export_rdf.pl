@@ -48,7 +48,9 @@ t1 :-
 %% owl_generate_rdf(+FileName,+RDF_Load_Mode) is det
 % see owl_generate_rdf/1 - derives ontology using ontology/1
 owl_generate_rdf(FileName,RDF_Load_Mode) :-
-        ontology(Ontology),
+        (   ontology(Ontology)
+        ->  true
+        ;   Ontology='http://example.org#'),
         owl_generate_rdf(Ontology,FileName,RDF_Load_Mode).
 
 %% owl_generate_rdf(+Ontology,+FileName,+RDF_Load_Mode) is det
@@ -132,13 +134,18 @@ owl2_export_axiom(disjointUnion([C|Rest]),main_triple(Tc,'owl:disjointUnionOf',L
 	owl2_export_list(Rest,LNode),
 	owl_rdf_assert(Tc,'owl:disjointUnionOf',LNode),!.
 
+% TODO: subPropertyOf(propertyChain(Chain),P2)
+% 
+owl2_export_axiom(subPropertyOf(propertyChain(PL),P2),main_triple(Tp2,'owl:propertyChainAxiom',LNode)) :-
+	owl2_export_axiom(P2,main_triple(Tp2,_,_)),
+	owl2_export_list(PL,LNode),
+	owl_rdf_assert(Tp2,'owl:propertyChainAxiom',LNode),!.
+
 owl2_export_axiom(subPropertyOf(P1,P2),main_triple(Tp1,'owl:subPropertyOf',Tp2)) :-
 	owl2_export_axiom(P1,main_triple(Tp1,_,_)),
 	owl2_export_axiom(P2,main_triple(Tp2,_,_)),
 	owl_rdf_assert(Tp1,'owl:subPropertyOf',Tp2),!.
 
-% TODO: subPropertyOf(propertyChain(Chain),P2)
-% 
 
 owl2_export_axiom(equivalentProperties([X,Y]),main_triple(Tx,'owl:equivalentProperty',Ty)) :-
 	owl2_export_axiom(X,main_triple(Tx,_,_)),
@@ -380,7 +387,7 @@ owl2_export_axiom(implies(AL,CL),main_triple(RuleNode,'rdf:type','swrl:Imp')) :-
 
 owl2_export_axiom(IRI,main_triple(IRI,_,_)) :- atom(IRI),!. % better iri(IRI).
 
-owl2_export_axiom(Any,main_triple(Any,P,Y)) :- print('unresolved:'-Any-P-Y),nl.
+owl2_export_axiom(Any,main_triple(Any,_,_)) :- format(user_error,'unresolved: ~w~n',[Any]).
 
 /*
 owl2_export_annotation(Parent)
@@ -450,6 +457,7 @@ swrl_export_atom_list(X,Node) :-
 swrl_export_atom(propertyAssertion(OPE,A1,A2),main_triple(BNode,'rdf:type','swrl:IndividualPropertyAtom')) :-
         !,
 	as2rdf_bnode(propertyAssertion(OPE,A1,A2),BNode),
+	owl_rdf_assert(BNode,'rdf:type','swrl:IndividualPropertyAtom'),
 	owl2_export_axiom(OPE,main_triple(Tope,_,_)),owl_rdf_assert(BNode,'swrl:propertyPredicate',Tope),
         swrl_export_argument(A1,main_triple(TA1,_,_)),owl_rdf_assert(BNode,'swrl:argument1',TA1),
         swrl_export_argument(A2,main_triple(TA2,_,_)),owl_rdf_assert(BNode,'swrl:argument2',TA2).
@@ -457,18 +465,21 @@ swrl_export_atom(propertyAssertion(OPE,A1,A2),main_triple(BNode,'rdf:type','swrl
 swrl_export_atom(description(C,A1),main_triple(BNode,'rdf:type','swrl:ClassAtom')) :-
         !,
 	as2rdf_bnode(description(C,A1),BNode),
+	owl_rdf_assert(BNode,'rdf:type','swrl:ClassAtom'),
 	owl2_export_axiom(C,main_triple(TC,_,_)),owl_rdf_assert(BNode,'swrl:classPredicate',TC),
         swrl_export_argument(A1,main_triple(TA1,_,_)),owl_rdf_assert(BNode,'swrl:argument1',TA1).
 
 swrl_export_atom(differentFrom(A1,A2),main_triple(BNode,'rdf:type','swrl:DifferentIndividualsAtom')) :-
         !,
 	as2rdf_bnode(differentFrom(A1,A2),BNode),
+	owl_rdf_assert(BNode,'rdf:type','swrl:DifferentIndividualsAtom'),
         swrl_export_argument(A1,main_triple(TA1,_,_)),owl_rdf_assert(BNode,'swrl:argument1',TA1),
         swrl_export_argument(A2,main_triple(TA2,_,_)),owl_rdf_assert(BNode,'swrl:argument2',TA2).
 
 swrl_export_atom(sameAs(A1,A2),main_triple(BNode,'rdf:type','swrl:SameIndividualAtom')) :-
         !,
 	as2rdf_bnode(sameAs(A1,A2),BNode),
+        owl_rdf_assert(BNode,'rdf:type','swrl:SameIndividualAtom'),
         swrl_export_argument(A1,main_triple(TA1,_,_)),owl_rdf_assert(BNode,'swrl:argument1',TA1),
         swrl_export_argument(A2,main_triple(TA2,_,_)),owl_rdf_assert(BNode,'swrl:argument2',TA2).
 
@@ -483,8 +494,11 @@ swrl_export_atom(PA,T) :-
         swrl_export_atom(propertyAssertion(P,A1,A2),T).
 
 
-swrl_export_argument(v(V),main_triple(V,'rdf:type','swrl:Variable')) :-
-        owl_rdf_assert(V,'rdf:type','swrl:Variable'),!.
+swrl_export_argument(v(V),main_triple(V1,'rdf:type','swrl:Variable')) :-
+        (   number(V)
+        ->  atom_concat('#v',V,V1)
+        ;   V1=V),
+        owl_rdf_assert(V1,'rdf:type','swrl:Variable'),!.
 
 swrl_export_argument(d(V),T) :- swrl_export_argument(v(V),T).
 swrl_export_argument(i(V),T) :- swrl_export_argument(v(V),T).
@@ -495,7 +509,7 @@ owl_rdf_assert(S,P,O).
         Expands the NS the S, P, O terms and asserts into the RDF
 	database
 */   
-owl_rdf_assert(S,P,O) :- 
+owl_rdf_assert(S,P,O) :-
 	expand_ns(S,S1),expand_ns(P,P1),expand_ns(O,O1),
 	rdf_db:rdf_assert(S1,P1,O1), !.
 
@@ -514,3 +528,4 @@ as2rdf_bnode(X,Node) :-
 	rdf_db:rdf_bnode(Node),
 	assert(blanknode_gen(Node,X)),
         !.
+
