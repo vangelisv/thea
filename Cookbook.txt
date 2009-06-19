@@ -43,7 +43,9 @@ Currently this process is incomplete, more patterns can potentially be
 matched. In the future there will also be the option of defining hooks
 to deal with n-ary predicates.
 
+For more, see
 
+* http://blipkit.wordpress.com/2009/06/19/translating-between-logic-programs-and-owlswrl/
 
 ---+++ Converting OWL to Logic Programs
 
