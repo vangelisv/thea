@@ -141,8 +141,9 @@ reasoner_classify_using(Reasoner,Ont,RN) :-
         create_reasoner(Man,RN,Reasoner),
         reasoner_classify(Reasoner,Man,Ont).
 
-inferred_axiom(R,Ont,subClassOf(A,B)) :-
-        reasoner_subClassOf(R,Ont,A,B).
+%% inferred_axiom(+R,+Fac,?Axiom)
+inferred_axiom(R,Fac,subClassOf(A,B)) :-
+        reasoner_subClassOf(R,Fac,A,B).
 
 
 is_consistent(Reasoner) :-
@@ -338,6 +339,9 @@ add_axiom(Manager,Factory,Ont,Axiom,JAx) :-
 %% owlterm_java(+Factory,?Type,+OWLTerm,?Obj) is det
 % translate OWL Axiom or OWL Expression from prolog term to java object
 
+% special rules for ontology declarations - should have been handled previously
+owlterm_java(_,_,ontology(_),_) :- !.
+
 % special rules for annotationAssertions
 owlterm_java(Fac,_,annotationAssertion(AP,Sub,literal(Val)),Obj) :-
         !,
@@ -351,7 +355,9 @@ owlterm_java(Fac,_,OWLTerm,Obj) :-
         OWLTerm =.. [P,X],
         decl_method(P,M),       % declaration axiom
         !,
+        debug(owl2,'converting to URI: ~w',[X]),
         atom_javaURI(X,U),
+        debug(owl2,'calling: ~w . ~w( ~w )',[Fac,M,U]),
         jpl_call(Fac,M,[U],Obj).
 
 owlterm_java(Fac,_,OWLTerm,Obj) :-
@@ -494,6 +500,7 @@ translate_arg_to_java(Fac,X,_T,Obj) :-
         atom(X),
         class(X),
         !,
+        debug(owl2,'converting to URI: ~w',[X]),
         atom_javaURI(X,U),
         jpl_call(Fac,getOWLClass,U,Obj).
 translate_arg_to_java(Fac,X,_T,Obj) :-
