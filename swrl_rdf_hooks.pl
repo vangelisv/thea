@@ -58,7 +58,26 @@ swrl_description(X,G) :-
         swrl_description(P,PP),
         swrl_description(A1,A1P),
         swrl_description(A2,A2P),
-        G=..[PP,A1P,A2P].
+        G=..[PP,A1P,A2P]. % TODO: make this canonical form?
+swrl_description(X,G) :-
+        use_owl(X,'rdf:type','swrl:DatavaluedPropertyAtom'),
+        !,
+        use_owl(X,'swrl:propertyPredicate',P),
+        use_owl(X,'swrl:argument1',A1),
+        use_owl(X,'swrl:argument2',A2),
+        swrl_description(P,PP),
+        swrl_description(A1,A1P),
+        swrl_description(A2,A2P),
+        G=..[PP,A1P,A2P]. % TODO: make this canonical form?
+swrl_description(X,G) :-
+        use_owl(X,'rdf:type','swrl:ClassAtom'),
+        !,
+        use_owl(X,'swrl:classPredicate',P),
+        use_owl(X,'swrl:argument1',A1),
+        swrl_description(P,PP),
+        swrl_description(A1,A1P),
+        G=description(PP,A1P).
+%        G=..[PP,A1P].
 swrl_description(X,G) :-
         use_owl(X,'rdf:type','swrl:DifferentIndividualsAtom'),
         !,
@@ -75,15 +94,9 @@ swrl_description(X,G) :-
         swrl_description(A1,A1P),
         swrl_description(A2,A2P),
         G=sameAs(A1P,A2P).
-swrl_description(X,G) :-
-        use_owl(X,'rdf:type','swrl:ClassAtom'),
-        !,
-        use_owl(X,'swrl:classPredicate',P),
-        use_owl(X,'swrl:argument1',A1),
-        swrl_description(P,PP),
-        swrl_description(A1,A1P),
-        G=description(PP,A1P).
-%        G=..[PP,A1P].
+swrl_description(X,DX) :-
+        owl_description(X,DX),
+        !.
 swrl_description(X,X) :- !.
 
 
