@@ -15,9 +15,13 @@
            reasoner_classify_using/3,
            is_consistent/1,
            inconsistent_class/2,
+           inferred_axiom/3,
            reasoner_nr_subClassOf/4,
            reasoner_subClassOf/4,
            reasoner_equivalent_to/4,
+           reasoner_individualOf/4,
+           reasoner_nr_individualOf/4,
+           reasoner_objectPropertyAssertion/5,
            add_axiom/5
            ]).
 
@@ -79,7 +83,7 @@ build_ontology(Man,Fac,Ont) :-
                    add_axiom(Man,Fac,Ont,Ax,_))).
 
 :- multifile owl2_io:save_axioms_hook/3.
-owl2_io:save_axioms_hook(File,owlapi(Fmt),Opts) :-
+owl2_io:save_axioms_hook(File,owlapi(_Fmt),_Opts) :-
         create_factory(Man,Fac),
         build_ontology(Man,Fac,Ont),
         save_ontology(Man,Ont,File).
@@ -124,7 +128,7 @@ reasoner_classify(Reasoner) :-
         jpl_call(Reasoner,classify,[],_).
 
 reasoner_classify(Reasoner,Ont) :-
-        reasoner_classify(Reasoner,Man,Ont).
+        reasoner_classify(Reasoner,_Man,Ont).
 
 reasoner_classify(Reasoner,Man,Ont) :-
         require_manager(Man),
@@ -136,6 +140,9 @@ reasoner_classify_using(Reasoner,Ont,RN) :-
         require_manager(Man),
         create_reasoner(Man,RN,Reasoner),
         reasoner_classify(Reasoner,Man,Ont).
+
+inferred_axiom(R,Ont,subClassOf(A,B)) :-
+        reasoner_subClassOf(R,Ont,A,B).
 
 
 is_consistent(Reasoner) :-
@@ -150,6 +157,11 @@ java_namedentity(J,C) :-
         jpl_call(J,getURI,[],URI),
         jpl_call(URI,toString,[],C).
 
+%% ecsets_class(+JPSetSet,?P) is nondet
+% Set<Set<OWLClass>> --> class expression
+%  class expression will be
+%   equivalentClasses(ECL) |
+%   other class expression
 ecsets_class(JPSetSet,P) :-
         jpl_call(JPSetSet,toArray,[],JPSetArr),
         jpl_array_to_list(JPSetArr,JPSets),
@@ -164,6 +176,22 @@ ecsets_class(JPSetSet,P) :-
         ;   maplist(java_namedentity,JPs,Ps),
             P=equivalentClasses(Ps)).
 
+%% pimap_property_individual(PIMap,P,I) is nondet
+%  Map<OWLObjectProperty, Set<OWLIndividual>> --> ?Property ?Individual
+% (currently object properties only?)
+pimap_property_individual(PIMap,P,I) :-
+        jpl_call(PIMap,keySet,[],JPSet),
+        jpl_call(JPSet,toArray,[],JPArr),
+        jpl_array_to_list(JPArr,JPs),
+        member(JP,JPs),
+        jpl_call(PIMap,get,[JP],JISet),
+        jpl_call(JISet,toArray,[],JIArr),
+        jpl_array_to_list(JIArr,JIs),
+        member(JI,JIs),
+        java_namedentity(JP,P),
+        java_namedentity(JI,I).
+
+% converts prolog reference to java
 cxj(Fac,C,JC) :-
         (   atom(C)
         ->  owlterm_java(Fac,_,class(C),JC)
@@ -198,7 +226,7 @@ reasoner_nr_subClassOf(R,Fac,C,P) :-
 reasoner_nr_subClassOf(R,Fac,C,P) :-
         nonvar(P),
         !,
-        cxj(Fac,P,PC),
+        cxj(Fac,P,JP),
         jpl_call(R,getSubClasses,[JP],JCSetSet),
         ecsets_class(JCSetSet,C).
 
@@ -232,8 +260,15 @@ reasoner_subClassOf(R,Fac,C,P) :-
         jpl_call(R,getDescendantClasses,[JP],JCSetSet),
         ecsets_class(JCSetSet,C).
 
+%% reasoner_nr_individualOf(+R,+Fac,?I,?C)
+% ?I ?C - find classes for all named individuals I
+% +I ?C - find classes
+% ?I +C - find individuals
+
 reasoner_nr_individualOf(R,Fac,I,C) :-
         reasoner_individualOf(R,Fac,I,C,true).
+
+%% reasoner_individualOf(+R,+Fac,?I,?C)
 reasoner_individualOf(R,Fac,I,C) :-
         reasoner_individualOf(R,Fac,I,C,false).
 
@@ -243,6 +278,7 @@ reasoner_individualOf(R,Fac,I,C,IsDirect) :-
         !,
         individual(I),
         reasoner_individualOf(R,Fac,I,C,IsDirect).
+
 
 reasoner_individualOf(R,Fac,I,C,IsDirect) :-
         nonvar(C),
@@ -262,8 +298,17 @@ reasoner_individualOf(R,Fac,I,C,IsDirect) :-
         (   IsDirect
         ->  Bool='@'(true)
         ;   Bool='@'(false)),
-        jpl_call(R,getTypes,[IC,Bool],JCSetSet),
+        jpl_call(R,getTypes,[JI,Bool],JCSetSet),
         ecsets_class(JCSetSet,C).
+
+reasoner_objectPropertyAssertion(R,Fac,I,P,I2) :-
+        nonvar(I),
+        !,
+        cxj(Fac,I,JI),
+        jpl_call(R,getObjectPropertyRelationships,[JI],PropIndivsMap),
+        pimap_property_individual(PropIndivsMap,P,I2).
+
+
 
 % java util
 jset_member(JPSet,JP) :-
@@ -271,7 +316,11 @@ jset_member(JPSet,JP) :-
         jpl_array_to_list(JPArr,JPs),
         member(JP,JPs).
 
-reasoner_equivalent_to(R,Fac,C,C2) :-
+%% reasoner_equivalent_to(+R,+Fac,+C,?P)
+reasoner_equivalent_to(R,Fac,C,P) :-
+        (   var(C)
+        ->  class(C)
+        ;   true),
         owlterm_java(Fac,_,class(C),JC),
         jpl_call(R,getEquivalentClasses,[JC],JPSet),
         jset_member(JPSet,JP),
@@ -331,6 +380,13 @@ owlterm_java(Fac,_Type,OWLTerm,Obj) :- % e.g classAssertion
         debug(owl2,'using java method: ~w, expecting arguments: ~w',[M,ArgTypes]),
         translate_args_to_java(Fac,Args,ArgTypes,Objs),
         jpl_call(Fac,M,ReorderedObjs,Obj).
+
+% special case translation for property chains
+owlterm_java(Fac,_,subPropertyOf(propertyChain(PL),P),Obj) :- % e.g. subObjectPropertyOf
+        !,
+        translate_args_to_java(Fac,[PL,P],[list(objectPropertyExpression),objectPropertyExpression],Objs),
+        %debug(owl2,'  translated ~w :: ~w method: ~w',[Args,ArgTypes,M]),
+        jpl_call(Fac,getOWLObjectPropertyChainSubPropertyAxiom,Objs,Obj).
 
 % axioms such as subPropertyOf have two typed variants.
 % we use type checking which may require the axiom declaration
@@ -492,7 +548,7 @@ decl_method(P,M) :-
 decl_method(class,getOWLClass,classExpression).
 decl_method(objectProperty,getOWLObjectProperty,propertyExpression).
 decl_method(annotationProperty,getOWLAnnotationProperty,iri).
-decl_method(dataType,getOWLDatatype,datatype,_).
+decl_method(dataType,getOWLDatatype,datatype).
 decl_method(dataProperty,getOWLDataProperty,_).
 decl_method(individual,getOWLIndividual,_). % anonymous individuals?
 decl_method(entity,getOWLIndividual,_). % anonymous individuals?
