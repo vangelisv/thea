@@ -42,7 +42,8 @@
 
             valid_axiom_annotation_mode/5,
 	    uri_split/4,
-	   
+
+            owl_description/2,
 	    blanknode/3,
 	    blanknode_gen/2,
 	    owl_parser_log/2
