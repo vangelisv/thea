@@ -384,8 +384,9 @@ owlterm_java(Fac,_Type,OWLTerm,Obj) :- % e.g classAssertion
 % special case translation for property chains
 owlterm_java(Fac,_,subPropertyOf(propertyChain(PL),P),Obj) :- % e.g. subObjectPropertyOf
         !,
+        debug(owl2,'  translating chain ~w',[PL]),
         translate_args_to_java(Fac,[PL,P],[list(objectPropertyExpression),objectPropertyExpression],Objs),
-        %debug(owl2,'  translated ~w :: ~w method: ~w',[Args,ArgTypes,M]),
+        debug(owl2,'  translated chain to: ~w',[Objs]),
         jpl_call(Fac,getOWLObjectPropertyChainSubPropertyAxiom,Objs,Obj).
 
 % axioms such as subPropertyOf have two typed variants.
@@ -427,7 +428,7 @@ translate_args_to_java(Fac,[A|Args],[T|ArgTypes],[Obj|Objs]) :-
         debug(owl2,' translated: ~w --> ~w',[A,Obj]),
         translate_args_to_java(Fac,Args,ArgTypes,Objs).
 
-translate_arg_to_java(Fac,L,list(T),Set) :-
+translate_arg_to_java(Fac,L,set(T),Set) :-
         is_list(L),
         !,
         findall(T,member(_,L),Ts),
@@ -437,6 +438,17 @@ translate_arg_to_java(Fac,L,list(T),Set) :-
         forall(member(Obj,Objs),
                jpl_call(Set,add,[Obj],_)),
         debug(owl2,' made set: ~w ',[Set]).
+
+translate_arg_to_java(Fac,L,list(T),List) :-
+        is_list(L),
+        !,
+        findall(T,member(_,L),Ts),
+        translate_args_to_java(Fac,L,Ts,Objs),
+        jpl_new('java.util.ArrayList',[],List),
+        debug(owl2,' new set: ~w = ~w -- adding objs ~w',[L,List,Objs]),
+        forall(member(Obj,Objs),
+               jpl_call(List,add,[Obj],_)),
+        debug(owl2,' made list: ~w ',[List]).
 
 translate_arg_to_java(_Fac,X,T,X) :- nonvar(T),T=int,!.
 
