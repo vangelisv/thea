@@ -11,6 +11,7 @@
 :- use_module(owl2_metamodel).
 
 :- rdf_register_ns(swrl,'http://www.w3.org/2003/11/swrl#',[force(true)]).
+:- rdf_register_ns(swrlb,'http://www.w3.org/2003/11/swrlb#',[force(true)]).
 
 :- multifile owl2_from_rdf:owl_parse_axiom_hook/3.
 owl2_from_rdf:owl_parse_axiom_hook(X,AnnMode,List) :-
@@ -69,6 +70,12 @@ swrl_description(X,G) :-
         swrl_description(A1,A1P),
         swrl_description(A2,A2P),
         G=..[PP,A1P,A2P]. % TODO: make this canonical form?
+swrl_description(X,builtin(P,ArgsP)) :-
+        use_owl(X,'rdf:type','swrl:BuiltinAtom'),
+        !,
+        use_owl(X,'swrl:builtin',P),
+        use_owl(X,'swrl:arguments',Args),
+        swrl_description_list(Args,ArgsP).
 swrl_description(X,G) :-
         use_owl(X,'rdf:type','swrl:ClassAtom'),
         !,
