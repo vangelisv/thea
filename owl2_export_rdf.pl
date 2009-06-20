@@ -377,7 +377,8 @@ owl2_export_axiom(implies(AL,CL),main_triple(RuleNode,'rdf:type','swrl:Imp')) :-
         % TODO: allow rules to have IDs in swrl.pl
         %   for now we force it to be a bnode
         !,
-	as2rdf_bnode(implies(AL,CL),RuleNode),
+        %rdf_bnode(RuleNode),
+        as2rdf_bnode(implies(AL,CL),RuleNode),
 	owl_rdf_assert(RuleNode,'rdf:type','swrl:Imp'),
 	swrl_export_atom_list(AL,ALNode),
 	swrl_export_atom_list(CL,CLNode),
@@ -450,6 +451,16 @@ swrl_export_atom_list([S|Rest],Node) :-
 	swrl_export_atom_list(Rest,Node2),
 	owl_rdf_assert(Node,'rdf:rest',Node2).
 
+swrl_export_argument_list([],'rdf:nil').
+
+swrl_export_argument_list([S|Rest],Node) :-
+	as2rdf_bnode([S|Rest],Node),
+	swrl_export_argument(S,main_triple(Ts,_,_)),
+	owl_rdf_assert(Node,'rdf:type', 'swrl:ArgumentList'),	
+	owl_rdf_assert(Node,'rdf:first', Ts),	
+	swrl_export_argument_list(Rest,Node2),
+	owl_rdf_assert(Node,'rdf:rest',Node2).
+
 % in swrl.pl atom lists are weakly typed - we allow a swrl atom to
 % stand in for an atom list for convenience
 swrl_export_atom_list(X,Node) :-
@@ -458,29 +469,42 @@ swrl_export_atom_list(X,Node) :-
 
 swrl_export_atom(propertyAssertion(OPE,A1,A2),main_triple(BNode,'rdf:type','swrl:IndividualPropertyAtom')) :-
         !,
-	as2rdf_bnode(propertyAssertion(OPE,A1,A2),BNode),
+        rdf_bnode(BNode),
+        %as2rdf_bnode(propertyAssertion(OPE,A1,A2),BNode),
 	owl_rdf_assert(BNode,'rdf:type','swrl:IndividualPropertyAtom'),
 	owl2_export_axiom(OPE,main_triple(Tope,_,_)),owl_rdf_assert(BNode,'swrl:propertyPredicate',Tope),
         swrl_export_argument(A1,main_triple(TA1,_,_)),owl_rdf_assert(BNode,'swrl:argument1',TA1),
         swrl_export_argument(A2,main_triple(TA2,_,_)),owl_rdf_assert(BNode,'swrl:argument2',TA2).
 
+swrl_export_atom(builtin(OPE,Args),main_triple(BNode,'rdf:type','swrl:BuiltinAtom')) :-
+        !,
+        rdf_bnode(BNode),
+	owl_rdf_assert(BNode,'rdf:type','swrl:BuiltinAtom'),
+	%owl2_export_axiom(OPE,main_triple(Tope,_,_)),owl_rdf_assert(BNode,'swrl:builtin',Tope),
+	atom_concat('swrlb:',OPE,Builtin),owl_rdf_assert(BNode,'swrl:builtin',Builtin),
+        swrl_export_argument_list(Args,ListNode),
+        owl_rdf_assert(BNode,'swrl:arguments',ListNode).
+
 swrl_export_atom(description(C,A1),main_triple(BNode,'rdf:type','swrl:ClassAtom')) :-
         !,
-	as2rdf_bnode(description(C,A1),BNode),
+        rdf_bnode(BNode),
+        %as2rdf_bnode(description(C,A1),BNode),
 	owl_rdf_assert(BNode,'rdf:type','swrl:ClassAtom'),
 	owl2_export_axiom(C,main_triple(TC,_,_)),owl_rdf_assert(BNode,'swrl:classPredicate',TC),
         swrl_export_argument(A1,main_triple(TA1,_,_)),owl_rdf_assert(BNode,'swrl:argument1',TA1).
 
 swrl_export_atom(differentFrom(A1,A2),main_triple(BNode,'rdf:type','swrl:DifferentIndividualsAtom')) :-
         !,
-	as2rdf_bnode(differentFrom(A1,A2),BNode),
+        rdf_bnode(BNode),
+	%as2rdf_bnode(differentFrom(A1,A2),BNode),
 	owl_rdf_assert(BNode,'rdf:type','swrl:DifferentIndividualsAtom'),
         swrl_export_argument(A1,main_triple(TA1,_,_)),owl_rdf_assert(BNode,'swrl:argument1',TA1),
         swrl_export_argument(A2,main_triple(TA2,_,_)),owl_rdf_assert(BNode,'swrl:argument2',TA2).
 
 swrl_export_atom(sameAs(A1,A2),main_triple(BNode,'rdf:type','swrl:SameIndividualAtom')) :-
         !,
-	as2rdf_bnode(sameAs(A1,A2),BNode),
+        rdf_bnode(BNode),
+	%as2rdf_bnode(sameAs(A1,A2),BNode),
         owl_rdf_assert(BNode,'rdf:type','swrl:SameIndividualAtom'),
         swrl_export_argument(A1,main_triple(TA1,_,_)),owl_rdf_assert(BNode,'swrl:argument1',TA1),
         swrl_export_argument(A2,main_triple(TA2,_,_)),owl_rdf_assert(BNode,'swrl:argument2',TA2).
