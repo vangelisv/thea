@@ -277,30 +277,30 @@ attribute(2,'SubClassOf','SuperClass:ClassExpression',string).
 axiom_arguments(subClassOf,[classExpression, classExpression]).
 valid_axiom(subClassOf(A, B)) :- subsumed_by([A, B],[classExpression, classExpression]).
 
-%% equivalentClasses(?ClassExpressions:list(ClassExpression))
+%% equivalentClasses(?ClassExpressions:set(ClassExpression))
 % An equivalent classes axiom EquivalentClasses( CE1 ... CEn ) states that all of the class expressions CEi, 1 <= i <= n, are semantically equivalent to each other.
 :- ext(equivalentClasses/1).
 relation('EquivalentClasses',1).
-attribute(1,'EquivalentClasses','ClassExpressions:list(ClassExpression)',string).
-axiom_arguments(equivalentClasses,[list(classExpression)]).
-valid_axiom(equivalentClasses(A)) :- subsumed_by([A],[list(classExpression)]).
+attribute(1,'EquivalentClasses','ClassExpressions:set(ClassExpression)',string).
+axiom_arguments(equivalentClasses,[set(classExpression)]).
+valid_axiom(equivalentClasses(A)) :- subsumed_by([A],[set(classExpression)]).
 
-%% disjointClasses(?ClassExpressions:list(ClassExpression))
+%% disjointClasses(?ClassExpressions:set(ClassExpression))
 % A disjoint classes axiom DisjointClasses( CE1 ... CEn ) states that all of the class expressions CEi, 1 <= i <= n, are pairwise disjoint; that is, no individual can be at the same time an instance of both CEi and CEj for i != j
 :- ext(disjointClasses/1).
 relation('DisjointClasses',1).
-attribute(1,'DisjointClasses','ClassExpressions:list(ClassExpression)',string).
-axiom_arguments(disjointClasses,[list(classExpression)]).
-valid_axiom(disjointClasses(A)) :- subsumed_by([A],[list(classExpression)]).
+attribute(1,'DisjointClasses','ClassExpressions:set(ClassExpression)',string).
+axiom_arguments(disjointClasses,[set(classExpression)]).
+valid_axiom(disjointClasses(A)) :- subsumed_by([A],[set(classExpression)]).
 
-%% disjointUnion(?ClassExpression, ?ClassExpressions:list(ClassExpression))
+%% disjointUnion(?ClassExpression, ?ClassExpressions:set(ClassExpression))
 % A disjoint union axiom DisjointUnion( C CE1 ... CEn ) states that a class C is a disjoint union of the class expressions CEi, 1 <= i <= n, all of which are pairwise disjoint.
 :- ext(disjointUnion/2).
 relation('DisjointUnion',2).
 attribute(1,'DisjointUnion','ClassExpression',string).
-attribute(2,'DisjointUnion','ClassExpressions:list(ClassExpression)',list).
-axiom_arguments(disjointUnion,[classExpression,list(classExpression)]).
-valid_axiom(disjointUnion(A,B)) :- subsumed_by([A,B],[classExpression,list(classExpression)]).
+attribute(2,'DisjointUnion','ClassExpressions:set(ClassExpression)',list).
+axiom_arguments(disjointUnion,[classExpression,set(classExpression)]).
+valid_axiom(disjointUnion(A,B)) :- subsumed_by([A,B],[classExpression,set(classExpression)]).
 
 %% propertyAxiom(?Axiom)
 % OWL 2 provides axioms that can be used to characterize and establish relationships between object property expressions. This predicate reifies the actual axiom
@@ -350,47 +350,47 @@ subAnnotationPropertyOf(A, B) :- subPropertyOf(A, B),subsumed_by([A, B],[annotat
 axiom_arguments(subAnnotationPropertyOf,[annotationProperty, annotationProperty]).
 valid_axiom(subAnnotationPropertyOf(A, B)) :- subsumed_by([A, B],[annotationProperty, annotationProperty]).
 
-%% equivalentProperties(?PropertyExpressions:list(PropertyExpression))
+%% equivalentProperties(?PropertyExpressions:set(PropertyExpression))
 % An equivalent object properties axiom EquivalentProperties( OPE1 ... OPEn ) states that all of the object property expressions OPEi, 1 <= i <= n, are semantically equivalent to each other
 % (extensional predicate - can be asserted)
 :- ext(equivalentProperties/1).
 relation('EquivalentProperties',1).
-attribute(1,'EquivalentProperties','PropertyExpressions:list(PropertyExpression)',string).
-axiom_arguments(equivalentProperties,[list(propertyExpression)]).
-valid_axiom(equivalentProperties(A)) :- subsumed_by([A],[list(propertyExpression)]).
+attribute(1,'EquivalentProperties','PropertyExpressions:set(PropertyExpression)',string).
+axiom_arguments(equivalentProperties,[set(propertyExpression)]).
+valid_axiom(equivalentProperties(A)) :- subsumed_by([A],[set(propertyExpression)]).
 
-%% equivalentObjectProperties(?PropertyExpressions:list(ObjectPropertyExpression))
+%% equivalentObjectProperties(?PropertyExpressions:set(ObjectPropertyExpression))
 % An equivalent object properties axiom EquivalentObjectProperties( OPE1 ... OPEn ) states that all of the object property expressions OPEi, 1 <= i <= n, are semantically equivalent to each other
-equivalentObjectProperties(A) :- equivalentProperties(A),subsumed_by([A],[list(objectPropertyExpression)]).
-axiom_arguments(equivalentObjectProperties,[list(objectPropertyExpression)]).
-valid_axiom(equivalentObjectProperties(A)) :- subsumed_by([A],[list(objectPropertyExpression)]).
+equivalentObjectProperties(A) :- equivalentProperties(A),subsumed_by([A],[set(objectPropertyExpression)]).
+axiom_arguments(equivalentObjectProperties,[set(objectPropertyExpression)]).
+valid_axiom(equivalentObjectProperties(A)) :- subsumed_by([A],[set(objectPropertyExpression)]).
 
-%% equivalentDataProperties(?PropertyExpressions:list(DataPropertyExpression))
+%% equivalentDataProperties(?PropertyExpressions:set(DataPropertyExpression))
 % An equivalent data properties axiom EquivalentProperties( DPE1 ... DPEn ) states that all the data property expressions DPEi, 1 <= i <= n, are semantically equivalent to each other. This axiom allows one to use each DPEi as a synonym for each DPEj - that is, in any expression in the ontology containing such an axiom, DPEi can be replaced with DPEj without affecting the meaning of the ontology
-equivalentDataProperties(A) :- equivalentProperties(A),subsumed_by([A],[list(dataPropertyExpression)]).
-axiom_arguments(equivalentDataProperties,[list(dataPropertyExpression)]).
-valid_axiom(equivalentDataProperties(A)) :- subsumed_by([A],[list(dataPropertyExpression)]).
+equivalentDataProperties(A) :- equivalentProperties(A),subsumed_by([A],[set(dataPropertyExpression)]).
+axiom_arguments(equivalentDataProperties,[set(dataPropertyExpression)]).
+valid_axiom(equivalentDataProperties(A)) :- subsumed_by([A],[set(dataPropertyExpression)]).
 
-%% disjointProperties(?PropertyExpressions:list(PropertyExpression))
+%% disjointProperties(?PropertyExpressions:set(PropertyExpression))
 % A disjoint properties axiom DisjointProperties( PE1 ... PEn ) states that all of the property expressions PEi, 1 <= i <= n, are pairwise disjoint
 % (extensional predicate - can be asserted)
 :- ext(disjointProperties/1).
 relation('DisjointProperties',1).
-attribute(1,'DisjointProperties','PropertyExpressions:list(PropertyExpression)',string).
-axiom_arguments(disjointProperties,[list(propertyExpression)]).
-valid_axiom(disjointProperties(A)) :- subsumed_by([A],[list(propertyExpression)]).
+attribute(1,'DisjointProperties','PropertyExpressions:set(PropertyExpression)',string).
+axiom_arguments(disjointProperties,[set(propertyExpression)]).
+valid_axiom(disjointProperties(A)) :- subsumed_by([A],[set(propertyExpression)]).
 
-%% disjointObjectProperties(?PropertyExpressions:list(ObjectPropertyExpression))
+%% disjointObjectProperties(?PropertyExpressions:set(ObjectPropertyExpression))
 % A disjoint object properties axiom DisjointProperties( OPE1 ... OPEn ) states that all of the object property expressions OPEi, 1 <= i <= n, are pairwise disjoint; that is, no individual x can be connected to an individual y by both OPEi and OPEj for i != j. 
-disjointObjectProperties(A) :- disjointProperties(A),subsumed_by([A],[list(objectPropertyExpression)]).
-axiom_arguments(disjointObjectProperties,[list(objectPropertyExpression)]).
-valid_axiom(disjointObjectProperties(A)) :- subsumed_by([A],[list(objectPropertyExpression)]).
+disjointObjectProperties(A) :- disjointProperties(A),subsumed_by([A],[set(objectPropertyExpression)]).
+axiom_arguments(disjointObjectProperties,[set(objectPropertyExpression)]).
+valid_axiom(disjointObjectProperties(A)) :- subsumed_by([A],[set(objectPropertyExpression)]).
 
-%% disjointDataProperties(?PropertyExpressions:list(DataPropertyExpression))
+%% disjointDataProperties(?PropertyExpressions:set(DataPropertyExpression))
 % A disjoint data properties axiom DisjointProperties( DPE1 ... DPEn ) states that all of the data property expressions DPEi, 1 <= i <= n, are pairwise disjoint; that is, no individual x can be connected to a literal y by both DPEi and DPEj for i !- j.
-disjointDataProperties(A) :- disjointProperties(A),subsumed_by([A],[list(dataPropertyExpression)]).
-axiom_arguments(disjointDataProperties,[list(dataPropertyExpression)]).
-valid_axiom(disjointDataProperties(A)) :- subsumed_by([A],[list(dataPropertyExpression)]).
+disjointDataProperties(A) :- disjointProperties(A),subsumed_by([A],[set(dataPropertyExpression)]).
+axiom_arguments(disjointDataProperties,[set(dataPropertyExpression)]).
+valid_axiom(disjointDataProperties(A)) :- subsumed_by([A],[set(dataPropertyExpression)]).
 
 %% inverseProperties(?ObjectPropertyExpression1:ObjectPropertyExpression, ?ObjectPropertyExpression2:ObjectPropertyExpression)
 % An inverse object properties axiom InverseProperties( OPE1 OPE2 ) states that the object property expression OPE1 is an inverse of the object property expression OPE2
@@ -555,22 +555,22 @@ fact(classAssertion(A, B)) :- classAssertion(A, B).
 axiom_arguments(fact,[axiom]).
 valid_axiom(fact(A)) :- subsumed_by([A],[axiom]).
 
-%% sameIndividual(?Individuals:list(Individual))
+%% sameIndividual(?Individuals:set(Individual))
 % An individual equality axiom SameIndividual( a1 ... an ) states that all of the individuals ai, 1 <= i <= n, are equal to each other.
 % note that despite the name of this predicate, it accepts a list of individuals as argument
 :- ext(sameIndividual/1).
 relation('SameIndividual',1).
-attribute(1,'SameIndividual','Individuals:list(Individual)',string).
-axiom_arguments(sameIndividual,[list(individual)]).
-valid_axiom(sameIndividual(A)) :- subsumed_by([A],[list(individual)]).
+attribute(1,'SameIndividual','Individuals:set(Individual)',string).
+axiom_arguments(sameIndividual,[set(individual)]).
+valid_axiom(sameIndividual(A)) :- subsumed_by([A],[set(individual)]).
 
-%% differentIndividuals(?Individuals:list(Individual))
+%% differentIndividuals(?Individuals:set(Individual))
 % An individual inequality axiom DifferentIndividuals( a1 ... an ) states that all of the individuals ai, 1 <= i <= n, are different from each other
 :- ext(differentIndividuals/1).
 relation('DifferentIndividuals',1).
-attribute(1,'DifferentIndividuals','Individuals:list(Individual)',string).
-axiom_arguments(differentIndividuals,[list(individual)]).
-valid_axiom(differentIndividuals(A)) :- subsumed_by([A],[list(individual)]).
+attribute(1,'DifferentIndividuals','Individuals:set(Individual)',string).
+axiom_arguments(differentIndividuals,[set(individual)]).
+valid_axiom(differentIndividuals(A)) :- subsumed_by([A],[set(individual)]).
 
 %% classAssertion(?ClassExpression, ?Individual)
 % A class assertion ClassAssertion( CE a ) states that the individual a is an instance of the class expression CE
@@ -742,7 +742,7 @@ subsumed_by([I|IL],[T|TL]) :-
 	!,
 	subsumed_by(I,T),
 	subsumed_by(IL,TL).
-subsumed_by(L,list(T)):-
+subsumed_by(L,set(T)):-
         !,
         forall(member(I,L),
                subsumed_by(I,T)).
