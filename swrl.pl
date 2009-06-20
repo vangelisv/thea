@@ -190,7 +190,7 @@ swrl_to_owl(AL,C,subClassOf(Sub,D)) :- % non-normalized form of above rule
 swrl_to_owl([],description(C,I),classAssertion(C,I)) :-
         I\=v(_),
         !.
-swrl_to_owl([],C,propertyAssertion(P,X,Y)) :-
+swrl_to_owl([],C,propertyAssertion(P,X,Y)) :-  % do we need data/object split?
         C=..[P,X,Y],
         X\=v(_),
         Y\=v(_),
@@ -333,12 +333,12 @@ prolog_term_to_swrl_atom( A, AX ):-
         prolog_term_to_swrl_atom( B, BX),
         prolog_term_to_swrl_atom( C, CX),
         default_ns(F,FX),
-        AX=..[FX,BX,CX].
-prolog_term_to_swrl_atom( A, A) :-
-        atom(A),
+        AX=..[FX,BX,CX].        % TODO: canonicalize to expanded form?
+prolog_term_to_swrl_atom( A, literal(type('xsd:integer',A)) ) :-
+        number(A),
         !.
 prolog_term_to_swrl_atom( A, A) :-
-        number(A),
+        atom(A),
         !.
         
 %% prolog_source_to_swrl_rules(+File,?Rules)
@@ -379,7 +379,15 @@ goal_swrlb(X is A-B,subtract(A,B,X)).
 goal_swrlb(X is A*B,multiply(A,B,X)).
 goal_swrlb(X is A/B,divide(A,B,X)).
 
-pred_swrlb(=,stringEqualIgnoreCase). % TODO: detect
+% arithmetic TODO
+pred_swrlb(<,lessThan). 
+pred_swrlb(=,equal). % TODO: detect type
+pred_swrlb(\=,notEqual). % TODO: detect type
+pred_swrlb(=<,lessThanOrEqual). 
+pred_swrlb(>,greaterThan). 
+pred_swrlb(>=,greaterThanOrEqual). 
+
+pred_swrlb(=,stringEqualIgnoreCase). % TODO: detect type
 pred_swrlb(atom_length,stringLength).
 pred_swrlb(upcase_atom,upperCase).
 pred_swrlb(downcase_atom,lowerCase).
