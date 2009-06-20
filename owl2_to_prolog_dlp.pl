@@ -195,7 +195,7 @@ owl_write_prolog_code( (H :- B), Options) :-!,
 	    owl_write_prolog_code(H,Options), write('.'), nl
 	; 
 	owl_write_prolog_code(H,Options), write(':-'), % normal rule H:-B. 
-	    nl, write('     '), 
+	    nl, write('     '),
 	    owl_write_prolog_code(B,Options), 
 	    write('.'), nl
 	).
@@ -227,7 +227,7 @@ owl_write_prolog_code(property(_,_,literal(_)),Options) :-
         member(suppress_literals(true),Options),
         write(true),
         !.
-owl_write_prolog_code(property(P,X,Y),Options) :- !, 
+owl_write_prolog_code(property(P,X,Y),Options) :- !,
 	collapse_ns(P,P1,'_',Options),
 	writeq(P1),  write('('),
 	(   X = x, !, write('X') 
@@ -265,6 +265,10 @@ owl_write_prolog_code(swrldescription(P,X),Options) :- !,
 	writeq(P1),  write('('),
 	write(X2),
 	write(')').
+
+owl_write_prolog_code(v(NY),_Options) :- !,
+         write('V'),write(NY).
+
 
 %
 % none generates nothing.
@@ -628,6 +632,7 @@ owl_as2prolog(inverseProperties(P,Inv),[(PE :- IPE),(IPE2 :- PE2)], _) :- !,
 % TODO: new OWL2 properties
 
 % SWRL
+% (should this go in a separate hooks module?)
 
 owl_as2prolog(implies(A,C),(CP :- AP), _) :- !,
               owl_as2prolog(swrl(A),AP,body),
@@ -642,21 +647,31 @@ owl_as2prolog(swrl([A|AL]), (G,Gs), Type) :-
          owl_as2prolog(swrl(A),G,Type),
          owl_as2prolog(swrl(AL),Gs,Type).
 
-owl_as2prolog(swrl(description(C,X)),swrldescription(C,PX), Type) :-
+owl_as2prolog(swrl(description(C,X)),class(C,PX), Type) :-
         !,
         owl_as2prolog(swrl(X),PX,Type).
 
-owl_as2prolog(swrl(propertyAssertion(P,X,Y)),swrlproperty(P,PX,PY), Type) :-
+owl_as2prolog(swrl(propertyAssertion(P,X,Y)),property(P,PX,PY), Type) :-
         !,
         owl_as2prolog(swrl(X),PX,Type),
         owl_as2prolog(swrl(Y),PY,Type).
+owl_as2prolog(swrl(builtin(B,Args)),G, Type) :-
+        !,
+        swrl:pred_swrlb(P,B),
+        findall(AP,(member(A,Args),
+                   owl_as2prolog(swrl(A),AP,Type)),
+                ArgsP),
+        G=..[property,P|ArgsP].  % TODO - n-ary properties
 
-owl_as2prolog(swrl(A),swrlproperty(P,PX,PY), Type) :-
+owl_as2prolog(swrl(A),property(P,PX,PY), Type) :-
         A=..[P,X,Y],
         !,
         owl_as2prolog(swrl(X),PX,Type),
         owl_as2prolog(swrl(Y),PY,Type).
-owl_as2prolog(swrl(i(V)),V,_) :- !.
+owl_as2prolog(swrl(i(V)),v(V),_) :- !.
+
+owl_as2prolog(swrl(A),G,T) :-
+        owl_as2prolog(A,G,T).
 
 % propertyChains
 chain_to_goal(PL,ChainGoal) :-
