@@ -62,27 +62,27 @@ owlpredicate_typed(negativePropertyAssertion, negativeDataPropertyAssertion).
 
 %% owlpredicate_arguments(?TypedPredicate,?ArgumentExpression:list) is semidet
 %
-% ArgumentExpression = [ Datatype | list(CE) | CE ]
+% ArgumentExpression = [ Datatype | set(CE) | CE ]
 % where CE is a classExpression/1 and Datatype = int | ...
 %
 % This can be used for run-time checking (see valid_axiom/1) and
 % to help write parsers/writers for strongly-typed formats like OWL-XML
 %
 % Example:
-% =|owlpredicate_arguments(objectIntersectionOf,[list(classExpression)])|=
+% =|owlpredicate_arguments(objectIntersectionOf,[set(classExpression)])|=
 
-owlpredicate_arguments(objectIntersectionOf,[list(classExpression)]).
-owlpredicate_arguments(dataIntersectionOf,[list(dataExpression)]).
+owlpredicate_arguments(objectIntersectionOf,[set(classExpression)]).
+owlpredicate_arguments(dataIntersectionOf,[set(dataExpression)]).
 owlpredicate_arguments(objectSomeValuesFrom,[objectPropertyExpression,classExpression]).
 owlpredicate_arguments(dataSomeValuesFrom,[dataPropertyExpression,dataExpression]).
 owlpredicate_arguments(objectAllValuesFrom,[objectPropertyExpression,classExpression]).
 owlpredicate_arguments(dataAllValuesFrom,[dataPropertyExpression,dataExpression]).
-owlpredicate_arguments(objectComplementOf,[list(classExpression)]).
-owlpredicate_arguments(dataComplementOf,[list(dataExpression)]).
-owlpredicate_arguments(objectUnionOf,[list(classExpression)]).
-owlpredicate_arguments(dataUnionOf,[list(dataExpression)]).
-owlpredicate_arguments(objectOneOf,[list(individual)]).
-owlpredicate_arguments(dataOneOf,[list(dataRange)]).
+owlpredicate_arguments(objectComplementOf,[set(classExpression)]).
+owlpredicate_arguments(dataComplementOf,[set(dataExpression)]).
+owlpredicate_arguments(objectUnionOf,[set(classExpression)]).
+owlpredicate_arguments(dataUnionOf,[set(dataExpression)]).
+owlpredicate_arguments(objectOneOf,[set(individual)]).
+owlpredicate_arguments(dataOneOf,[set(dataRange)]).
 owlpredicate_arguments(objectHasValue,[objectPropertyExpression,individual]). % TODO
 owlpredicate_arguments(dataHasValue,[dataPropertyExpression,dataRange]).
 owlpredicate_arguments(objectMinCardinality,[int,objectPropertyExpression,classExpression]). % TEST-ME: non-QCR
@@ -99,6 +99,7 @@ owlpredicate_arguments(dataExactCardinality,[int,dataPropertyExpression,dataRang
 owlpredicate_arguments(dataExactCardinality,[int,dataPropertyExpression]). % TEST: non-QCR
 
 owlpredicate_arguments(inverseOf,[objectProperty]).
+owlpredicate_arguments(propertyChain,[list(objectProperty)]).
 
 owlpredicate_arguments(functionalObjectProperty,[objectPropertyExpression]).
 owlpredicate_arguments(functionalDataProperty,[dataPropertyExpression]).
@@ -112,10 +113,10 @@ owlpredicate_arguments(subObjectPropertyOf,[objectPropertyExpressionOrChain, obj
 owlpredicate_arguments(subDataPropertyOf,[dataPropertyExpression, dataPropertyExpression]).
 owlpredicate_arguments(subAnnotationPropertyOf, [annotationProperty, annotationProperty]).
 
-owlpredicate_arguments(disjointObjectProperties,[list(objectPropertyExpression)]).
-owlpredicate_arguments(disjointDataProperties,[list(dataPropertyExpression)]).
-owlpredicate_arguments(equivalentObjectProperties,[list(objectPropertyExpression)]).
-owlpredicate_arguments(equivalentDataProperties,[list(dataPropertyExpression)]).
+owlpredicate_arguments(disjointObjectProperties,[set(objectPropertyExpression)]).
+owlpredicate_arguments(disjointDataProperties,[set(dataPropertyExpression)]).
+owlpredicate_arguments(equivalentObjectProperties,[set(objectPropertyExpression)]).
+owlpredicate_arguments(equivalentDataProperties,[set(dataPropertyExpression)]).
 
 owlpredicate_arguments(annotationAssertion,[annotationProperty, iri, value]).
 owlpredicate_arguments(objectPropertyAssertion,[objectPropertyExpression, individual, individual]).
