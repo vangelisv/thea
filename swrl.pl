@@ -178,6 +178,12 @@ swrl_to_owl([AL], description(Sub,v(X)), subClassOf(Sub,unionOf(DL))) :-
         !,
         subgoals_to_union(AL,v(X),DL),
         !.
+% e.g. upstreamOfGene(X) :- upstream_of(X,G),gene(G).
+swrl_to_owl(AL,description(Sub,v(X)),subClassOf(Sub,someValuesFrom(P,D))) :-
+        select(A1,AL,[A2]),
+        A1=..[P,v(X),v(Y)],
+        A2=description(D,v(Y)),
+        !.
 swrl_to_owl(AL,C,subClassOf(Sub,intersectionOf(DL))) :-
         C=..[Sub,v(X)],
         subgoals_to_intersection(AL,X,DL),
