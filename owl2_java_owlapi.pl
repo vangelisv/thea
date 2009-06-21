@@ -141,10 +141,6 @@ reasoner_classify_using(Reasoner,Ont,RN) :-
         create_reasoner(Man,RN,Reasoner),
         reasoner_classify(Reasoner,Man,Ont).
 
-%% inferred_axiom(+R,+Fac,?Axiom)
-inferred_axiom(R,Fac,subClassOf(A,B)) :-
-        reasoner_subClassOf(R,Fac,A,B).
-
 
 is_consistent(Reasoner) :-
         jpl_call(Reasoner,isConsistent,[],'@'(true)).
@@ -195,10 +191,21 @@ pimap_property_individual(PIMap,P,I) :-
 % converts prolog reference to java
 cxj(Fac,C,JC) :-
         (   atom(C)
-        ->  owlterm_java(Fac,_,class(C),JC)
+        ->  owlterm_java(Fac,_,C,JC)
         ;   translate_arg_to_java(Fac,C,_,JC)).
 
 
+%% inferred_axiom(+R,+Fac,?Axiom)
+inferred_axiom(R,Fac,subClassOf(A,B)) :-
+        reasoner_subClassOf(R,Fac,A,B).
+inferred_axiom(R,Fac,classAssertion(C,I)) :-
+        reasoner_individualOf(R,Fac,I,C).
+inferred_axiom(R,Fac,classAssertion(C,I)) :-
+        reasoner_nr_individualOf(R,Fac,I,C).
+inferred_axiom(R,Fac,propertyAssertion(P,I,I2)) :-
+        reasoner_objectPropertyAssertion(R,Fac,I,P,I2).
+
+        
 %% reasoner_nr_subClassOf(+R,+Fac,?C,?P)
 % ?C ?P - find superclasses for all named classes C
 % +C ?P - find superclasses
@@ -274,10 +281,10 @@ reasoner_individualOf(R,Fac,I,C) :-
         reasoner_individualOf(R,Fac,I,C,false).
 
 reasoner_individualOf(R,Fac,I,C,IsDirect) :-
-        nonvar(C),
-        nonvar(I),
+        var(C),
+        var(I),
         !,
-        individual(I),
+        class(C),
         reasoner_individualOf(R,Fac,I,C,IsDirect).
 
 
@@ -303,8 +310,9 @@ reasoner_individualOf(R,Fac,I,C,IsDirect) :-
         ecsets_class(JCSetSet,C).
 
 reasoner_objectPropertyAssertion(R,Fac,I,P,I2) :-
-        nonvar(I),
-        !,
+        (   var(I)
+        ->  classAssertion(_,I)
+        ;   true),
         cxj(Fac,I,JI),
         jpl_call(R,getObjectPropertyRelationships,[JI],PropIndivsMap),
         pimap_property_individual(PropIndivsMap,P,I2).
@@ -355,7 +363,7 @@ owlterm_java(Fac,_,OWLTerm,Obj) :-
         OWLTerm =.. [P,X],
         decl_method(P,M),       % declaration axiom
         !,
-        debug(owl2,'converting to URI: ~w',[X]),
+        debug(owl2,'decl(~w,~w) -- converting to URI: ~w',[P,M,X]),
         atom_javaURI(X,U),
         debug(owl2,'calling: ~w . ~w( ~w )',[Fac,M,U]),
         jpl_call(Fac,M,[U],Obj).
@@ -365,7 +373,14 @@ owlterm_java(Fac,_,OWLTerm,Obj) :-
         !,
         debug(owl2,'converting to URI: ~w',[OWLTerm]),
         atom_javaURI(OWLTerm,U),
-        jpl_call(Fac,getOWLClass,[U],Obj). % TODO
+        (   class(OWLTerm)
+        ->  M=getOWLClass
+        ;   objectProperty(OWLTerm)
+        ->  M=getOWLObjectProperty
+        ;   \+ \+ classAssertion(_,M)
+        ->  M=getOWLIndividual
+        ;   throw(OWLTerm)),
+        jpl_call(Fac,M,[U],Obj). % TODO
 
 % some axioms such as subClassOf are effectively untyped
 owlterm_java(Fac,_Type,OWLTerm,Obj) :- % e.g subClassOf
@@ -505,10 +520,20 @@ translate_arg_to_java(Fac,X,_T,Obj) :-
         jpl_call(Fac,getOWLClass,U,Obj).
 translate_arg_to_java(Fac,X,_T,Obj) :-
         atom(X),
+        \+ \+ classAssertion(_,X),
+        !,
+        atom_javaURI(X,U),
+        jpl_call(Fac,getOWLIndividual,U,Obj).
+
+translate_arg_to_java(Fac,X,_T,Obj) :-
+        atom(X),
         objectProperty(X),
         !,
         atom_javaURI(X,U),
         jpl_call(Fac,getOWLObjectProperty,U,Obj).
+
+
+
 
 % typed expressions
 translate_arg_to_java(Fac,UntypedExpr,_T,Obj) :-
