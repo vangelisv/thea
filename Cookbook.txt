@@ -2,6 +2,57 @@
 
 Here are some recipes for doing common tasks in Thea2
 
+---++ Manipulating Ontologies
+
+In most of these examples, there are 3 steps:
+
+* load the ontology using load_axioms/2
+* manipulate the ontology in a forall goal or a failure-driven-loop, called assert_axiom/1
+* save the ontology using save_axioms/2
+
+Another way to manipulate ontologies is via the OPPL language. See:
+
+* See http://www.cs.man.ac.uk/~iannonel/oppl/documentation.html
+
+One advantage of prolog over OPPL is its expressivity
+
+---+++ Asserting all subclasses are mutually disjoint
+
+
+==
+subClassOf(X,gender),
+subClassOf(Y,gender),
+X\=Y,
+assert_axiom(disjointProperties[X,Y]),
+fail.
+==
+
+---+++ Replacing simple assertions with complex descriptions 
+
+See http://www.cs.man.ac.uk/~iannonel/oppl/documentation.html
+
+==
+        % setup boilerplate
+        [owl2_io],
+        [owl2_java_owlapi],
+        [library('semweb/rdf_db'),
+        rdf_register_ns(c,'http://www.co-ode.org/roberts/country.owl#'),
+        load_axioms('testfiles/country.owl'),
+
+        % owlapi boilerplate
+        create_reasoner(Man,pellet,Reasoner),
+        create_factory(Man,Fac),
+        build_ontology(Man,Fac,Ont),
+        reasoner_classify(Reasoner,Man,Ont),
+
+        reasoner_objectPropertyAssertion(Reasoner,Fac,C1,'c:adjacentTo',C2),
+        retract_axiom(propertyAssertion(C1,'c:adjacentTo',C2),
+        Desc = someValuesFrom('c:hasLandBoundry',intersectionOf('c:LandBoundryFragment',
+                                                                 hasValue('c:boundaryOf',C2))),
+        assert_axiom(classAssertion(Desc,C2)),
+        fail.
+==
+
 ---++ Working with other LP systems
 
 ---+++ Converting prolog to OWL
