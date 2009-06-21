@@ -416,14 +416,6 @@ reify(SNode,PTerm,OTerm,S,P,O) :-
 
 
 
-
-
-	
-
-
-
-
-
 /*
 owl2_export_list(+List, -Node).  
         Generates RDF triples for the List of construct based on
@@ -446,7 +438,8 @@ swrl_export_atom_list([],'rdf:nil').
 swrl_export_atom_list([S|Rest],Node) :-
 	as2rdf_bnode([S|Rest],Node),
 	swrl_export_atom(S,main_triple(Ts,_,_)),
-	owl_rdf_assert(Node,'rdf:type', 'swrl:AtomList'),	
+	%owl_rdf_assert(Node,'rdf:type', 'swrl:AtomList'),	
+	owl_rdf_assert(Node,'rdf:type', 'rdf:List'),	
 	owl_rdf_assert(Node,'rdf:first', Ts),	
 	swrl_export_atom_list(Rest,Node2),
 	owl_rdf_assert(Node,'rdf:rest',Node2).
@@ -471,7 +464,6 @@ swrl_export_atom(propertyAssertion(OPE,A1,A2),main_triple(BNode,'rdf:type','swrl
         dataProperty(OPE),
         !,
         rdf_bnode(BNode),
-        %as2rdf_bnode(propertyAssertion(OPE,A1,A2),BNode),
 	owl_rdf_assert(BNode,'rdf:type','swrl:DatavaluedPropertyAtom'),
 	owl2_export_axiom(OPE,main_triple(Tope,_,_)),owl_rdf_assert(BNode,'swrl:propertyPredicate',Tope),
         swrl_export_argument(A1,main_triple(TA1,_,_)),owl_rdf_assert(BNode,'swrl:argument1',TA1),
