@@ -467,6 +467,16 @@ swrl_export_atom_list(X,Node) :-
         \+ atom(X),
         swrl_export_atom_list([X],Node).
 
+swrl_export_atom(propertyAssertion(OPE,A1,A2),main_triple(BNode,'rdf:type','swrl:DatavaluedPropertyAtom')) :-
+        dataProperty(OPE),
+        !,
+        rdf_bnode(BNode),
+        %as2rdf_bnode(propertyAssertion(OPE,A1,A2),BNode),
+	owl_rdf_assert(BNode,'rdf:type','swrl:DatavaluedPropertyAtom'),
+	owl2_export_axiom(OPE,main_triple(Tope,_,_)),owl_rdf_assert(BNode,'swrl:propertyPredicate',Tope),
+        swrl_export_argument(A1,main_triple(TA1,_,_)),owl_rdf_assert(BNode,'swrl:argument1',TA1),
+        swrl_export_argument(A2,main_triple(TA2,_,_)),owl_rdf_assert(BNode,'swrl:argument2',TA2).
+
 swrl_export_atom(propertyAssertion(OPE,A1,A2),main_triple(BNode,'rdf:type','swrl:IndividualPropertyAtom')) :-
         !,
         rdf_bnode(BNode),
