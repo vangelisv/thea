@@ -28,7 +28,7 @@
 owl2_io:save_axioms_hook(File,owl,Opts) :-
         (   member(rdf_load_mode(RDF_Load_Mode),Opts)
         ->  true
-        ;   true),
+        ;   RDF_Load_Mode=complete),
         (   var(File)
         ->  tmp_file(owl,File),
             IsTemp=true
@@ -102,18 +102,16 @@ owl2_export_axiom(ontology(O),main_triple(O,'rdf:type','owl:Ontology')) :-
 	forall(ontologyImport(O,Import),owl_rdf_assert(O,'owl:imports',Import)),!.
 
 
-owl2_export_axiom(class(C),main_triple(C,'rdf:type','owl:Class')) :-
+owl2_export_axiom(class(C1),main_triple(C,'rdf:type','owl:Class')) :-
+        translate_iri(C1,C),
 	owl_rdf_assert(C,'rdf:type','owl:Class'),!.
 
-owl2_export_axiom(objectProperty(C),main_triple(C,'rdf:type','owl:ObjectProperty')) :-
+owl2_export_axiom(objectProperty(C1),main_triple(C,'rdf:type','owl:ObjectProperty')) :-
+        translate_iri(C1,C),
 	owl_rdf_assert(C,'rdf:type','owl:ObjectProperty'),!.
 
 owl2_export_axiom(subClassOf(C1,C2),main_triple(TC1,'rdfs:subClassOff',TC2)) :-
 	owl2_export_axiom(C1,main_triple(TC1,_,_)),
-	(   C1 = 'http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WhiteLoire' -> 
-	true 
-	;   
-	true),
 	owl2_export_axiom(C2,main_triple(TC2,_,_)),
 	owl_rdf_assert(TC1,'rdfs:subClassOf',TC2),!.
 
@@ -143,10 +141,10 @@ owl2_export_axiom(subPropertyOf(propertyChain(PL),P2),main_triple(Tp2,'owl:prope
 	owl2_export_list(PL,LNode),
 	owl_rdf_assert(Tp2,'owl:propertyChainAxiom',LNode),!.
 
-owl2_export_axiom(subPropertyOf(P1,P2),main_triple(Tp1,'owl:subPropertyOf',Tp2)) :-
+owl2_export_axiom(subPropertyOf(P1,P2),main_triple(Tp1,'rdfs:subPropertyOf',Tp2)) :-
 	owl2_export_axiom(P1,main_triple(Tp1,_,_)),
 	owl2_export_axiom(P2,main_triple(Tp2,_,_)),
-	owl_rdf_assert(Tp1,'owl:subPropertyOf',Tp2),!.
+	owl_rdf_assert(Tp1,'rdfs:subPropertyOf',Tp2),!.
 
 
 owl2_export_axiom(equivalentProperties([X,Y]),main_triple(Tx,'owl:equivalentProperty',Ty)) :-
@@ -386,11 +384,17 @@ owl2_export_axiom(implies(AL,CL),main_triple(RuleNode,'rdf:type','swrl:Imp')) :-
         owl_rdf_assert(RuleNode,'swrl:head', CLNode).
 
 
-
+:- multifile translate_iri_hook/2.
+owl2_export_axiom(IRI,main_triple(T,_,_)) :- translate_iri_hook(IRI,T), !. 
 
 owl2_export_axiom(IRI,main_triple(IRI,_,_)) :- atom(IRI),!. % better iri(IRI).
-
+owl2_export_axiom(X,main_triple(X,_,_)) :- X=literal(_),!. % better iri(IRI).
 owl2_export_axiom(Any,main_triple(Any,_,_)) :- format(user_error,'unresolved: ~w~n',[Any]).
+
+translate_iri(X,Y) :- translate_iri_hook(X,Y),!.
+translate_iri(X,X).
+
+
 
 /*
 owl2_export_annotation(Parent)
@@ -444,6 +448,12 @@ swrl_export_atom_list([S|Rest],Node) :-
 	swrl_export_atom_list(Rest,Node2),
 	owl_rdf_assert(Node,'rdf:rest',Node2).
 
+% in swrl.pl atom lists are weakly typed - we allow a swrl atom to
+% stand in for an atom list for convenience
+swrl_export_atom_list(X,Node) :-
+        \+ atom(X),
+        swrl_export_atom_list([X],Node).
+
 swrl_export_argument_list([],'rdf:nil').
 
 swrl_export_argument_list([S|Rest],Node) :-
@@ -454,11 +464,6 @@ swrl_export_argument_list([S|Rest],Node) :-
 	swrl_export_argument_list(Rest,Node2),
 	owl_rdf_assert(Node,'rdf:rest',Node2).
 
-% in swrl.pl atom lists are weakly typed - we allow a swrl atom to
-% stand in for an atom list for convenience
-swrl_export_atom_list(X,Node) :-
-        \+ atom(X),
-        swrl_export_atom_list([X],Node).
 
 swrl_export_atom(propertyAssertion(OPE,A1,A2),main_triple(BNode,'rdf:type','swrl:DatavaluedPropertyAtom')) :-
         dataProperty(OPE),
