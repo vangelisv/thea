@@ -493,7 +493,7 @@ axiom_arguments(inverseFunctionalProperty,[objectPropertyExpression]).
 valid_axiom(inverseFunctionalProperty(A)) :- subsumed_by([A],[objectPropertyExpression]).
 
 %% reflexiveProperty(?ObjectPropertyExpression)
-% An object property reflexivity axiom ReflexiveProperty( OPE ) states that the object property expression OPE is reflexive - that is, each individual is connected by OPE to itsel
+% An object property reflexivity axiom ReflexiveProperty( OPE ) states that the object property expression OPE is reflexive - that is, each individual is connected by OPE to itself
 :- ext(reflexiveProperty/1).
 relation('ReflexiveProperty',1).
 attribute(1,'ReflexiveProperty','ObjectPropertyExpression',string).
@@ -1032,11 +1032,13 @@ anyPropertyAssertion(P,E,V) :- annotationAssertion(P,E,V).
 
 %% labelAnnotation_value(?X,?Val)
 labelAnnotation_value(X,Val) :- 
-        anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(type(_,Val))).
+        anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(type(_,Val))),atom(Val).
 labelAnnotation_value(X,Val) :- 
-        anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(lang(_,Val))).
+        anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(lang(_,Val))),atom(Val).
 labelAnnotation_value(X,Val) :- 
-        anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(Val)).
+        anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(Val)),atom(Val).
+labelAnnotation_value(X,Val) :- 
+        anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(lang(_,Val))),atom(Val).
 
 /****************************************
   META-PREDICATES
@@ -1094,7 +1096,9 @@ assert_axiom(Axiom) :-
 
 retract_all_axioms :-
         findall(A,axiom(A),Axioms),
-        maplist(retract,Axioms).
+        maplist(retract,Axioms),
+        findall(ontologyAxiom(O,A),ontologyAxiom(O,A),OAxioms),
+        maplist(retract,OAxioms).
 
 
 owl2_model_init :-
