@@ -450,7 +450,7 @@ expand_ns(NS_URL, Full_URL) :-
 expand_ns(URL, URL).
 
 
-%%       collapse_ns(+FullURL, ?NSURL, +Options)
+%%       collapse_ns(+FullURL, ?NSURL, +Char, +Options)
 %
 %	Collapses a full URI of the form Path#fragment to a Namespaced
 %	URI NS:fragment substituting the full expansion for ns from
