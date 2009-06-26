@@ -1,0 +1,7 @@
+objectProperty(likes).
+reflexiveProperty(likes).
+propertyDomain(likes,agent).
+disjointClasses([agent,inanimate]).
+class(agent).
+class(inanimate).
+classAssertion(inanimate,rock1).
