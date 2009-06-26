@@ -12,7 +12,13 @@ run(Args) :-
         create_reasoner(Man,pellet,Reasoner),
         create_factory(Man,Fac),
         build_ontology(Man,Fac,Ont),
-        reasoner_classify(Reasoner,Man,Ont),
-        forall(inferred_axiom(Reasoner,Fac,Ax),
-               format('~q.~n',[Ax])).
+        (   is_consistent(Reasoner)
+        ->  format(user_error,'Is Consistent. Reasoning...~n',[]),
+            reasoner_classify(Reasoner,Man,Ont),
+            format(user_error,'Done Reasoning~n',[]),
+            forall(inferred_axiom(Reasoner,Fac,Ax),
+                   format('~q.~n',[Ax]))
+        ;   format('**INCONSISTENT**~n')),
+        format(user_error,'Done!~n',[]).
+
 
