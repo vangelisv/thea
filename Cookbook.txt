@@ -51,6 +51,9 @@ See http://www.cs.man.ac.uk/~iannonel/oppl/documentation.html
                                                                  hasValue('c:boundaryOf',C2))),
         assert_axiom(classAssertion(Desc,C2)),
         fail.
+
+        % then save:
+        save_axioms('countries2.owl',owl).
 ==
 
 ---++ Working with other LP systems
