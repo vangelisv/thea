@@ -35,6 +35,11 @@ owl2_io:save_axioms_hook(File,dlp_yap,Opts) :-
         owl2_io:save_axioms_hook(File,dlp,[write_directives(table)|Opts]).
 
 
+uri_to_atom(literal(type(_,A)),A) :- !.
+
+uri_to_atom(URI,A) :-
+        collapse_ns(URI,A,':',[]).
+
 
 %% owl_write_all_dlpterms
 % as owl_write_all_dlpterms/1
@@ -212,7 +217,7 @@ owl_write_prolog_code(class(X,Y),Options) :- !,
 	    writeq(X1), write('('), write('Y'), write(')')
 	;   Y=v(VY), !,
 	    writeq(X1), write('('), write('V'),write(VY), write(')')
-        ;   collapse_ns(Y,Y1,':',[]),
+        ;   uri_to_atom(Y,Y1),
             writeq(X1), write('('), writeq(Y1), write(')')
 	).
 
@@ -235,7 +240,7 @@ owl_write_prolog_code(property(P,X,Y),Options) :- !,
         ;   X = z, !, write('Z')  
         ;   X = v(NX), !, write('V'),write(NX)  
         ;   X = var , !, write('_') 
-        ;   collapse_ns(X,X1,':',[]),
+        ;   uri_to_atom(X,X1),
             writeq(X1)
 	),	
 	write(','),
@@ -244,7 +249,7 @@ owl_write_prolog_code(property(P,X,Y),Options) :- !,
 	;   Y = z, !, print('Z')  
         ;   Y = v(NY), !, write('V'),write(NY)  
 	;   Y = var , !, print('_') 
-	;   collapse_ns(Y,Y1,':',[]),
+	;   uri_to_atom(Y,Y1),
             writeq(Y1)
 	),
 	write(')').
@@ -275,6 +280,10 @@ owl_write_prolog_code(v(NY),_Options) :- !,
 %
 
 owl_write_prolog_code(none,_Options) :- !.
+
+owl_write_prolog_code(literal(type(_,Term)),_Options) :-
+	writeq(Term).
+
 
 %
 % otherwise generate the Term itself
@@ -380,7 +389,7 @@ owl_as2prolog(differentIndividuals(_),none,_) :- !.
 % Subclass(Class,Superclass) ==> C(X) implies S(X) or S(X) :- C(X).
 %
 
-owl_as2prolog(subClassOf(A,B),R,_) :- 
+owl_as2prolog(subClassOf(A,B),R,_) :-
      owl_as2prolog(description(A,_),Rb,body),
      owl_as2prolog(description(B,_),Rh,head),
      !,     
