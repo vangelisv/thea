@@ -73,7 +73,6 @@
 
 % we make this discontiguous so that the code can follow the structure of the document as much as possible
 
-:- discontiguous owl_parse_axiom/1. % DEPRECATED?? -- check with VV
 :- discontiguous owl_parse_axiom/3.
 :- discontiguous dothislater/1.
 
@@ -642,7 +641,8 @@ owl_parse_axiom(ontology(O),AnnMode,List) :-
 
 
 % See table 5.
-% triple_remove(Patter,Remove)
+% triple_remove(Pattern:list,Remove:list)
+% if Pattern is present, remove triples in Remove
 triple_remove([owl(X,'rdf:type','owl:Ontology')],[owl(X,'rdf:type','owl:Ontology')]).
 triple_remove([owl(X,'rdf:type','owl:Class'),owl(X,'rdf:type','rdfs:Class')],[owl(X,'rdf:type','rdfs:Class')]).
 triple_remove([owl(X,'rdf:type','rdfs:Datatype'),owl(X,'rdf:type','rdfs:Class')],[owl(X,'rdf:type','rdfs:Class')]).
@@ -761,7 +761,8 @@ ann2(_,_,_,_).
 % Table 11. Parsing Object Property Expressions
 
 owl_property_expression(C,C) :- 
-	not(sub_string(C,0,2,_,'__')). % better: IRI(C).
+	not(sub_string(C,0,2,_,'__')), % better: IRI(C).
+        !.
 
 owl_property_expression(C,D) :- 
 	blanknode(C,D,Use),
@@ -1139,6 +1140,7 @@ owl_parse_axiom(disjointUnion(DX,DY),AnnMode,List) :-
 
 % PROPERTY AXIOMS
 
+
 % introduces bnode
 owl_parse_axiom(subPropertyOf(propertyChain(PL),QX),AnnMode,List) :-
 	test_use_owl(Q,'owl:propertyChainAxiom',L1),
@@ -1213,7 +1215,6 @@ owl_parse_axiom(propertyRange(PX,CX),AnnMode,List) :-
 	    owl_property_expression(P,PX),
             (   owl_description(C,CX) -> true ; owl_datarange(C,CX))
 	).
-
 
 owl_parse_axiom(inverseProperties(PX,QX),AnnMode,List) :-
 	test_use_owl(P,'owl:inverseOf',Q),
@@ -1323,6 +1324,8 @@ owl_parse_axiom(classAssertion(CX,X),AnnMode,List) :-
         % way is to simply consume the owl4/ triple at the time of translating
         % the description? --CJM
         C\='http://www.w3.org/2002/07/owl#Class',
+        %
+        C\='http://www.w3.org/1999/02/22-rdf-syntax-ns#Property',
         owl_description(C,CX).
 
 dothislater(propertyAssertion/3).
