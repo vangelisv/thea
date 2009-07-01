@@ -92,13 +92,15 @@ test(query) :-
                    writeln(results=RL),
                    RL=ExpectedL)).
 
-test(foo) :-
+test(lca) :-
         forall(property_assertion_least_common_ancestor(P,XI,YI,XC,YC),
                writeln(lca(P,XI,YI,XC,YC))),
         nl.
 
 
 query(subClassOf(cat,X),X,[animal,mammal,organism|_]).
+query(classAssertion(intersectionOf([A,someValuesFrom(P,B)]),X),
+      X,[kes, perch2, pike1, shrimpzilla, shrimpzuki, tom]).
 
 
 expected(subClassOf(man_eating_shrimp,someValuesFrom(eats,human))).
@@ -116,6 +118,7 @@ expected(subClassOf(intersectionOf([mammal, someValuesFrom(eats, animal)]),
 expected(classAssertion(organism,human1)).
 expected(classAssertion(man_eating_shrimp,shrimpzuki)).
 expected(classAssertion(intersectionOf([mammal, someValuesFrom(eats, fish)]),tom)).
+expected(classAssertion(carnivore,tom)).
 
 
 test(expected) :-

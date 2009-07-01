@@ -9,6 +9,11 @@
 
 :- use_module(owl2_model).
 
+:- multifile entailed/2.
+:- multifile entailed_2/2.
+:- multifile entailed_5/2.
+
+
 % ----------------------------------------
 % TBox Reasoning
 % ----------------------------------------
@@ -60,8 +65,11 @@ entailed_2(subClassOf(X,Y),EL) :-
         Y=intersectionOf(DL),
         debug(owl2_basic_reasoner,'testing for subclasses of class expression ~w',[DL]),
         \+ member(X<Y,EL),
-        forall(member(D,DL),
-               entailed(subClassOf(X,D),EL)).
+        DL=[D|DL2],
+        entailed(subClassOf(X,D),EL),
+        (   DL2=[]
+        ->  true
+        ;   entailed_2(subClassOf(X,intersectionOf(DL2)),EL)).
 
 entailed_2(subClassOf(X,Y),EL) :-
         nonvar(X),
@@ -113,18 +121,32 @@ entailed_2(classAssertion(C,I),EL) :-
         pairwise_equivalent_class(C,intersectionOf(DL)),
         entailed_2(classAssertion(DL,I),EL).
 
+xxentailed_2(classAssertion(C,I),EL) :-
+        nonvar(C),
+        C=intersectionOf(DL),
+        debug(owl2_basic_reasoner,'~w(~w) if all ~w satisfied',[C,I,DL]),
+        entailed(individual(I)),
+        % note: instead of forall we could enumerate all
+        forall(member(D,DL),
+               entailed_2(classAssertion(D,I),EL)).
 
 entailed_2(classAssertion(C,I),EL) :-
         nonvar(C),
         C=intersectionOf(DL),
+        debug(owl2_basic_reasoner,'~w(~w) if all ~w satisfied',[C,I,DL]),
         entailed(individual(I)),
-        forall(member(D,DL),
-               entailed_2(classAssertion(D,I),EL)).
-
+        DL=[D|DL2],
+        % note: instead of forall we could enumerate all
+        entailed_2(classAssertion(D,I),EL),
+        (   DL2=[]
+        ->  true
+        ;   entailed_2(classAssertion(intersectionOf(DL2),I),EL)).
+        
 
 entailed_2(classAssertion(C,I),EL) :-
         nonvar(C),
         C=someValuesFrom(P,Y),
+        debug(owl2_basic_reasoner,'~w some ~w satisfied for ~w if exists...',[P,Y,I]),
         propertyAssertion(P,I,YI),
         entailed(classAssertion(Y,YI),EL).
 
