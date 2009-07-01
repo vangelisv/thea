@@ -1,7 +1,8 @@
 /* -*- Mode: Prolog -*- */
 
 :- table subClassOf/2.
-:- table member/2.
+:- table subPropertyOf/2.
+%:- table member/2.
 
 % ----------------------------------------
 % TBox Reasoning
@@ -90,7 +91,7 @@ classAssertion(C,I) :- propertyRange(P,C),propertyAssertion(P,_,I).
 
 propertyAssertion(P,A,B) :- transitiveProperty(P),propertyAssertion(P,A,C),propertyAssertion(P,C,B).
 propertyAssertion(P,A,B) :- symmetricProperty(P),propertyAssertion(P,B,A).
-propertyAssertion(P,A,B) :- inverseOf(P,Q),propertyAssertion(Q,B,A).
+propertyAssertion(P,A,B) :- inverseProperties(P,Q),propertyAssertion(Q,B,A).
 propertyAssertion(Q,A,B) :- subPropertyOf(P,Q),propertyAssertion(P,A,B).
 
 % role chains
