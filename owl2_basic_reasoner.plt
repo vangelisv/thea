@@ -8,6 +8,27 @@
 init_axioms :-
         Axioms=[
                 ontology(trophy),
+                class(animal),
+                class(organism),
+                class(bird),
+                class(fish),
+                class(arthropod),
+                class(crustacean),
+                class(mammal),
+                class(cat),
+                class(mouse),
+                class(dog),
+                class(human),
+                class(raptor),
+                class(eagle),
+                class(kestrel),
+                class(goldfish),
+                class(pike),
+                class(shrimp),
+                class(man_eating_shrimp),
+                class(dangerous_animal),
+                class(carnivore),
+                
                 subClassOf(animal,organism),
                 subClassOf(mammal,animal),
                 subClassOf(bird,animal),
@@ -27,6 +48,9 @@ init_axioms :-
                 subClassOf(shrimp,crustacean),
                 subClassOf(man_eating_shrimp,crustacean),
 
+                subClassOf(cat,someValuesFrom(eats,mouse)),
+
+                
                 equivalentClasses([man_eating_shrimp,intersectionOf([shrimp,someValuesFrom(eats,human)])]),
                 equivalentClasses([dangerous_animal,intersectionOf([animal,someValuesFrom(eats,human)])]),
                 equivalentClasses([carnivore,intersectionOf([organism,someValuesFrom(eats,animal)])]),
@@ -82,8 +106,11 @@ expected(subClassOf(man_eating_shrimp,dangerous_animal)).
 expected(subClassOf(human,organism)).
 expected(subClassOf(raptor,bird)).
 expected(subClassOfReflexive(raptor,raptor)).
-%expected(subClassOf(cat,someValuesFrom(eats,animal))).
-%expected(subClassOf(cat,carnivore)).
+expected(subClassOf(carnivore,someValuesFrom(eats,animal))).
+expected(subClassOf(cat,someValuesFrom(eats,animal))).
+expected(subClassOf(cat,carnivore)).
+expected(subClassOf(intersectionOf([mammal, someValuesFrom(eats, organism)]),
+                    mammal)).
 expected(subClassOf(intersectionOf([mammal, someValuesFrom(eats, animal)]),
                     intersectionOf([mammal, someValuesFrom(eats, organism)]))).
 expected(classAssertion(organism,human1)).
