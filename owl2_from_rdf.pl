@@ -178,6 +178,16 @@ owl_canonical_parse_3([IRI|Rest]) :-
 	forall((triple_remove(Pattern,Remove), test_use_owl(Pattern)),
 	        forall(member(owl(S,P,O),Remove),use_owl(S,P,O,removed))),
 
+        % temporary fix to make up for bug in rdf parsing
+        % see email to Jan July-1-2009
+        forall((test_use_owl(S,P,BNode),
+                atom(BNode),
+                sub_string(BNode,0,2,_,'__'),
+                test_use_owl(BNode,'http://www.w3.org/1999/02/22-rdf-syntax-ns#datatype',literal(_))),
+               (   use_owl(S,P,BNode),
+                   use_owl(BNode,'http://www.w3.org/1999/02/22-rdf-syntax-ns#datatype',literal(_)),
+                   expand_and_assert(S,P,literal('')))),
+        
 	% replace matched patterns (Table 6)
 	forall(triple_replace(Pattern,ReplaceWith),
                forall(use_owl(Pattern),
