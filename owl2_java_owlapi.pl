@@ -351,9 +351,9 @@ add_axiom(Manager,Factory,Ont,Axiom,JAx) :-
 owlterm_java(_,_,ontology(_),_) :- !.
 
 % special rules for annotationAssertions
-owlterm_java(Fac,_,annotationAssertion(AP,Sub,literal(Val)),Obj) :-
+owlterm_java(Fac,_,annotationAssertion(AP,Sub,Val),Obj) :-
         !,
-        jpl_call(Fac,getOWLUntypedConstant,[Val],JVal),
+        translate_arg_to_java(Fac,Val,literal,JVal),
         translate_arg_to_java(Fac,Sub,entity,JEntity),
         atom_javaURI(AP,JAP),
         jpl_call(Fac,getOWLConstantAnnotation,[JAP,JVal],JAnno),
@@ -501,6 +501,14 @@ translate_arg_to_java(Fac,X,entity,Obj) :-
         atom(X),
         !,
         owlterm_java(Fac,_,entity(X),Obj).
+translate_arg_to_java(Fac,Val,literal,Obj) :- % todo - caused by bug in rdf parser
+        atom(Val),
+        sub_atom(Val,0,_,_,'__'),
+        !,
+        translate_arg_to_java(Fac,literal(''),literal,Obj).
+translate_arg_to_java(Fac,literal(type(_,Val)),literal,Obj) :- % todo - typed constants
+        !,
+        jpl_call(Fac,getOWLUntypedConstant,[Val],Obj).
 translate_arg_to_java(Fac,literal(Val),literal,Obj) :- % todo - typed constants
         !,
         jpl_call(Fac,getOWLUntypedConstant,[Val],Obj).
