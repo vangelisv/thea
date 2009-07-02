@@ -56,8 +56,13 @@ entailed_2(subClassOf(X,Y),EL) :-
         pairwise_equivalent_class(Y,intersectionOf(DL)),
         debug(owl2_basic_reasoner,'testing for subclasses of named class ~w = ~w',[Y,DL]),
         \+ member(X<Y,EL),
-        forall(member(D,DL),
-               entailed(subClassOf(X,D),EL)).
+        DL=[D|DL2],
+        entailed(subClassOf(X,D),EL),
+        (   DL2=[]
+        ->  true
+        ;   entailed_2(subClassOf(X,intersectionOf(DL2)),EL)).
+%        forall(member(D,DL),
+%               entailed(subClassOf(X,D),EL)).
 
 entailed_2(subClassOf(X,Y),EL) :-
         nonvar(Y),
@@ -74,9 +79,9 @@ entailed_2(subClassOf(X,Y),EL) :-
 entailed_2(subClassOf(X,Y),EL) :-
         nonvar(X),
         X=intersectionOf(DL),
-        nonvar(Y),
         debug(owl2_basic_reasoner,'testing for superclasses of class expression ~w',[DL]),
-        \+ member(X<Y,EL),
+        %nonvar(Y),
+        %\+ member(X<Y,EL),
         member(D,DL),
         entailed(subClassOfReflexive(D,Y),EL).
 

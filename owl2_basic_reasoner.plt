@@ -98,7 +98,23 @@ test(lca) :-
         nl.
 
 
+query(subClassOf(human,Y),
+      Y,
+      [animal, mammal, organism]).
+query(subClassOf(someValuesFrom(eats,human),
+                 someValuesFrom(eats,Y)),
+      Y,
+      [animal, mammal, organism]).
+query(subClassOf(intersectionOf([shrimp,someValuesFrom(eats,human)]),
+                 someValuesFrom(eats,Y)),
+      Y,
+      [animal, mammal, organism]).
+query(subClassOf(intersectionOf([shrimp,someValuesFrom(eats,human)]),
+                 intersectionOf([X,someValuesFrom(eats,Y)])),
+      X-Y,
+      [animal-animal, animal-mammal, animal-organism, arthropod-animal, arthropod-mammal, arthropod-organism, crustacean-animal, crustacean-mammal, crustacean-organism, man_eating_shrimp-animal, man_eating_shrimp-mammal, man_eating_shrimp-organism, organism-animal, organism-mammal, organism-organism, shrimp-animal, shrimp-mammal, shrimp-organism]).
 query(subClassOf(cat,X),X,[animal,mammal,organism|_]).
+
 query(classAssertion(intersectionOf([A,someValuesFrom(P,B)]),X),
       X,[kes, perch2, pike1, shrimpzilla, shrimpzuki, tom]).
 
