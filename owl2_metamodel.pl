@@ -8,6 +8,8 @@
 
 :- use_module(library(lists)). % Yap
 
+
+
 %% owlpredicate_typed(?UntypedPredicate,?TypedPredicate) is non det
 %
 % true if UntypedPredicate has a stringly typed for TypedPredicate
@@ -126,6 +128,108 @@ owlpredicate_arguments(negativeObjectPropertyAssertion, [objectPropertyExpressio
 owlpredicate_arguments(annotationPropertyRange, [annotationProperty, iri]).
 owlpredicate_arguments(annotationPropertyDomain, [annotationProperty, iri]).
 owlpredicate_arguments(negativeDataPropertyAssertion, [dataPropertyExpression, individual, literal]).
+
+% for sql_compiler
+
+:- discontiguous(relation/2,attribute/4).
+
+relation('Class',1).
+attribute(1,'Class','IRI',string).
+relation('Datatype',1).
+attribute(1,'Datatype','IRI',string).
+relation('ObjectProperty',1).
+attribute(1,'ObjectProperty','IRI',string).
+relation('DataProperty',1).
+attribute(1,'DataProperty','IRI',string).
+relation('AnnotationProperty',1).
+attribute(1,'AnnotationProperty','IRI',string).
+relation('NamedIndividual',1).
+attribute(1,'NamedIndividual','IRI',string).
+relation('SubClassOf',2).
+attribute(1,'SubClassOf','SubClass:ClassExpression',string).
+attribute(2,'SubClassOf','SuperClass:ClassExpression',string).
+relation('EquivalentClasses',1).
+attribute(1,'EquivalentClasses','ClassExpressions:set(ClassExpression)',string).
+relation('DisjointClasses',1).
+attribute(1,'DisjointClasses','ClassExpressions:set(ClassExpression)',string).
+relation('DisjointUnion',2).
+attribute(1,'DisjointUnion','ClassExpression',string).
+attribute(2,'DisjointUnion','ClassExpressions:set(ClassExpression)',list).
+relation('SubPropertyOf',2).
+attribute(1,'SubPropertyOf','Sub:PropertyExpression',string).
+attribute(2,'SubPropertyOf','Super:ObjectPropertyExpressions',string).
+relation('EquivalentProperties',1).
+attribute(1,'EquivalentProperties','PropertyExpressions:set(PropertyExpression)',string).
+relation('DisjointProperties',1).
+attribute(1,'DisjointProperties','PropertyExpressions:set(PropertyExpression)',string).
+relation('InverseProperties',2).
+attribute(1,'InverseProperties','ObjectPropertyExpression1:ObjectPropertyExpression',string).
+attribute(2,'InverseProperties','ObjectPropertyExpression2:ObjectPropertyExpression',string).
+relation('PropertyDomain',2).
+attribute(1,'PropertyDomain','PropertyExpression',string).
+attribute(2,'PropertyDomain','ClassExpression',string).
+relation('PropertyRange',2).
+attribute(1,'PropertyRange','PropertyExpression',string).
+attribute(2,'PropertyRange','ClassExpression',string).
+relation('FunctionalProperty',1).
+attribute(1,'FunctionalProperty','PropertyExpression',string).
+relation('InverseFunctionalProperty',1).
+attribute(1,'InverseFunctionalProperty','ObjectPropertyExpression',string).
+relation('ReflexiveProperty',1).
+attribute(1,'ReflexiveProperty','ObjectPropertyExpression',string).
+relation('IrreflexiveProperty',1).
+attribute(1,'IrreflexiveProperty','ObjectPropertyExpression',string).
+relation('SymmetricProperty',1).
+attribute(1,'SymmetricProperty','ObjectPropertyExpression',string).
+relation('AsymmetricProperty',1).
+attribute(1,'AsymmetricProperty','ObjectPropertyExpression',string).
+relation('TransitiveProperty',1).
+attribute(1,'TransitiveProperty','ObjectPropertyExpression',string).
+relation('HasKey',2).
+attribute(1,'HasKey','ClassExpression').
+attribute(2,'HasKey','PropertyExpression').
+relation('SameIndividual',1).
+attribute(1,'SameIndividual','Individuals:set(Individual)',string).
+relation('DifferentIndividuals',1).
+attribute(1,'DifferentIndividuals','Individuals:set(Individual)',string).
+relation('ClassAssertion',2).
+attribute(1,'ClassAssertion','ClassExpression',string).
+attribute(2,'ClassAssertion','Individual',string).
+relation('PropertyAssertion',3).
+attribute(1,'PropertyAssertion','PropertyExpression',string).
+attribute(2,'PropertyAssertion','SourceIndividual:Individual',string).
+attribute(3,'PropertyAssertion','TargetIndividual:Individual',string).
+relation('NegativePropertyAssertion',3).
+attribute(1,'NegativePropertyAssertion','PropertyExpression',string).
+attribute(2,'NegativePropertyAssertion','SourceIndividual:Individual',string).
+attribute(3,'NegativePropertyAssertion','TargetIndividual:Individual',string).
+relation('AnnotationAssertion',3).
+attribute(1,'AnnotationAssertion','AnnotationProperty',string).
+attribute(2,'AnnotationAssertion','AnnotationSubject',string).
+attribute(3,'AnnotationAssertion','AnnotationValue',string).
+relation('OntologyAnnotation',3).
+attribute(1,'OntologyAnnotation','Ontology',string).
+attribute(2,'OntologyAnnotation','AnnotationProperty',string).
+attribute(3,'OntologyAnnotation','AnnotationValue',string).
+relation('AxiomAnnotation',3).
+attribute(1,'AxiomAnnotation','Axiom',string).
+attribute(2,'AxiomAnnotation','AnnotationProperty',string).
+attribute(3,'AxiomAnnotation','AnnotationValue',string).
+relation('AnnotationAnnotation',3).
+attribute(1,'AnnotationAnnotation','Annotation',string).
+attribute(2,'AnnotationAnnotation','AnnotationProperty',string).
+attribute(3,'AnnotationAnnotation','AnnotationValue',string).
+relation('Ontology',1).
+attribute(1,'Ontology','IRI',string).
+relation('OntologyAxiom',2).
+attribute(1,'OntologyAxiom','Ontology',string).
+attribute(2,'OntologyAxiom','Axiom',string).
+relation('OntologyImport',2).
+attribute(1,'OntologyImport','Ontology',string).
+attribute(2,'OntologyImport','IRI',string).
+relation('OntologyVersionInfo',2).
+attribute(1,'OntologyVersionInfo','Ontology',string).
+attribute(2,'OntologyVersionInfo','IRI',string).
 
 
 /** <module> 

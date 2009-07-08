@@ -107,11 +107,11 @@
 	   owl2_model_init/0
 	   
 	  ]).
-:- require([ is_list/1
-	   , current_prolog_flag/2
-	   , forall/2
-	   , debug/3
-	   ]).
+%:- require([ is_list/1
+%	   , current_prolog_flag/2
+%	   , forall/2
+%	   , debug/3
+%	   ]).
 
 
 :- use_module(library(lists)). % Yap
@@ -130,7 +130,7 @@ user:term_expansion((:- ext(Pred)),
 user:term_expansion((:- ext(Pred)),
                     [(:- table(Pred)),(:- multifile Pred),axiompred(Pred)]) :- current_prolog_flag(dialect,yap).
 
-:- discontiguous valid_axiom/1, axiompred/1, relation/2, attribute/4, axiom_arguments/2.
+:- discontiguous(valid_axiom/1, axiompred/1, axiom_arguments/2).
 
 
 % TODO: hasKey
@@ -164,16 +164,12 @@ declarationAxiom(ontology(A)) :- ontology(A).
 %% class(?IRI)
 % Classes can be understood as sets of individuals
 :- ext(class/1).
-relation('Class',1).
-attribute(1,'Class','IRI',string).
 axiom_arguments(class,[iri]).
 valid_axiom(class(A)) :- subsumed_by([A],[iri]).
 
 %% datatype(?IRI)
 % Datatypes are entities that refer to sets of values described by a datatype map
 :- ext(datatype/1).
-relation('Datatype',1).
-attribute(1,'Datatype','IRI',string).
 axiom_arguments(datatype,[iri]).
 valid_axiom(datatype(A)) :- subsumed_by([A],[iri]).
 
@@ -190,24 +186,18 @@ valid_axiom(property(A)) :- subsumed_by([A],[iri]).
 %% objectProperty(?IRI)
 % Object properties connect pairs of individuals
 :- ext(objectProperty/1).
-relation('ObjectProperty',1).
-attribute(1,'ObjectProperty','IRI',string).
 axiom_arguments(objectProperty,[iri]).
 valid_axiom(objectProperty(A)) :- subsumed_by([A],[iri]).
 
 %% dataProperty(?IRI)
 % Data properties connect individuals with literals. In some knowledge representation systems, functional data properties are called attributes.
 :- ext(dataProperty/1).
-relation('DataProperty',1).
-attribute(1,'DataProperty','IRI',string).
 axiom_arguments(dataProperty,[iri]).
 valid_axiom(dataProperty(A)) :- subsumed_by([A],[iri]).
 
 %% annotationProperty(?IRI)
 % Annotation properties can be used to provide an annotation for an ontology, axiom, or an IRI
 :- ext(annotationProperty/1).
-relation('AnnotationProperty',1).
-attribute(1,'AnnotationProperty','IRI',string).
 axiom_arguments(annotationProperty,[iri]).
 valid_axiom(annotationProperty(A)) :- subsumed_by([A],[iri]).
 
@@ -224,8 +214,6 @@ valid_axiom(individual(A)) :- subsumed_by([A],[iri]).
 %% namedIndividual(?IRI)
 % Named individuals are given an explicit name that can be used in any ontology in the import closure to refer to the same individual
 :- ext(namedIndividual/1).
-relation('NamedIndividual',1).
-attribute(1,'NamedIndividual','IRI',string).
 axiom_arguments(namedIndividual,[iri]).
 valid_axiom(namedIndividual(A)) :- subsumed_by([A],[iri]).
 
@@ -271,34 +259,24 @@ valid_axiom(classAxiom(A)) :- subsumed_by([A],[axiom]).
 %   @param SubClass a classExpression/1 representing the more specific class
 %   @param SuperClass a classExpression/1 representing the more general class
 :- ext(subClassOf/2).
-relation('SubClassOf',2).
-attribute(1,'SubClassOf','SubClass:ClassExpression',string).
-attribute(2,'SubClassOf','SuperClass:ClassExpression',string).
 axiom_arguments(subClassOf,[classExpression, classExpression]).
 valid_axiom(subClassOf(A, B)) :- subsumed_by([A, B],[classExpression, classExpression]).
 
 %% equivalentClasses(?ClassExpressions:set(ClassExpression))
 % An equivalent classes axiom EquivalentClasses( CE1 ... CEn ) states that all of the class expressions CEi, 1 <= i <= n, are semantically equivalent to each other.
 :- ext(equivalentClasses/1).
-relation('EquivalentClasses',1).
-attribute(1,'EquivalentClasses','ClassExpressions:set(ClassExpression)',string).
 axiom_arguments(equivalentClasses,[set(classExpression)]).
 valid_axiom(equivalentClasses(A)) :- subsumed_by([A],[set(classExpression)]).
 
 %% disjointClasses(?ClassExpressions:set(ClassExpression))
 % A disjoint classes axiom DisjointClasses( CE1 ... CEn ) states that all of the class expressions CEi, 1 <= i <= n, are pairwise disjoint; that is, no individual can be at the same time an instance of both CEi and CEj for i != j
 :- ext(disjointClasses/1).
-relation('DisjointClasses',1).
-attribute(1,'DisjointClasses','ClassExpressions:set(ClassExpression)',string).
 axiom_arguments(disjointClasses,[set(classExpression)]).
 valid_axiom(disjointClasses(A)) :- subsumed_by([A],[set(classExpression)]).
 
 %% disjointUnion(?ClassExpression, ?ClassExpressions:set(ClassExpression))
 % A disjoint union axiom DisjointUnion( C CE1 ... CEn ) states that a class C is a disjoint union of the class expressions CEi, 1 <= i <= n, all of which are pairwise disjoint.
 :- ext(disjointUnion/2).
-relation('DisjointUnion',2).
-attribute(1,'DisjointUnion','ClassExpression',string).
-attribute(2,'DisjointUnion','ClassExpressions:set(ClassExpression)',list).
 axiom_arguments(disjointUnion,[classExpression,set(classExpression)]).
 valid_axiom(disjointUnion(A,B)) :- subsumed_by([A,B],[classExpression,set(classExpression)]).
 
@@ -326,9 +304,6 @@ valid_axiom(propertyAxiom(A)) :- subsumed_by([A],[axiom]).
 % subproperty axioms are analogous to subclass axioms
 % (extensional predicate - can be asserted)
 :- ext(subPropertyOf/2).
-relation('SubPropertyOf',2).
-attribute(1,'SubPropertyOf','Sub:PropertyExpression',string).
-attribute(2,'SubPropertyOf','Super:ObjectPropertyExpressions',string).
 axiom_arguments(subPropertyOf,[propertyExpression, objectPropertyExpressions]).
 valid_axiom(subPropertyOf(A, B)) :- subsumed_by([A, B],[propertyExpression, objectPropertyExpressions]).
 
@@ -354,8 +329,6 @@ valid_axiom(subAnnotationPropertyOf(A, B)) :- subsumed_by([A, B],[annotationProp
 % An equivalent object properties axiom EquivalentProperties( OPE1 ... OPEn ) states that all of the object property expressions OPEi, 1 <= i <= n, are semantically equivalent to each other
 % (extensional predicate - can be asserted)
 :- ext(equivalentProperties/1).
-relation('EquivalentProperties',1).
-attribute(1,'EquivalentProperties','PropertyExpressions:set(PropertyExpression)',string).
 axiom_arguments(equivalentProperties,[set(propertyExpression)]).
 valid_axiom(equivalentProperties(A)) :- subsumed_by([A],[set(propertyExpression)]).
 
@@ -375,8 +348,6 @@ valid_axiom(equivalentDataProperties(A)) :- subsumed_by([A],[set(dataPropertyExp
 % A disjoint properties axiom DisjointProperties( PE1 ... PEn ) states that all of the property expressions PEi, 1 <= i <= n, are pairwise disjoint
 % (extensional predicate - can be asserted)
 :- ext(disjointProperties/1).
-relation('DisjointProperties',1).
-attribute(1,'DisjointProperties','PropertyExpressions:set(PropertyExpression)',string).
 axiom_arguments(disjointProperties,[set(propertyExpression)]).
 valid_axiom(disjointProperties(A)) :- subsumed_by([A],[set(propertyExpression)]).
 
@@ -399,9 +370,6 @@ valid_axiom(disjointDataProperties(A)) :- subsumed_by([A],[set(dataPropertyExpre
 % =|inverseProperties(partOf,hasPart)|=
 % (extensional predicate - can be asserted)
 :- ext(inverseProperties/2).
-relation('InverseProperties',2).
-attribute(1,'InverseProperties','ObjectPropertyExpression1:ObjectPropertyExpression',string).
-attribute(2,'InverseProperties','ObjectPropertyExpression2:ObjectPropertyExpression',string).
 axiom_arguments(inverseProperties,[objectPropertyExpression, objectPropertyExpression]).
 valid_axiom(inverseProperties(A, B)) :- subsumed_by([A, B],[objectPropertyExpression, objectPropertyExpression]).
 
@@ -411,9 +379,6 @@ valid_axiom(inverseProperties(A, B)) :- subsumed_by([A, B],[objectPropertyExpres
 % (extensional predicate - can be asserted)
 
 :- ext(propertyDomain/2).
-relation('PropertyDomain',2).
-attribute(1,'PropertyDomain','PropertyExpression',string).
-attribute(2,'PropertyDomain','ClassExpression',string).
 axiom_arguments(propertyDomain,[propertyExpression, classExpression]).
 valid_axiom(propertyDomain(A, B)) :- subsumed_by([A, B],[propertyExpression, classExpression]).
 
@@ -439,9 +404,6 @@ valid_axiom(annotationPropertyDomain(A, B)) :- subsumed_by([A, B],[annotationPro
 % An object property domain axiom PropertyRange( OPE CE ) states that the domain of the object property expression OPE is the class expression CE - that is, if an individual x is connected by OPE with some other individual, then x is an instance of CE
 % (extensional predicate - can be asserted)
 :- ext(propertyRange/2).
-relation('PropertyRange',2).
-attribute(1,'PropertyRange','PropertyExpression',string).
-attribute(2,'PropertyRange','ClassExpression',string).
 axiom_arguments(propertyRange,[propertyExpression, classExpression]).
 valid_axiom(propertyRange(A, B)) :- subsumed_by([A, B],[propertyExpression, classExpression]).
 
@@ -467,8 +429,6 @@ valid_axiom(annotationPropertyRange(A, B)) :- subsumed_by([A, B],[annotationProp
 % An object property functionality axiom FunctionalProperty( OPE ) states that the object property expression OPE is functional - that is, for each individual x, there can be at most one distinct individual y such that x is connected by OPE to y
 % (extensional predicate - can be asserted)
 :- ext(functionalProperty/1).
-relation('FunctionalProperty',1).
-attribute(1,'FunctionalProperty','PropertyExpression',string).
 axiom_arguments(functionalProperty,[propertyExpression]).
 valid_axiom(functionalProperty(A)) :- subsumed_by([A],[propertyExpression]).
 
@@ -487,57 +447,42 @@ valid_axiom(functionalDataProperty(A)) :- subsumed_by([A],[dataPropertyExpressio
 %% inverseFunctionalProperty(?ObjectPropertyExpression)
 % An object property inverse functionality axiom InverseFunctionalProperty( OPE ) states that the object property expression OPE is inverse-functional - that is, for each individual x, there can be at most one individual y such that y is connected by OPE with x. Note there are no InverseFunctional DataProperties
 :- ext(inverseFunctionalProperty/1).
-relation('InverseFunctionalProperty',1).
-attribute(1,'InverseFunctionalProperty','ObjectPropertyExpression',string).
 axiom_arguments(inverseFunctionalProperty,[objectPropertyExpression]).
 valid_axiom(inverseFunctionalProperty(A)) :- subsumed_by([A],[objectPropertyExpression]).
 
 %% reflexiveProperty(?ObjectPropertyExpression)
 % An object property reflexivity axiom ReflexiveProperty( OPE ) states that the object property expression OPE is reflexive - that is, each individual is connected by OPE to itself
 :- ext(reflexiveProperty/1).
-relation('ReflexiveProperty',1).
-attribute(1,'ReflexiveProperty','ObjectPropertyExpression',string).
 axiom_arguments(reflexiveProperty,[objectPropertyExpression]).
 valid_axiom(reflexiveProperty(A)) :- subsumed_by([A],[objectPropertyExpression]).
 
 %% irreflexiveProperty(?ObjectPropertyExpression)
 % An object property reflexivity axiom ReflexiveProperty( OPE ) states that the object property expression OPE is reflexive - that is, no individual is connected by OPE to itsel
 :- ext(irreflexiveProperty/1).
-relation('IrreflexiveProperty',1).
-attribute(1,'IrreflexiveProperty','ObjectPropertyExpression',string).
 axiom_arguments(irreflexiveProperty,[objectPropertyExpression]).
 valid_axiom(irreflexiveProperty(A)) :- subsumed_by([A],[objectPropertyExpression]).
 
 %% symmetricProperty(?ObjectPropertyExpression)
 % An object property symmetry axiom SymmetricProperty( OPE ) states that the object property expression OPE is symmetric - that is, if an individual x is connected by OPE to an individual y, then y is also connected by OPE to x
 :- ext(symmetricProperty/1).
-relation('SymmetricProperty',1).
-attribute(1,'SymmetricProperty','ObjectPropertyExpression',string).
 axiom_arguments(symmetricProperty,[objectPropertyExpression]).
 valid_axiom(symmetricProperty(A)) :- subsumed_by([A],[objectPropertyExpression]).
 
 %% asymmetricProperty(?ObjectPropertyExpression)
 % An object property asymmetry axiom AsymmetricProperty( OPE ) states that the object property expression OPE is asymmetric - that is, if an individual x is connected by OPE to an individual y, then y cannot be connected by OPE to x
 :- ext(asymmetricProperty/1).
-relation('AsymmetricProperty',1).
-attribute(1,'AsymmetricProperty','ObjectPropertyExpression',string).
 axiom_arguments(asymmetricProperty,[objectPropertyExpression]).
 valid_axiom(asymmetricProperty(A)) :- subsumed_by([A],[objectPropertyExpression]).
 
 %% transitiveProperty(?ObjectPropertyExpression)
 % An object property transitivity axiom TransitiveProperty( OPE ) states that the object property expression OPE is transitive - that is, if an individual x is connected by OPE to an individual y that is connected by OPE to an individual z, then x is also connected by OPE to z
 :- ext(transitiveProperty/1).
-relation('TransitiveProperty',1).
-attribute(1,'TransitiveProperty','ObjectPropertyExpression',string).
 axiom_arguments(transitiveProperty,[objectPropertyExpression]).
 valid_axiom(transitiveProperty(A)) :- subsumed_by([A],[objectPropertyExpression]).
 
 %% hasKey(?ClassExpression,?PropertyExpression)
 % A key axiom HasKey( CE PE1 ... PEn ) states that each (named) instance of the class expression CE is uniquely identified by the (data or object) property expressions PEi - that is, no two distinct (named) instances of CE can coincide on the values of all property expressions PEi
 :- ext(hasKey/2).
-relation('HasKey',2).
-attribute(1,'HasKey','ClassExpression').
-attribute(2,'HasKey','PropertyExpression').
 axiom_arguments(hasKey,[classExpression,propertyExpression]).
 valid_axiom(hasKey(CE,PE)) :- subsumed_by([CE,PE],[classExpression,propertyExpression]).
 
@@ -559,25 +504,18 @@ valid_axiom(fact(A)) :- subsumed_by([A],[axiom]).
 % An individual equality axiom SameIndividual( a1 ... an ) states that all of the individuals ai, 1 <= i <= n, are equal to each other.
 % note that despite the name of this predicate, it accepts a list of individuals as argument
 :- ext(sameIndividual/1).
-relation('SameIndividual',1).
-attribute(1,'SameIndividual','Individuals:set(Individual)',string).
 axiom_arguments(sameIndividual,[set(individual)]).
 valid_axiom(sameIndividual(A)) :- subsumed_by([A],[set(individual)]).
 
 %% differentIndividuals(?Individuals:set(Individual))
 % An individual inequality axiom DifferentIndividuals( a1 ... an ) states that all of the individuals ai, 1 <= i <= n, are different from each other
 :- ext(differentIndividuals/1).
-relation('DifferentIndividuals',1).
-attribute(1,'DifferentIndividuals','Individuals:set(Individual)',string).
 axiom_arguments(differentIndividuals,[set(individual)]).
 valid_axiom(differentIndividuals(A)) :- subsumed_by([A],[set(individual)]).
 
 %% classAssertion(?ClassExpression, ?Individual)
 % A class assertion ClassAssertion( CE a ) states that the individual a is an instance of the class expression CE
 :- ext(classAssertion/2).
-relation('ClassAssertion',2).
-attribute(1,'ClassAssertion','ClassExpression',string).
-attribute(2,'ClassAssertion','Individual',string).
 axiom_arguments(classAssertion,[classExpression, individual]).
 valid_axiom(classAssertion(A, B)) :- subsumed_by([A, B],[classExpression, individual]).
 
@@ -585,10 +523,6 @@ valid_axiom(classAssertion(A, B)) :- subsumed_by([A, B],[classExpression, indivi
 % A positive object property assertion PropertyAssertion( OPE a1 a2 ) states that the individual a1 is connected by the object property expression OPE to the individual a2
 % (extensional predicate - can be asserted)
 :- ext(propertyAssertion/3).
-relation('PropertyAssertion',3).
-attribute(1,'PropertyAssertion','PropertyExpression',string).
-attribute(2,'PropertyAssertion','SourceIndividual:Individual',string).
-attribute(3,'PropertyAssertion','TargetIndividual:Individual',string).
 axiom_arguments(propertyAssertion,[propertyExpression, individual, individual]).
 valid_axiom(propertyAssertion(A, B, C)) :- subsumed_by([A, B, C],[propertyExpression, individual, individual]).
 
@@ -608,10 +542,6 @@ valid_axiom(dataPropertyAssertion(A, B, C)) :- subsumed_by([A, B, C],[dataProper
 % A negative object property assertion NegativePropertyAssertion( OPE a1 a2 ) states that the individual a1 is not connected by the object property expression OPE to the individual a2
 % (extensional predicate - can be asserted)
 :- ext(negativePropertyAssertion/3).
-relation('NegativePropertyAssertion',3).
-attribute(1,'NegativePropertyAssertion','PropertyExpression',string).
-attribute(2,'NegativePropertyAssertion','SourceIndividual:Individual',string).
-attribute(3,'NegativePropertyAssertion','TargetIndividual:Individual',string).
 axiom_arguments(negativePropertyAssertion,[propertyExpression, individual, individual]).
 valid_axiom(negativePropertyAssertion(A, B, C)) :- subsumed_by([A, B, C],[propertyExpression, individual, individual]).
 
@@ -630,10 +560,6 @@ valid_axiom(negativeDataPropertyAssertion(A, B, C)) :- subsumed_by([A, B, C],[da
 %% annotationAssertion(?AnnotationProperty, ?AnnotationSubject, ?AnnotationValue)
 % An annotation assertion AnnotationAssertion( AP as at ) states that the annotation subject as - an IRI or an anonymous individual - is annotated with the annotation property AP and the annotation value av
 :- ext(annotationAssertion/3).
-relation('AnnotationAssertion',3).
-attribute(1,'AnnotationAssertion','AnnotationProperty',string).
-attribute(2,'AnnotationAssertion','AnnotationSubject',string).
-attribute(3,'AnnotationAssertion','AnnotationValue',string).
 axiom_arguments(annotationAssertion,[annotationProperty, annotationSubject, annotationValue]).
 valid_axiom(annotationAssertion(A, B, C)) :- subsumed_by([A, B, C],[annotationProperty, annotationSubject, annotationValue]).
 
@@ -651,10 +577,6 @@ valid_axiom(annotation(A,B,C)) :- subsumed_by([A,B,C],[iri,annotationProperty,an
 ontologyAnnotation(Ontology,AP,AV) :-
 	annotation(Ontology,AP,AV),
 	ontology(Ontology).	
-relation('OntologyAnnotation',3).
-attribute(1,'OntologyAnnotation','Ontology',string).
-attribute(2,'OntologyAnnotation','AnnotationProperty',string).
-attribute(3,'OntologyAnnotation','AnnotationValue',string).
 axiom_arguments(ontologyAnnotation,[ontology, annotationProperty, annotationValue]).
 valid_axiom(ontologyAnnotation(A, B, C)) :- subsumed_by([A, B, C],[ontology, annotationProperty, annotationValue]).
 
@@ -662,10 +584,6 @@ valid_axiom(ontologyAnnotation(A, B, C)) :- subsumed_by([A, B, C],[ontology, ann
 axiomAnnotation(Axiom,AP,AV) :-
 	annotation(Axiom,AP,AV),
 	axiom(Axiom).
-relation('AxiomAnnotation',3).
-attribute(1,'AxiomAnnotation','Axiom',string).
-attribute(2,'AxiomAnnotation','AnnotationProperty',string).
-attribute(3,'AxiomAnnotation','AnnotationValue',string).
 axiom_arguments(axiomAnnotation,[axiom, annotationProperty, annotationValue]).
 valid_axiom(axiomAnnotation(A, B, C)) :- subsumed_by([A, B, C],[axiom, annotationProperty, annotationValue]).
 
@@ -673,18 +591,12 @@ valid_axiom(axiomAnnotation(A, B, C)) :- subsumed_by([A, B, C],[axiom, annotatio
 annotationAnnotation(Annotation,AP,AV) :-
 	annotation(Annotation,AP,AV),
 	annotation(Annotation).
-relation('AnnotationAnnotation',3).
-attribute(1,'AnnotationAnnotation','Annotation',string).
-attribute(2,'AnnotationAnnotation','AnnotationProperty',string).
-attribute(3,'AnnotationAnnotation','AnnotationValue',string).
 axiom_arguments(annotationAnnotation,[annotation, annotationProperty, annotationValue]).
 valid_axiom(annotationAnnotation(A, B, C)) :- subsumed_by([A, B, C],[annotation, annotationProperty, annotationValue]).
 
 %% ontology(?IRI)
 % An ontology in OWL2 is a collection of OWL Axioms
 :- ext(ontology/1).
-relation('Ontology',1).
-attribute(1,'Ontology','IRI',string).
 axiom_arguments(ontology,[iri]).
 valid_axiom(ontology(A)) :- subsumed_by([A],[iri]).
 
@@ -699,26 +611,17 @@ valid_axiom(ontologyDirective(A, B)) :- subsumed_by([A, B],[ontology, iri]).
 %% ontologyAxiom(?Ontology, ?Axiom)
 % True if Ontology contains Axiom
 :- ext(ontologyAxiom/2).
-relation('OntologyAxiom',2).
-attribute(1,'OntologyAxiom','Ontology',string).
-attribute(2,'OntologyAxiom','Axiom',string).
 axiom_arguments(ontologyAxiom,[ontology, axiom]).
 valid_axiom(ontologyAxiom(A, B)) :- subsumed_by([A, B],[ontology, axiom]).
 
 %% ontologyImport(?Ontology, ?IRI)
 % True of Ontology imports document IRI
 :- ext(ontologyImport/2).
-relation('OntologyImport',2).
-attribute(1,'OntologyImport','Ontology',string).
-attribute(2,'OntologyImport','IRI',string).
 axiom_arguments(ontologyImport,[ontology, iri]).
 valid_axiom(ontologyImport(A, B)) :- subsumed_by([A, B],[ontology, iri]).
 
 %% ontologyVersionInfo(?Ontology, ?IRI)
 :- ext(ontologyVersionInfo/2).
-relation('OntologyVersionInfo',2).
-attribute(1,'OntologyVersionInfo','Ontology',string).
-attribute(2,'OntologyVersionInfo','IRI',string).
 axiom_arguments(ontologyVersionInfo,[ontology, iri]).
 valid_axiom(ontologyVersionInfo(A, B)) :- subsumed_by([A, B],[ontology, iri]).
 
@@ -1089,7 +992,7 @@ assert_axiom(Axiom) :-
         assert_axiom_hook(Axiom),
         !.
 assert_axiom(Axiom) :-
-        debug(owl2,'asserting ~w',[Axiom]),
+        %debug(owl2,'asserting ~w',[Axiom]),
         assert(Axiom),
 	(   nb_current(current_ontology,O) -> assert(ontologyAxiom(O,Axiom)) ; true),
         !.
