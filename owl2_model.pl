@@ -104,7 +104,8 @@
            
            assert_axiom/1,
            retract_all_axioms/0,
-	   owl2_model_init/0
+	   owl2_model_init/0,
+           consult_axioms/1
 	   
 	  ]).
 %:- require([ is_list/1
@@ -114,7 +115,7 @@
 %	   ]).
 
 
-:- use_module(library(lists)). % Yap
+:- use_module(library(lists),[member/2]). 
 
 %% axiompred(?PredSpec)
 % @param PredSpec Predicate/Arity
@@ -125,12 +126,17 @@
 % wish to modify the database at run time. They are multifile, as we may wish to load from multiple sources.
 % In tabled prologs such as Yap, extensional predicates are tabled, because they may be entailed as well as asserted.
 user:term_expansion((:- ext(Pred)),
-                    [(   :- multifile Pred),(:- dynamic Pred),axiompred(Pred)]) :- current_prolog_flag(dialect,swi).
+                    [(   :- multifile Pred),(:- dynamic Pred),axiompred(Pred)]).
 
-user:term_expansion((:- ext(Pred)),
-                    [(:- table(Pred)),(:- multifile Pred),axiompred(Pred)]) :- current_prolog_flag(dialect,yap).
+%user:term_expansion((:- ext(Pred)),
+%                    [(:- table(Pred)),(:- multifile Pred),axiompred(Pred)]) :- current_prolog_flag(dialect,yap).
 
-:- discontiguous(valid_axiom/1, axiompred/1, axiom_arguments/2).
+%user:term_expansion((:- ext(Pred)),
+%                    [(:- multifile Pred),axiompred(Pred)]) :- current_prolog_flag(dialect,xsb).
+
+:- discontiguous(valid_axiom/1).
+:- discontiguous(axiompred/1).
+:- discontiguous(axiom_arguments/2).
 
 
 % TODO: hasKey
@@ -1007,6 +1013,9 @@ retract_all_axioms :-
 owl2_model_init :-
 	assert(annotationProperty('http://www.w3.org/2000/01/rdf-schema#label')),
 	assert(annotationProperty('http://www.w3.org/2000/01/rdf-schema#comment')).
+
+consult_axioms(File) :-
+        consult(File).
 
 
 

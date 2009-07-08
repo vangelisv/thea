@@ -9,7 +9,7 @@
            convert_axioms/5
           ]).
 
-:- use_module(owl2_model).
+:- use_module(owl2_model,[consult_axioms/1]).
 
 :- multifile load_axioms_hook/3.
 :- multifile save_axioms_hook/3.
@@ -41,7 +41,7 @@ load_axioms(File,Fmt,_Opts) :-
         ;   Fmt=owlpl
         ;   Fmt=pl),
         !,
-        owl2_model:consult(File).
+        owl2_model:consult_axioms(File).
 load_axioms(File,Fmt,Opts) :-
         load_handler(read,Fmt),
         load_axioms_hook(File,Fmt,Opts),
@@ -87,7 +87,7 @@ convert_axioms(FileIn,FmtIn,FileOut,FmtOut,Opts) :-
 
 load_handler(Dir,Fmt) :-
         forall(format_module(Dir,Fmt,Mod),
-               (   atom_concat('thea2/',Mod,TMod),
+               (   atom_concat('thea2/',Mod,TMod), % TODO: check for more elegant way to do this..
                    ensure_loaded(library(TMod)))).
 
 guess_format(File,Fmt,_Opts) :-
