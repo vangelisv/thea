@@ -9,8 +9,8 @@
 :- use_module(owl2_model).
 :- use_module(owl2_metamodel).
 :- use_module(owl2_io).
-:- use_module(library(sgml)). % DEPENDENCY: SWI-Prolog
-:- use_module(library('semweb/rdf_db')).
+:- use_module(library(sgml)). % DEPENDENCY: SWI-Prolog or Yap
+%:- use_module(library('semweb/rdf_db')).
 
 
 % ----------------------------------------
@@ -33,6 +33,14 @@ owl_parse_xml(File,_Opts) :-
         !.
 owl_parse_xml(File,_) :-
         throw(no_parse(File)).
+
+xsb_owl_parse_xml(File,_Opts) :-
+        load_structure(file(File),[XML],[dialect(xmlns),space(remove)],_Warn),
+        xml_ontology(XML,Ont,Axioms),
+        assert_axiom(Ont),
+        forall(member(Axiom,Axioms),
+               assert_axiom(Axiom)),
+        !.
 
 %% xml_ontology(+XML, ?Ont, ?Axioms:list) is det
 % Translate XML term conforming to OWLX to a collecton of owl2_model axioms
