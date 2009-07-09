@@ -9,7 +9,7 @@
            convert_axioms/5
           ]).
 
-:- use_module(owl2_model,[consult_axioms/1]).
+:- use_module(owl2_model,[consult_axioms/1,axiom/1]).
 
 :- multifile load_axioms_hook/3.
 :- multifile save_axioms_hook/3.
@@ -41,7 +41,7 @@ load_axioms(File,Fmt,_Opts) :-
         ;   Fmt=owlpl
         ;   Fmt=pl),
         !,
-        owl2_model:consult_axioms(File).
+        consult_axioms(File).
 load_axioms(File,Fmt,Opts) :-
         load_handler(read,Fmt),
         load_axioms_hook(File,Fmt,Opts),
