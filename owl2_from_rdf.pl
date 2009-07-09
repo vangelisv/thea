@@ -303,14 +303,23 @@ rdf_2_owl(_,Ont) :-
 	owl_parser_log(['Number of owl triples copied: ',Z]).
 
 
-%%       rdf_load_stream(+URL, -Ontology, -BaseURI, -Imports:list)
+%%       rdf_load_stream(+URL, -Ontology, -BaseURI, -Imports:list) is det
 %	
 %	This predicate calls the rdf parser to parse the RDF/XML URL
 %	into RDF triples. URL can be a local file or a URL.
 %	The predicate returns all Imports based on the 	owl:imports predicate. 
 %	Also the Ontology of the URL if an owl:Ontology exists, var
-%	otherise. 
+%	otherise.
+%
+%       If owl_repository/2 is defined, then this is used to map URLs
+%       prior to loading.
 
+
+rdf_load_stream(URL,Ontology,BaseURI,Imports) :-
+        owl_repository(URL,RURL),
+        !,
+        % note: users responsibility to avoid infinite loops by avoid cycles in repository mappings!
+        rdf_load_stream(RURL,Ontology,BaseURI,Imports).
 
 rdf_load_stream(URL,Ontology,BaseURI,Imports) :- 
   	(   sub_string(URL,0,4,_,'http')
@@ -318,12 +327,9 @@ rdf_load_stream(URL,Ontology,BaseURI,Imports) :-
                    rdf_load(RDF_Stream,[if(true),base_uri(BaseURI),blank_nodes(noshare),result(Action, Triples, MD5)]),
                    debug(owl_parser,' Loaded ~w stream: ~w Action: ~w Triples:~w MD5: ~w',[URL,RDF_Stream,Action,Triples,MD5]),
                    close(RDF_Stream)),
-                  Message, 
-                  (   owl_repository(URL,RURL),
-                      !,
-                      rdf_load_stream(RURL,Ontology,BaseURI,Imports) 
-                  ;   print(Message),nl)) 
-	;   RDF_Stream = URL, rdf_load(RDF_Stream,[blank_nodes(noshare),if(true),base_uri(BaseURI)])
+                  Message,
+                  throw(io_error(URL,'rdf_load/2 failed',Message)))
+        ;   RDF_Stream = URL, rdf_load(RDF_Stream,[blank_nodes(noshare),if(true),base_uri(BaseURI)])
 	),
         % collect all imports directives
 	(   rdf(Ontology,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type','http://www.w3.org/2002/07/owl#Ontology',BaseURI:_),
