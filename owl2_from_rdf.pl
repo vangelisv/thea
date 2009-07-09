@@ -140,18 +140,21 @@ owl_parse(URL, RDF_Load_Mode, OWL_Parse_Mode,ImportFlag) :-
 owl_canonical_parse_2([],_,_,Processed,Processed) :- !.
 
 owl_canonical_parse_2([IRI|ToProcessRest],Parent,ImportFlag,ProcessedIn,ProcessedOut) :-
-	member(IRI,ProcessedIn),!,
+	member(IRI,ProcessedIn),
+        !,
 	owl_canonical_parse_2(ToProcessRest,Parent,ImportFlag,ProcessedIn,ProcessedOut).
 
 owl_canonical_parse_2([IRI|ToProcessRest],Parent,ImportFlag,ProcessedIn,ProcessedOut) :-
 	% Get rdf triples, *Ontology* and Imports 
 	rdf_load_stream(IRI,O,BaseURI,Imports),
-	%	process(IRI,O,Imports),!,
-	( nonvar(O) -> Ont = O; Ont = Parent), % in the include case we may need to remove the import...
+	(   nonvar(O)
+        ->  Ont = O
+        ;   Ont = Parent), % in the include case we may need to remove the import...
         debug(owl_parser,'Commencing rdf_2_owl. Generating owl/4',[]),
 	rdf_2_owl(BaseURI,Ont),  	% move the RDF triples into the owl-Ont/4 facts
-	(   ImportFlag = true -> owl_canonical_parse_2(Imports,Ont,ImportFlag,[Ont|ProcessedIn],ProcessedIn1) ; 
-	ProcessedIn1=[Ont|ProcessedIn]),
+	(   ImportFlag = true
+        ->  owl_canonical_parse_2(Imports,Ont,ImportFlag,[Ont|ProcessedIn],ProcessedIn1)
+        ;   ProcessedIn1=[Ont|ProcessedIn]),
 	owl_canonical_parse_2(ToProcessRest,Parent,ImportFlag,ProcessedIn1,ProcessedOut).
 
 
@@ -310,20 +313,21 @@ rdf_2_owl(_,Ont) :-
 
 
 rdf_load_stream(URL,Ontology,BaseURI,Imports) :- 
-  	(sub_string(URL,0,4,_,'http'), !, 
-	 catch((http_open(URL,RDF_Stream,[]),	
-		rdf_load(RDF_Stream,[if(true),base_uri(BaseURI),blank_nodes(noshare),result(Action, Triples, MD5)]),
-		debug(owl_parser,' Loaded ~w stream: ~w Action: ~w Triples:~w MD5: ~w',[URL,RDF_Stream,Action,Triples,MD5]),
-		close(RDF_Stream)),
-	       Message, 
-	       (owl_repository(URL,RURL),!,rdf_load_stream(RURL,Ontology,BaseURI,Imports) ;
-	         print(Message),nl)) 
-	;
-	 RDF_Stream = URL, rdf_load(RDF_Stream,[blank_nodes(noshare),if(true),base_uri(BaseURI)])
+  	(   sub_string(URL,0,4,_,'http'),
+            !, 
+            catch((http_open(URL,RDF_Stream,[]),	
+                   rdf_load(RDF_Stream,[if(true),base_uri(BaseURI),blank_nodes(noshare),result(Action, Triples, MD5)]),
+                   debug(owl_parser,' Loaded ~w stream: ~w Action: ~w Triples:~w MD5: ~w',[URL,RDF_Stream,Action,Triples,MD5]),
+                   close(RDF_Stream)),
+                  Message, 
+                  (   owl_repository(URL,RURL),!,rdf_load_stream(RURL,Ontology,BaseURI,Imports) ;
+                      print(Message),nl)) 
+	;   
+            RDF_Stream = URL, rdf_load(RDF_Stream,[blank_nodes(noshare),if(true),base_uri(BaseURI)])
 	),
 	(   rdf(Ontology,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type','http://www.w3.org/2002/07/owl#Ontology',BaseURI:_),
 	    findall(I,rdf(Ontology,'http://www.w3.org/2002/07/owl#imports',I,BaseURI:_),Imports),! 
-	; 
+	;   
 	    Imports = []
 	).
 
