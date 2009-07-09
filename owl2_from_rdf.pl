@@ -313,18 +313,19 @@ rdf_2_owl(_,Ont) :-
 
 
 rdf_load_stream(URL,Ontology,BaseURI,Imports) :- 
-  	(   sub_string(URL,0,4,_,'http'),
-            !, 
-            catch((http_open(URL,RDF_Stream,[]),	
+  	(   sub_string(URL,0,4,_,'http')
+        ->  catch((http_open(URL,RDF_Stream,[]),	
                    rdf_load(RDF_Stream,[if(true),base_uri(BaseURI),blank_nodes(noshare),result(Action, Triples, MD5)]),
                    debug(owl_parser,' Loaded ~w stream: ~w Action: ~w Triples:~w MD5: ~w',[URL,RDF_Stream,Action,Triples,MD5]),
                    close(RDF_Stream)),
                   Message, 
-                  (   owl_repository(URL,RURL),!,rdf_load_stream(RURL,Ontology,BaseURI,Imports) ;
-                      print(Message),nl)) 
-	;   
-            RDF_Stream = URL, rdf_load(RDF_Stream,[blank_nodes(noshare),if(true),base_uri(BaseURI)])
+                  (   owl_repository(URL,RURL),
+                      !,
+                      rdf_load_stream(RURL,Ontology,BaseURI,Imports) 
+                  ;   print(Message),nl)) 
+	;   RDF_Stream = URL, rdf_load(RDF_Stream,[blank_nodes(noshare),if(true),base_uri(BaseURI)])
 	),
+        % collect all imports directives
 	(   rdf(Ontology,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type','http://www.w3.org/2002/07/owl#Ontology',BaseURI:_),
 	    findall(I,rdf(Ontology,'http://www.w3.org/2002/07/owl#imports',I,BaseURI:_),Imports),! 
 	;   
