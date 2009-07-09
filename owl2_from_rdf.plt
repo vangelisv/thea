@@ -145,6 +145,23 @@ expected_count(class(_),4).
 
 :- end_tests(edge_cases).
 
+:- begin_tests(repository_test,[]).
+
+test(no_repos) :-
+        retractall(owl2_from_rdf:owl_repository(_,_)),
+        \+ catch(owl_parse_rdf('testfiles/import_test.owl',[imports(true)]),
+                 Message,
+                 (   format('Got error as expected: ~w~n',[Message]),
+                     fail)).
+
+test(with_repos) :-
+        retractall(owl2_from_rdf:owl_repository(_,_)),
+        assert(owl2_from_rdf:owl_repository('http://y.org','http://www.w3.org/TR/2003/CR-owl-guide-20030818/wine')),
+        owl_parse_rdf('testfiles/import_test.owl',[imports(true)]).
+
+
+:- end_tests(repository_test).
+
 % TEST UTILITY PREDICATES
 
 :- module_transparent test_expected_count/0.
