@@ -83,7 +83,6 @@
            dataMinCardinality/1, dataMaxCardinality/1, dataExactCardinality/1,
 
            dataRange/1,
-           datatype/1,
            dataIntersectionOf/1,
            dataUnionOf/1,
            dataComplementOf/1,
@@ -126,13 +125,10 @@
 % wish to modify the database at run time. They are multifile, as we may wish to load from multiple sources.
 % In tabled prologs such as Yap, extensional predicates are tabled, because they may be entailed as well as asserted.
 user:term_expansion((:- ext(Pred)),
-                    [(   :- multifile Pred),(:- dynamic Pred),axiompred(Pred)]).
+                    [(   :- multifile(Pred)),(:- dynamic(Pred)), axiompred(Pred)]).
 
 %user:term_expansion((:- ext(Pred)),
 %                    [(:- table(Pred)),(:- multifile Pred),axiompred(Pred)]) :- current_prolog_flag(dialect,yap).
-
-%user:term_expansion((:- ext(Pred)),
-%                    [(:- multifile Pred),axiompred(Pred)]) :- current_prolog_flag(dialect,xsb).
 
 :- discontiguous(valid_axiom/1).
 :- discontiguous(axiompred/1).
@@ -987,6 +983,7 @@ axiom_references(Ax,Ref) :-
   ****************************************/
 
 :- multifile assert_axiom_hook/1.
+:- dynamic assert_axiom_hook/1.
 
 %% assert_axiom(+Axiom:axiom)
 %
