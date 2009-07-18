@@ -92,7 +92,7 @@ owl2_io:save_axioms_hook(File,owlapi(_Fmt),_Opts) :-
 %% save_ontology(+Man,+Ont,+File) is det
 save_ontology(Man,Ont,File) :-
         (   var(File)
-        ->  tmp_file(File),
+        ->  tmp_file(owl,File),
             Tmp=true
         ;   Tmp=fail),
         atom_javaURI(File,URI),
