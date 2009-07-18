@@ -23,4 +23,4 @@ do
 done
 
 #echo CP = $CLASSPATH
-swipl -g "['$DIRNAME/thea-owlapi-reasoner.pl'],run(['$1']),halt"
+swipl -g "['$DIRNAME/thea-owlapi-reasoner.pl'],run('$*'),halt"

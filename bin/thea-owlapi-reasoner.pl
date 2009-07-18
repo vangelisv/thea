@@ -5,8 +5,9 @@
 :- use_module(library('thea2/owl2_java_owlapi')).
 
 
-run(Args) :-
-        debug(owl2),
+run(FilesAtom) :-
+        concat_atom(Args,' ',FilesAtom),
+        %debug(owl2),
         forall(member(Arg,Args),
                load_axioms(Arg,_,[])),
         create_reasoner(Man,pellet,Reasoner),
