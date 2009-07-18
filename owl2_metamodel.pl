@@ -79,8 +79,8 @@ owlpredicate_arguments(objectSomeValuesFrom,[objectPropertyExpression,classExpre
 owlpredicate_arguments(dataSomeValuesFrom,[dataPropertyExpression,dataExpression]).
 owlpredicate_arguments(objectAllValuesFrom,[objectPropertyExpression,classExpression]).
 owlpredicate_arguments(dataAllValuesFrom,[dataPropertyExpression,dataExpression]).
-owlpredicate_arguments(objectComplementOf,[set(classExpression)]).
-owlpredicate_arguments(dataComplementOf,[set(dataExpression)]).
+owlpredicate_arguments(objectComplementOf,[classExpression]).
+owlpredicate_arguments(dataComplementOf,[dataExpression]).
 owlpredicate_arguments(objectUnionOf,[set(classExpression)]).
 owlpredicate_arguments(dataUnionOf,[set(dataExpression)]).
 owlpredicate_arguments(objectOneOf,[set(individual)]).
