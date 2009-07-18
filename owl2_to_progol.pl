@@ -42,7 +42,10 @@ owl2_io:save_axioms_hook(File,progol,Opts) :-
 % writes:
 % =|has_disease_type(human1,alzheimers). ... disease_type(alzheimers)|=
 write_progol_facts(Head,Goal,TypeDecl) :-
+        format('% Type declarations:~n'),
         setof(TypeDecl,Goal^Goal,TypeDecls),
+        nl,
+        format('% Facts:~n'),
         forall(member(TypeDecl,TypeDecls),
                format('~q.~n',[TypeDecl])),
         forall(Goal,format('~q.~n',[Head])).
