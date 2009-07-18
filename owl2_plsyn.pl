@@ -7,7 +7,7 @@
                       plsyn_owl/2,
                       
                       op(1200,xfy,(--)),
-                      op(1150,fx,class),
+                      %op(1150,fx,class),
                       op(1150,fx,individual),
                       op(1150,xfy,disjointUnion),
                       op(1150,fx,functional),
@@ -19,7 +19,7 @@
                                 % 700 <
                                 % 700 =
                       op(700,xfy,inverseOf),
-                      op(700,xfy,(->)),
+                      %op(700,xfy,(->)),
                       op(650,xfy,(::)),
                       op(600,xfy,not),
                       op(500,xfy,or),
@@ -50,7 +50,7 @@
 % 700 <
 % 700 =
 :- op(700,xfy,inverseOf).
-:- op(700,xfy,(->)).
+%:- op(700,xfy,(->)).
 :- op(650,xfy,(::)).
 :- op(600,xfy,not).
 :- op(500,xfy,or).
@@ -91,6 +91,11 @@ plsyn_owl(Pl,Owl) :-
         owl2plsyn(Owl,Pl),
         !.
 
+
+% allow translation of vars, for example for queries or templates
+plsyn2owl(V,V) :-
+        var(V),
+        !.
 
 plsyn2owl(Pl,Owl) :-
         Pl=..[PlPred|Args],
@@ -134,14 +139,19 @@ plsyn2owl(A or B,unionOf(ECs)) :-
 plsyn2owl(X,X) :- !.
 
 
+%% plsyn2owl_ec(+Term,+Op,?Elts:list)
+% e.g. a and b and c and V ==> [a,b,c,V]
+plsyn2owl_ec(T,_,[T]) :-
+        var(T),
+        !.
 plsyn2owl_ec(T,Op,L) :-
         T=..[Op,A,B],
         !,
         plsyn2owl_ec(A,Op,LA),
         plsyn2owl_ec(B,Op,LB),
         append(LA,LB,L).
-plsyn2owl_ec(A,_,[A]).
-        
+plsyn2owl_ec(A,_,[AX]) :-
+        plsyn2owl(A,AX).
 
 owl2plsyn(Owl,Pl) :-
         Owl=..[OwlPred|Args],
