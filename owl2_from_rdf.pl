@@ -328,7 +328,7 @@ rdf_load_stream(URL,Ontology,BaseURI,Imports) :-
                    debug(owl_parser,' Loaded ~w stream: ~w Action: ~w Triples:~w MD5: ~w',[URL,RDF_Stream,Action,Triples,MD5]),
                    close(RDF_Stream)),
                   Message,
-                  throw(io_error(URL,'rdf_load/2 failed',Message)))
+                  throw(io_error(URL,'rdf_load/2 failed',Message))) % re-throw with more information
         ;   RDF_Stream = URL, rdf_load(RDF_Stream,[blank_nodes(noshare),if(true),base_uri(BaseURI)])
 	),
         % collect all imports directives
