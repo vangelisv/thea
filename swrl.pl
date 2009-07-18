@@ -193,6 +193,10 @@ swrl_to_owl(AL,C,subClassOf(Sub,D)) :- % non-normalized form of above rule
         C=..[Sub,v(X)],
         subgoals_to_intersection(AL,X,[D]),
         !.
+swrl_to_owl(AL,C,subClassOf(Sub,D)) :- 
+        C=..[Sub,v(X)],
+        subgoals_to_description(AL,X,D),
+        !.
 swrl_to_owl([],description(C,I),classAssertion(C,I)) :-
         I\=v(_),
         !.
@@ -247,12 +251,20 @@ subgoals_to_intersection([A|AL],V,[D|DL]) :-
 %        A=someValuesFrom(D,Y),
 %        subgoals_to_intersection(AL,V,DL).
 
+% not valid swrl, but we allow this for roundtripping
 subgoals_to_union((A;AL),V,[D|DL]) :-
         !,
         A=description(D,V),
         subgoals_to_union(AL,V,DL).
 subgoals_to_union(description(D,_),_,[D]).
 
+% TODO
+subgoals_to_description([],_,[]).
+subgoals_to_description([A|AL],V,[D|DL]) :-
+        subgoal_to_description(A,V,D),
+        subgoals_to_description(AL,V,DL).
+
+subgoal_to_description(description(D,V),V,D).
 
 %% prolog_term_to_swrl_hook( +Term, ?SWRLAtom:swrlAtom )
 % define this to extend the translation.
