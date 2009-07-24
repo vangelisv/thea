@@ -8,6 +8,7 @@
            rdf_file_to_prolog/2,
            write_owl_as_prolog/0,
            remove_namespaces/0,
+           remove_ns/2,
            use_labels_for_IRIs/0,
            prefix_IRIs/1,
            translate_IRIs/1,
@@ -98,7 +99,10 @@ use_labels_for_IRIs:-
         translate_IRIs(use_label_as_IRI).
 
 remove_ns(IRI,X) :-
-        concat_atom([_,X],'#',IRI).
+        concat_atom([_,X],'#',IRI),
+        !.
+remove_ns(X,X).
+
 
 use_label_as_IRI(IRI,X) :-
         labelAnnotation_value(IRI,X),
@@ -127,6 +131,11 @@ translate_IRIs(Goal):-
         maplist(assert_axiom,Axioms2).
 
 :- module_transparent map_IRIs/3.
+map_IRIs(_,[],[]) :- !.
+map_IRIs(G,[X|Xs],[X2|X2s]) :-
+        !,
+        map_IRIs(G,X,X2),
+        map_IRIs(G,Xs,X2s).
 map_IRIs(G,X,X2) :-
         atom(X),
         call(G,X,X2),
