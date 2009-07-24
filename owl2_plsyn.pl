@@ -159,6 +159,12 @@ owl2plsyn(Owl,Pl) :-
         !,
         maplist(owl2plsyn,Args,Args2),
         Pl=..[PlPred|Args2].
+owl2plsyn(Owl,Pl) :-
+        Owl=..[OwlPred|Args],
+        plpred2owlpred_list(PlPred,OwlPred),
+        !,
+        maplist(owl2plsyn,Args,Args2),
+        Pl=..[PlPred,[Args2]].
 owl2plsyn(equivalentProperties(Args),Pl) :-
         maplist(owl2plsyn,Args,Args2),
         list_to_chain(Args2,(=@=),Pl).
