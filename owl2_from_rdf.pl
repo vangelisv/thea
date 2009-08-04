@@ -182,7 +182,7 @@ owl_canonical_parse_3([IRI|Rest]) :-
 	        forall(member(owl(S,P,O),Remove),use_owl(S,P,O,removed))),
 
         % temporary fix to make up for bug in rdf parsing
-        % see email to Jan July-1-2009
+        % see email to JanW July-1-2009
         forall((test_use_owl(S,P,BNode),
                 atom(BNode),
                 sub_string(BNode,0,2,_,'__'),
@@ -192,13 +192,26 @@ owl_canonical_parse_3([IRI|Rest]) :-
                    expand_and_assert(S,P,literal('')))),
         
 	% replace matched patterns (Table 6)
+        debug(owl_parser,'Replacing patterns [see table 6]',[]),
+	(   setof(ReplaceWith,
+                  Pattern^(   triple_replace(Pattern,ReplaceWith), % +Triples:list, ?Triples:list
+                              use_owl(Pattern),
+                              debug(owl_parser,'Replacing ~w ==> ~w [see table 6]',[Pattern,ReplaceWith])),
+                  ReplacementSetList)
+        ->  forall((member(ReplacementSet,ReplacementSetList),member(owl(S,P,O),ReplacementSet)),
+                   expand_and_assert(S,P,O))
+        ;   debug(owl_parser,'No replacements required',[])),
+        
+        /*
 	forall(triple_replace(Pattern,ReplaceWith),
                forall(use_owl(Pattern),
                       forall(member(owl(S,P,O),ReplaceWith),
                              (   expand_and_assert(S,P,O),
                                  debug(owl_parser,'Replacing ~w ==> ~w [see table 6]',[Pattern,owl(S,P,O)]))))),
+        */
         
 	% continue with parsing using the rules...
+        debug(owl_parser,'Anon individuals in reification [see table 8]',[]),
 	
 	% Table 8, get the set of RIND - anonymous individuals in reification
 	findall(X, (member(Y,['owl:Axiom','owl:Annotation',
@@ -207,7 +220,7 @@ owl_canonical_parse_3([IRI|Rest]) :-
 		    test_use_owl(X,'rdf:type',Y)), RIND),
 	nb_setval(rind,RIND),
 	findall(_,ann(_,_),_), % find all annotations, assert annotation(X,AP,AV) axioms.
-        debug(owl_parser_detail,'Commencing parse of annotated axioms',[]),
+        debug(owl_parser,'Commencing parse of annotated axioms',[]),
 	
 	
         forall((axiompred(PredSpec),\+dothislater(PredSpec),\+omitthis(PredSpec)),
@@ -238,10 +251,12 @@ owl_parse_annotated_axioms(Pred/Arity) :-
 	       (   assert_axiom(Head),
                    debug(owl_parser_detail,' parsed: ~w : anns: ~w',[Head,Annotations]),
 		   forall(member(X,Annotations),
-			  forall(annotation(X,AP,AV),assert(annotation(Head,AP,AV)))
+			  forall(annotation(X,AP,AV),assert_axiom(annotation(Head,AP,AV)))
 			 )
 	       )
-	      ).
+	      ),
+        debug(owl_parser_detail,'[ann] Done parsing all of type: ~w',[Pred]).
+
 owl_parse_nonannotated_axioms(Pred/Arity) :-
         debug(owl_parser_detail,'[unann] Parsing all of type: ~w',[Pred]),
         functor(Head,Pred,Arity),
@@ -354,6 +369,7 @@ expand_and_assert(X1,Y1,Z1) :-
 	expand_ns(X1,X),
 	expand_ns(Y1,Y),
 	expand_ns(Z1,Z),!,
+	retractall(owl(X,Y,Z, used1)),
 	assert(owl(X,Y,Z, not_used)).
         
 
@@ -1380,7 +1396,7 @@ parse_annotation_assertions :-
 	       (   assert_axiom(annotationAssertion(AP,X,AV)),
 		   retract(annotation(X,AP,AV)),
 		   forall(member(annotation(_,AP1,AV1),ANN), 
-			  assert(annotation(annotationAssertion(AP,X,AV),AP1,AV1))))
+			  assert_axiom(annotation(annotationAssertion(AP,X,AV),AP1,AV1))))
 	      ).
 	       
 % Table 18. Parsing of Axioms for Compatibility with OWL DL
