@@ -995,7 +995,6 @@ assert_axiom(Axiom) :-
         assert_axiom_hook(Axiom),
         !.
 assert_axiom(Axiom) :-
-        %debug(owl2,'asserting ~w',[Axiom]),
         assert(Axiom),
 	(   nb_current(current_ontology,O) -> assert(ontologyAxiom(O,Axiom)) ; true),
         !.
