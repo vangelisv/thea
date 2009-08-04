@@ -1,14 +1,14 @@
 /* -*- Mode: Prolog -*- */
 
 :- use_module(owl2_model).
+:- use_module(owl2_io).
 :- use_module(owl2_java_owlapi).
 
-:- begin_tests(pellet,[setup(load_rdffile)]).
 
-:- use_module(owl2_from_rdf).
+:- begin_tests(pellet,[setup(load)]).
 
-load_rdffile :-
-        owl_parse_rdf('testfiles/music_ontology.owl').
+load :-
+        load_axioms('testfiles/music_ontology.owl').
 
 test(loaded) :-
         \+ \+ ontology(_).
@@ -27,6 +27,29 @@ test(reasoner) :-
 
 
 :- end_tests(pellet).
+
+:- begin_tests(teams,[setup(load)]).
+
+% see http://owl.cs.manchester.ac.uk/2009/07/sssw/teams.html
+
+load :-
+        load_axioms('testfiles/teams.owl').
+
+test(loaded) :-
+        \+ \+ ontology(_).
+
+test(reasoner) :-
+        create_factory(Man,Fac),
+        build_ontology(Man,Fac,Ont),
+        writeln(classifying),
+        create_reasoner(Man,pellet,Reasoner),
+        reasoner_classify(Reasoner,Man,Ont),
+        reasoner_subClassOf(Reasoner,Fac,'http://owl.cs.manchester.ac.uk/2009/07/sssw/teams#OntologyFC','http://owl.cs.manchester.ac.uk/2009/07/sssw/teams#MixedTeam'),
+        \+ reasoner_subClassOf(Reasoner,Fac,'http://owl.cs.manchester.ac.uk/2009/07/sssw/teams#OntologyFC','http://owl.cs.manchester.ac.uk/2009/07/sssw/teams#NonSingletonTeam').
+
+        
+
+:- end_tests(teams).
 
 
 /** <module> tests for OWL2 RDF parser
