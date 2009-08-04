@@ -25,7 +25,7 @@ expected(subClassOf('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine',
 %                                             'http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#ToursRegion')]),
 %                    hasValue('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#madeFromGrape',
 %                             'http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#CheninBlancGrape'))).
-expected(ontologyAxiom('http://www.w3.org/TR/2003/CR-owl-guide-20030818/wine',
+expected(ontologyAxiom('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine',
                        propertyAssertion('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#hasBody',
                                          'http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#SelaksIceWine',
                                          'http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Medium'))).
@@ -49,12 +49,12 @@ expected_count(class(_),137).
 % these are replicated from the wine test
 expected(objectProperty('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#locatedIn')).
 expected(subClassOf('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine', 'http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PotableLiquid')).
-expected(subClassOf(intersectionOf(['http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Loire',
-                                    hasValue('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#locatedIn',
-                                             'http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#ToursRegion')]),
-                    hasValue('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#madeFromGrape',
-                             'http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#CheninBlancGrape'))).
-expected(ontologyAxiom('http://www.w3.org/TR/2003/CR-owl-guide-20030818/wine',
+%expected(subClassOf(intersectionOf(['http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Loire',
+%                                    hasValue('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#locatedIn',
+%                                             'http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#ToursRegion')]),
+%                    hasValue('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#madeFromGrape',
+%                             'http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#CheninBlancGrape'))).
+expected(ontologyAxiom('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine',
                        propertyAssertion('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#hasBody',
                                          'http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#SelaksIceWine',
                                          'http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Medium'))).
