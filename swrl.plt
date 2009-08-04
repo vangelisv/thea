@@ -97,7 +97,7 @@ check(Axiom,Pl) :-
         prolog_clause_to_swrl_rule(Pl,Rule),
         swrl_to_owl_axioms(Rule,[Axiom]).
 
-:- end_tests(pl2swrl,[]).
+:- end_tests(pl2swrl).
 
 
 
