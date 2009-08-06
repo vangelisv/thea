@@ -102,6 +102,8 @@
            axiom_references/2,
            
            assert_axiom/1,
+           assert_axiom/2,
+           retract_axiom/1,
            retract_all_axioms/0,
 	   owl2_model_init/0,
            consult_axioms/1
@@ -990,13 +992,42 @@ axiom_references(Ax,Ref) :-
 % writes an axiom to the prolog database.
 % typically this will just be a matter of calling assert/1. However, in future we
 % will have different backing stores (rdf_db, sql), and in these cases calls to
-% this predicate will perform the appropriate actions
+% this predicate will perform the appropriate actions.
+%
+% this also asserts ontologyAxiom/2, using nb_getval with current_ontology
 assert_axiom(Axiom) :-
         assert_axiom_hook(Axiom),
         !.
 assert_axiom(Axiom) :-
         assert(Axiom),
 	(   nb_current(current_ontology,O) -> assert(ontologyAxiom(O,Axiom)) ; true),
+        !.
+
+%% assert_axiom(+Axiom:axiom,+Ontology:ontology) is det
+%
+% as assert_axiom/1, but also asserts to ontologyAxion/2
+assert_axiom(Axiom,O) :-
+        assert(Axiom),
+	assert(ontologyAxiom(O,Axiom),
+        !.
+
+:- multifile retract_axiom_hook/1.
+:- dynamic retract_axiom_hook/1.
+
+%% retract_axiom(+Axiom:axiom)
+%
+% removes an axiom from the prolog database.
+% typically this will just be a matter of calling retract/1. However, in future we
+% will have different backing stores (rdf_db, sql), and in these cases calls to
+% this predicate will perform the appropriate actions.
+%
+% also removes ontologyAxiom/2 from ALL ontologies
+retract_axiom(Axiom) :-
+        retract_axiom_hook(Axiom),
+        !.
+retract_axiom(Axiom) :-
+        retractall(Axiom),
+	retract(ontologyAxiom(_,Axiom),
         !.
 
 retract_all_axioms :-
