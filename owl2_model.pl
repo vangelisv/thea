@@ -958,6 +958,12 @@ axiom_directly_about(Ax,About) :-
         ->  member(About,Arg1)
         ;   About=Arg1).
 
+%% axiom_directly_references(?Ax:axiom,?Ref)
+%
+% Ref may be
+%  - an axiom
+%  - a named entity
+%  - an expression
 axiom_directly_references(Ax,Ref) :-
         axiom(Ax),
         Ax =.. [_|Args],
@@ -1005,10 +1011,10 @@ assert_axiom(Axiom) :-
 
 %% assert_axiom(+Axiom:axiom,+Ontology:ontology) is det
 %
-% as assert_axiom/1, but also asserts to ontologyAxion/2
+% as assert_axiom/1, but also asserts to ontologyAxiom/2
 assert_axiom(Axiom,O) :-
         assert(Axiom),
-	assert(ontologyAxiom(O,Axiom),
+	assert(ontologyAxiom(O,Axiom)),
         !.
 
 :- multifile retract_axiom_hook/1.
@@ -1027,7 +1033,7 @@ retract_axiom(Axiom) :-
         !.
 retract_axiom(Axiom) :-
         retractall(Axiom),
-	retract(ontologyAxiom(_,Axiom),
+	retractall(ontologyAxiom(_,Axiom)),
         !.
 
 retract_all_axioms :-
