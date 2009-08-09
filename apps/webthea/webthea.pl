@@ -3,7 +3,8 @@
 :- module(webthea,
           [
            start_server/0,
-           start_server/1
+           start_server/1,
+           start_server/2
           ]).
 
 :- use_module(library('thea2/owl2_model')).
@@ -16,9 +17,14 @@
 :- use_module(library('http/http_parameters')).
 
 start_server :-
-        start_server(9000).
+        start_server(9000,[]).
 
 start_server(Port) :-
+        start_server(Port,[]).
+
+start_server(Port,Opts) :-
+        forall(member(load(OwlFile),Opts),
+              load_axioms(OwlFile)),
         http_server(http_dispatch, [port(Port)]).
 
 :- http_handler('/', root, []).
@@ -176,7 +182,7 @@ display_label(C,C).
 
   Run this on command line:
 ==
-swipl -g "[webthea],[owl2_io],load_axioms('../../testfiles/wine.owl'),start_server(9000)"
+swipl -g "[webthea],start_server(9000,[load('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine')])"
 ==
 
 Then point your browser at
