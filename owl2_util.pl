@@ -10,6 +10,7 @@
            remove_namespaces/0,
            remove_ns/2,
            use_labels_for_IRIs/0,
+           use_numeric_IRIs_for_classes/2,
            prefix_IRIs/1,
            translate_IRIs/1,
            map_IRIs/3,
@@ -66,11 +67,6 @@ write_axioms(P/A):-
 write_axioms(H):-
         forall(H,format('~q.~n',[H])).
 
-% @Deprecated
-% use retract_all_axioms/0 in owl2_model
-retract_axioms :-
-        findall(A,axiom(A),Axioms),
-        maplist(retract,Axioms).
 
 %% remove_namespaces
 % calls translate_IRIs/1 with remove_ns/2 as argument,
@@ -88,6 +84,22 @@ remove_namespaces:-
 % attaches a prefix to all names.
 prefix_IRIs(X):-
         translate_IRIs(prefix_IRI(X)).
+
+%% use_numeric_IRIs_for_classes(NS,Base)
+%
+% e.g. =|use_numeric_IRIs_for_classes('http://example.org/cars#',car_)|=
+use_numeric_IRIs_for_classes(NS,Base) :-
+        findall(From-To,
+                (   class(From),
+                    atom_concat(NS,_Local,From),
+                    gensym(Base,NewLocal),
+                    atom_concat(NS,NewLocal,To)),
+                Map),
+        length(Map,NumMappings),
+        format(user_error,'Mappings: ~w~n',[NumMappings]),
+        translate_IRIs(replace_IRI_using_map(Map)).
+
+
 
 %% use_labels_for_IRIs/0
 % uses rdfs:label if available, if not uses local part of URI.
@@ -118,6 +130,9 @@ prefix_IRI(Pre,X,Y) :-
         atom_concat(Pre,X,Y).
 prefix_IRI(_,X,X) :- !.
 
+replace_IRI_using_map(Map,X,Y) :- member(X-Y,Map),!.
+replace_IRI_using_map(_,X,X).
+
 
 %% translate_IRIs(+Goal)
 % Goal must be a 2 argument predicate Goal(+IRI,?TranslatedAtom)
@@ -127,7 +142,7 @@ prefix_IRI(_,X,X) :- !.
 translate_IRIs(Goal):-
         findall(A,axiom(A),Axioms),
         maplist(map_IRIs(Goal),Axioms,Axioms2),
-        maplist(retract,Axioms),
+        maplist(retract_axiom,Axioms),
         maplist(assert_axiom,Axioms2).
 
 :- module_transparent map_IRIs/3.
