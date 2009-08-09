@@ -33,18 +33,18 @@ owl2_io:save_axioms_hook(File,owl,Opts) :-
         ->  tmp_file(owl,File),
             IsTemp=true
         ;   IsTemp=false),
-        owl_generate_rdf(File,RDF_Load_Mode),
+        (   member(ontology(O),Opts)
+        ->  true
+        ;   ontology(O)         % TODO: better soln; this arbitrarily chooses an ontology
+        ->  true
+        ;   O='http://example.org#'),
+        owl_generate_rdf(O,File,RDF_Load_Mode),
         (   IsTemp
         ->  sformat(Cmd,'cat ~w',[File]),
             shell(Cmd)
         ;   true).
 
-owl2_from_rdf:owl_repository('http://www.w3.org/TR/2003/PR-owl-guide-20031209/food','testfiles/food.owl').
-t:- owl_parse('testfiles/wine.owl',complete,complete,true),
-	owl_generate_rdf('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine','testfiles/wine_g.owl',complete).
-
-t1 :-
-	owl_generate_rdf('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine','testfiles/wine_g.owl',complete).
+%owl2_from_rdf:owl_repository('http://www.w3.org/TR/2003/PR-owl-guide-20031209/food','testfiles/food.owl').
 
 %% owl_generate_rdf(+FileName,+RDF_Load_Mode) is det
 % see owl_generate_rdf/1 - derives ontology using ontology/1
