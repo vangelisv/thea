@@ -7,6 +7,7 @@
            rdf_file_to_prolog/1,
            rdf_file_to_prolog/2,
            write_owl_as_prolog/0,
+           expand_namespaces/0,
            remove_namespaces/0,
            remove_ns/2,
            use_labels_for_IRIs/0,
@@ -27,6 +28,7 @@
 :- use_module(owl2_from_rdf).
 :- use_module(owl2_xml).
 :- use_module(owl2_basic_reasoner).
+
 
 % @Deprecated
 % use owl2_io
@@ -58,7 +60,6 @@ write_owl_as_prolog:-
         forall(axiompred(PS),
                write_axioms(PS)).
 
-
 write_axioms(P/A):-
         !,
         functor(H,P,A),
@@ -79,6 +80,9 @@ write_axioms(H):-
 % @see prefix_IRIs/1 for the converse operation
 remove_namespaces:-
         translate_IRIs(remove_ns).
+
+expand_namespaces:-
+        translate_IRIs(expand_ns).
 
 %% prefix_IRIs(+NS)
 % attaches a prefix to all names.
@@ -114,6 +118,7 @@ remove_ns(IRI,X) :-
         concat_atom([_,X],'#',IRI),
         !.
 remove_ns(X,X).
+
 
 
 use_label_as_IRI(IRI,X) :-
