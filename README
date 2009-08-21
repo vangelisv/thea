@@ -1,9 +1,8 @@
 ---+ Thea2 : Prolog Modules for OWL2
 
-This is a collection of modules for parsing and manipulating OWL2
-ontologies in Prolog. It is developed with SWI-Prolog in mind, but the
-goal is to maximize portability with other prologs, such as Yap and
-XSB.
+A collection of modules for parsing and manipulating OWL2 ontologies
+in Prolog. It is developed with SWI-Prolog in mind, but the goal is to
+maximize portability with other prologs, such as Yap and XSB.
 
 This module is currently in alpha status - aspects may change
 radically!
