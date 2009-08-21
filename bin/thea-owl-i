@@ -9,6 +9,26 @@ main :-
         current_prolog_flag(argv, Arguments),
         append(_SytemArgs, [--|Args], Arguments), !,
         set_prolog_flag(verbose,normal),
-        debug(owl_parser_detail),
-        maplist(load_axioms,Args),
-        prolog.
+        parse_args(Args,Opts),
+        findall(X,
+                member(loadopt(X),Opts),
+                LoadOpts),
+        forall(member(rest(F),Opts),
+               load_axioms(F,_,LoadOpts)),
+        (   member(prolog(true),Opts)
+        ->  prolog
+        ;   true).
+
+
+parse_args([],[]).
+parse_args(Args,[Opt|Opts]) :-
+        parse_arg(Args,Rest,Opt),
+        !,
+        parse_args(Rest,Opts).
+parse_args([A|Args],[rest(A)|Opts]) :-
+        parse_args(Args,Opts).
+
+parse_arg(['--debug',D|L],L,null) :- debug(D).
+parse_arg(['--prolog'|L],L,prolog(true)).
+parse_arg(['--import'|L],L,loadopt(imports(true))).
+parse_arg(['-to',Fmt|L],L,fmt(Fmt)).
