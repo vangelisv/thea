@@ -68,6 +68,7 @@
 :- dynamic(blanknode_gen/2).
 :- dynamic(outstream/1).
 :- dynamic(annotation/3). % implements the ANN(X) function.
+:- dynamic(annotation_node/4).
 :- dynamic(owl_repository/2). % implements a simple OWL repository: if URL not found, Ontology is read from a repository (local) RURL
 :- multifile(owl_repository/2).
 
@@ -173,6 +174,7 @@ owl_canonical_parse_3([IRI|Rest]) :-
 	retractall(owl(_,_,_,not_used)),
 	% Copy the owl facts of the IRI document to the 'not_used'
 	forall(owl(S,P,O,IRI),assert(owl(S,P,O,not_used))),
+	collect_annotation_nodes,
 
 	% First parse the Ontology axiom 
         owl_parse_annotated_axioms(ontology/1),
@@ -1089,17 +1091,23 @@ owl_restriction_type(E, P, maxCardinality(N,PX,DX)) :-
 % if AnnMode is true and annotation triples can be found then
 % unify AnnotationNodes with the Nodes that annotate the triple,
 % otherwise []
-valid_axiom_annotation_mode(Mode,S,P,O,List) :-
-	findall(Node,(test_use_owl(Node,'rdf:type','owl:Axiom'),
-		      test_use_owl(Node,'owl:subject',S),
-		      test_use_owl(Node,'owl:predicate',P),
-		      test_use_owl(Node,'owl:object',O)),
-		List),
-	(   Mode = true, List = [_|_],! ;  List = []),
-	forall(member(Node,List), use_owl([owl(Node,'rdf:type','owl:Axiom'),
-					   owl(Node,'owl:subject',S),
-					   owl(Node,'owl:predicate',P),
-					   owl(Node,'owl:object',O)])),!.
+
+collect_annotation_nodes :-
+	retractall(annotation_node(_,_,_,_)),
+	forall(( test_use_owl(Node,'rdf:type','owl:Axiom'),
+		 test_use_owl(Node,'owl:subject',S),
+		 test_use_owl(Node,'owl:predicate',P),
+		 test_use_owl(Node,'owl:object',O)),
+	       (assert(annotation_node(Node,S,P,O)),
+		use_owl([owl(Node,'rdf:type','owl:Axiom'),
+			 owl(Node,'owl:subject',S),
+			 owl(Node,'owl:predicate',P),
+			 owl(Node,'owl:object',O)]))).
+		
+	
+
+valid_axiom_annotation_mode(_Mode,S,P,O,List) :-
+	findall(Node,annotation_node(Node,S,P,O),List).
 	       
 
 owl_parse_axiom(subClassOf(DX,DY),AnnMode,List) :- 
