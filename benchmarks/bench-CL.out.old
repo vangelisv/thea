@@ -1,0 +1,12 @@
+26.49 seconds cpu time for 3,478,625 inferences
+18,314 atoms, 3,642 functors, 3,346 predicates, 58 modules, 703,320 VM-codes
+
+                       Limit    Allocated       In use
+Heap         :                               8,424,256 Bytes
+Local  stack :   134,217,728       16,384          952 Bytes
+Global stack :   134,217,724       32,764          360 Bytes
+Trail  stack :   134,217,728       16,384           92 Bytes
+
+1 garbage collections gained 234,564 bytes in 0.00 seconds.
+1 atom garbage collections gained 356 atoms in 0.00 seconds.
+1 threads, 0 finished threads used 0.00 seconds.

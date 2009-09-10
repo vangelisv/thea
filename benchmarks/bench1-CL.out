@@ -1,0 +1,13 @@
+% Parsed "CL" in 0.67 sec; 13,443 triples
+% load_time: 37.7826
+26.88 seconds cpu time for 2,865,403 inferences
+18,314 atoms, 3,642 functors, 3,346 predicates, 58 modules, 703,320 VM-codes
+
+                       Limit    Allocated       In use
+Heap         :                               8,424,216 Bytes
+Local  stack :   134,217,728       16,384          952 Bytes
+Global stack :   134,217,724      229,372       23,520 Bytes
+Trail  stack :   134,217,728       16,384        2,628 Bytes
+
+1 atom garbage collections gained 355 atoms in 0.00 seconds.
+1 threads, 0 finished threads used 0.00 seconds.

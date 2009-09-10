@@ -1,0 +1,16 @@
+% Parsed "ido.owl" in 0.15 sec; 2,409 triples
+% Parsed "protege-dc.owl" in 0.01 sec; 77 triples
+% Parsed "ontology-metadata.owl" in 0.02 sec; 309 triples
+% Parsed "ogms.owl" in 0.03 sec; 381 triples
+% Parsed "1.1" in 0.03 sec; 498 triples
+% load_time: 7.64991
+1.92 seconds cpu time for 882,613 inferences
+8,801 atoms, 3,651 functors, 3,367 predicates, 59 modules, 304,126 VM-codes
+
+                       Limit    Allocated       In use
+Heap         :                               3,465,208 Bytes
+Local  stack :   134,217,728       16,384          952 Bytes
+Global stack :   134,217,724      163,836      130,628 Bytes
+Trail  stack :   134,217,728       32,768        2,628 Bytes
+
+1 threads, 0 finished threads used 0.00 seconds.
