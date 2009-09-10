@@ -222,7 +222,6 @@ owl_canonical_parse_3([IRI|Rest]) :-
 	findall(_,ann(_,_),_), % find all annotations, assert annotation(X,AP,AV) axioms.
         debug(owl_parser,'Commencing parse of annotated axioms',[]),
 	
-	
         forall((axiompred(PredSpec),\+dothislater(PredSpec),\+omitthis(PredSpec)),
                owl_parse_annotated_axioms(PredSpec)),
         forall((axiompred(PredSpec),dothislater(PredSpec),\+omitthis(PredSpec)),
