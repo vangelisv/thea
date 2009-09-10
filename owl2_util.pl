@@ -10,6 +10,7 @@
            expand_namespaces/0,
            remove_namespaces/0,
            remove_ns/2,
+           replace_ns_prefix/4,
            use_labels_for_IRIs/0,
            use_numeric_IRIs_for_classes/2,
            prefix_IRIs/1,
@@ -119,6 +120,12 @@ remove_ns(IRI,X) :-
         !.
 remove_ns(X,X).
 
+%% replace_ns_prefix(+From,+To,+OldIRI,?NewIRI) is det
+replace_ns_prefix(From,To,OldIRI,NewIRI) :-
+        atom_concat(From,Local,OldIRI),
+        !,
+        atom_concat(To,Local,NewIRI).
+replace_ns_prefix(_,_,X,X).
 
 
 use_label_as_IRI(IRI,X) :-
