@@ -68,7 +68,8 @@
 :- dynamic(blanknode_gen/2).
 :- dynamic(outstream/1).
 :- dynamic(annotation/3). % implements the ANN(X) function.
-:- dynamic(annotation_node/4).
+:- dynamic(annotation_r_node/4).
+:- dynamic(axiom_r_node/4).
 :- dynamic(owl_repository/2). % implements a simple OWL repository: if URL not found, Ontology is read from a repository (local) RURL
 :- multifile(owl_repository/2).
 
@@ -174,7 +175,7 @@ owl_canonical_parse_3([IRI|Rest]) :-
 	retractall(owl(_,_,_,not_used)),
 	% Copy the owl facts of the IRI document to the 'not_used'
 	forall(owl(S,P,O,IRI),assert(owl(S,P,O,not_used))),
-	collect_annotation_nodes,
+	collect_r_nodes,
 
 	% First parse the Ontology axiom 
         owl_parse_annotated_axioms(ontology/1),
@@ -780,13 +781,7 @@ ann(X,X1, annotation(X1,Y,Z)) :-
 
 
 ann2(X,Y,Z,X1) :-
-	test_use_owl(W,'rdf:type','owl:Annotation'),
-	test_use_owl(W,'owl:subject',X),
-	test_use_owl(W,'owl:object',Z),
-	use_owl([owl(W,'rdf:type','owl:Annotation'),
-		 owl(W,'owl:subject',X),
-		 owl(W,'owl:predicate',Y),
-		 owl(W,'owl:object',Z)]),
+	annotation_r_node(W,X,Y,Z),       	
 	ann(W,annotation(X1,Y,Z),Term),u_assert(Term).
 
 ann2(_,_,_,_).
@@ -1092,22 +1087,32 @@ owl_restriction_type(E, P, maxCardinality(N,PX,DX)) :-
 % unify AnnotationNodes with the Nodes that annotate the triple,
 % otherwise []
 
-collect_annotation_nodes :-
-	retractall(annotation_node(_,_,_,_)),
+collect_r_nodes :-
+	retractall(axiom_r_node(_,_,_,_)),
 	forall(( test_use_owl(Node,'rdf:type','owl:Axiom'),
 		 test_use_owl(Node,'owl:subject',S),
 		 test_use_owl(Node,'owl:predicate',P),
 		 test_use_owl(Node,'owl:object',O)),
-	       (assert(annotation_node(Node,S,P,O)),
+	       (assert(axiom_r_node(Node,S,P,O)),
 		use_owl([owl(Node,'rdf:type','owl:Axiom'),
 			 owl(Node,'owl:subject',S),
 			 owl(Node,'owl:predicate',P),
-			 owl(Node,'owl:object',O)]))).
-		
+			 owl(Node,'owl:object',O)]))),
+	
+	retractall(annotation_r_node(_,_,_,_)),	
+	forall(( test_use_owl(W,'rdf:type','owl:Annotation'),
+		 test_use_owl(W,'owl:subject',S),
+		 test_use_owl(W,'owl:predicate',P),
+		 test_use_owl(W,'owl:object',O)),
+	       (assert(annotation_r_node(Node,S,P,O)),
+		use_owl([owl(W,'rdf:type','owl:Annotation'),
+			 owl(W,'owl:subject',S),
+			 owl(W,'owl:predicate',P),
+			 owl(W,'owl:object',O)]))).
 	
 
 valid_axiom_annotation_mode(_Mode,S,P,O,List) :-
-	findall(Node,annotation_node(Node,S,P,O),List).
+	findall(Node,axiom_r_node(Node,S,P,O),List).
 	       
 
 owl_parse_axiom(subClassOf(DX,DY),AnnMode,List) :- 
