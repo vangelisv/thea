@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ResponseMessage xmlns="http://www.owllink.org/owllink-xml#"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.owllink.org/owllink-xml# http://www.owllink.org/owllink-xml-20091016.xsd"
+    xmlns:owl="http://www.w3.org/2002/07/owl#">   
+    <KB kb="http://owllink.org/examples/kb_1"/>
+    <OK/>
+    <ClassHierarchy>
+       <ClassSubClassPair>
+           <ClassSynset>
+               <owl:Class abbreviatedIRI="owl:Thing"/>
+           </ClassSynset>
+           <SetOfClassSynsets></SetOfClassSynsets>
+       </ClassSubClassPair>
+    </ClassHierarchy>    
+    <KB kb="http://owllink.org/examples/KB_2"/>
+    <OK/>
+    <KB kb="http://owllink.org/examples/KB_3"/>
+    <OK/>
+    <KB kb="http://owllink.org/examples/KB_4"/>
+    <OK/>
+    <ClassHierarchy>
+        <ClassSubClassPair>
+            <ClassSynset>
+                <owl:Class abbreviatedIRI="owl:Thing"/>
+            </ClassSynset>
+            <SetOfClassSynsets>
+                <ClassSynset>
+                    <owl:Class IRI="A"/>
+                </ClassSynset> 
+            </SetOfClassSynsets>
+        </ClassSubClassPair>
+    </ClassHierarchy> 
+    <ClassHierarchy>
+        <ClassSubClassPair>
+            <ClassSynset>
+                <owl:Class abbreviatedIRI="owl:Thing"/>
+            </ClassSynset>
+            <SetOfClassSynsets>
+                <ClassSynset>
+                    <owl:Class IRI="A"/>
+                </ClassSynset>
+            </SetOfClassSynsets>
+        </ClassSubClassPair>
+        <ClassSubClassPair>
+            <ClassSynset>
+                <owl:Class IRI="A"/>
+            </ClassSynset>
+            <SetOfClassSynsets>
+                <ClassSynset>
+                    <owl:Class IRI="B"/>
+                </ClassSynset>
+                <ClassSynset>
+                    <owl:Class IRI="D"/>
+                </ClassSynset> 
+            </SetOfClassSynsets>
+        </ClassSubClassPair>   
+    </ClassHierarchy>
+    <ClassHierarchy>
+        <ClassSubClassPair>
+            <ClassSynset>
+                <owl:Class IRI="A"/>
+                <owl:Class abbreviatedIRI="owl:Thing"/>
+            </ClassSynset>
+            <SetOfClassSynsets>
+                <ClassSynset>
+                    <owl:Class IRI="B"/>
+                </ClassSynset>   
+            </SetOfClassSynsets>
+        </ClassSubClassPair>
+        <ClassSubClassPair>
+            <ClassSynset>
+                <owl:Class IRI="B"/>
+            </ClassSynset>
+            <SetOfClassSynsets>
+                <ClassSynset>
+                    <owl:Class IRI="C"/>
+                    <owl:Class abbreviatedIRI="owl:Nothing"/>
+                </ClassSynset>
+            </SetOfClassSynsets>
+        </ClassSubClassPair>
+    </ClassHierarchy>
+    <OK/>
+    <OK/>
+    <OK/>
+    <OK/>
+</ResponseMessage>

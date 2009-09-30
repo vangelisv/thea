@@ -3,13 +3,21 @@
 :- module(owl2_xml,
           [
            owl_parse_xml/1,
-           owl_parse_xml/2
+           owl_parse_xml/2,
+	   
+	   axiom_xml/3,
+	   desc_xml/3,
+	   axioms_elts/3
           ]).
 
 :- use_module(owl2_model).
+:- use_module(owl2_xml).
 :- use_module(owl2_metamodel).
 :- use_module(owl2_io).
-:- use_module(library(sgml)). % DEPENDENCY: SWI-Prolog or Yap
+:- use_module(library(sgml)). 
+:- use_module(library(semweb/rdf_db)).
+
+% DEPENDENCY: SWI-Prolog or Yap
 %:- use_module(library('semweb/rdf_db')).
 
 
@@ -200,7 +208,7 @@ axioms_elts(O,[A|_],_) :-
 axiom_xml(_Ont,Axiom,element('http://www.w3.org/2006/12/owl2-xml#':Name,['URI'=IRI],[])) :-
                                 % TODO: annotations
         xmle_entity(Name,Axiom,[IRI]),
-        !.
+	!.
 % translate full axiom to XML, translating description arguments also
 axiom_xml(_Ont,Axiom,element('http://www.w3.org/2006/12/owl2-xml#':Name,[],Subs)) :-
         xmle_axiom(Name,Axiom,Args),
@@ -267,7 +275,10 @@ desc_xml(_Parent,IRI,element('http://www.w3.org/2006/12/owl2-xml#':Name,['URI'=I
 % except by guesswork
 desc_xml(_Parent,IRI,element('http://www.w3.org/2006/12/owl2-xml#':'Class',['URI'=IRI],[])) :-
         atom(IRI),
+	% VV 29/9 if Class Axiom then IRIs must be classes...
+	% member(Parent,['SubClassOf','EquivalentClasses','DisjointClasses','DisjointUnion']),
         !.
+
 
 desc_xml(_Ont,Desc,_) :-
         throw(description(Desc)).
