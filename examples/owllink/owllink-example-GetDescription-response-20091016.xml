@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ResponseMessage [ 
+<!ENTITY ole "http://www.owllink.org/owllink-ext-xml/"> ]>
+<ResponseMessage xmlns="http://www.owllink.org/owllink-xml#"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.owllink.org/owllink-xml# ../owllink-xml-20091016.xsd">
+    <Description name="MyOwnReasoner">
+        <protocolVersion major="1" minor="0"/>
+        <reasonerVersion major="1" minor="0"/>
+        <Property key="appliedSemantics">
+            <Datatype abbreviatedIRI="xsd:string"/>
+            <Literal>direct</Literal>
+        </Property>
+        <Property key="ignoresAnnotations">
+            <Datatype abbreviatedIRI="xsd:boolean"/>
+            <Literal>true</Literal>
+        </Property>
+        <Property key="ignoresDeclarations">
+            <Datatype abbreviatedIRI="xsd:boolean"/>
+            <Literal>true</Literal>
+        </Property>
+        <Property key="supportedDatatypes">
+            <List abbreviatedIRI="xsd:anyURI"/>
+            <Literal>xsd:long</Literal>
+            <Literal>xsd:int</Literal> 
+            <Literal>xsd:nonPositiveInteger</Literal>
+            <Literal>xsd:nonNegativeInteger</Literal>
+            <Literal>xsd:short</Literal>
+            <Literal>owl:real</Literal>
+        </Property>
+        <Setting key="selectedProfile">
+            <OneOf abbreviatedIRI="xsd:string">
+                <Literal>OWL DL</Literal>
+                <Literal>OWL 2 EL</Literal>
+            </OneOf>
+            <Literal>OWL 2 EL</Literal>
+        </Setting>
+        <Setting key="uniqueNameAssumption">
+            <Datatype IRI="xsd:boolean"/>
+            <Literal>true</Literal>
+        </Setting>
+        <SupportedExtension identifier="&ole;retraction"/>
+        <SupportedExtension identifier="&ole;told"/>
+        <PublicKB kb="http://owllink.org/examples/KB_1" name="Test KB 1"/>
+        <PublicKB kb="http://owllink.org/examples/KB_2" name="Test KB 2"/>
+    </Description>
+</ResponseMessage>
