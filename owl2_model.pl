@@ -2,7 +2,6 @@
 
 :- module(owl2_model,
 	  [
-           
            entity/1,
            declarationAxiom/1,
            class/1,
@@ -126,10 +125,10 @@
 % The ext/1 directive is used to declare a predicate extensional. Extensional predicates are dynamic, because we may
 % wish to modify the database at run time. They are multifile, as we may wish to load from multiple sources.
 % In tabled prologs such as Yap, extensional predicates are tabled, because they may be entailed as well as asserted.
-user:term_expansion((:- ext(Pred)),
-                    [(   :- multifile(Pred)),(:- dynamic(Pred)), axiompred(Pred)]).
+term_expansion((:- ext(Pred)),
+               [(   :- multifile(Pred)),(:- dynamic(Pred)), axiompred(Pred)]).
 
-%user:term_expansion((:- ext(Pred)),
+%term_expansion((:- ext(Pred)),
 %                    [(:- table(Pred)),(:- multifile Pred),axiompred(Pred)]) :- current_prolog_flag(dialect,yap).
 
 :- discontiguous(valid_axiom/1).
