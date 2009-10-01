@@ -28,7 +28,27 @@ INSTALL=@INSTALL@
 INSTALL_PROGRAM=@INSTALL_PROGRAM@
 INSTALL_DATA=@INSTALL_DATA@
 
-LIBPL=		owl2_model.pl owl2_from_rdf.pl
+LIBPL=\
+owl2_basic_reasoner.pl\
+owl2_chr.pl\
+owl2_export_rdf.pl\
+owl2_from_rdf.pl\
+owl2_io.pl\
+owl2_java_owlapi.pl\
+owl2_manchester_parser.pl\
+owl2_metamodel.pl\
+owl2_model.pl\
+owl2_owllink.pl\
+owl2_plsyn.pl\
+owl2_reasoner.pl\
+owl2_thea1_compat.pl\
+owl2_to_progol.pl\
+owl2_to_prolog_dlp.pl\
+owl2_util.pl\
+owl2_xml.pl\
+swrl.pl\
+swrl_rdf_hooks.pl
+
 LIBALL=		$(LIBPL) $(SUPPORT)
 EXAMPLES=	README
 
