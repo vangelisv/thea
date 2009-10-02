@@ -30,7 +30,6 @@ INSTALL_DATA=@INSTALL_DATA@
 
 LIBPL=\
 owl2_basic_reasoner.pl\
-owl2_chr.pl\
 owl2_export_rdf.pl\
 owl2_from_rdf.pl\
 owl2_io.pl\
