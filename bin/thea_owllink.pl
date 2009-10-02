@@ -13,34 +13,51 @@
 main :-
 
     % OWLLink Example 1
-    owl_link('localhost:8082',[getDescription],_,[request_file='thea-owllink-example-GetDescription-request.xml']),
-
+    owl_link('localhost:8082',[getDescription],Response1,
+	     [no_reasoner,
+	      request_file='../examples/owllink/thea-owllink-example-GetDescription-request.xml',
+	      response_file='../examples/owllink/owllink-example-GetDescription-response-20091016.xml']),
+    print(Response1),nl,
+    
     % OWLLink Example 2
     owl_link('localhost:8082',[createKB([kb='http://owllink.org/examples/KB_1'],[]),
 			       tell('http://owllink.org/examples/KB_1',
 				    [subClassOf('A','B'),
 				    subClassOf('B','C')]),
 			       isClassSatisfiable('http://owllink.org/examples/KB_1','A')
-			      ],_,[request_file='thea-owllink-example-CreateKB-request.xml']),
-
+			      ],Response2,
+	     [no_reasoner,
+	      request_file='../examples/owllink/thea-owllink-example-CreateKB-request.xml',
+	      response_file='../examples/owllink/owllink-example-CreateKB-response-20091016.xml']),
+    print(Response2),nl,
 
     % OWLLink Example 3      
-    owl_link('localhost:8082',[getSettings('http://owllink.org/examples/KB_1')],_,
-	     [request_file='thea-owllink-example-RetrieveSettings-request.xml']),
+    owl_link('localhost:8082',[getSettings('http://owllink.org/examples/KB_1')],Response3,
+	     [no_reasoner,
+	      request_file='../examples/owllink/thea-owllink-example-RetrieveSettings-request.xml',
+	      response_file='../examples/owllink/owllink-example-GetSettings-response-20091016.xml'
+	     ]),
+    print(Response3),nl,
 
     % OWLLink Example 4      
-    owl_link('localhost:8082',[set('http://owllink.org/examples/KB_1','selectedProfile',['OWL DL'])],_,
-	     [request_file='thea-owllink-example-SettSettings-request.xml']),
-
+    owl_link('localhost:8082',[set('http://owllink.org/examples/KB_1','selectedProfile',['OWL DL'])],Response4,
+	     [no_reasoner,
+	      request_file='../examples/owllink/thea-owllink-example-SetSettings-request.xml',
+	      response_file='../examples/owllink/owllink-example-Set-response-20091016.xml']),
+    print(Response4),nl,
+    
     % OWLLink Example 5     
     owl_link('localhost:8082',[createKB([kb='http://owllink.org/examples/KB_2'],
 					['Prefix'(name='test:',fullIRI='http://www.owllink.orgtest/ont'),
 					'Prefix'(name='ont:',fullIRI='http://owllink.org/examples/ontology')]),
 			       tell('http://owllink.org/examples/KB_2',
 				    [subClassOf('ont:ClassA','test:ClassA')])		       			       
-			      ],_,
-	     [request_file='thea-owllink-example-Prefixes-request.xml']),
-
+			      ],Response5,
+	     [no_reasoner,
+	      request_file='../examples/owllink/thea-owllink-example-Prefixes-request.xml',
+	      response_file='../examples/owllink/owllink-example-Prefix-response-20091016.xml']),
+    print(Response5),nl,
+    
     % OWLLink Example 6     
     owl_link('localhost:8082',[createKB([kb='http://owllink.org/examples/KB_3'],
 					['Prefix'(name='test:',fullIRI='http://www.owllink.orgtest/ont'),
@@ -51,9 +68,12 @@ main :-
 					   ]),
 			       tell('http://owllink.org/examples/KB_3',
 				    [subClassOf('ont:ClassA','test:ClassA')])		       			       
-			      ],_,
-	     [request_file='thea-owllink-example-LoadOntology-request.xml']),
-			      
+			      ],Response6,
+	     [no_reasoner,
+	      request_file='../examples/owllink/thea-owllink-example-LoadOntology-request.xml',
+	      response_file='../examples/owllink/owllink-example-LoadOntology-response-20091016.xml']),
+    print(Response6),nl,
+    
     % OWLLink Example 7
     owl_link('localhost:8082',[createKB([kb='http://owllink.org/examples/KB_4'],[]),
 			       tell('http://owllink.org/examples/KB_4',
@@ -73,9 +93,11 @@ main :-
 				    [subClassOf('A','B')]),
 			       releaseKB('http://owllink.org/examples/KB_4'),
 			       getAllClasses('http://owllink.org/examples/KB_4')
-			      ],_,
-	     	     [request_file='thea-owllink-example-PoolingRequests-request.xml']),
-		      
+			      ],Response7,
+	     	     [no_reasoner,
+		      request_file='../examples/owllink/thea-owllink-example-PoolingRequests-request.xml',
+		      response_file='../examples/owllink/owllink-example-poolingrequests-response-20091016.xml']),
+    print(Response7),nl,
 
     % OWLLink Example 8 - Taxonomy Request
     owl_link('localhost:8082',[createKB([kb='http://owllink.org/examples/KB_1'],[]),
@@ -105,8 +127,11 @@ main :-
 			       releaseKB('http://owllink.org/examples/KB_3'),
 			       releaseKB('http://owllink.org/examples/KB_4')
 
-			      ],_,
-	     [request_file='thea-owllink-example-Taxonomy-request.xml']).
+			      ],Response8,
+	     [no_reasoner,
+	      request_file='../examples/owllink/thea-owllink-example-Taxonomy-request.xml',
+	      response_file='../examples/owllink/owllink-example-taxonomy-response-20091016.xml']),
+    print(Response8),nl.
 
 
 

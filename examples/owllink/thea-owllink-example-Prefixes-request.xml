@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <RequestMessage
-    xmlns:xns183="xsi"
+    xmlns:xns129="xsi"
     xmlns="http://www.owllink.org/owllink-xml#"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xns183:schemaLocation="http://www.owllink.org/owllink-xml# http://www.owllink.org/owllink-xml-20091016.xsd"
+    xns129:schemaLocation="http://www.owllink.org/owllink-xml# http://www.owllink.org/owllink-xml-20091016.xsd"
     xmlns:owl2="http://www.w3.org/2006/12/owl2-xml#"
     xmlns:owl="http://www.w3.org/2002/07/owl#">
   <CreateKB kb="http://owllink.org/examples/KB_2">
