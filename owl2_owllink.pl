@@ -59,7 +59,7 @@ owl_link(ReasonerURL,Request,Response,Options) :-
 	          open(FilenameResponse,write,St),write(St,Result),close(St),
 	          % Read response from file into an xml structure
 	          open(FilenameResponse,read,St),	    
-	          load_structure(St,Response,[dialect(xml),space(sgml)]),close(St),
+	          load_structure(St,ResponseXML,[dialect(xml),space(sgml)]),close(St),
 	       	  ResponseXML = [element('ResponseMessage',_,ResponsesXML)],
 	          owl_link_response_l(ResponsesXML,Response)
 	   ; 
@@ -123,9 +123,15 @@ owl_link_request(areClassesEquivalent(KB,Classes),element('AreClassesEquivalent'
 %      <!-- Ask-ClassQueries -->
 owl_link_request(getSubClasses(KB,Class),element('GetSubClasses',[kb=KB],[ClassXML])) :-
 	desc_xml(_,Class,ClassXML),!.
+owl_link_request(getSubClasses(KB,Class,Direct),element('GetSubClasses',[kb=KB,direct=Direct],[ClassXML])) :-
+	desc_xml(_,Class,ClassXML),!.
+
 owl_link_request(getSuperClasses(KB,Class),element('GetSuperClasses',[kb=KB],[ClassXML])) :-
 	desc_xml(_,Class,ClassXML),!.
-	
+owl_link_request(getSuperClasses(KB,Class,Direct),element('GetSuperClasses',[kb=KB,direct=Direct],[ClassXML])) :-
+	desc_xml(_,Class,ClassXML),!.
+
+
 %      <!-- Ask-ClassHierarchy -->
 owl_link_request(getEquivalentClasses(KB,Class),element('GetEquivalentClasses',[kb=KB],ClassElement)) :-
 	(   nonvar(Class) -> desc_xml(_,Class,ClassXML), ClassElement=[ClassXML] ; ClassElement= []),!.
@@ -297,6 +303,25 @@ owl_link_response(element('Settings',Attrs,Elements), settings(WarningO,Settings
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
 	maplist(response_elements,Elements,Settings).
 	
+owl_link_response(element('Error',[error=Message],_Elements), error(Message)).
+owl_link_response(element('SyntaxError',[error=Message],_Elements), syntaxError(Message)).
+owl_link_response(element('KBError',[error=Message],_Elements), kbError(Message)).
+owl_link_response(element('SemanticError',[error=Message],_Elements), semanticError(Message)).
+
+
+owl_link_response(element('ClassHierarchy',Attrs,PairElements), classHierarchy(WarningO,Pairs)) :-
+	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
+	maplist(response_elements,PairElements,Pairs).
+
+owl_link_response(element('SetOfClasses',Attrs,ClassLE), setOfClasses(WarningO,ClassL)) :-
+	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
+	maplist(xml_desc(_),ClassLE,ClassL).
+
+owl_link_response(element('Settings',Attrs,SettingsE), settings(WarningO,Settings)) :-
+	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
+	maplist(response_elements,SettingsE,Settings).
+
+
 
 %% pass all other responses unprocessed for now
 %  TODO: handle all remaining responses into Prolog terms.
@@ -306,7 +331,36 @@ owl_link_response(Res,Res).
 
 
 response_elements(element(protocolVersion,Attrs,_),protocolVersion(Attrs)) :- !.
+response_elements(element('ClassSubClassesPair',_,[element('ClassSynset',_,ClassDescL),SynsetsE]),
+		  classSubClassesPair(synset(Classes),Synsets)) :- 
+	maplist(xml_desc(_),ClassDescL,Classes),
+	maplist(SynsetsE,Synsets),
+	!.
+response_elements(element('SetOfClassSynsets',_,SynsetE),Synsets) :-
+	 maplist(response_elements,SynsetE,Synsets),!.
+
+response_elements(element('ClassSynset',_,ClassDescL),Classes) :-
+	maplist(xml_desc(_),ClassDescL,Classes),!.
+
+response_elements(element('Setting',[key=Key], [DataRangeE,LiteralE]),setting(Key,DataRange,Literal)) :-
+		  LiteralE = element('Literal',_,[Literal]),
+		  (   DataRangeE = element('owl:Datatype',Attrs,_) -> 
+		  (   member(abbreviatedIRI=DataType,Attrs), DataRange = DataType,! ;
+		      member('IRI' = DataType,Attrs),DataRange = DataType,! ; 
+		      DataRange = unknown_datatype) ;
+		  DataRange = DataRangeE),!.
+
+response_elements(element('Property',[key=Key], [DataRangeE,LiteralE]),property(Key,DataRange,Literal)) :-
+		  LiteralE = element('Literal',_,[Literal]),
+		  (   DataRangeE = element('owl:Datatype',Attrs,_) -> 
+		  (   member(abbreviatedIRI=DataType,Attrs), DataRange = DataType,! ;
+		      member('IRI' = DataType,Attrs),DataRange = DataType,! ; 
+		      DataRange = unknown_datatype) ;
+		      DataRange = DataRangeE),!.
+
+
 response_elements(X,X).
+
 
 
 

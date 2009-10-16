@@ -14,53 +14,66 @@
 
 main(URL) :-
 
-    % OWLLink Example 1
+    % OWLLink Example 1 - Get Descriptions
     owl_link(URL,[getDescription],Response1,
 	     [reasoner,
 	      request_file='../examples/owllink/thea-owllink-example-GetDescription-request.xml',
 	      response_file='../examples/owllink/owllink-example-GetDescription-response-20091016.xml']),
-    print(Response1),nl,
+    print('--------------------'),nl,print(Response1),nl,
     
-    % OWLLink Example 2
+    % OWLLink Example 2 - Create KB
     owl_link(URL,[createKB([kb='http://owllink.org/examples/KB_1'],[]),
 		  tell('http://owllink.org/examples/KB_1',
 		       [subClassOf('A','B'),
 			subClassOf('B','C')]),
-		  isClassSatisfiable('http://owllink.org/examples/KB_1','A')
+		  isClassSatisfiable('http://owllink.org/examples/KB_1','A'),
+		  releaseKB('http://owllink.org/examples/KB_1')
 		 ],Response2,
 	     [reasoner,
 	      request_file='../examples/owllink/thea-owllink-example-CreateKB-request.xml',
 	      response_file='../examples/owllink/owllink-example-CreateKB-response-20091016.xml']),
-    print(Response2),nl,
+    print('--------------------'),nl,print(Response2),nl,
 
-    % OWLLink Example 3      
+    % OWLLink Example 3	- Get Settings
    
-    owl_link(URL,[getSettings('http://owllink.org/examples/KB_1')],Response3,
+    owl_link(URL,[createKB([kb='http://owllink.org/examples/KB_1'],[]),
+		  getSettings('http://owllink.org/examples/KB_1'),
+		  releaseKB('http://owllink.org/examples/KB_1')],Response3,
 	     [reasoner,
 	      request_file='../examples/owllink/thea-owllink-example-RetrieveSettings-request.xml',
 	      response_file='../examples/owllink/owllink-example-GetSettings-response-20091016.xml'
 	     ]),
-    print(Response3),nl,
+    print('--------------------'),nl,print(Response3),nl,
    
 
-    % OWLLink Example 4      
-    owl_link(URL,[set('http://owllink.org/examples/KB_1','selectedProfile',['OWL DL'])],Response4,
+    % OWLLink Example 4 - Set     
+    owl_link(URL,[createKB([kb='http://owllink.org/examples/KB_1'],[]),
+		  set('http://owllink.org/examples/KB_1','abbreviatesIRIs',[false]),
+		  getSettings('http://owllink.org/examples/KB_1'),
+		  releaseKB('http://owllink.org/examples/KB_1')],Response4,
 	     [reasoner,
 	      request_file='../examples/owllink/thea-owllink-example-SetSettings-request.xml',
 	      response_file='../examples/owllink/owllink-example-Set-response-20091016.xml']),
-    print(Response4),nl,
+    print('--------------------'),nl,print(Response4),nl,
   
-    % OWLLink Example 5     
+    % OWLLink Example 5 - Prefixes    
     owl_link(URL,[createKB([kb='http://owllink.org/examples/KB_2'],
 					['Prefix'(name='test:',fullIRI='http://www.owllink.orgtest/ont'),
 					'Prefix'(name='ont:',fullIRI='http://owllink.org/examples/ontology')]),
-			       tell('http://owllink.org/examples/KB_2',
-				    [subClassOf('ont:ClassA','test:ClassA')])		       			       
-			      ],Response5,
+		  tell('http://owllink.org/examples/KB_2',
+		       [subClassOf('test:ClassA','ont:ClassA')]),
+		  set('http://owllink.org/examples/KB_2','abbreviatesIRIs',[false]),
+		  getSubClasses('http://owllink.org/examples/KB_2','http://owllink.org/examples/ontology#ClassA',false),
+		  getSubClasses('http://owllink.org/examples/KB_2','ont:ClassA',false),
+		  set('http://owllink.org/examples/KB_2','abbreviatesIRIs',[true]),
+		  getSubClasses('http://owllink.org/examples/KB_2','http://owllink.org/examples/ontology#ClassA',false),
+		  releaseKB('http://owllink.org/examples/KB_2')
+		 ],
+	     Response5,
 	     [reasoner,
 	      request_file='../examples/owllink/thea-owllink-example-Prefixes-request.xml',
 	      response_file='../examples/owllink/owllink-example-Prefix-response-20091016.xml']),
-    print(Response5),nl,
+    print('--------------------'),nl,print(Response5),nl,
     
     % OWLLink Example 6     
     owl_link(URL,[createKB([kb='http://owllink.org/examples/KB_3'],
@@ -76,33 +89,43 @@ main(URL) :-
 	     [reasoner,
 	      request_file='../examples/owllink/thea-owllink-example-LoadOntology-request.xml',
 	      response_file='../examples/owllink/owllink-example-LoadOntology-response-20091016.xml']),
-    print(Response6),nl,
+    print('--------------------'),nl,print(Response6),nl,
     
     % OWLLink Example 7
-    owl_link(URL,[createKB([kb='http://owllink.org/examples/KB_4'],[]),
-			       tell('http://owllink.org/examples/KB_4',
+    owl_link(URL,[createKB([kb='http://owllink.org/examples/KB_1'],[]),
+			       tell('http://owllink.org/examples/KB_1',
 				    [subClassOf('B','A'),
 				     subClassOf('C','A'),
 				     equivalentClasses(['D','E']),
-				     classAssertion('A','iA')				     
+				     classAssertion('A','iA'),
+				     subClassOf('C','A')
 				    ]),
-			       getAllClasses('http://owllink.org/examples/KB_4'),
-			       getEquivalentClasses('http://owllink.org/examples/KB_4','D'),
-			       isClassSubsumedBy('http://owllink.org/examples/KB_4',
+			       getAllClasses('http://owllink.org/examples/KB_1'),
+			       getEquivalentClasses('http://owllink.org/examples/KB_1','D'),
+			       isClassSubsumedBy('http://owllink.org/examples/KB_1',
 						 'http://www.w3.org/2002/07/owl#Thing',
 						 'http://www.w3.org/2002/07/owl#Nothing'),
-			       getSubClasses('http://owllink.org/examples/KB_4','C'),
-			       createKB([kb='http://owllink.org/examples/KB_5'],[]),
-			       tell('http://owllink.org/examples/KB_5',
+			       getSubClasses('http://owllink.org/examples/KB_1','C'),
+			       createKB([kb='http://owllink.org/examples/KB_2'],[]),
+			       tell('http://owllink.org/examples/KB_2',
 				    [subClassOf('A','B')]),
-			       releaseKB('http://owllink.org/examples/KB_4'),
-			       getAllClasses('http://owllink.org/examples/KB_4')
+			       releaseKB('http://owllink.org/examples/KB_1'),
+			       getAllClasses('http://owllink.org/examples/KB_1')
 			      ],Response7,
 	     	     [reasoner,
 		      request_file='../examples/owllink/thea-owllink-example-PoolingRequests-request.xml',
 		      response_file='../examples/owllink/owllink-example-poolingrequests-response-20091016.xml']),
-    print(Response7),nl,
-
+    print('--------------------'),nl,print(Response7),nl,
+/*          
+       [kb(http://owllink.org/examples/KB_4, []), 
+	syntaxError(Ignored non-valid OWLlink Tell requests: ((ClassAssertion                                            (Class A)                                            (Class iA)))), 
+	setOfClasses([], [owl:Thing, C, B, E, A, D]), setOfClasses([], [E, D]), 
+	booleanResponse(false, []), element(SetOfClassSynsets, [], []), 
+	kbError(KB http://owllink.org/examples/KB_5 already exists, request denied), 
+	ok([]), 
+	ok([]), 
+	kbError(KB http://owllink.org/examples/KB_4 not found. Request denied)]
+    */
     % OWLLink Example 8 - Taxonomy Request
     owl_link(URL,[createKB([kb='http://owllink.org/examples/KB_1'],[]),
 			       getSubClassHierarchy('http://owllink.org/examples/KB_1',_),
@@ -135,7 +158,96 @@ main(URL) :-
 	     [reasoner,
 	      request_file='../examples/owllink/thea-owllink-example-Taxonomy-request.xml',
 	      response_file='../examples/owllink/owllink-example-taxonomy-response-20091016.xml']),
-    print(Response8),nl.
+    print('--------------------'),nl,   print(Response8),nl.
+
+
+
+/*
+     
+    
+------------------------------
+[kb(http://owllink.org/examples/KB_1, []), 
+ ok([]), 
+ booleanResponse(true, []), ok([])
+]
+--------------------
+[kb(http://owllink.org/examples/KB_1, []), 
+ settings([], [setting(uniqueNameAssumption, xsd:boolean, false), 
+	       setting(verbose, xsd:boolean, false), 
+	       setting(leanMode, xsd:boolean, false), 
+	       setting(keepsAxioms, xsd:boolean, true), 
+	       setting(usesLessMemory, xsd:boolean, false), 
+	       setting(ignoresAnnotations, xsd:boolean, false), 
+	       setting(ignoresDeclarations, xsd:boolean, false), 
+	       setting(incremental, xsd:boolean, true), 
+	       setting(abbreviatesIRIs, xsd:boolean, true)]), 
+ ok([])
+]
+--------------------
+[kb(http://owllink.org/examples/KB_1, []), 
+ ok([]), 
+ settings([], [setting(uniqueNameAssumption, http://www.w3.org/2001/XMLSchema#boolean, false), 
+	       setting(verbose, http://www.w3.org/2001/XMLSchema#boolean, false), 
+	       setting(leanMode, http://www.w3.org/2001/XMLSchema#boolean, false), 
+	       setting(keepsAxioms, http://www.w3.org/2001/XMLSchema#boolean, true), 
+	       setting(usesLessMemory, http://www.w3.org/2001/XMLSchema#boolean, false), 
+	       setting(ignoresAnnotations, http://www.w3.org/2001/XMLSchema#boolean, false),
+	       setting(ignoresDeclarations, http://www.w3.org/2001/XMLSchema#boolean, false), 
+	       setting(incremental, http://www.w3.org/2001/XMLSchema#boolean, true), 
+	       setting(abbreviatesIRIs, http://www.w3.org/2001/XMLSchema#boolean, false)]),
+ ok([])
+]
+--------------------
+[kb(http://owllink.org/examples/KB_2, []), 
+ ok([]), 
+ ok([]), 
+ semanticError(Reasoning error 'Undefined concept name                  http://owllink.org/examples/ontology#ClassA in TBox                  http://owllink.org/examples/KB_2' occured),
+ element(SetOfClassSynsets, [], [element(ClassSynset, [], [element(owl:Class, [IRI=http://www.owllink.orgtest/ontClassA], [])])]), ok([]), 
+ semanticError(Reasoning error 'Undefined concept name                  http://owllink.org/examples/ontology#ClassA in TBox                  http://owllink.org/examples/KB_2' occured),
+ ok([])]
+--------------------
+[kb(http://owllink.org/examples/KB_3, []),
+ syntaxError(No valid OWLlink KBRequest request: LoadOntology),
+ ok([])]
+--------------------
+[kb(http://owllink.org/examples/KB_1, []),
+ syntaxError(Ignored non-valid OWLlink Tell requests: ((ClassAssertion                                            (Class A)                                            (Class iA)))), 
+ setOfClasses([], [owl:Thing, C, B, E, A, D]), 
+ setOfClasses([], [E, D]), 
+ booleanResponse(false, []), 
+ element(SetOfClassSynsets, [], []), kb(http://owllink.org/examples/KB_2, []), 
+ ok([]),
+ ok([]),
+ kbError(KB http://owllink.org/examples/KB_1 not found. Request denied)
+]
+--------------------
+[kb(http://owllink.org/examples/KB_1, []), 
+ classHierarchy([], [classSubClassesPair(synset([owl:Thing]), [])]), kbError(KB http://owllink.org/examples/KB_2 already exists, request denied), 
+ ok([]), 
+ kbError(KB http://owllink.org/examples/KB_3 already exists, request denied), 
+ ok([]),
+ kb(http://owllink.org/examples/KB_4, []), 
+ ok([]),
+ classHierarchy([], [classSubClassesPair(synset([owl:Thing]), []), classSubClassesPair(synset([B]), [])]),
+ classHierarchy([], [classSubClassesPair(synset([owl:Thing]), []), classSubClassesPair(synset([http://www.owllink.orgtest/ontClassA]), [])]), 
+ classHierarchy([], [classSubClassesPair(synset([owl:Thing, A]), []), classSubClassesPair(synset([owl:NoThing, C]), [])]),
+ ok([]),
+ ok([]), 
+ ok([]),
+ ok([])]
+
+*/
+
+
+
+
+
+
+
+
+
+
+
 
 
 
