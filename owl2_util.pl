@@ -9,9 +9,11 @@
            write_owl_as_prolog/0,
            expand_namespaces/0,
            remove_namespaces/0,
+           contract_namespaces/0,
            remove_ns/2,
            replace_ns_prefix/4,
            use_labels_for_IRIs/0,
+           use_safe_labels_for_IRIs/0,
            use_numeric_IRIs_for_classes/2,
            prefix_IRIs/1,
            translate_IRIs/1,
@@ -85,10 +87,15 @@ remove_namespaces:-
 expand_namespaces:-
         translate_IRIs(expand_ns).
 
+contract_namespaces:-
+        translate_IRIs(contract_ns).
+
 %% prefix_IRIs(+NS)
 % attaches a prefix to all names.
 prefix_IRIs(X):-
         translate_IRIs(prefix_IRI(X)).
+
+
 
 %% use_numeric_IRIs_for_classes(NS,Base)
 %
@@ -115,6 +122,9 @@ use_numeric_IRIs_for_classes(NS,Base) :-
 use_labels_for_IRIs:-
         translate_IRIs(use_label_as_IRI).
 
+use_safe_labels_for_IRIs:-
+        translate_IRIs(use_safe_label_as_IRI).
+
 remove_ns(IRI,X) :-
         concat_atom([_,X],'#',IRI),
         !.
@@ -127,6 +137,24 @@ replace_ns_prefix(From,To,OldIRI,NewIRI) :-
         atom_concat(To,Local,NewIRI).
 replace_ns_prefix(_,_,X,X).
 
+contract_ns(URI,ID) :-
+        atom(URI),
+        rdf_global_id(NS:Local,URI),
+        NS \= rdf,
+        NS \= rdfs,
+        NS \= owl,
+        !,
+        concat_atom([NS,Local],':',ID).
+contract_ns(X,X).
+
+
+
+use_safe_label_as_IRI(IRI,X) :-
+        use_label_as_IRI(IRI,X1),
+        atom_chars(X1,Chars),
+        replace_nonalpha(Chars,Chars2),
+        atom_chars(X,Chars2),
+        !.
 
 use_label_as_IRI(IRI,X) :-
         labelAnnotation_value(IRI,X),
@@ -284,6 +312,23 @@ write_owl_class(Class,_) :-
 write_owl_class(Class,_) :-
         write(Class).
 
+replace_nonalpha(['_'|T],L) :-
+        replace_nonalpha1([x,x,x|T],L).
+replace_nonalpha([H|T],L) :-
+        downcase_atom(H,H2),
+        replace_nonalpha1([H2|T],L).
+replace_nonalpha1([],[]) :- !.
+replace_nonalpha1([H|T],[H|T2]) :-
+        isalpha(H),
+        !,
+        replace_nonalpha1(T,T2).
+replace_nonalpha1([_|T],['_'|T2]) :-
+        replace_nonalpha1(T,T2).
+
+isalpha('_').
+isalpha(X) :- X @>= 'a',X @=< 'z'.
+isalpha(X) :- X @>= 'A',X @=< 'Z'.
+isalpha(X) :- X @>= '0',X @=< '9'.
 
 
 /** <module> Various utility predicates for OWL ontologies
