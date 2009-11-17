@@ -25,33 +25,47 @@ entailed(A) :-
 
 
 entailed(A,EL) :- entailed_2(A,EL).
+
 % NEXT LEVEL
 entailed_2(A,EL) :- entailed_5(A,EL).
-
-
-
-
-
-
-
 
 
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 % level 5:
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-% asserted
-entailed_5(subClassOf(X,Y),_) :- subClassOf(X,Y).
+
+% NEXT LEVEL
+entailed_5(A,EL) :- entailed_10(A,EL).
+
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% level 10:
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 % asserted
-entailed_5(classAssertion(C,I),_) :- classAssertion(C,I).
+entailed_10(subClassOf(X,Y),_) :- subClassOf(X,Y).
 
 % asserted
-entailed_5(propertyAssertion(P,I,J),_) :- propertyAssertion(P,I,J).
+entailed_10(classAssertion(C,I),_) :- classAssertion(C,I).
 
 % asserted
-entailed_5(individual(I),_) :- individual(I).
+entailed_10(propertyAssertion(P,I,J),_) :- propertyAssertion(P,I,J).
 
+% asserted
+entailed_10(individual(I),_) :- individual(I).
+
+:- dynamic entailed_cached/1.
+% cached
+entailed_10(X,_) :-
+        entailed_cached(X).
+
+entailed_10(X,_) :-
+        \+ entailed_cached(_),
+        forall(entailed_pre(A),
+               assert(entailed_cached(A))),
+        assert(entailed_cached(null)), % to ensure only executed once
+        entailed_cached(X).
 
 
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
