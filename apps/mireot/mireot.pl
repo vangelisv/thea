@@ -14,7 +14,14 @@ mireot(O,O2) :-
         setof(O-C-O2,
               ontology_references_class_in(O,C,O2),
               Refs),
-        forall(member(O-C-O2,Refs),
+        % we do not exclude self-pairs from the LCA which ensures we also
+        % capture leaf nodes too
+        findall(O-CA-O2,
+                (   member(O-C1-O2,Refs),
+                    member(O-C2-O2,Refs),
+                    least_common_ancestor(C1,C2,CA)),
+                RefsLCA),
+        forall(member(O-C-O2,RefsLCA),
                mireot_class(O,C,O2)).
 
 mireot_class(O,C,O2) :-
@@ -40,6 +47,18 @@ mireot_files(InFile,OutFile,O) :-
 imports_closure_root(O) :-
         ontology(O),
         \+ ontologyImport(_,O).
+
+% TODO: move to generic place
+common_ancestor(X,Y,A) :-
+  entailed(subClassOf(X,A)),
+  entailed(subClassOf(Y,A)).
+
+least_common_ancestor(X,Y,A) :-
+  common_ancestor(X,Y,A),
+  \+ ((common_ancestor(X,Y,A2),
+       A2\=A,
+       entailed(subClassOf(A2,A)))).
+
 
 /** <module> referencing external ontology terms
 
