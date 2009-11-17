@@ -612,7 +612,13 @@ axiom_arguments(ontologyDirective,[ontology, iri]).
 valid_axiom(ontologyDirective(A, B)) :- subsumed_by([A, B],[ontology, iri]).
 
 %% ontologyAxiom(?Ontology, ?Axiom)
-% True if Ontology contains Axiom
+% True if Ontology contains Axiom.
+% Axiom is a prolog term that is typically asserted and separately and can thus can be executed as a goal.
+% For example, an ontology http://example.org# will contain redundant assertions:
+% ==
+% subClassOf('http://example.org#a', 'http://example.org#b').
+% ontologyAxiom('http://example.org#', subClassOf('http://example.org#a','http://example.org#b')).
+% ==
 :- ext(ontologyAxiom/2).
 axiom_arguments(ontologyAxiom,[ontology, axiom]).
 valid_axiom(ontologyAxiom(A, B)) :- subsumed_by([A, B],[ontology, axiom]).
