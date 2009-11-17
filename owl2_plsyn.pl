@@ -69,6 +69,16 @@ owl2_io:load_axioms_hook(File,plsyn,Opts) :-
 owl2_io:save_axioms_hook(_File,plsyn,Opts) :-
         write_owl_as_plsyn(Opts).
 
+owl_parse_plsyn(File,_Opts) :-
+        open(File,read,IO,[]),
+        repeat,
+        (   at_end_of_stream(IO)
+        ->  true
+        ;   read_term(IO,PlTerm,[module(owl2_plsyn)]),
+            plsyn2owl(PlTerm,Axiom),
+            assert_axiom(Axiom),
+            fail),
+        close(IO).
 
 write_owl_as_plsyn:-
         write_owl_as_plsyn([]).
