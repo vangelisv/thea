@@ -1,4 +1,4 @@
-
+/* -*- Mode: Prolog -*- */
 
 % ----------------------------------------
 % TBox Reasoning
@@ -23,6 +23,7 @@ entailed(subPropertyOf(X,Y),EL) :- \+member(X<Z,EL),subPropertyOf(X,Z),entailed(
 
 entailed(subClassOfReflexive(X,Y), EL) :- entailed(subClassOf(X,Y), EL).
 entailed(subClassOfReflexive(X,X), _) :- class(X).
+
 
 entailed_2(classAssertion(C,I),EL) :-
         classAssertion(C2,I),
@@ -49,7 +50,9 @@ entailed_2(propertyAssertion(P,A,B), EL) :-
 
 
 % transitivity of subclass
-entailed_5(subClassOf(X,Y),EL) :- subClassOf(X,Z),\+member(X<Z,EL),entailed(subClassOf(Z,Y),[X<Z|EL]). % TODO: cycles
+% we avoid recursion by stratification - 10 cannot call a 5
+% 10 is either asserted or a precalculated set of assertions based on eg equivalentClass
+entailed_5(subClassOf(X,Y),EL) :- entailed_10(subClassOf(X,Z),EL),\+member(X<Z,EL),entailed(subClassOf(Z,Y),[X<Z|EL]). % TODO: cycles
 
 
 % subclass over existential restrictions
@@ -58,3 +61,11 @@ entailed_5(subClassOf(X,someValuesFrom(P,Y)), EL) :-
         subClassOf(X,someValuesFrom(P,YY)),
         subClassOf(YY,Y),
         \+ member(X<someValuesFrom(P,Y),EL).
+
+
+% e.g. if X = A and B, then treat this like X subClassOf A, X subClassOf B
+% this is v. slow when X is nonvar
+entailed_pre(subClassOf(X,Y)) :-
+        pairwise_equivalent_class(X,intersectionOf(DL)),
+        atom(X),
+        member(Y,DL).

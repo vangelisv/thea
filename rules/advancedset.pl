@@ -49,13 +49,6 @@ entailed_2(subClassOf(X,Y),EL) :-
         debug(owl2_basic_reasoner,'testing for subsumption between existential restrictions ~w ~w',[X,Y]),
         entailed(subClassOf(DX,DY),EL).
 
-entailed_2(subClassOf(X,Y),_) :-
-        (   nonvar(X)
-        ->  true
-        ;   class(X)),
-        debug(owl2_basic_reasoner,'testing for X < X^... ~w ~w',[X,Y]),
-        pairwise_equivalent_class(X,intersectionOf(DL)),
-        member(Y,DL).
 
 entailed_2(subClassOf(X,Y),_) :-
         (   nonvar(X)
