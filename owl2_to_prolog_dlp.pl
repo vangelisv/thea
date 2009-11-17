@@ -127,6 +127,7 @@ owl_write_dlpterm(OwlAsTerm,_) :-
 % Generate code for each item in the list.
 % 
 
+
 owl_write_prolog_code([],_) :- !.
 
 
@@ -165,7 +166,15 @@ owl_write_prolog_code(\+ (A),Options) :- !,
 % Generate code for a prolog rule Head :- Body 
 % 
 
-owl_write_prolog_code( ('owl:Nothing'(_):- _), Options) :-
+owl_write_prolog_code( (class('owl:Nothing',_):- B), Options) :-
+        member(disjunctive_datalog(true),Options),
+        !,
+        write(':-'),            
+        nl, write('     '), 
+        owl_write_prolog_code(B,Options), 
+        write('.'), nl.
+
+owl_write_prolog_code( (class('owl:Nothing',_):- _), Options) :-
         member(suppress_owl_nothing(true),Options),
         !.
 
@@ -379,7 +388,7 @@ owl_as2prolog(disjointClasses(L),RL,_) :- !,
                 (   member(C,L),
                     member(D,L),
                     C@<D,
-                    owl_as2prolog(subClassOf(intersectionOf([C,D]),'owl:nothing'),R,_)),
+                    owl_as2prolog(subClassOf(intersectionOf([C,D]),'owl:Nothing'),R,_)),
                 RL).
 
 owl_as2prolog(differentIndividuals(_),none,_) :- !.
