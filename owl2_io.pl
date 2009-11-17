@@ -41,7 +41,22 @@ load_axioms(File,Fmt,_Opts) :-
         ;   Fmt=owlpl
         ;   Fmt=pl),
         !,
-        consult_axioms(File).
+        style_check(-discontiguous),
+        style_check(-atom),
+	file_name_extension(Base, _Ext, File),
+	file_name_extension(Base, qlf, QlfFile),
+        debug(load,'checking for: ~w',[QlfFile]),
+	(   exists_file(QlfFile),
+	    time_file(QlfFile, QlfTime),
+	    time_file(File, PlTime),
+	    QlfTime >= PlTime
+	->  consult_axioms(QlfFile)
+	;   access_file(QlfFile, write)
+	->  qcompile(File),
+            consult_axioms(QlfFile)
+        ;   debug(load,'  cannot write to qlf (permission problem?), loading from: ~w',[File]),
+            consult_axioms(File)
+	).
 load_axioms(File,Fmt,Opts) :-
         load_handler(read,Fmt),
         load_axioms_hook(File,Fmt,Opts),
@@ -71,7 +86,7 @@ save_axioms(File,Fmt,_Opts) :-
         ;   true),
         forall(axiom(A),
                (   A=implies(_,_)
-               ->  format('swrl:~q.~n',[A]) % ugly hack..
+               ->  format('swrl:~q.~n',[A]) % ugly hack - assume owl2_model module for everything except this
                ;   format('~q.~n',[A]))),
         told.
 save_axioms(File,Fmt,Opts) :-
@@ -119,6 +134,7 @@ format_module(write,owl,owl2_export_rdf).
 format_module(write,owlx,owl2_xml).
 format_module(write,plsyn,owl2_plsyn).
 format_module(write,dl_syntax,owl2_dl_syntax).
+format_module(write,dlp,owl2_to_prolog_dlp).
 
 
 /** <module> 
