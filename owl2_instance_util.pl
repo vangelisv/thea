@@ -36,7 +36,7 @@ instance_graph(X,G,Opts) :-
         instance_graph_extend(Nodes,[],[],G,Opts).
 
 %% instance_graph_extend(+Nodes:list,+VisitedL:list,+EdgesIn:list,?Edges:list,+Opts)  is det
-
+% deterministically extend a list of edges
 instance_graph_extend([],_,E,E,_Opts) :- !.
 instance_graph_extend([D-_|Nodes],VisitedL,EdgesIn,EdgesOut,Opts) :-
         option(max_depth(MaxD),Opts,3),
@@ -78,7 +78,7 @@ invert_graph([edge(P,X,Y)|Edges],[edge(PI,Y,X)|Edges2]) :-
 invert_graph([_|Edges],Edges2) :-
         invert_graph(Edges,Edges2).
 
-
+%all_chains(L) :-
 
 %% edge_to_class_expression(+Edge,?ClassExpression)
 edge_to_class_expression(edge(inverseOf(P),X,Y),CE) :-
