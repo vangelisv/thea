@@ -46,7 +46,8 @@ owl2_to_prolog_dlp.pl\
 owl2_util.pl\
 owl2_xml.pl\
 swrl.pl\
-swrl_rdf_hooks.pl
+swrl_rdf_hooks.pl\
+rules
 
 LIBALL=		$(LIBPL) $(SUPPORT)
 EXAMPLES=	README
