@@ -4,8 +4,11 @@ A collection of modules for parsing and manipulating OWL2 ontologies
 in Prolog. It is developed with SWI-Prolog in mind, but the goal is to
 maximize portability with other prologs, such as Yap and XSB.
 
-This module is currently in alpha status - aspects may change
-radically!
+This documentation is intended to be read via pldoc
+
+---++ Installation
+
+See INSTALL.txt
 
 ---++ Overview
 
@@ -17,12 +20,12 @@ Predicates such as subClassOf/2 can be used to query in-memory axioms
 
 There are a variety of surface forms for OWL2. The goal is to
 eventually support all of these for both parsing and writing. So far
-we have (incomplete) parsers for:
+we have parsers and writers for:
 
 * RDF - owl2_from_rdf.pl
 * OWL-XML - owl2_xml.pl
 
-We also allow for reading and writing from prolog factfiles
+We also allow for reading and writing from prolog factfiles.
 
 The module owl2_io.pl is used for reading and writing other formats
 and languages. For example:
@@ -60,7 +63,8 @@ There is also a very partial TBox reasoner in owl2_reasoner.pl, and an
 ad-hoc reasoner in owl2_basic_reasoner.pl that can be used with a
 non-tabled prolog such as SWI; however, this gives incomplete results.
 
-The DIG interface from Thea1 has yet to be converted.
+The DIG interface from Thea1 has yet to be converted. However, as we
+now have OWLLink support, and DIG is being retired in favor of OWLLink.
 
 You can also use java reasoners via the OWLAPI bridge. See
 owl2_owlapi_java.pl
@@ -80,6 +84,22 @@ would like a dynamic view over an RDF database, although this will be
 difficult due to the non-monotonic nature of the mapping between RDF
 and OWL.
 
+---++ On namespaces
+
+Currently all IRIs are treated as Prolog atoms. This makes for
+slightly verbose axioms, especially if long URLs are used.
+
+One possible future option is to use the semweb library and
+rdf_register_ns/2 to allow for convenient specification of namespaces
+using a QName-like mechanism. This is not currently
+implemented. Comments welcome.
+
+One possibility is to simply rewrite the ontology using more compact
+atoms. Even though the OWL spec dictates that well-formed IRIs should
+be used, Thea allows you to use any unique atom to identify an
+entity. See remove_namespaces/0 in owl2_util.pl for details. Of course,
+care must be taken when doing this.
+
 ---++ Optional Extras
 
 The core modules are
@@ -92,11 +112,6 @@ but may be useful for specific purposes. Here is an overview of what
 is currently distributed (some of these may move to separate
 distributions):
 
----+++ Web interface
-
-There is the beginnings of a primitive web front end:
-
-* prolege_server.pl
 
 ---+++ Integration with other LP systems
 
@@ -133,6 +148,39 @@ Requirements:
 
 * ODBC
 * sql_compiler.pro (currently distributed as part of blipkit)
+
+---++ Compatibility
+
+The goal is to keep the core ISO compliant and usable across prolog
+systems but this is difficult due to the different implementations of
+modules in different Prolog engines. We develop for SWI-Prolog and are
+aiming for full support for Yap in the near future.
+
+See the iso/ directory for a dynamically generated version of some
+Thea modules, stripped of module declarations. This is usable in
+no-module systems like GNU Prolog and systems with incompatible module
+syntax such as XSB. Only a subset of Thea functionality will be
+available here, as SWI/Yap specific libraries are used for RDF, XML
+and Java interaction.
+
+---++ Sample Applications
+
+See the apps/ director
+
+---+++ Web interface
+
+There is the beginnings of a primitive web front end:
+
+* apps/webthea/webthea.pl
+
+---+++ Obol - label parsing and generation
+
+* apps/labelgen/labelgen.pl
+
+---+++ MIREOT - selective migration of referenced classes into an ontology
+
+* apps/mireot/mireot.pl
+
 
 ---++ Authors
 
