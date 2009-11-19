@@ -7,7 +7,8 @@
 	   
 	   axiom_xml/3,
 	   desc_xml/3,
-	   axioms_elts/3
+	   axioms_elts/3,
+	   xml_desc/3
           ]).
 
 :- use_module(owl2_model).
@@ -144,7 +145,15 @@ xml_desc(_Parent,element(_:_Name,Atts,[]),IRI) :-
         iri_att(A),
         member(A=IRI,Atts),
         !.
-        
+
+%VV add 15/10 for OWLLink support
+xml_desc(_Parent,element('owl:Class',Atts,[]),IRI) :-
+        % TODO: _Name
+        iri_att(A),
+        member(A=IRI,Atts),
+        !.
+
+
 xml_desc(Parent,Elt,_) :-
         throw(xml_desc(Elt,in(Parent))).
 
@@ -159,6 +168,9 @@ atts_iri(Atts,IRI) :-
         member(A=IRI,Atts).
 
 iri_att('URI').  % TODO clarify. P4 uses this
+iri_att('abbreviatedIRI').  % VV add 15/10 for OWLLink support
+iri_att('IRI'). % VV add 15/10 for OWLLink support
+
 
 % ----------------------------------------
 % GENERATING XML
@@ -275,10 +287,7 @@ desc_xml(_Parent,IRI,element('http://www.w3.org/2006/12/owl2-xml#':Name,['URI'=I
 % except by guesswork
 desc_xml(_Parent,IRI,element('http://www.w3.org/2006/12/owl2-xml#':'Class',['URI'=IRI],[])) :-
         atom(IRI),
-	% VV 29/9 if Class Axiom then IRIs must be classes...
-	% member(Parent,['SubClassOf','EquivalentClasses','DisjointClasses','DisjointUnion']),
         !.
-
 
 desc_xml(_Ont,Desc,_) :-
         throw(description(Desc)).
