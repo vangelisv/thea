@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<ResponseMessage
-    xsi:schemaLocation="http://www.owllink.org/owllink-xml# ../owllink-xml-20091016.xsd">
-  <KB
-      kb="http://owllink.org/examples/KB_2"/>
-  <OK/>
-</ResponseMessage>

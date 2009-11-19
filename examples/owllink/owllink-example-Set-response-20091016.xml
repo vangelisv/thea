@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<ResponseMessage
-    xsi:schemaLocation="http://www.owllink.org/owllink-xml# ../owllink-xml-20091016.xsd">
-  <KBError
-      error="Setting 'selectedProfile' cannot be set for KB 'http://owllink.org/examples/KB_1'. Request denied"/>
-</ResponseMessage>

@@ -1,7 +1,0 @@
-objectProperty(likes).
-reflexiveProperty(likes).
-propertyDomain(likes,agent).
-disjointClasses([agent,inanimate]).
-class(agent).
-class(inanimate).
-classAssertion(inanimate,rock1). % reasoner will infer that rock1 likes itself, therefore it's an agent, therefore inconsistent

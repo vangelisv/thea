@@ -1,9 +1,0 @@
-To install Thea
-
-first install SWI-Prolog
-
-Then:
-
-./configure
-make
-sudo make install
