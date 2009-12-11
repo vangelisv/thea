@@ -69,6 +69,8 @@ now have OWLLink support, and DIG is being retired in favor of OWLLink.
 You can also use java reasoners via the OWLAPI bridge. See
 owl2_owlapi_java.pl
 
+For more information see Reasoning-using-Thea.txt
+
 ---++ Utilities
 
 Currently the owl2_util.pl is a grab-bag of ad-hoc utility
