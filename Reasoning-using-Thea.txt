@@ -1,0 +1,130 @@
+---+ Using Thea for Reasoning
+
+An ontology specified in OWL is amenable to reasoning. Some of the
+uses of reasoning are:
+
+ * To check for inconsistencies in an ontology
+ * To classify the ontology (i.e. find all implied subClassOf/2 relationships)
+ * To classify instances using the ontology (i.e. find all implied classAssertuon/2 relationships)
+
+Thea2 offers a number of different options for reasoning. These can be
+broken down into the following categories:
+
+ * Use of an external reasoning engine
+ * Direct use of prolog engine
+
+There are 2 main ways of accessing external reasoning engines - via
+the Java OWLAPI (which requires the JPL bridge) or across a network
+via OWLLink. A third way is via an external Logic Programming engine.
+
+The alternative to using an external reasoning engine is to reason
+using Prolog. At this time, this means SWI-Prolog, and
+backward-chaining based reasoning.
+
+---++ Use of a Java reasoning engine via JPL
+
+  * Module: owl2_java_owlapi.pl
+
+SWI-Prolog can interact with Java via the JPL library. The main OWL2
+library for Java is the Manchester OWLAPI. One of the advantages of
+the OWLAPI is that it provides a common reasoner API that allows for
+seamless integration with powerful reasoners such as Pellet and
+FaCT++. Thea2 has a bridge to the OWLAPI called owl2_java_owlapi. This
+module exports predicates such as
+
+  * reasoner_classify/1
+  * reasoner_subClassOf/4
+
+See the module documentation for more details
+
+At this time the bridge is to v2 of the OWLAPI. At some point we will
+switch to v3, but this switch should be seamless to Thea users.
+
+The implementation here should be complete and comprehensive - you
+should have access to the full power of these reasoners directly from
+Thea2. However, this has only been tested on a subset of ontologies
+which are of interest to the authors.
+
+---++ Use of a reasoning engine over the network
+
+  * Module: owl2_owllink.pl
+
+This module implements the OWLLink standard. See http://www.owllink.org/
+
+[VV to fill in more details here]
+
+Currently this supports using Thea as a client to an external reasoner
+running as an OWLLink server. This implementation should be complete
+[VV - true?]. In the future we may support using Thea as an OWLLink
+server too.
+
+Currently this exports one predicate, owl_link/4
+
+Perhaps this should also export more finer grained ask/tell predicates?
+
+---++ Use of an external Logic Programming engine.
+
+  * Module: owl2_to_prolog_dlp.pl
+
+It is possible to convert a subset of Description Logic Programs
+(DLPs, Grosof 04). Thea2 implements this functionality. For example,
+in an interactive prolog session you can type this:
+
+==
+use_module(library(thea2/owl_io)).
+load_axioms('myont.owl').
+save_axioms('myont.pl',dlp).
+==
+
+Then you can use the resulting program with a prolog or deductive
+database system. Tt has been tested on XSB and Yap - both of these
+prolog engines provide tabling, which is required for the vast
+majority of generated logic programs, to avoid non-termination.
+
+One unsatisfactory aspect of this approach is that you can't reason
+from within a Thea session. You have to use SWI-Prolog and Thea to
+generate the logic program, and then start a new session with
+XSB/Yap/etc and perform queries there. In the future this may be
+resolved in two ways:
+
+  * You will soon hopefully be able to use Yap directly from XSB or Yap,
+  and thus be able to generate the logic program and query it in the
+  same session. (See prolog-compatibility.txt)
+
+  * You may be able to call Yap or XSB from within an SWI prolog Thea
+    session.
+
+There are also hooks for answer set programming and disjunctive
+datalog systems such as DLV.
+
+---++ Use of backward chaining
+
+  * Module: owl2_basic_reasoner.pl
+
+In certain circumstances, it may be desirable to use simple standard
+prolog backward chaining to do basic reasoning over an ontology. For
+example, if you want a lightweight fast way of finding the transitive
+closure of subClassOf/2 and want to avoid external dependencies then
+this might be the right approach.
+
+This module comes with a sizeable caveat emptor. There will be
+circumstances when reasoning will not terminate (although the module
+uses a few tricks to avoid these). For the gory details see the module
+documentation.
+
+
+
+The DLP subset of OWL2-DL can be translated to logic programs using a
+transormation defined by Grosof. See owl2_to_prolog_dlp.pl
+
+The resulting programs can be used with Prologs such as Yap and
+XSB. 
+There is also a very partial TBox reasoner in owl2_reasoner.pl, and an
+ad-hoc reasoner in owl2_basic_reasoner.pl that can be used with a
+non-tabled prolog such as SWI; however, this gives incomplete results.
+
+The DIG interface from Thea1 has yet to be converted. However, as we
+now have OWLLink support, and DIG is being retired in favor of OWLLink.
+
+You can also use java reasoners via the OWLAPI bridge. See
+owl2_owlapi_java.pl
