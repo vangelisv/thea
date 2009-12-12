@@ -150,24 +150,3 @@ forall(reasoner_ask(Reasoner,subClassOf(X,Y)),
   * TODO
 
 
----++ Use of backward chaining
-
-  * Module: owl2_basic_reasoner.pl
-
-
-
-
-The DLP subset of OWL2-DL can be translated to logic programs using a
-transormation defined by Grosof. See owl2_to_prolog_dlp.pl
-
-The resulting programs can be used with Prologs such as Yap and
-XSB. 
-There is also a very partial TBox reasoner in owl2_reasoner.pl, and an
-ad-hoc reasoner in owl2_basic_reasoner.pl that can be used with a
-non-tabled prolog such as SWI; however, this gives incomplete results.
-
-The DIG interface from Thea1 has yet to be converted. However, as we
-now have OWLLink support, and DIG is being retired in favor of OWLLink.
-
-You can also use java reasoners via the OWLAPI bridge. See
-owl2_owlapi_java.pl
