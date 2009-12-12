@@ -182,6 +182,10 @@ propertyAssertion_chain([P|PL],A,B) :- propertyAssertion(P,A,C),propertyAssertio
 
   The implementation of this module provides a few tricks under-the-hood:
 
-  * The list of 'visited nodes' is maintained
+  * A list of 'visited nodes' is maintained to avoid non-termination
+   over cycles in some scenarios (not a replacement for tabling
+   however)
+
+  * The rules are stratified into levels. 
 
 */
