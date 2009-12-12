@@ -161,6 +161,59 @@ propertyAssertion_chain([P|PL],A,B) :- propertyAssertion(P,A,C),propertyAssertio
   graph of class/1 nodes linked by transitive someValuesFrom/2
   restrictions.
 
+  ---++ Examples
+  
+  ---+++ subClassOf/2 closure
+
+  given:
+
+  ==
+  subClassOf(a,b).
+  subClassOf(b,c).
+  ==
+
+  the following holds and can be inferred:
+  
+  ==
+  entailed(subClassOf(a,c))
+  ==
+
+  ==
+  subClassOf(a,b).
+  subClassOf(b,c).
+  ==
+
+  ---+++ transitiveProperty/1 and TBoxes
+
+  given:
+
+  ==
+  transitiveProperty(partOf).
+  subClassOf(spoke,someValuesFrom(partOf,bike_wheel)).
+  subClassOf(bike_wheel,someValuesFrom(partOf,bike)).
+  ==
+
+  the following holds and can be inferred:
+  
+  ==
+  subClassOf(spoke,someValuesFrom(partOf,bike)).
+  ==
+
+  ---+++ ABoxes
+
+  ==
+  subClassOf(cat,mammal).
+  subClassOf(mammal,animal).
+  classAssertion(cat,mr_whiskers).
+  ==
+
+  the following can be inferred:
+  
+  ==
+  entailed(classAssertion(animal,mr_whisker).
+  ==
+  
+  
   ---++ Implementation overview
 
   Using prolog and standard backwarch chaining we can find the
@@ -186,6 +239,24 @@ propertyAssertion_chain([P|PL],A,B) :- propertyAssertion(P,A,C),propertyAssertio
    over cycles in some scenarios (not a replacement for tabling
    however)
 
-  * The rules are stratified into levels. 
+  * The rules are stratified into levels. This helps avoid non-termination
 
+  ---++ Configuration of custom rules
+
+  Rules live in the directory rules/
+
+  Currently this module consults rules/basicset.pl
+
+  This gives certain entailments such as:
+
+  * subClassOf/2 closure over named classes
+
+  * subClassOf/2 closure where the subclass is a named class and the
+  superclass is a someValuesFrom/2 restriction involving a
+  transitiveProperty/1
+
+  * TODO - document. See file for details. See also .plt tests
+
+  
+  
 */

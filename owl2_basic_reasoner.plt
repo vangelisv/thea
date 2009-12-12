@@ -49,7 +49,6 @@ init_axioms :-
                 subClassOf(man_eating_shrimp,crustacean),
 
                 subClassOf(cat,someValuesFrom(eats,mouse)),
-
                 
                 equivalentClasses([man_eating_shrimp,intersectionOf([shrimp,someValuesFrom(eats,human)])]),
                 equivalentClasses([dangerous_animal,intersectionOf([animal,someValuesFrom(eats,human)])]),
