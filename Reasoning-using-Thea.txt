@@ -62,55 +62,98 @@ Currently this exports one predicate, owl_link/4
 
 Perhaps this should also export more finer grained ask/tell predicates?
 
----++ Use of an external Logic Programming engine.
+---++ Reasoning using Prolog
 
-  * Module: owl2_to_prolog_dlp.pl
+There are two opposing approaches here:
 
-It is possible to convert a subset of Description Logic Programs
-(DLPs, Grosof 04). Thea2 implements this functionality. For example,
-in an interactive prolog session you can type this:
+  * Rewrite the ontology as a logic program
+  * Use rules in conjunction with Thea predicates
+
+The first approach is based on rules defined by Grosof, and will
+rewrite axioms such as:
 
 ==
-use_module(library(thea2/owl_io)).
-load_axioms('myont.owl').
-save_axioms('myont.pl',dlp).
+subClassOf(cat, mammal).
+classAssertion(cat, mr_whiskers).
 ==
 
-Then you can use the resulting program with a prolog or deductive
-database system. Tt has been tested on XSB and Yap - both of these
-prolog engines provide tabling, which is required for the vast
-majority of generated logic programs, to avoid non-termination.
+to programs such as:
 
-One unsatisfactory aspect of this approach is that you can't reason
-from within a Thea session. You have to use SWI-Prolog and Thea to
-generate the logic program, and then start a new session with
-XSB/Yap/etc and perform queries there. In the future this may be
-resolved in two ways:
+==
+mammal(X) :- cat(X).
+cat(mr_whiskers).
+==
 
-  * You will soon hopefully be able to use Yap directly from XSB or Yap,
-  and thus be able to generate the logic program and query it in the
-  same session. (See prolog-compatibility.txt)
+See owl2_to_prolog_dlp.pl module documentation for details.
 
-  * You may be able to call Yap or XSB from within an SWI prolog Thea
-    session.
+This is useful for reasoning over ABoxes (individual), but not TBoxes.
 
-There are also hooks for answer set programming and disjunctive
-datalog systems such as DLV.
+A tabled prolog is recommended here, to avoid non-termination.
+
+The second approach can actually be further subdivided depending on
+whether backward chaining or a tabled prolog is used.
+
+If you are using a tabled prolog (e.g. Yap or XSB), you can use the
+module owl2_reasoner_rules.pl which defines rules such as this:
+
+==
+subClassOf(X,Y) :- subClassOf(X,Z),subClassOf(Z,Y).
+==
+
+If you are using SWI-Prolog, you can use owl2_basic_reasoner.pl which
+has backwards chaining rules. Caveat emptor: this module is
+experimental, liable to change and could be non-terminating. See the
+module docs for details.
+
+---++ TODO
+
+Currently each of the modules described above provides their own
+particular predicates. This isn't ideal for the application
+programmer. 
+
+We have a prototype of a common API for all reasoning engines, see
+owl2_reasoner.pl (not yet functional).
+
+This will be analagous to owl2_io.pl, which provides
+load_axioms/2 and save_axioms/2 with different parsers/writers
+providing hooks for these.
+
+The predicates exported might include:
+
+  * initialize_reasoner/3
+  * reasoner_tell/1
+  * reasoner_tell/2
+  * reasoner_ask/2
+  * reasoner_check_consistency/1
+
+We are envisioning something whereby the application programmer can write:
+
+==
+load_axioms('myont.owl'),
+initialize_reasoner(pellet,Opts,Reasoner),
+reasoner_tell(Reasoner),
+forall(reasoner_ask(Reasoner,subClassOf(X,Y)),
+       writeln(X-Y)).
+==
+
+---+++ Modules
+
+  * owl2_reasoner.pl
+  * owl2_java_owlapi.pl
+  * owl2_owllink.pl
+  * owl2_to_prolog_dlp.pl
+  * owl2_reasoning_rules.pl
+  * owl2_basic_reasoner.pl
+
+--+++ Reasoner Cookbook
+
+  * TODO
+
 
 ---++ Use of backward chaining
 
   * Module: owl2_basic_reasoner.pl
 
-In certain circumstances, it may be desirable to use simple standard
-prolog backward chaining to do basic reasoning over an ontology. For
-example, if you want a lightweight fast way of finding the transitive
-closure of subClassOf/2 and want to avoid external dependencies then
-this might be the right approach.
-
-This module comes with a sizeable caveat emptor. There will be
-circumstances when reasoning will not terminate (although the module
-uses a few tricks to avoid these). For the gory details see the module
-documentation.
 
 
 

@@ -120,22 +120,68 @@ propertyAssertion_chain([P|PL],A,B) :- propertyAssertion(P,A,C),propertyAssertio
 
 */
 
-/** <module> simple backward chaining
+/** <module> simple scruffy backward chaining 
 
   ---+ Synopsis
 
-==
-:- use_module(bio(owl2_basic_reasoner)).
+  ==
+  :- use_module(bio(owl2_basic_reasoner)).
 
-% 
-demo:-
-  nl.
+
+  ==
+
+  ---+ Details
+
+  In certain circumstances, it may be desirable to use simple standard
+  prolog backward chaining to do basic reasoning over an ontology. For
+  example, if you want a lightweight fast way of finding the transitive
+  closure of subClassOf/2 and want to avoid external dependencies then
+  this might be the right approach.
   
+  This module comes with a sizeable caveat emptor. There will be
+  circumstances when reasoning will not terminate (although the module
+  uses a few tricks to avoid these).
 
-==
+  ---+ Status
 
----+ Details
+  This module is still somewhat experimental
 
-Use a simple incomplete backward chaining algorithm to find entailed axioms
+  ---++ When should you use this module?
+
+  See Reasoning-using-Thea.txt
+
+  * You don't want to invoke any external dependencies, such as JPL or an external reasoner
+
+  * You are prepared for incomplete results under certain circumstances
+
+  * The task at hand is suited to 'scruffy' reasoning
+
+  For example, if you have a large lightly axiomatized ontology in
+  memory and you just want to find the closure of subClassOf/2 and the
+  graph of class/1 nodes linked by transitive someValuesFrom/2
+  restrictions.
+
+  ---++ Implementation overview
+
+  Using prolog and standard backwarch chaining we can find the
+  transitive closure of a predicate like this:
+
+  ==
+  entailed(subClassOf(X,Y)) :- subClassOf(X,Y). % base case
+  entailed(subClassOf(X,Z)) :- subClassOf(X,Y), entailed(subClassOf(X,Z)).
+  ==
+
+  However, this suffers from some limitations:
+
+  * If subClassOf/2 contains cycles, the program will be
+  non-terminating (not an impossible scenario, as subClassOf/2 is
+  reflexive)
+
+  * When we start to add rules for other axioms, there is a danger the
+    rules will interact in a way that causes non-termination.
+
+  The implementation of this module provides a few tricks under-the-hood:
+
+  * The list of 'visited nodes' is maintained
 
 */

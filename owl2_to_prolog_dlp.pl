@@ -728,31 +728,91 @@ map_description(Type,X,Description,DMap) :- !,
 
   ---+ Synopsis
 
-==
-:- use_module(bio(owl2_to_prolog_dlp)).
-
-% 
-demo:-
-  nl.
+  Type the following in a prolog session:
   
+  ==
+  use_module(library(thea2/owl_io)).
+  load_axioms('myont.owl').
+  save_axioms('myont.pl',dlp).
+  ==
 
-==
+  ---+ Details
 
----+ Details
+  This submodule converts an OWL ontology represented as OWL abstract
+  syntax terms into a Prolog program. The mapping implements the idea
+  of Description Logic Programs [Grossof]. Similar work has been also
+  done in the dlpconvert tool.
 
+  ---++ Invocation
 
-This submodule converts an OWL ontology represented as OWL
-abstract syntax terms into a Prolog program. The mapping implements the
-idea of Description Logic Programs [Grossof]. Similar work has been also
-done in the dlpconvert tool.
+  You should not need to import this module directly. Instead, import
+  owl2_io and use save_axioms/3. This module contains hooks that are invoked whenever the output format is one of:
 
-This extends Thea1 and the original Grossof rules to allow for certain
-OWL2 features, currently limited to property expressions (inverse
-properties and role chains)
+  * dlp
+  * dlp_yap
 
----++ Options
+  ---++ Example
 
- * disjunctive_datalog(DDL:boolean) - if true, will write rules in which head contains disjunctions
- * head_disjunction_symbol(Op:atom) - if true, and if disjunctive_datalog(true) then writes disjunctive head rules using Op as separator. For DLV, set Op='v'
+  An ontology which contains the axioms:
+  
+  ==
+  subClassOf(cat, mammal).
+  classAssertion(cat, mr_whiskers).
+  inverseProperties(likes,liked_by).
+  ==
+
+  will be converted to a program such as:
+
+  ==
+  mammal(X) :- cat(X).
+  cat(mr_whiskers).
+  likes(X,Y) :- liked_by(Y,X).
+  liked_by(X,Y) :- likes(Y,X).
+  ==
+
+  You can then consult this program from within a prolog engine and ask questions such as
+
+  ==
+  ?- mammal(X).
+  X = mr_whiskers
+  ==
+
+  Note that you should use a table prolog such as Yap, XSB or B-Prolog
+  
+    ---++ Options
+
+  The following options can be passed in to save_axioms/3
+  
+  * disjunctive_datalog(DDL:boolean) - if true, will write rules in which head contains disjunctions
+  * head_disjunction_symbol(Op:atom) - if true, and if disjunctive_datalog(true) then writes disjunctive head rules using Op as separator. For DLV, set Op='v'
+  * write_directives(table) - if true, this will write tabling directives. This is set automatically if the output format is dlp_yap
+  
+  ---++ Comparison with other ways of Reasoning in Thea2
+
+  See Reasoning-using-Thea.txt
+
+  One unsatisfactory aspect of this approach is that you can't reason
+  from within a Thea session. You have to use SWI-Prolog and Thea to
+  generate the logic program, and then start a new session with
+  XSB/Yap/etc and perform queries there. In the future this may be
+  resolved in two ways:
+
+  * You will soon hopefully be able to use Yap directly from XSB or Yap,
+  and thus be able to generate the logic program and query it in the
+  same session. (See prolog-compatibility.txt)
+
+  * You may be able to call Yap or XSB from within an SWI prolog Thea
+    session.
+
+  There are also hooks for answer set programming and disjunctive
+  datalog systems such as DLV.
+  
+  
+  ---++ Changes from Thea1
+  
+  This extends Thea1 and the original Grossof rules to allow for certain
+  OWL2 features, currently limited to property expressions (inverse
+  properties and role chains)
+  
 
 */
