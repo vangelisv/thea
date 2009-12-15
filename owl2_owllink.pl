@@ -1,8 +1,13 @@
+/*
+
+Hello
+
+*/
+
+
 :- module(owl2_owllink,
-	  [ owl_link/4
-
+	  [ owl_link/4 % File
 	  ]).
-
 
 :-use_module(library('http/http_client')).
 :-use_module(library('sgml')).
@@ -10,21 +15,24 @@
 :-use_module('owl2_xml').
 
 
-/*
-         	OWLLink Language Wrapper 
-	     -------------------------------
+/** <module> Implements the OWLLink interface
+
+OWLLink Language Wrapper
 
 This module is an implementation of the OWLLink interface. It allows
 communication between a Prolog program and an OWLLink enabled reasoner.
-It is using SWI Prolog's HTTP and SGML packages. 
+It is using SWI Prologs HTTP and SGML packages.
 
-	     -------------------------------
+  @author Vangelis Vassiliadis
+  @license GPL
+
+
 */
 
 
-%% owl_link(+ReasonerURL, +Request:list, -Response:list) is det
-%  Implementes OWLLink over HTTP. Sends an OWLLink request to the ReasonerURL and
-%  gets its Response. 
+%% owl_link(+ReasonerURL, +Request:list, -Response:list, +Options:list) is det
+%  Implements OWLLink over HTTP. Sends an OWLLink request to the ReasonerURL and
+%  gets its Response.
 
 owl_link(ReasonerURL,Request,Response,Options) :-
 	owl_link_request_l(Request,RequestXML),
@@ -41,35 +49,34 @@ owl_link(ReasonerURL,Request,Response,Options) :-
 					      xmlns:owl2='http://www.w3.org/2006/12/owl2-xml#',
 					      xmlns:owl='http://www.w3.org/2002/07/owl#'],
 			     RequestXML),[layout(false)]),close(St),  % layout false to avoid newlines
-	size_file(Filename,_RLength), % size_file is not counting correctly newlines in 
+	size_file(Filename,_RLength), % size_file is not counting correctly newlines in
 	                                                     % windows environment.
-	% print(RLength),nl,						     
+	% print(RLength),nl,
         % read(RLength1), print(RLength1),
 	% RLength1 is RLength + N,
 	(   member(no_reasoner,Options) ->
-	       open(FilenameResponse,read,St),	    
+	       open(FilenameResponse,read,St),
 	       load_structure(St,ResponseXML,[dialect(xml),space(sgml)]),close(St),
 	       ResponseXML = [element('ResponseMessage',_,ResponsesXML)],
 	       owl_link_response(ResponsesXML,Response)
-	;   
+	;
 	   (   http_post(ReasonerURL,file(Filename),Result,[]) ->
-		%	 [request_header('Content-Type' = 'text/xml'), 
-		%	  request_header('Content-Length' = RLength1)]) -> 	
+		%	 [request_header('Content-Type' = 'text/xml'),
+		%	  request_header('Content-Length' = RLength1)]) ->
 	       % write reasoner response to predefined file
 	          open(FilenameResponse,write,St),write(St,Result),close(St),
 	          % Read response from file into an xml structure
-	          open(FilenameResponse,read,St),	    
+	          open(FilenameResponse,read,St),
 	          load_structure(St,ResponseXML,[dialect(xml),space(sgml)]),close(St),
 	       	  ResponseXML = [element('ResponseMessage',_,ResponsesXML)],
 	          owl_link_response_l(ResponsesXML,Response)
-	   ; 
+	   ;
 	          debug(owllink,'Reasoner error ~w',[ReasonerURL])
 	   )
 	).
-	
 
-% owl_link_request(+TheaReq,-OwlLinkReq)
-%	 Convert a request from Thea / OWL2 to OwlLink XML Schema format
+
+
 
 owl_link_request_l([],[]).
 owl_link_request_l([Req1|ReqRest],[Res1|ResRest]) :-
@@ -78,9 +85,13 @@ owl_link_request_l([Req1|ReqRest],[Res1|ResRest]) :-
 
 
 
+%% owl_link_request(+TheaReq, -OwlLinkReq) is semidet
+%
+%	 Convert a request from Thea / OWL2 to OwlLink XML Schema format
+
 % 	 <!--  Management -->
 owl_link_request(getDescription,element('GetDescription',[],[])) :-!.
-owl_link_request(getSettings(KB),element('GetSettings',[kb=KB],[])) :- !.		 
+owl_link_request(getSettings(KB),element('GetSettings',[kb=KB],[])) :- !.
 owl_link_request(createKB(KB_Name_Attrs,Prefixes),element('CreateKB',KB_Name_Attrs,EPrefixes)):-
 	options_to_elements(Prefixes,EPrefixes), !.
 owl_link_request(releaseKB(KB),element('ReleaseKB',[kb=KB],[])) :-!.
@@ -139,67 +150,67 @@ owl_link_request(getSubClassHierarchy(KB,Class),element('GetSubClassHierarchy',[
 	(   nonvar(Class) -> desc_xml(_,Class,ClassXML), ClassElement=[ClassXML] ; ClassElement= []),!.
 
 
-	
+
 %      <!-- Ask-Individuals -->
 owl_link_request(areIndividualsEquivalent(KB,Individuals),element('AreIndividualsEquivalent',[kb=KB],EIndividuals)) :-
 	axioms_elts(_,Individuals,EIndividuals),!.
 owl_link_request(areIndividualsDisjoint(KB,Individuals),element('AreIndividualsDisjoint',[kb=KB],EIndividuals)) :-
 	axioms_elts(_,Individuals,EIndividuals),!.
-owl_link_request(isInstanceOf(KB,Individual,Direct),element('IsInstanceOf',[kb=KB,direct=Direct],IndividualXML)) :-	
+owl_link_request(isInstanceOf(KB,Individual,Direct),element('IsInstanceOf',[kb=KB,direct=Direct],IndividualXML)) :-
 	axiom_xml(_,Individual,IndividualXML),!.
 
 %      <!-- Ask-IndividuualClassQuerysynsets -->
-owl_link_request(getTypes(KB,Individual,Direct),element('GetTypes',[kb=KB,direct=Direct],IndividualXML)) :-	
+owl_link_request(getTypes(KB,Individual,Direct),element('GetTypes',[kb=KB,direct=Direct],IndividualXML)) :-
 	axiom_xml(_,Individual,IndividualXML),!.
-owl_link_request(getFlattenTypes(KB,Individual,Direct),element('GetFlattenTypes',[kb=KB,direct=Direct],IndividualXML)) :-	
+owl_link_request(getFlattenTypes(KB,Individual,Direct),element('GetFlattenTypes',[kb=KB,direct=Direct],IndividualXML)) :-
 	axiom_xml(_,Individual,IndividualXML),!.
 owl_link_request(getEquivalentIndividuals(KB,Individual),
-		 element('GetEquivalentIndividuals',[kb=KB],IndividualXML)) :-	
+		 element('GetEquivalentIndividuals',[kb=KB],IndividualXML)) :-
 	axiom_xml(_,Individual,IndividualXML),!.
 owl_link_request(getDisjointIndividuals(KB,Individual),
-		 element('GetDisjointIndividuals',[kb=KB],IndividualXML)) :-	
+		 element('GetDisjointIndividuals',[kb=KB],IndividualXML)) :-
 	axiom_xml(_,Individual,IndividualXML),!.
 owl_link_request(getFlattenDisjointIndividuals(KB,Individual),
-		 element('GetFlattenDisjointIndividuals',[kb=KB],IndividualXML)) :-	
+		 element('GetFlattenDisjointIndividuals',[kb=KB],IndividualXML)) :-
 	axiom_xml(_,Individual,IndividualXML),!.
 
-      
+
 %      <!-- Ask-IndividualPropertyQueries -->
 owl_link_request(getObjectPropertiesOfSource(KB,Individual,Negative),
-		 element('GetObjectPropertiesOfSource',[kb=KB,negative=Negative],IndividualXML)) :-	
+		 element('GetObjectPropertiesOfSource',[kb=KB,negative=Negative],IndividualXML)) :-
 	axiom_xml(_,Individual,IndividualXML),!.
 owl_link_request(getObjectPropertiesBetween(KB,I1,I2,Negative),
-		 element('GetObjectPropertiesBetween',[kb=KB,negative=Negative],IXML)) :-	
+		 element('GetObjectPropertiesBetween',[kb=KB,negative=Negative],IXML)) :-
 	axiom_xml(_,I1,I1XML),
 	axiom_xml(_,I2,I2XML),
 	append(I1XML,I2XML,IXML),!.
 owl_link_request(getObjectPropertiesOfFiller(KB,Individual,Negative),
-		 element('GetObjectPropertiesOfFiller',[kb=KB,negative=Negative],IndividualXML)) :-	
+		 element('GetObjectPropertiesOfFiller',[kb=KB,negative=Negative],IndividualXML)) :-
 	axiom_xml(_,Individual,IndividualXML),!.
 
 %      <!-- Ask-IndividualDataPropertyQueries -->
 owl_link_request(getDataPropertiesOfSource(KB,Individual),
-		 element('GetDataPropertiesOfSource',[kb=KB],IndividualXML)) :-	
+		 element('GetDataPropertiesOfSource',[kb=KB],IndividualXML)) :-
 	axiom_xml(_,Individual,IndividualXML),!.
 owl_link_request(getDataPropertiesBetween(KB,I1,Literal,Negative),
-		 element('GetDataPropertiesBetween',[kb=KB,negative=Negative],ILXML)) :-	
+		 element('GetDataPropertiesBetween',[kb=KB,negative=Negative],ILXML)) :-
 	axiom_xml(_,I1,I1XML),
 	axiom_xml(_,Literal,LiteralXML),
 	append(I1XML,LiteralXML,ILXML),!.
 owl_link_request(getDataPropertiesOfLiteral(KB,Literal,Negative),
-		 element('GetDataPropertiesOfLiteral',[kb=KB,negative=Negative],LiteralXML)) :-	
+		 element('GetDataPropertiesOfLiteral',[kb=KB,negative=Negative],LiteralXML)) :-
 	axiom_xml(_,Literal,LiteralXML),!.
 
 %      <!-- Ask-IndividualIndividualQueries -->
 owl_link_request(getInstances(KB,Class),[element('GetInstances',[kb=KB],ClassXML)]) :-
 	axiom_xml(_,Class,ClassXML),!.
 owl_link_request(getObjectPropertyFillers(KB,Individual,ObjectProperty,Negative),
-		 element('GetObjectPropertyFillers',[kb=KB,negative=Negative],[IndividualXML,ObjectPropertyXML])) :-	
+		 element('GetObjectPropertyFillers',[kb=KB,negative=Negative],[IndividualXML,ObjectPropertyXML])) :-
 	axiom_xml(_,Individual,IndividualXML),
 	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
 
 owl_link_request(getObjectPropertySources(KB,Individual,ObjectProperty,Negative),
-		 element('GetObjectPropertySources',[kb=KB,negative=Negative],[IndividualXML,ObjectPropertyXML])) :-	
+		 element('GetObjectPropertySources',[kb=KB,negative=Negative],[IndividualXML,ObjectPropertyXML])) :-
 	axiom_xml(_,Individual,IndividualXML),
 	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
 
@@ -250,7 +261,7 @@ owl_link_request(getObjectPropertySources(KB,Individual,ObjectProperty,Negative)
       <xsd:element ref="ol:IsIndividualRelatedWithLiteral" />
 */
 owl_link_request(tell(KB,Axioms),
-		 element('Tell',[kb=KB],AxiomsXML)) :-	
+		 element('Tell',[kb=KB],AxiomsXML)) :-
 		  axioms_elts(_,Axioms,AxiomsXML),!.
 
 owl_link_request(Req,_) :-
@@ -283,26 +294,26 @@ owl_link_response_l([ResXMLH|ResXMLRest],[ResH|ResRest]) :-
 
 
 owl_link_response(element('Description',Attrs,Elements),
-		  description(Name,MessageO,Descriptions)) :- 
+		  description(Name,MessageO,Descriptions)) :-
 	member(name=Name,Attrs),
 	(   member(message=Message,Attrs) -> MessageO = [Message] ; MessageO = []),
 	maplist(response_elements,Elements,Descriptions).
 
-owl_link_response(element('KB',Attrs,_Elements), kb(KB,WarningO)) :- 
+owl_link_response(element('KB',Attrs,_Elements), kb(KB,WarningO)) :-
 	member(kb=KB,Attrs),
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []).
 
-owl_link_response(element('OK',Attrs,_Elements), ok(WarningO)) :- 
+owl_link_response(element('OK',Attrs,_Elements), ok(WarningO)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []).
 
-owl_link_response(element('BooleanResponse',Attrs,_Elements), booleanResponse(Result,WarningO)) :- 
+owl_link_response(element('BooleanResponse',Attrs,_Elements), booleanResponse(Result,WarningO)) :-
 	member(result=Result,Attrs),
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []).
 
-owl_link_response(element('Settings',Attrs,Elements), settings(WarningO,Settings)) :- 
+owl_link_response(element('Settings',Attrs,Elements), settings(WarningO,Settings)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
 	maplist(response_elements,Elements,Settings).
-	
+
 owl_link_response(element('Error',[error=Message],_Elements), error(Message)).
 owl_link_response(element('SyntaxError',[error=Message],_Elements), syntaxError(Message)).
 owl_link_response(element('KBError',[error=Message],_Elements), kbError(Message)).
@@ -323,16 +334,16 @@ owl_link_response(element('Settings',Attrs,SettingsE), settings(WarningO,Setting
 
 
 
-%% pass all other responses unprocessed for now
+% pass all other responses unprocessed for now
 %  TODO: handle all remaining responses into Prolog terms.
 %  mainly inferred axioms....
-owl_link_response(Res,Res). 
+owl_link_response(Res,Res).
 
 
 
 response_elements(element(protocolVersion,Attrs,_),protocolVersion(Attrs)) :- !.
 response_elements(element('ClassSubClassesPair',_,[element('ClassSynset',_,ClassDescL),SynsetsE]),
-		  classSubClassesPair(synset(Classes),Synsets)) :- 
+		  classSubClassesPair(synset(Classes),Synsets)) :-
 	maplist(xml_desc(_),ClassDescL,Classes),
 	maplist(SynsetsE,Synsets),
 	!.
@@ -344,17 +355,17 @@ response_elements(element('ClassSynset',_,ClassDescL),Classes) :-
 
 response_elements(element('Setting',[key=Key], [DataRangeE,LiteralE]),setting(Key,DataRange,Literal)) :-
 		  LiteralE = element('Literal',_,[Literal]),
-		  (   DataRangeE = element('owl:Datatype',Attrs,_) -> 
+		  (   DataRangeE = element('owl:Datatype',Attrs,_) ->
 		  (   member(abbreviatedIRI=DataType,Attrs), DataRange = DataType,! ;
-		      member('IRI' = DataType,Attrs),DataRange = DataType,! ; 
+		      member('IRI' = DataType,Attrs),DataRange = DataType,! ;
 		      DataRange = unknown_datatype) ;
 		  DataRange = DataRangeE),!.
 
 response_elements(element('Property',[key=Key], [DataRangeE,LiteralE]),property(Key,DataRange,Literal)) :-
 		  LiteralE = element('Literal',_,[Literal]),
-		  (   DataRangeE = element('owl:Datatype',Attrs,_) -> 
+		  (   DataRangeE = element('owl:Datatype',Attrs,_) ->
 		  (   member(abbreviatedIRI=DataType,Attrs), DataRange = DataType,! ;
-		      member('IRI' = DataType,Attrs),DataRange = DataType,! ; 
+		      member('IRI' = DataType,Attrs),DataRange = DataType,! ;
 		      DataRange = unknown_datatype) ;
 		      DataRange = DataRangeE),!.
 
