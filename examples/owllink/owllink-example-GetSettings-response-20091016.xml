@@ -1,18 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ResponseMessage xmlns="http://www.owllink.org/owllink-xml#"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.owllink.org/owllink-xml# http://www.owllink.org/owllink-xml-20091016.xsd">
-    <Settings>
-        <Setting key="selectedProfile">
-            <OneOf abbreviatedIRI="xsd:string">
-                <Literal>OWL 2 QL</Literal>
-                <Literal>OWL 2 RL</Literal>
-            </OneOf>
-            <Literal>OWL 2 RL</Literal>
-        </Setting>
-        <Setting key="uniqueNameAssumption">
-            <Datatype abbreviatedIRI="xsd:boolean"/>
-            <Literal>true</Literal>
-        </Setting>
-    </Settings>
-  </ResponseMessage>
+
+<ResponseMessage
+    xsi:schemaLocation="http://www.owllink.org/owllink-xml# ../owllink-xml-20091016.xsd">
+  <Settings
+      kb="http://owllink.org/examples/KB_1">
+    <Setting
+        key="una">
+      <Datatype
+          abbreviatedIRI="xs:boolean"/>
+      <Literal>false</Literal>
+    </Setting>
+    <Setting
+        key="verbose">
+      <Datatype
+          abbreviatedIRI="xs:boolean"/>
+      <Literal>false</Literal>
+    </Setting>
+    <Setting
+        key="leanMode">
+      <Datatype
+          abbreviatedIRI="xs:boolean"/>
+      <Literal>false</Literal>
+    </Setting>
+    <Setting
+        key="keepsAxioms">
+      <Datatype
+          abbreviatedIRI="xs:boolean"/>
+      <Literal>true</Literal>
+    </Setting>
+    <Setting
+        key="usesLessMemory">
+      <Datatype
+          abbreviatedIRI="xs:boolean"/>
+      <Literal>false</Literal>
+    </Setting>
+    <Setting
+        key="ignoresAnnotations">
+      <Datatype
+          abbreviatedIRI="xs:boolean"/>
+      <Literal>false</Literal>
+    </Setting>
+    <Setting
+        key="incremental">
+      <Datatype
+          abbreviatedIRI="xs:boolean"/>
+      <Literal>true</Literal>
+    </Setting>
+    <Setting
+        key="abbreviatesIRIs">
+      <Datatype
+          abbreviatedIRI="xs:boolean"/>
+      <Literal>true</Literal>
+    </Setting>
+  </Settings>
+</ResponseMessage>
