@@ -41,8 +41,22 @@ load_axioms(File,Fmt,_Opts) :-
         ;   Fmt=owlpl
         ;   Fmt=pl),
         !,
+	load_prolog_axioms(File).
+load_axioms(File,Fmt,Opts) :-
+        load_handler(read,Fmt),
+        load_axioms_hook(File,Fmt,Opts),
+        !.
+load_axioms(File,Fmt,Opts) :-
+        throw(owl2_io('cannot parse fmt for',File,Fmt,Opts)).
+
+load_prolog_axioms(File) :-
+	\+ predicate_property(qcompile(_),_), % e.g. Yap
+	!,
         style_check(-discontiguous),
-        style_check(-atom),
+	consult_axioms(File).
+load_prolog_axioms(File) :-
+        style_check(-discontiguous),
+	style_check(-atom),	
 	file_name_extension(Base, _Ext, File),
 	file_name_extension(Base, qlf, QlfFile),
         debug(load,'checking for: ~w',[QlfFile]),
@@ -57,12 +71,6 @@ load_axioms(File,Fmt,_Opts) :-
         ;   debug(load,'  cannot write to qlf (permission problem?), loading from: ~w',[File]),
             consult_axioms(File)
 	).
-load_axioms(File,Fmt,Opts) :-
-        load_handler(read,Fmt),
-        load_axioms_hook(File,Fmt,Opts),
-        !.
-load_axioms(File,Fmt,Opts) :-
-        throw(owl2_io('cannot parse fmt for',File,Fmt,Opts)).
 
 %% save_axioms(+File,+Fmt)
 % saves owl2_model axioms to File.
@@ -100,10 +108,10 @@ convert_axioms(FileIn,FmtIn,FileOut,FmtOut,Opts) :-
         load_axioms(FileIn,FmtIn,Opts),
         save_axioms(FileOut,FmtOut,Opts).
 
+% TODO - check if this is the best way of doing this
 load_handler(Dir,Fmt) :-
         forall(format_module(Dir,Fmt,Mod),
-               (   atom_concat('thea2/',Mod,TMod), % TODO: check for more elegant way to do this..
-                   ensure_loaded(library(TMod)))).
+	       ensure_loaded(library(thea2/Mod))).
 
 guess_format(File,Fmt,_Opts) :-
         concat_atom(Toks,'.',File),
