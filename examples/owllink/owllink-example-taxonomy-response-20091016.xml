@@ -1,174 +1,110 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<ResponseMessage
-    xsi:schemaLocation="http://www.owllink.org/owllink-xml# ../owllink-xml-20091016.xsd">
-  <KBError
-      error="KB http://owllink.org/examples/KB_1 already exists, request denied"/>
+<ResponseMessage xmlns="http://www.owllink.org/owllink#"
+                 xmlns:owl="http://www.w3.org/2002/07/owl#">
+  <KB kb="http://owllink.org/examples/KB_1"/>
   <ClassHierarchy>
-    <ClassSubClassesPair>
-      <ClassSynset>
-        <Class
-            IRI="*top*"/>
-        <Class
-            abbreviatedIRI="owl:Thing"/>
-      </ClassSynset>
-      <SetOfClassSynsets>
-        <ClassSynset>
-          <Class
-              IRI="C"/>
-        </ClassSynset>
-      </SetOfClassSynsets>
-    </ClassSubClassesPair>
-    <ClassSubClassesPair>
-      <ClassSynset>
-        <Class
-            IRI="C"/>
-      </ClassSynset>
-      <SetOfClassSynsets>
-        <ClassSynset>
-          <Class
-              IRI="B"/>
-        </ClassSynset>
-      </SetOfClassSynsets>
-    </ClassSubClassesPair>
-    <ClassSubClassesPair>
-      <ClassSynset>
-        <Class
-            IRI="B"/>
-      </ClassSynset>
-      <SetOfClassSynsets>
-        <ClassSynset>
-          <Class
-              IRI="A"/>
-        </ClassSynset>
-      </SetOfClassSynsets>
-    </ClassSubClassesPair>
-    <ClassSubClassesPair>
-      <ClassSynset>
-        <Class
-            IRI="A"/>
-      </ClassSynset>
-      <SetOfClassSynsets/>
-    </ClassSubClassesPair>
+    <ClassSynset>
+      <owl:Class abbreviatedIRI="owl:Nothing"/>
+    </ClassSynset>
   </ClassHierarchy>
-  <KBError
-      error="KB http://owllink.org/examples/KB_2 already exists, request denied"/>
+  <KBError error="KB http://owllink.org/examples/KB_2 already exists, request denied"/>
   <OK/>
-  <KBError
-      error="KB http://owllink.org/examples/KB_3 already exists, request denied"/>
+  <KBError error="KB http://owllink.org/examples/KB_3 already exists, request denied"/>
   <OK/>
-  <KB
-      kb="http://owllink.org/examples/KB_4"/>
+  <KB kb="http://owllink.org/examples/KB_4"/>
   <OK/>
   <ClassHierarchy>
+    <ClassSynset>
+      <owl:Class abbreviatedIRI="owl:Nothing"/>
+    </ClassSynset>
     <ClassSubClassesPair>
       <ClassSynset>
-        <Class
-            IRI="*top*"/>
-        <Class
-            abbreviatedIRI="owl:Thing"/>
+        <owl:Class abbreviatedIRI="owl:Thing"/>
       </ClassSynset>
-      <SetOfClassSynsets>
+      <SubClassSynsets>
         <ClassSynset>
-          <Class
-              IRI="http://www.owllink.orgtest/ontClassA"/>
+          <owl:Class IRI="B"/>
         </ClassSynset>
-      </SetOfClassSynsets>
+      </SubClassSynsets>
     </ClassSubClassesPair>
     <ClassSubClassesPair>
       <ClassSynset>
-        <Class
-            IRI="http://www.owllink.orgtest/ontClassA"/>
+        <owl:Class IRI="B"/>
       </ClassSynset>
-      <SetOfClassSynsets>
+      <SubClassSynsets>
         <ClassSynset>
-          <Class
-              IRI="http://owllink.org/examples/ontologyClassA"/>
+          <owl:Class IRI="A"/>
         </ClassSynset>
-      </SetOfClassSynsets>
-    </ClassSubClassesPair>
-    <ClassSubClassesPair>
-      <ClassSynset>
-        <Class
-            IRI="http://owllink.org/examples/ontologyClassA"/>
-      </ClassSynset>
-      <SetOfClassSynsets/>
+      </SubClassSynsets>
     </ClassSubClassesPair>
   </ClassHierarchy>
   <ClassHierarchy>
+    <ClassSynset>
+      <owl:Class abbreviatedIRI="owl:Nothing"/>
+    </ClassSynset>
     <ClassSubClassesPair>
       <ClassSynset>
-        <Class
-            IRI="*top*"/>
-        <Class
-            abbreviatedIRI="owl:Thing"/>
+        <owl:Class abbreviatedIRI="owl:Thing"/>
       </ClassSynset>
-      <SetOfClassSynsets>
+      <SubClassSynsets>
         <ClassSynset>
-          <Class
-              IRI="http://www.owllink.orgtest/ontClassA"/>
+          <owl:Class abbreviatedIRI="test::ClassA"/>
         </ClassSynset>
-      </SetOfClassSynsets>
+        <ClassSynset>
+          <owl:Class IRI="A"/>
+        </ClassSynset>
+      </SubClassSynsets>
     </ClassSubClassesPair>
     <ClassSubClassesPair>
       <ClassSynset>
-        <Class
-            IRI="http://www.owllink.orgtest/ontClassA"/>
+        <owl:Class abbreviatedIRI="test::ClassA"/>
       </ClassSynset>
-      <SetOfClassSynsets>
+      <SubClassSynsets>
         <ClassSynset>
-          <Class
-              IRI="http://owllink.org/examples/ontologyClassA"/>
+          <owl:Class abbreviatedIRI="ont::ClassA"/>
         </ClassSynset>
-      </SetOfClassSynsets>
+      </SubClassSynsets>
     </ClassSubClassesPair>
     <ClassSubClassesPair>
       <ClassSynset>
-        <Class
-            IRI="http://owllink.org/examples/ontologyClassA"/>
+        <owl:Class IRI="A"/>
       </ClassSynset>
-      <SetOfClassSynsets/>
+      <SubClassSynsets>
+        <ClassSynset>
+          <owl:Class IRI="D"/>
+        </ClassSynset>
+        <ClassSynset>
+          <owl:Class IRI="B"/>
+        </ClassSynset>
+      </SubClassSynsets>
     </ClassSubClassesPair>
   </ClassHierarchy>
   <ClassHierarchy>
+    <ClassSynset>
+      <owl:Class abbreviatedIRI="owl:Nothing"/>
+    </ClassSynset>
     <ClassSubClassesPair>
       <ClassSynset>
-        <Class
-            IRI="*top*"/>
-        <Class
-            abbreviatedIRI="owl:Thing"/>
-        <Class
-            IRI="A"/>
+        <owl:Class abbreviatedIRI="owl:Thing"/>
+        <owl:Class IRI="A"/>
       </ClassSynset>
-      <SetOfClassSynsets>
+      <SubClassSynsets>
         <ClassSynset>
-          <Class
-              abbreviatedIRI="owl:NoThing"/>
-          <Class
-              IRI="C"/>
+          <owl:Class abbreviatedIRI="owl:NoThing"/>
+          <owl:Class IRI="C"/>
         </ClassSynset>
-      </SetOfClassSynsets>
+      </SubClassSynsets>
     </ClassSubClassesPair>
     <ClassSubClassesPair>
       <ClassSynset>
-        <Class
-            abbreviatedIRI="owl:NoThing"/>
-        <Class
-            IRI="C"/>
+        <owl:Class abbreviatedIRI="owl:NoThing"/>
+        <owl:Class IRI="C"/>
       </ClassSynset>
-      <SetOfClassSynsets>
+      <SubClassSynsets>
         <ClassSynset>
-          <Class
-              IRI="B"/>
+          <owl:Class IRI="B"/>
         </ClassSynset>
-      </SetOfClassSynsets>
-    </ClassSubClassesPair>
-    <ClassSubClassesPair>
-      <ClassSynset>
-        <Class
-            IRI="B"/>
-      </ClassSynset>
-      <SetOfClassSynsets/>
+      </SubClassSynsets>
     </ClassSubClassesPair>
   </ClassHierarchy>
   <OK/>

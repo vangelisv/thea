@@ -102,7 +102,8 @@ convert_axioms(FileIn,FmtIn,FileOut,FmtOut,Opts) :-
 
 load_handler(Dir,Fmt) :-
         forall(format_module(Dir,Fmt,Mod),
-               (   atom_concat('thea2/',Mod,TMod), % TODO: check for more elegant way to do this..
+               (    atom_concat('thea2/',Mod,TMod), % TODO: check for more elegant way to do this..
+	            % TMod = Mod, % assumes library_directory(<path_to_thea>) is asserted.
                    ensure_loaded(library(TMod)))).
 
 guess_format(File,Fmt,_Opts) :-
@@ -137,7 +138,7 @@ format_module(write,dl_syntax,owl2_dl_syntax).
 format_module(write,dlp,owl2_to_prolog_dlp).
 
 
-/** <module> 
+/** <module>
 
   ---+ Synopsis
 

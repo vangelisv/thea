@@ -171,8 +171,40 @@ main(URL) :-
     print('--------------------'),nl,   print(Response8),nl.
 
 
+test :-
+	owl_link('http://localhost:8080',[createKB([kb='http://owllink.org/examples/KB_1'],[]),
+			       tell('http://owllink.org/examples/KB_1',
+				    [subClassOf('B','A'),
+				     subClassOf('C','A'),
+				     equivalentClasses(['D','E']),
+				     % classAssertion('A','iA'),
+				     subClassOf('C','A')
+				    ]),
+				tell('http://owllink.org/examples/KB_1',
+				    [ classAssertion('A','iA')]),
+			       getAllClasses('http://owllink.org/examples/KB_1'),
+					  getSubClassHierarchy('http://owllink.org/examples/KB_1','A'),
+			       getEquivalentClasses('http://owllink.org/examples/KB_1','D'),
+			       isClassSubsumedBy('http://owllink.org/examples/KB_1',
+						 'http://www.w3.org/2002/07/owl#Thing',
+						 'http://www.w3.org/2002/07/owl#Nothing'),
+			       getSubClasses('http://owllink.org/examples/KB_1','C'),
+					  getAllIndividuals('http://owllink.org/examples/KB_1'),
+			       createKB([kb='http://owllink.org/examples/KB_2'],[]),
+			       tell('http://owllink.org/examples/KB_2',
+				    [subClassOf('A','B')]),
+			       releaseKB('http://owllink.org/examples/KB_1'),
+			       getAllClasses('http://owllink.org/examples/KB_1')
+			      ],Response7,
+	     	     [reasoner,
+		      request_file='../examples/owllink/thea-owllink-example-PoolingRequests-request.xml',
+		      response_file='../examples/owllink/owllink-example-poolingrequests-response-20091016.xml']),
+    print('--------------------'),nl,print(Response7),nl.
+
+
 
 /*
+
 
 
 ------------------------------

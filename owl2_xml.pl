@@ -4,8 +4,9 @@
           [
            owl_parse_xml/1,
            owl_parse_xml/2,
-	   
+
 	   axiom_xml/3,
+	   xml_axiom/3,
 	   desc_xml/3,
 	   axioms_elts/3,
 	   xml_desc/3
@@ -15,7 +16,7 @@
 :- use_module(owl2_xml).
 :- use_module(owl2_metamodel).
 :- use_module(owl2_io).
-:- use_module(library(sgml)). 
+:- use_module(library(sgml)).
 :- use_module(library(semweb/rdf_db)).
 
 % DEPENDENCY: SWI-Prolog or Yap
@@ -73,7 +74,7 @@ elts_axioms(O,[E|Elts],Axioms2):-
 elts_axioms(O,[E|_],_) :-
         throw(axiom(E,O)).
 
-        
+
 %% xml_axiom(+O,+XML,?Axiom)
 % translate a single element to an axiom
 
@@ -103,11 +104,25 @@ xml_axiom(_Ont,element(_:Name,Atts,_),Axiom) :-
 xml_axiom(_Ont,element(_:Name,_Atts,Sub),Axiom) :-
         xmle_axiom(Name,Axiom,Args),
         !,
-        maplist(xml_desc(Name),Sub,Args).
+        maplist(axiom_xml_arg(Name),Sub,Args).
 
 xml_axiom(Ont,Elt,_) :-
         throw(xml_axiom(Ont,Elt)).
 
+
+% if axiom argument is a class expression then call the
+% desc_xml
+% VV 18/12/2009 for OWLlink individual support
+axiom_xml_arg(ParentAxiom,c(Arg),Element) :-
+	desc_xml(ParentAxiom,Arg,Element),!.
+
+% everything else return the argument itself eg. property, individual
+%
+axiom_xml_arg(_ParentAxiom,element('http://www.w3.org/2006/12/owl2-xml#':'NamedIndividual',['URI'=IRI],[]),i(IRI)) :- !.
+axiom_xml_arg(_ParentAxiom,element('http://www.w3.org/2006/12/owl2-xml#':'ObjectProperty',['URI'=IRI],[]),op(IRI)) :- !.
+axiom_xml_arg(_ParentAxiom,element('http://www.w3.org/2006/12/owl2-xml#':'DataProperty',['URI'=IRI],[]),dp(IRI)) :- !.
+axiom_xml_arg(_ParentAxiom,element('http://www.w3.org/2006/12/owl2-xml#':'AnnotationProperty',['URI'=IRI],[]),ap(IRI)) :- !.
+axiom_xml_arg(_ParentAxiom,X,X) :- !.
 
 %% xml_desc(+ParentElementName, +XML, ?Description)
 % translate an OWL XML term to an owl2_model description
@@ -163,9 +178,11 @@ xml_annotation(element(_:'Annotation',Atts,Elts),annotation(P,V)) :-
         member(annotationURI=P,Atts),
         Elts=[element(_:'Constant',_,[V])].
 
-atts_iri(Atts,IRI) :-
-        iri_att(A),
+atts_iri(Atts,TIRI) :-
+  	(   TIRI = i(IRI) ; TIRI = c(IRI) ; TIRI = op(IRI); var(IRI)),!,
+	iri_att(A),
         member(A=IRI,Atts).
+
 
 iri_att('URI').  % TODO clarify. P4 uses this
 iri_att('abbreviatedIRI').  % VV add 15/10 for OWLLink support
@@ -226,9 +243,25 @@ axiom_xml(_Ont,Axiom,element('http://www.w3.org/2006/12/owl2-xml#':Name,[],Subs)
         xmle_axiom(Name,Axiom,Args),
         !,
         debug(owl_exporter,'Axiom: ~w',[Axiom]),
-        maplist(desc_xml(Name),Args,Subs).
+        maplist(axiom_arg_xml(Name),Args,Subs).
 axiom_xml(_Ont,Axiom,_) :-
         throw(axiom(Axiom)).
+
+% if axiom argument is a class expression then call the
+% desc_xml
+% VV 18/12/2009 for OWLlink individual support
+axiom_arg_xml(ParentAxiom,c(Arg),Element) :-
+	desc_xml(ParentAxiom,Arg,Element),!.
+
+% everything else return the argument itself eg. property, individual
+%
+axiom_arg_xml(_ParentAxiom,i(IRI),element('http://www.w3.org/2006/12/owl2-xml#':'Individual',['URI'=IRI],[])) :- !.
+axiom_arg_xml(_ParentAxiom,op(IRI),element('http://www.w3.org/2006/12/owl2-xml#':'ObjectProperty',['URI'=IRI],[])) :- !.
+axiom_arg_xml(_ParentAxiom,dp(IRI),element('http://www.w3.org/2006/12/owl2-xml#':'DataProperty',['URI'=IRI],[])) :- !.
+axiom_arg_xml(_ParentAxiom,ap(IRI),element('http://www.w3.org/2006/12/owl2-xml#':'AnnotationProperty',['URI'=IRI],[])) :- !.
+axiom_arg_xml(_ParentAxiom,X,X) :- !.
+
+
 
 % eg unionOf
 desc_xml(_Parent,Desc,element('http://www.w3.org/2006/12/owl2-xml#':Name,_Atts,Elts)) :-
@@ -337,56 +370,56 @@ xmle_functor('DataExactCardinality',dataExactCardinality).
 % axiompred(P/A),functor(H,P,A),H=..[P|Args],atom_chars(P,[C|Chars]),upcase_atom(C,C2),atom_chars(P2,[C2|Chars]),formatq('xmle_axiom(~q,~w,~w).~n',[P2,H,Args]),fail.
 
 % declarations
-xmle_entity('Class',class(A),[A]).
+xmle_entity('Class',class(A),[c(A)]).
 %xmle_entity('OWLClass',class(A),[A]).  % TODO: clarify. Protege4 exports this
-xmle_entity('Datatype',datatype(A),[A]).
-xmle_entity('ObjectProperty',objectProperty(A),[A]).
-xmle_entity('DataProperty',dataProperty(A),[A]).
-xmle_entity('AnnotationProperty',annotationProperty(A),[A]).
-xmle_entity('Individual',namedIndividual(A),[A]). % TODO - check
-%xmle_entity('Individual',individual(A),[A]).
+xmle_entity('Datatype',datatype(A),[dt(A)]).
+xmle_entity('ObjectProperty',objectProperty(A),[op(A)]).
+xmle_entity('DataProperty',dataProperty(A),[dp(A)]).
+xmle_entity('AnnotationProperty',annotationProperty(A),[ap(A)]).
+xmle_entity('NamedIndividual',namedIndividual(A),[i(A)]). % TODO - check
+xmle_entity('Individual',individual(A),[i(A)]).
 
-xmle_axiom('SubClassOf',subClassOf(A, B),[A, B]).
-xmle_axiom('EquivalentClasses',equivalentClasses(A),A).
-xmle_axiom('DisjointClasses',disjointClasses(A),A).
-xmle_axiom('DisjointUnion',disjointUnion(A, B),[A, B]).
+xmle_axiom('SubClassOf',subClassOf(A, B),[c(A), c(B)]).
+xmle_axiom('EquivalentClasses',equivalentClasses(A),A1) :- maplist(iri_type(c),A,A1).
+xmle_axiom('DisjointClasses',disjointClasses(A),A1) :- maplist(iri_type(c),A,A1).
+xmle_axiom('DisjointUnion',disjointUnion(A, B),[c(A), c(B)]).
 
-xmle_axiom('SubObjectPropertyOf',subPropertyOf(A, B),[A, B]).
-xmle_axiom('SubDataPropertyOf',subPropertyOf(A, B),[A, B]).
+xmle_axiom('SubObjectPropertyOf',subPropertyOf(A, B),[op(A), op(B)]).
+xmle_axiom('SubDataPropertyOf',subPropertyOf(A, B),[dp(A), dp(B)]).
 
-xmle_axiom('EquivalentObjectProperties',equivalentProperties(A),A).
-xmle_axiom('EquivalentDataProperties',equivalentProperties(A),A).
+xmle_axiom('EquivalentObjectProperties',equivalentProperties(A),A1) :- maplist(iri_type(op),A,A1).
+xmle_axiom('EquivalentDataProperties',equivalentProperties(A),A1) :- maplist(iri_type(dp),A,A1).
 
-xmle_axiom('DisjointObjectProperties',disjointProperties(A),A).
-xmle_axiom('DisjointDataProperties',disjointProperties(A),A).
+xmle_axiom('DisjointObjectProperties',disjointProperties(A),A1) :- maplist(iri_type(op),A,A1).
+xmle_axiom('DisjointDataProperties',disjointProperties(A),A1) :- maplist(iri_type(dp),A,A1).
 
-xmle_axiom('InverseObjectProperties',inverseProperties(A, B),[A, B]).
+xmle_axiom('InverseObjectProperties',inverseProperties(A, B),[op(A), op(B)]).
 
-xmle_axiom('ObjectPropertyDomain',propertyDomain(A, B),[A, B]).
-xmle_axiom('DataPropertyDomain',propertyDomain(A, B),[A, B]).
-xmle_axiom('ObjectPropertyRange',propertyRange(A, B),[A, B]).
-xmle_axiom('DataPropertyRange',propertyRange(A, B),[A, B]).
+xmle_axiom('ObjectPropertyDomain',propertyDomain(A, B),[op(A), c(B)]).
+xmle_axiom('DataPropertyDomain',propertyDomain(A, B),[dp(A), c(B)]).
+xmle_axiom('ObjectPropertyRange',propertyRange(A, B),[op(A), c(B)]).
+xmle_axiom('DataPropertyRange',propertyRange(A, B),[dp(A), c(B)]).
 
-xmle_axiom('FunctionalObjectProperty',functionalProperty(A),[A]).
-xmle_axiom('FunctionalDataProperty',functionalProperty(A),[A]).
+xmle_axiom('FunctionalObjectProperty',functionalProperty(A),[op(A)]).
+xmle_axiom('FunctionalDataProperty',functionalProperty(A),[dp(A)]).
 
-xmle_axiom('InverseFunctionalObjectProperty',inverseFunctionalProperty(A),[A]).
+xmle_axiom('InverseFunctionalObjectProperty',inverseFunctionalProperty(A),[op(A)]).
 
-xmle_axiom('ReflexiveObjectProperty',reflexiveProperty(A),[A]).
-xmle_axiom('IrreflexiveObjectProperty',irreflexiveProperty(A),[A]).
-xmle_axiom('SymmetricObjectProperty',symmetricProperty(A),[A]).
-xmle_axiom('AsymmetricObjectProperty',asymmetricProperty(A),[A]).
-xmle_axiom('TransitiveObjectProperty',transitiveProperty(A),[A]).
+xmle_axiom('ReflexiveObjectProperty',reflexiveProperty(A),[op(A)]).
+xmle_axiom('IrreflexiveObjectProperty',irreflexiveProperty(A),[op(A)]).
+xmle_axiom('SymmetricObjectProperty',symmetricProperty(A),[op(A)]).
+xmle_axiom('AsymmetricObjectProperty',asymmetricProperty(A),[op(A)]).
+xmle_axiom('TransitiveObjectProperty',transitiveProperty(A),[op(A)]).
 
 % individual axioms
-xmle_axiom('SameIndividual',sameIndividual(A),A).
-xmle_axiom('DifferentIndividuals',differentIndividuals(A),A).
-xmle_axiom('ClassAssertion',classAssertion(A, B),[A, B]).
-xmle_axiom('ObjectPropertyAssertion',propertyAssertion(A, B, C),[A, B, C]).
-xmle_axiom('DataPropertyAssertion',propertyAssertion(A, B, C),[A, B, C]).
-xmle_axiom('NegativeObjectPropertyAssertion',negativePropertyAssertion(A, B, C),[A, B, C]).
-xmle_axiom('NegativeDaraPropertyAssertion',negativePropertyAssertion(A, B, C),[A, B, C]).
-xmle_axiom('AnnotationAssertion',annotationAssertion(A, B, C),[A, B, C]).
+xmle_axiom('SameIndividual',sameIndividual(A),A1) :- maplist(iri_type(i),A,A1).
+xmle_axiom('DifferentIndividuals',differentIndividuals(A),A1) :- maplist(iri_type(i),A,A1).
+xmle_axiom('ClassAssertion',classAssertion(A, B),[c(A), i(B)]).
+xmle_axiom('ObjectPropertyAssertion',propertyAssertion(A, B, C),[op(A), i(B), i(C)]).
+xmle_axiom('DataPropertyAssertion',propertyAssertion(A, B, C),[dp(A), i(B), C]).
+xmle_axiom('NegativeObjectPropertyAssertion',negativePropertyAssertion(A, B, C),[op(A), i(B), i(C)]).
+xmle_axiom('NegativeDataPropertyAssertion',negativePropertyAssertion(A, B, C),[dp(A), i(B), C]).
+xmle_axiom('AnnotationAssertion',annotationAssertion(A, B, C),[ap(A), i(B), C]).
 %xmle_axiom('OntologyAnnotation',ontologyAnnotation(A, B, C),[A, B, C]).
 %xmle_axiom('AxiomAnnotation',axiomAnnotation(A, B, C),[A, B, C]).
 %xmle_axiom('AnnotationAnnotation',annotationAnnotation(A, B, C),[A, B, C]).
@@ -397,14 +430,15 @@ xmle_axiom('AnnotationAssertion',annotationAssertion(A, B, C),[A, B, C]).
 %xmle_axiom('OntologyVersionInfo',ontologyVersionInfo(A, B),[A, B]).
 %mle_axiom('Implies',implies(A, B),[A, B]).
 
-
+iri_type(Type,Arg,TypedArg) :-
+	TypedArg =.. [Type,Arg].
 
 /** <module> Generation and parsing of OWL-XML from owl2_model
 
 ---+ Synopsis
 
 Use this module via owl2_io.pl
-  
+
 ==
 :- use_module(library('thea2/owl2_io')).
 :- use_module(library('thea2/owl2_model')).

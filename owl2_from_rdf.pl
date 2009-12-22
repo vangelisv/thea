@@ -49,6 +49,20 @@
 	    owl_parser_log/2
 	  ]).
 
+/** <module> Translates an RDF database to OWL2 axioms
+  ---+ Synopsis 2
+==
+:- use_module(bio(owl2_from_rdf)).
+%
+==
+---+ Details
+---++ Hooks
+* owl_parse_axiom_hook/3
+---+ See Also
+The file owl2_from_rdf.plt has some examples
+*/
+
+
 :- use_module(owl2_model).
 
 :- use_module(library('semweb/rdf_db.pl')).
@@ -282,7 +296,7 @@ owl_parser_log(Log) :-
 	assertz(owl_parser_log(TS, Log)).
 
 
-%%       owl_clear_as.
+%%       owl_clear_as
 %
 %       Clears the prolog terms that store the Abstract Syntax
 %       implementation of the OWL ontology.
@@ -301,7 +315,7 @@ u_assert(Term) :-
 convert(T,V,typed_value(T,V)).
 
 
-%%	rdf_2_owl/1.
+%%	rdf_2_owl(+Base, +Ont) is det
 %
 %       Converts RDF triples to OWL/4 triples so that
 %	their use can tracked by the OWL parser.
@@ -362,6 +376,7 @@ owl_count(O,U) :-
 	findall(1,owl(_,_,_,O),X), length(X,U).
 
 %% expand_and_assert(S,P,O) is det
+%
 % adds a owl(S,P,O,not_used) after expanding namespaces.
 % this is required for the triple replacement rules,
 % which use shortened rdfs/owl namespaces.
@@ -433,9 +448,9 @@ use_owl(X1,Y1,Z1) :-
 	assert(owl(X,Y,Z,used1)).
 
 
-%%	use_owl(?S,?P,?O,named).
+%%	use_owl(?S,?P,?O,+Named)
 %
-%       Same as use_owl/3, but marks only if S 	is Named URI (i.e. non blank node).
+%       Named = named: Same as use_owl/3, but marks only if S 	is Named URI (i.e. non blank node).
 
 use_owl(X1,Y1,Z1,named) :-
 	expand_ns(X1,X),
@@ -447,6 +462,7 @@ use_owl(X1,Y1,Z1,named) :-
 	assert(owl(X,Y,Z,used2)).
 
 %%       use_owl(?S,?P,?O,Term)
+%
 %	Marks an OWL triple as used. Expands the S,P,O.
 
 use_owl(X1,Y1,Z1,Term) :-
@@ -459,9 +475,9 @@ use_owl(X1,Y1,Z1,Term) :-
 	assert(owl(X,Y,Z,used(Term))).
 
 
-%%	use_owl(?S,?P,?O,named,Term).
+%%	use_owl(?S,?P,?O,+Named,Term)
 %
-%       Same as use_owl/3, but marks only if S 	is Named URI (i.e. non blank node).
+%       Named = named: Same as use_owl/3, but marks only if S 	is Named URI (i.e. non blank node).
 
 use_owl(X1,Y1,Z1,named,Term) :-
 	expand_ns(X1,X),
@@ -521,7 +537,7 @@ collapse_ns(URL, URL,_,_).
 
 
 
-%%       uri_split(+URI,-Namespace,-Term,+Split_Char) :-
+%%       uri_split(+URI,-Namespace,-Term,+Split_Char) is det
 %
 %       Splits a URI into the Namespace and the Term parts
 %       separated by the Split_Char character.
@@ -707,11 +723,14 @@ triple_replace([owl(X,'rdf:type','owl:SymmetricProperty')],[owl(X,'rdf:type','ow
 triple_replace([owl(X,'rdf:type','rdfs:Class')],[owl(X,'rdf:type','owl:Class')]).
 
 % DECLARATIONS
-
+%
 % See table 7.
 % http://www.w3.org/TR/2008/WD-owl2-mapping-to-rdf-20081202/
 
-%% owl_parse_axiom(+AxiomSpec,+AnnMode:boolean,?AnnList:list)
+%% owl_parse_axiom(+AxiomSpec,+AnnMode:boolean,?AnnList:list) is det
+%
+% None
+%
 owl_parse_axiom(class(C),AnnMode,List) :-
 	test_use_owl(C,'rdf:type','owl:Class'),
 	valid_axiom_annotation_mode(AnnMode,C,'rdf:type','owl:Class',List),
@@ -1486,8 +1505,9 @@ timed_forall(Cond,Action) :-
                (   time_goal(Action,Time),
                    debug(owl2_bench,'Goal: ~w Time:~w',[Action,Time]))).
 
+
 /** <module> Translates an RDF database to OWL2 axioms
-  ---+ Synopsis
+  ---+ Synopsis 1
 ==
 :- use_module(bio(owl2_from_rdf)).
 %
@@ -1498,7 +1518,6 @@ timed_forall(Cond,Action) :-
 ---+ See Also
 The file owl2_from_rdf.plt has some examples
 */
-
 
 
 
