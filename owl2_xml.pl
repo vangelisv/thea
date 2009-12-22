@@ -179,7 +179,7 @@ xml_annotation(element(_:'Annotation',Atts,Elts),annotation(P,V)) :-
         Elts=[element(_:'Constant',_,[V])].
 
 atts_iri(Atts,TIRI) :-
-  	(   TIRI = i(IRI) ; TIRI = c(IRI) ; TIRI = op(IRI); var(IRI)),!,
+  	(   TIRI = i(IRI) ; TIRI = c(IRI) ; TIRI = op(IRI); TIRI = dp(IRI) ; var(IRI)),!,
 	iri_att(A),
         member(A=IRI,Atts).
 

@@ -42,7 +42,7 @@
   <SetOfIndividuals>
     <owl:NamedIndividual IRI="iA"/>
   </SetOfIndividuals>
-  <KBError error="KB http://owllink.org/examples/KB_2 already exists, request denied"/>
+  <KB kb="http://owllink.org/examples/KB_2"/>
   <OK/>
   <OK/>
   <KBError error="KB http://owllink.org/examples/KB_1 not found. Request denied"/>

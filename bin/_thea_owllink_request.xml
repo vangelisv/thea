@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<RequestMessage
+    xmlns:xns16="xsi"
+    xmlns:xns15="http://www.w3.org/2006/12/owl2-xml#"
+    xmlns="http://www.owllink.org/owllink#"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xns16:schemaLocation="http://www.owllink.org/owllink# http://www.owllink.org/owllink-20091116.xsd">d">
+  <GetDisjointDataProperties kb="http://owllink.org/examples/wine" direct="true">
+    <xns100:DataProperty
+	URI="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#yearValue"/>
+  </GetDisjointDataProperties>
+</RequestMessage>

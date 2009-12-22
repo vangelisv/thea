@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ResponseMessage xmlns="http://www.owllink.org/owllink#"
+                 xmlns:owl="http://www.w3.org/2002/07/owl#">
+  <Error error="OWLlink request GetDisjointDataProperties not yet implemented"/>
+</ResponseMessage>
