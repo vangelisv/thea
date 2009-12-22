@@ -99,7 +99,7 @@ owl_link_request(set(KB,Key,Settings),element('Set',[kb=KB,key=Key],LiteralSetti
 owl_link_request(isKBSatisfiable(KB),element('IsKBSatisfiable',[kb=KB],[])) :- !.
 owl_link_request(isKBStructurallyConsistent(KB),element('IsKBStructurallyConsistent',[kb=KB],[])) :-!.
 owl_link_request(isTBoxConsistent(KB),element('IsTBoxConsistent',[kb=KB],[])) :- !.
-owl_link_request(loadOntology(KB,IRIs,IRIMappings),element('LoadOntology',[kb=KB],Elements)) :-
+owl_link_request(loadOntologies(KB,IRIs,IRIMappings,Imports),element('LoadOntologies',[kb=KB,considerImports=Imports],Elements)) :-
 	options_to_elements(IRIMappings,MappingsEL),
 	options_to_elements(IRIs,IRIsEL),
 	merge(IRIsEL,MappingsEL,Elements),!.
@@ -145,7 +145,8 @@ owl_link_request(getSuperClasses(KB,Class),element('GetSuperClasses',[kb=KB],[Cl
 	desc_xml(_,Class,ClassXML),!.
 owl_link_request(getSuperClasses(KB,Class,Direct),element('GetSuperClasses',[kb=KB,direct=Direct],[ClassXML])) :-
 	desc_xml(_,Class,ClassXML),!.
-
+owl_link_request(getDisjointClasses(KB,Class),element('GetDisjointClasses',[kb=KB],ClassElement)) :-
+	(   nonvar(Class) -> desc_xml(_,Class,ClassXML), ClassElement=[ClassXML] ; ClassElement= []),!.
 
 %      <!-- Ask-ClassHierarchy -->
 owl_link_request(getEquivalentClasses(KB,Class),element('GetEquivalentClasses',[kb=KB],ClassElement)) :-
@@ -153,21 +154,23 @@ owl_link_request(getEquivalentClasses(KB,Class),element('GetEquivalentClasses',[
 owl_link_request(getSubClassHierarchy(KB,Class),element('GetSubClassHierarchy',[kb=KB],ClassElement)) :-
 	(   nonvar(Class) -> desc_xml(_,Class,ClassXML), ClassElement=[ClassXML] ; ClassElement= []),!.
 
-
-
-%      <!-- Ask-Individuals -->
-owl_link_request(areIndividualsEquivalent(KB,Individuals),element('AreIndividualsEquivalent',[kb=KB],EIndividuals)) :-
-	axioms_elts(_,Individuals,EIndividuals),!.
-owl_link_request(areIndividualsDisjoint(KB,Individuals),element('AreIndividualsDisjoint',[kb=KB],EIndividuals)) :-
-	axioms_elts(_,Individuals,EIndividuals),!.
-owl_link_request(isInstanceOf(KB,Individual,Direct),element('IsInstanceOf',[kb=KB,direct=Direct],IndividualXML)) :-
-	axiom_xml(_,Individual,IndividualXML),!.
-
 %      <!-- Ask-IndividuualClassQuerysynsets -->
-owl_link_request(getTypes(KB,Individual,Direct),element('GetTypes',[kb=KB,direct=Direct],IndividualXML)) :-
+owl_link_request(getTypes(KB,Individual,Direct),
+		 element('GetTypes',[kb=KB,direct=Direct],[IndividualXML])) :-
 	axiom_xml(_,Individual,IndividualXML),!.
-owl_link_request(getFlattenTypes(KB,Individual,Direct),element('GetFlattenTypes',[kb=KB,direct=Direct],IndividualXML)) :-
+owl_link_request(getFlattenedTypes(KB,Individual,Direct),
+		 element('GetFlattenedTypes',[kb=KB,direct=Direct],[IndividualXML])) :-
 	axiom_xml(_,Individual,IndividualXML),!.
+owl_link_request(getSameIndividuals(KB,Individual,Direct),
+		 element('GetSameIndividuals',[kb=KB,direct=Direct],[IndividualXML])) :-
+	axiom_xml(_,Individual,IndividualXML),!.
+owl_link_request(getDifferentIndividuals(KB,Individual,Direct),
+		 element('GetDifferentIndividuals',[kb=KB,direct=Direct],[IndividualXML])) :-
+	axiom_xml(_,Individual,IndividualXML),!.
+owl_link_request(getFlattenedDifferentIndividuals(KB,Individual,Direct),
+		 element('GetFlattenedDifferentIndividuals',[kb=KB,direct=Direct],[IndividualXML])) :-
+	axiom_xml(_,Individual,IndividualXML),!.
+
 owl_link_request(getEquivalentIndividuals(KB,Individual),
 		 element('GetEquivalentIndividuals',[kb=KB],IndividualXML)) :-
 	axiom_xml(_,Individual,IndividualXML),!.
@@ -181,61 +184,90 @@ owl_link_request(getFlattenDisjointIndividuals(KB,Individual),
 
 %      <!-- Ask-IndividualPropertyQueries -->
 owl_link_request(getObjectPropertiesOfSource(KB,Individual,Negative),
-		 element('GetObjectPropertiesOfSource',[kb=KB,negative=Negative],IndividualXML)) :-
+		 element('GetObjectPropertiesOfSource',[kb=KB,negative=Negative],[IndividualXML])) :-
 	axiom_xml(_,Individual,IndividualXML),!.
 owl_link_request(getObjectPropertiesBetween(KB,I1,I2,Negative),
-		 element('GetObjectPropertiesBetween',[kb=KB,negative=Negative],IXML)) :-
+		 element('GetObjectPropertiesBetween',[kb=KB,negative=Negative],[I1XML,I2XML])) :-
 	axiom_xml(_,I1,I1XML),
-	axiom_xml(_,I2,I2XML),
-	append(I1XML,I2XML,IXML),!.
-owl_link_request(getObjectPropertiesOfFiller(KB,Individual,Negative),
-		 element('GetObjectPropertiesOfFiller',[kb=KB,negative=Negative],IndividualXML)) :-
+	axiom_xml(_,I2,I2XML),!.
+owl_link_request(getObjectPropertiesOfTarget(KB,Individual,Negative),
+		 element('GetObjectPropertiesOfTarget',[kb=KB,negative=Negative],[IndividualXML])) :-
 	axiom_xml(_,Individual,IndividualXML),!.
 
 %      <!-- Ask-IndividualDataPropertyQueries -->
-owl_link_request(getDataPropertiesOfSource(KB,Individual),
-		 element('GetDataPropertiesOfSource',[kb=KB],IndividualXML)) :-
+owl_link_request(getDataPropertiesOfSource(KB,Individual,Negative),
+		 element('GetDataPropertiesOfSource',[kb=KB,negative=Negative],[IndividualXML])) :-
 	axiom_xml(_,Individual,IndividualXML),!.
 owl_link_request(getDataPropertiesBetween(KB,I1,Literal,Negative),
-		 element('GetDataPropertiesBetween',[kb=KB,negative=Negative],ILXML)) :-
-	axiom_xml(_,I1,I1XML),
-	axiom_xml(_,Literal,LiteralXML),
-	append(I1XML,LiteralXML,ILXML),!.
+		 element('GetDataPropertiesBetween',[kb=KB,negative=Negative],[IXML,LiteralXML])) :-
+	axiom_xml(_,I1,IXML),
+	axiom_xml(_,Literal,LiteralXML),!.
 owl_link_request(getDataPropertiesOfLiteral(KB,Literal,Negative),
 		 element('GetDataPropertiesOfLiteral',[kb=KB,negative=Negative],LiteralXML)) :-
 	axiom_xml(_,Literal,LiteralXML),!.
 
 %      <!-- Ask-IndividualIndividualQueries -->
-owl_link_request(getInstances(KB,Class),[element('GetInstances',[kb=KB],ClassXML)]) :-
+owl_link_request(getInstances(KB,Class,Direct),element('GetInstances',[kb=KB,direct=Direct],[ClassXML])) :-
 	axiom_xml(_,Class,ClassXML),!.
-owl_link_request(getObjectPropertyFillers(KB,Individual,ObjectProperty,Negative),
-		 element('GetObjectPropertyFillers',[kb=KB,negative=Negative],[IndividualXML,ObjectPropertyXML])) :-
+owl_link_request(getObjectPropertyTargets(KB,ObjectProperty,Individual,Negative),
+		 element('GetObjectPropertyTargets',[kb=KB,negative=Negative],[ObjectPropertyXML,IndividualXML])) :-
+	axiom_xml(_,Individual,IndividualXML),
+	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
+owl_link_request(getObjectPropertySources(KB,ObjectProperty,Individual,Negative),
+		 element('GetObjectPropertySources',[kb=KB,negative=Negative],[ObjectPropertyXML,IndividualXML])) :-
 	axiom_xml(_,Individual,IndividualXML),
 	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
 
-owl_link_request(getObjectPropertySources(KB,Individual,ObjectProperty,Negative),
-		 element('GetObjectPropertySources',[kb=KB,negative=Negative],[IndividualXML,ObjectPropertyXML])) :-
+%      <!-- Ask-IndividualIndividualQueriesFlatten-->
+owl_link_request(getFlattenedInstances(KB,Class,Direct),element('GetFlattenedInstances',[kb=KB,direct=Direct],[ClassXML])) :-
+	axiom_xml(_,Class,ClassXML),!.
+owl_link_request(getFlattenedObjectPropertyTargets(KB,ObjectProperty,Individual,Negative),
+		 element('GetFlattenedObjectPropertyTargets',[kb=KB,negative=Negative],[ObjectPropertyXML,IndividualXML])) :-
 	axiom_xml(_,Individual,IndividualXML),
+	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
+owl_link_request(getFlattenedObjectPropertySources(KB,ObjectProperty,Individual,Negative),
+		 element('GetFlattenedObjectPropertySources',[kb=KB,negative=Negative],[ObjectPropertyXML,IndividualXML])) :-
+	axiom_xml(_,Individual,IndividualXML),
+	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
+
+%      <!-- Ask-IndividualIndividualDataQueriesSynsets-->
+owl_link_request(getDataPropertyTargets(KB,DataProperty,Individual,Negative),
+		 element('GetDataPropertyTargets',[kb=KB,negative=Negative],[DataPropertyXML,IndividualXML])) :-
+	axiom_xml(_,Individual,IndividualXML),
+	axiom_xml(_,DataProperty,DataPropertyXML),!.
+owl_link_request(getDataPropertySources(KB,DataProperty,Literal,Negative),
+		 element('GetDataPropertySources',[kb=KB,negative=Negative],[DataPropertyXML,LiteralXML])) :-
+	axiom_xml(_,Literal,LiteralXML),
+	axiom_xml(_,DataProperty,DataPropertyXML),!.
+
+%       <!-- Ask-IndividualIndividualDataQueriesFlatten -->
+owl_link_request(getFlattenedDataPropertySources(KB,ObjectProperty,Literal,Negative),
+		 element('GetFlattenedDataPropertySources',[kb=KB,negative=Negative],[ObjectPropertyXML,LiteralXML])) :-
+	axiom_xml(_,Literal,LiteralXML),
+	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
+
+%      <!-- Ask-ObjectPropQueries -->
+owl_link_request(getSubObjectProperties(KB,ObjectProperty,Direct),
+		 element('GetSubObjectProperties',[kb=KB,direct=Direct],[ObjectPropertyXML])) :-
+	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
+owl_link_request(getSuperObjectProperties(KB,ObjectProperty,Direct),
+		 element('GetSuperObjectProperties',[kb=KB,direct=Direct],[ObjectPropertyXML])) :-
+	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
+owl_link_request(getEquivalentObjectProperties(KB,ObjectProperty,Direct),
+		 element('GetEquivalentObjectProperties',[kb=KB,direct=Direct],[ObjectPropertyXML])) :-
+	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
+owl_link_request(getDisjointObjectProperties(KB,ObjectProperty,Direct),
+		 element('GetDisjointObjectProperties',[kb=KB,direct=Direct],[ObjectPropertyXML])) :-
+	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
+
+%      <!--  Ask-ObjectPropHierarchy -->
+owl_link_request(getSubObjectPropertyHierarchy(KB,ObjectProperty),
+		 element('GetSubObjectPropertyHierarchy',[kb=KB],[ObjectPropertyXML])) :-
 	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
 
 /* TODO rest of requests...
-      <!-- Ask-IndividualIndividualQueriesFlatten-->
-      <xsd:element ref="ol:GetFlattenInstances" />
-      <xsd:element ref="ol:GetFlattenObjectPropertyFillers" />
-      <xsd:element ref="ol:GetFlattenObjectPropertySources" />
-      <!-- Ask-IndividualIndividualDataQueriesSynsets-->
-      <xsd:element ref="ol:GetDataPropertyFillers" />
-      <xsd:element ref="ol:GetDataPropertySources" />
-      <!-- Ask-IndividualIndividualDataQueriesFlatten -->
-      <xsd:element ref="ol:GetFlattenDataPropertySources" />
-      <!-- Ask-ObjectPropQueries -->
-      <xsd:element ref="ol:GetSubObjectProperties" />
-      <xsd:element ref="ol:GetSuperObjectProperties" />
-      <xsd:element ref="ol:GetEquivalentObjectProperties" />
-      <xsd:element ref="ol:GetDisjointObjectProperties" />
-      <!--  Ask-ObjectPropHierarchy -->
-      <xsd:element ref="ol:GetSubObjectPropertyHierarchy" />
-      <!--  Ask-ObjectPropAsks -->
+
+       <!--  Ask-ObjectPropAsks -->
       <xsd:element ref="ol:AreObjectPropertiesEquivalent" />
       <xsd:element ref="ol:IsObjectPropertySubsumedBy" />
       <xsd:element ref="ol:IsObjectPropertySatisfiable" />

@@ -202,6 +202,22 @@ test :-
     print('--------------------'),nl,print(Response7),nl.
 
 
+load_wine(Response) :-
+	owl_link('http://localhost:8080',
+		 [createKB([kb='http://owllink.org/examples/wine'],[]),
+		  loadOntologies('http://owllink.org/examples/wine',
+				 ['OntologyIRI'('IRI'='http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine')],[],false)
+		 ],
+		 Response,
+		 [reasoner]).
+
+release_wine(Response) :- owl_link('http://localhost:8080',[releaseKB('http://owlink.org/examples/wine')],Response,[reasoner]).
+
+wine_classes(Response) :- owl_link('http://localhost:8080',[getAllClasses('http://owllink.org/examples/wine')],Response,[reasoner]).
+
+wine_ask(Ask,Response) :-
+	owl_link('http://localhost:8080',Ask,Response,[reasoner]).
+
 
 /*
 
