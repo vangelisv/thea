@@ -1,3 +1,5 @@
+%TOC%
+
 ---+ Using Thea for Reasoning
 
 An ontology specified in OWL is amenable to reasoning. Some of the

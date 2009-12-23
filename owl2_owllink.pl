@@ -21,7 +21,8 @@ OWLLink Language Wrapper
 
 This module is an implementation of the OWLLink interface. It allows
 communication between a Prolog program and an OWLLink enabled reasoner.
-It is using SWI Prologs HTTP and SGML packages.
+It is using SWI Prologs HTTP and SGML packages. See more in
+owl2_owllink.txt
 
   @author Vangelis Vassiliadis
   @license GPL
@@ -30,31 +31,27 @@ It is using SWI Prologs HTTP and SGML packages.
 */
 
 %% owl_link(+ReasonerURL, +Request:list, -Response:list, +Options:list) is det
+%
 %  Implements OWLLink over HTTP. Sends an OWLLink request to the ReasonerURL and
-%  gets its Response.
+%  gets its Response. Both Request and Response are lists of Prolog
+%  terms. The complete grammar for the terms is given in
+%  owl2_owllink.txt
 
 owl_link(ReasonerURL,Request,Response,Options) :-
 	owl_link_request_l(Request,RequestXML),
 	% write Request to predefined file
 	(   member(request_file=Filename,Options) -> true ; Filename = '_thea_owllink_request.xml'),
 	(   member(response_file=FilenameResponse,Options) -> true ; FilenameResponse = '_thea_owllink_response.xml'),
-
-	% capture(Filename,(print('<?xml version=\"1.0\"?>'),print_elements(RequestXML,0))),
-	% Filename = 'protege_tell.xml',
 	open(Filename,write,St),
 	xml_write(St,element('RequestMessage',
 			     [xmlns='http://www.owllink.org/owllink#',
 			      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance',
 			      xsi:schemaLocation='http://www.owllink.org/owllink# http://www.owllink.org/owllink-20091116.xsd'],
-			     RequestXML),[layout(true)]),close(St),  % layout false to avoid newlines
-	size_file(Filename,_RLength), % size_file is not counting correctly newlines in
-	                                                     % windows environment.
-	% print(RLength),nl,
-        % read(RLength1), print(RLength1),
-	% RLength1 is RLength + N,
+			     RequestXML),[layout(true)]),close(St),
+			     % size_file(Filename,_RLength),  size_file is not counting correctly newlines in windows environment.
 	(   member(no_reasoner,Options) ->
 	       open(FilenameResponse,read,St),
-	       load_structure(St,ResponseXML,[dialect(xml),space(sgml)]),close(St),
+	       load_structure(St,ResponseXML,[dialect(xmlns),space(sgml)]),close(St),
 	       ResponseXML = [element('ResponseMessage',_,ResponsesXML)],
 	       owl_link_response(ResponsesXML,Response)
 	;
