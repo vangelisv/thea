@@ -28,7 +28,8 @@ See http://www.w3.org/TR/2008/WD-owl2-profiles-20081202/#Reasoning_in_OWL_2_RL_a
 :- use_module('owl2_model').
 
 :- dynamic entails/3.
-:- dynamic inferred/3.
+:- dynamic entailed/3.
+:- discontiguous entails/3.
 
 
 % ----------------------------------------
@@ -134,13 +135,13 @@ fire :-
 	       print(Rule),nl,
 	       hold(Antecedants),
 	       member(Consequent,Consequents)),
-	       assert_u(inferred(Consequent,Rule,Antecedants))).
+	       assert_u(entailed(Consequent,Rule,Antecedants))).
 
 assert_u(Fact) :- call(Fact),!.
 assert_u(Fact) :- assert(Fact).
 
 holds(Axiom) :-
-	axiom(Axiom) ; inferred(Axiom,_,_).
+	axiom(Axiom) ; entailed(Axiom,_,_).
 
 hold([]).
 hold([Antecedent|Rest]) :-
@@ -149,9 +150,46 @@ hold([Antecedent|Rest]) :-
 
 
 clear :-
-	retractall(inferred(_,_,_)).
+	retractall(entailed(_,_,_)).
 
 
 load_owl :-
 	owl_parse_rdf('testfiles/wine.owl',[clear(complete)]).
+
+
+is_entailed(Axiom,axiom(Axiom)) :-
+	axiom1(Axiom).
+
+is_entailed(Axiom,entailed(Rule,Expl)) :-
+	entailed(Axiom,Rule,Expl).
+
+is_entailed(Axiom,entailed(Rule,Expl)) :-
+	not(entailed(Axiom,_,_)),
+	% find rules to be executed.
+	entails(Rule,Antecedants,Consequents),	member(Axiom,Consequents),
+	% resolve rules, if resolution succeeds,
+	are_entailed(Antecedants,Expl),
+	% assert axiom if not already there
+	not(entailed(Axiom,_,_)),	% put this axiom once but generate all entailments for its children...	
+	assert_u(entailed(Axiom,Rule,Expl)). % backtrack to next rule.
+
+
+are_entailed([],[]).
+are_entailed([Axiom|Rest],[Expl|RestExpl]) :-
+	is_entailed(Axiom,Expl),
+	are_entailed(Rest,RestExpl).
+
+entails(r1,[e(X,Y)],[s(X,Y)]).
+entails(r2,[e(X,Z),s(Z,Y)],[s(X,Y)]).
+
+axiom1(e(a,b)).
+axiom1(e(b,c)).
+axiom1(e(c,b)).
+axiom1(e(a,a)).
+
+
+
+
+
+
 
