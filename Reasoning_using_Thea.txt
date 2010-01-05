@@ -53,14 +53,12 @@ which are of interest to the authors.
 
 This module implements the OWLLink standard. See http://www.owllink.org/
 
-[VV to fill in more details here]
-
 Currently this supports using Thea as a client to an external reasoner
-running as an OWLLink server. This implementation should be complete
-[VV - true?]. In the future we may support using Thea as an OWLLink
+running as an OWLLink server. This implementation is complete
+In the future we may support using Thea as an OWLLink
 server too.
 
-Currently this exports one predicate, owl_link/4
+[VV]: See module documentation and owl2_owllink.txt
 
 Perhaps this should also export more finer grained ask/tell predicates?
 
@@ -107,6 +105,10 @@ has backwards chaining rules. Caveat emptor: this module is
 experimental, liable to change and could be non-terminating. See the
 module docs for details.
 
+[VV] Another implementation is provided in owl2_rl_rules.pl. The module
+implements OWL RL Rules with simple forward and backward chaining engines
+See more in module documentation
+
 ---++ TODO
 
 Currently each of the modules described above provides their own
@@ -138,6 +140,21 @@ forall(reasoner_ask(Reasoner,subClassOf(X,Y)),
        writeln(X-Y)).
 ==
 
+[VV] Querying an external reasoner via OWLLink with non-ground queries is not trivial.
+OWLLink does not support variables in its Ask specification. One should write the logic
+on how the system should handle free variables: 
+E.g. write something like the following:
+
+==
+  reasoner_ask(owllink_external_reasoner(R),subClassOf(X,Y)) :-
+	    var(X),nonvar(Y),
+		owllink(R, getAllClasses(KB),classSet(CL),[]),
+		member(X,CL),
+		owllink(R, isClassSubsumedBy(KB,X,Y),response(true),[]).
+		
+==
+
+
 ---+++ Modules
 
   * owl2_reasoner.pl
@@ -145,6 +162,7 @@ forall(reasoner_ask(Reasoner,subClassOf(X,Y)),
   * owl2_owllink.pl
   * owl2_to_prolog_dlp.pl
   * owl2_reasoning_rules.pl
+  * owl2_rl_rules.pl
   * owl2_basic_reasoner.pl
 
 --+++ Reasoner Cookbook
