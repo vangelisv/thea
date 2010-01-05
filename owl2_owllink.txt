@@ -7,11 +7,13 @@ mechanism for communication between OWL 2 components. Thea's OWLLink interface m
 enables a Prolog program to act as a client to an external OWL reasoner that supports the OWLLink interface. 
 The interface is implemented via the owl_link/4 predicate:
 
-[[owl_link/4]]
+ * [[owl_link/4]]
+
+
 
 ---++ Examples
 
-See thea_owllink.pl
+See bin/thea_owllink.pl
 
 ---++ Requests Specification 
 ==
