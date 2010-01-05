@@ -3,13 +3,18 @@
 :- module(owl2_reasoner,
           [
 	   initialize_reasoner/3,
-	   reasoner_tell/1,
 	   reasoner_tell/2,
+	   reasoner_tell_all/1,
 	   reasoner_ask/2,
 	   reasoner_check_consistency/1
           ]).
 
 :- use_module(owl2_model).
+
+:- multifile owl2_reasoner:initialize_reasoner_hook/3.
+:- multifile owl2_reasoner:reasoner_tell_hook/2.
+:- multifile owl2_reasoner:reasoner_tell_all_hook/1.
+:- multifile owl2_reasoner:reasoner_ask_hook/2.
 
 %% initialize_reasoner(+Type,?Reasoner)
 % see initialize_reasoner/2
@@ -30,14 +35,23 @@ reasoner_tell(Reasoner,Axiom) :-
 	reasoner_tell_hook(Reasoner,Axiom).
 
 %% reasoner_tell_all(+Reasoner)
-reasoner_tell_all(Reasoner,Axiom) :- 
-	reasoner_tell_all_hook(Reasoner,Axiom).
+reasoner_tell_all(Reasoner) :- 
+	reasoner_tell_all_hook(Reasoner),
+	!.
+reasoner_tell_all(Reasoner) :- 
+	forall(axiom(A),
+	       reasoner_tell(Reasoner,A)).
 
 %% reasoner_ask(+Reasoner,?Axiom)
 reasoner_ask(Reasoner,Axiom) :- 
-	reasoner_ask(Reasoner,Axiom).
+	reasoner_ask_hook(Reasoner,Axiom).
 
 %% reasoner_consistent(+Reasoner)
+
+
+% --
+
+
 
 /** <module> reasoner API - NOT YET IN USE
 
@@ -55,7 +69,7 @@ reasoner_ask(Reasoner,Axiom) :-
 
 ---+ Details
 
-
+See Reasoning-using-Thea.txt
 
 
 */

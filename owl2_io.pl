@@ -145,7 +145,7 @@ format_module(write,dl_syntax,owl2_dl_syntax).
 format_module(write,dlp,owl2_to_prolog_dlp).
 
 
-/** <module> 
+/** <module>
 
   ---+ Synopsis
 

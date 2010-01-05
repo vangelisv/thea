@@ -21,8 +21,9 @@
 %% entailed(?Axiom) is nondet
 % true if Axiom is entailed
 entailed(A) :-
-        entailed(A,[]).
-
+	debug(reasoner,'<<testing for ~w',[A]),
+        entailed(A,[]),
+	debug(reasoner,'>>found       ~w',[A]).
 
 entailed(A,EL) :- entailed_2(A,EL).
 

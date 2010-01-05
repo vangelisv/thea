@@ -1,32 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ResponseMessage xmlns="http://www.owllink.org/owllink-xml#"
-    xmlns:owl="http://www.w3.org/2002/07/owl#"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.owllink.org/owllink-xml# http://www.owllink.org/owllink-xml-20091016.xsd"> 
-    <KB kb="http://owllink.org/examples/KB_1"/>
-    <OK/>
-    <!-- asks -->
-    <SetOfClasses>
+<ResponseMessage xmlns="http://www.owllink.org/owllink#"
+                 xmlns:owl="http://www.w3.org/2002/07/owl#">
+  <KB kb="http://owllink.org/examples/KB_1"/>
+  <OK/>
+  <OK/>
+  <SetOfClasses>
+    <owl:Class IRI="A"/>
+    <owl:Class IRI="D"/>
+    <owl:Class IRI="C"/>
+    <owl:Class IRI="E"/>
+    <owl:Class IRI="B"/>
+  </SetOfClasses>
+  <ClassHierarchy>
+    <ClassSynset>
+      <owl:Class abbreviatedIRI="owl:Nothing"/>
+    </ClassSynset>
+    <ClassSubClassesPair>
+      <ClassSynset>
         <owl:Class IRI="A"/>
-        <owl:Class IRI="B"/>
-        <owl:Class IRI="C"/>
-        <owl:Class IRI="D"/>
-        <owl:Class IRI="E"/>
-    </SetOfClasses>
-    <SetOfClasses>
-        <owl:Class IRI="E"/>
-    </SetOfClasses>
-    <BooleanResponse result="false"/>
-    <SetOfClassSynsets>
+      </ClassSynset>
+      <SubClassSynsets>
         <ClassSynset>
-            <owl:Class abbreviatedIRI="owl:Nothing"/>
+          <owl:Class IRI="C"/>
         </ClassSynset>
-    </SetOfClassSynsets>
-    <KB kb="http://owllink.org/examples/KB_2"/> 
-    <!-- some tells in KB_2 -->
-    <OK/>
-    <!-- KB management -->
-    <OK/>
-    <!-- One more ask -->
-    <KBError errorMessage="KB http://owllink.org/examples/KB_1 does not exist!"/>
+        <ClassSynset>
+          <owl:Class IRI="B"/>
+        </ClassSynset>
+      </SubClassSynsets>
+    </ClassSubClassesPair>
+  </ClassHierarchy>
+  <SetOfClasses>
+    <owl:Class IRI="E"/>
+    <owl:Class IRI="D"/>
+  </SetOfClasses>
+  <BooleanResponse result="false"/>
+  <ClassSynsets>
+    <ClassSynset>
+      <owl:Class abbreviatedIRI="owl:Nothing"/>
+    </ClassSynset>
+  </ClassSynsets>
+  <SetOfIndividuals>
+    <owl:NamedIndividual IRI="iA"/>
+  </SetOfIndividuals>
+  <KBError error="KB http://owllink.org/examples/KB_2 already exists, request denied"/>
+  <OK/>
+  <OK/>
+  <KBError error="KB http://owllink.org/examples/KB_1 not found. Request denied"/>
 </ResponseMessage>

@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<RequestMessage xmlns:xns12="xsi" xmlns="http://www.owllink.org/owllink#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xns12:schemaLocation="http://www.owllink.org/owllink# http://www.owllink.org/owllink-20091116.xsd"><CreateKB kb="http://owllink.org/examples/KB_1"/><Set kb="http://owllink.org/examples/KB_1" key="abbreviatesIRIs"><Literal>false</Literal></Set><GetSettings kb="http://owllink.org/examples/KB_1"/><ReleaseKB kb="http://owllink.org/examples/KB_1"/></RequestMessage>

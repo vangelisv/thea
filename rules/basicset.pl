@@ -52,14 +52,22 @@ entailed_2(propertyAssertion(P,A,B), EL) :-
 % transitivity of subclass
 % we avoid recursion by stratification - 10 cannot call a 5
 % 10 is either asserted or a precalculated set of assertions based on eg equivalentClass
-entailed_5(subClassOf(X,Y),EL) :- entailed_10(subClassOf(X,Z),EL),\+member(X<Z,EL),entailed(subClassOf(Z,Y),[X<Z|EL]). % TODO: cycles
+entailed_5(subClassOf(X,Y),EL) :-
+	debug(reasoner,'[trans] testing for ~w',[subClassOf(X,Y)]),
+	entailed_10(subClassOf(X,Z),EL),\+member(X<Z,EL),entailed(subClassOf(Z,Y),[X<Z|EL]). % TODO: cycles
 
 
 % subclass over existential restrictions
 % X < P some Y :- X < P some YY, YY < Y
-entailed_5(subClassOf(X,someValuesFrom(P,Y)), EL) :-
+% TODO - fix this - cause of non-termination
+xxxxxxxxentailed_5(subClassOf(X,someValuesFrom(P,Y)), EL) :-
+	class(X),
+	debug(reasoner,'testing for ~w',[subClassOf(X,someValuesFrom(P,Y))]),
         subClassOf(X,someValuesFrom(P,YY)),
-        subClassOf(YY,Y),
+	debug(reasoner,'  testing for ~w',[subClassOf(YY,Y)]),
+	class(YY),
+        entailed(subClassOf(YY,Y),[P-X-YY|EL]),
+	class(Y),
         \+ member(X<someValuesFrom(P,Y),EL).
 
 

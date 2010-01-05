@@ -1,5 +1,7 @@
 ---+ Thea2 : Prolog Modules for OWL2
 
+%TOC%
+
 A collection of modules for parsing and manipulating OWL2 ontologies
 in Prolog. It is developed with SWI-Prolog in mind, but the goal is to
 maximize portability with other prologs, such as Yap and XSB.
@@ -11,6 +13,8 @@ This documentation is intended to be read via pldoc
 See INSTALL.txt
 
 ---++ Overview
+
+* [[owl_parse/4]]
 
 The model is based on Structural Specification and Functional-Style
 Syntax for OWL2 (http://www.w3.org/TR/owl2-syntax), and can be found
@@ -69,7 +73,7 @@ now have OWLLink support, and DIG is being retired in favor of OWLLink.
 You can also use java reasoners via the OWLAPI bridge. See
 owl2_owlapi_java.pl
 
-For more information see Reasoning-using-Thea.txt
+For more information see Reasoning_using_Thea.txt
 
 ---++ Utilities
 
