@@ -1,28 +1,30 @@
 /*
-PREFIX
+    lkjkj lk
+
 */
 
+:- module(thea_owllink,[main/1]).
 
 :- use_module('../owl2_util.pl').
 :- use_module('../owl2_model.pl').
 :- use_module('../owl2_from_rdf.pl').
 :- use_module('../owl2_owllink.pl').
-:-use_module(library('http/http_client')).
+:- use_module(library('http/http_client')).
 
 
 /** <module> Test code for OWLLink interface
 
 This module processes structured comments and generates both formal
 mode declarations from them as well as documentation in the form of
-HTML or LaTeX..
-  test code for owllink
-  VV 25/9/09
+HTML or LaTeX
+zdfsa
 
-
-@author Vangelis Vassiliadis
-@license GPL
+ @author  Vangelis Vassiliadis
+ @license GPL
 
 */
+
+
 
 
 main(URL) :-
@@ -129,17 +131,10 @@ main(URL) :-
 		      request_file='../examples/owllink/thea-owllink-example-PoolingRequests-request.xml',
 		      response_file='../examples/owllink/owllink-example-poolingrequests-response-20091016.xml']),
     print('--------------------'),nl,print(Response7),nl,
-/*
-       [kb(http://owllink.org/examples/KB_4, []),
-	syntaxError(Ignored non-valid OWLlink Tell requests: ((ClassAssertion                                            (Class A)                                            (Class iA)))),
-	setOfClasses([], [owl:Thing, C, B, E, A, D]), setOfClasses([], [E, D]),
-	booleanResponse(false, []), element(SetOfClassSynsets, [], []),
-	kbError(KB http://owllink.org/examples/KB_5 already exists, request denied),
-	ok([]),
-	ok([]),
-	kbError(KB http://owllink.org/examples/KB_4 not found. Request denied)]
-    */
-    % OWLLink Example 8 - Taxonomy Request
+
+% OWLLink Example 8 - Taxonomy Request
+%
+%
     owl_link(URL,[createKB([kb='http://owllink.org/examples/KB_1'],[]),
 			       getSubClassHierarchy('http://owllink.org/examples/KB_1',_),
 			       createKB([kb='http://owllink.org/examples/KB_2'],[]),

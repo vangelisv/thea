@@ -27,7 +27,6 @@ owl2_owllink.txt
   @author Vangelis Vassiliadis
   @license GPL
 
-
 */
 
 %% owl_link(+ReasonerURL, +Request:list, -Response:list, +Options:list) is det
