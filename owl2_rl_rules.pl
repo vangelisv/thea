@@ -53,15 +53,118 @@ See http://www.w3.org/TR/2008/WD-owl2-profiles-20081202/#Reasoning_in_OWL_2_RL_a
 %  axioms
 %
 
-% transitivity of subprop
-entails(scm-spo, [subPropertyOf(X,Z),subPropertyOf(Z,Y)],[subPropertyOf(X,Y)]).
+% Semantics of Equality (Table 4)
+entails(eq-sym, [sameAs(X,Y)],[sameAs(Y,X)]).
+entails(eq-trans, [sameAs(X,Z),sameAs(Z,Y)],[sameAs(X,Y)]).
 
-% transitivity of subclass
-entails(scm-sco, [subClassOf(X,Z),subClassOf(Z,Y)],[subClassOf(X,Y)]).
+entails(eq-rep-s,[sameAs(X,Y),propertyAssertion(P,X,V)],[propertyAssertion(P,Y,V)]).
+entails(eq-rep-p,[sameAs(P1,P2),propertyAssertion(P1,X,V)],[propertyAssertion(P2,X,V)]).
+entails(eq-rep-o,[sameAs(V1,V2),propertyAssertion(P,X,V1)],[propertyAssertion(P,X,V2)]).
+entails(eq-diff1,[sameAs(X,Y),differentFrom(X,Y)],[false]).
+% entails(eq-diff2, Todo...
 
-entails(cax-sco, [subClassOf(C1,C2),classAssertion(C1,I)],[classAssertion(C2,I)]).
+% Table 5. The Semantics of Axioms about Properties
+entails(prp-dom, [propertyDomain(P,C),propertyAssertion(P,X,_)],[classAssertion(C,X)]).
+entails(prp-rng, [propertyRange(P,C),propertyAssertion(P,_,Y)],[classAssertion(C,Y)]).
+entails(prp-fp,  [functionalProperty(P),propertyAssertion(P,X,Y1),propertyAssertion(P,X,Y2),pl(Y1 \= Y2)],[sameAs(Y1,Y2)]).
+entails(prp-ifp, [inverseFunctionalProperty(P),propertyAssertion(P,X1,Y),propertyAssertion(P,X2,Y)],[sameAs(X1,X2)]).
+entails(prp-irp, [irreflexiveProperty(P),propertyAssertion(P,X,X)],[false]).
+entails(prp-symp,[symmetricProperty(P),propertyAssertion(P,X,Y)],[propertyAssertion(P,Y,X)]).
+entails(prp-asyp,[asymmetricProperty(P),propertyAssertion(P,X,Y),propertyAssertion(P,Y,X)],[false]).
+entails(prp-trp, [transitiveProperty(P),propertyAssertion(P,X,Y),propertyAssertion(P,Y,Z)],[propertyAssertion(P,X,Z)]).
+entails(prp-spo1,[subPropertyOf(P1,P2),propertyAssertion(P1,X,Y)],[propertyAssertion(P2,X,Y)]).
+% Todo entails(prp-spo2... Propertychain
+entails(prp-eqp1,[equivalentProperties([P1,P2]),propertyAssertion(P1,X,Y)],[propertyAssertion(P2,X,Y)]).
+entails(prp-eqp2,[equivalentProperties([P1,P2]),propertyAssertion(P2,X,Y)],[propertyAssertion(P1,X,Y)]).
+entails(prp-pdw, [disjointProperties(P1,P2),propertyAssertion(P1,X,Y),propertyAssertion(P2,X,Y)],[false]).
+entails(prp-adp, [disjointProperties(P),pl(select(P1,P,Rest)),pl(member(P2,Rest)),
+		  propertyAssertion(P1,X,Y),
+		  propertyAssertion(P2,X,Y)],[false]).
+entails(prp-inv1,[inverseOf(P1,P2),propertyAssertion(P1,X,Y)],[propertyAssertion(P2,Y,X)]).
+entails(prp-inv2,[inverseOf(P1,P2),propertyAssertion(P2,X,Y)],[propertyAssertion(P1,Y,X)]).
+entails(prp-key, [hasKey(C,[P]),classAssertion(C,X), % Todo for Key lists with more than 1 properties
+		  propertyAssertion(P,X,Z),propertyAssertion(P,Y,Z)],[sameAs(X,Y)]).
 
+% Table 6. The Semantics of Classes
+% Todo what about
+% cls-thing 	 true 	 T(owl:Thing, rdf:type, owl:Class)
+% cls-nothing1   true    T(owl:Nothing, rdf:type, owl:Class)
+entails(cls-nothing2,[classAssertion('owl:Nothing',_X)],[false]).
+entails(cls-int1, [equivalentClasses([C,intersectionOf(L)]),
+		   pl(classAssertionList(L,X))],[classAssertion(C,X)]).
+entails(cls-int2, [equivalentClasses([C,intersectionOf(L)]),
+		   classAssertion(C,X),pl(member(C1,L))],[classAssertion(C1,X)]).
+entails(cls-int2s, [subClassOf(C,intersectionOf(L)),
+		   classAssertion(C,X),pl(member(C1,L))],[classAssertion(C1,X)]).
+entails(cls-uni,  [equivalentClasses([C,unionOf(L)]),classAssertion(C1,X),
+		   pl(member(C1,L))],[classAssertion(C,X)]).
+entails(cls-unis,  [subClassOf([unionOf(L),C]),classAssertion(C1,X),
+		   pl(member(C1,L))],[classAssertion(C,X)]).
+entails(ls-svf1, [subClassOf(C,someValuesFrom(P,Y)),propertyAssertion(P,X,V),
+		  classAssertion(Y,V)],[classAssertyion(C,X)]).
+%entails(ls-svf2 ToDo...
+entails(cls-avf,[classAssertion(allValuesFrom(P,Y),U),propertyAssertion(P,U,V)],
+	[classAssertion(Y,V)]).
 entails(cls-hv1, [classAssertion(hasValue(P,V),I)],[propertyAssertion(P,I,V)]).
+entails(cls-hv2, [classAssertion(hasValue(P,V),I),propertyAssertion(P,X,I)],[classAssertion(hasValue(P,V),X)]).
+entails(cls-maxc1, [classAssertion(maxCardinality(0,P),U),propertyAssertion(P,U,_)],[false]).
+entails(cls-maxc2, [classAssertion(maxCardinality(1,P),U),
+		    propertyAssertion(P,U,Y1),
+		    propertyAssertion(P,U,Y2), pl(Y1 \= Y2)],[sameAs(Y1,Y2)]).
+% ToDo entails maxqc1-4
+entails(cls-oo,  [subClassOf(_,oneOf(L)),pl(member(X,L))],[classAssertion(oneOf(L),X)]).
+entails(cls-oo2,  [subClassOf(_,allValuesFrom(_,oneOf(L))),pl(member(X,L))],[classAssertion(oneOf(L),X)]).
+entails(cls-oo3,  [subClassOf(_,someValuesFrom(_,oneOf(L))),pl(member(X,L))],[classAssertion(oneOf(L),X)]).
+
+
+% Table 7. The Semantics of Class Axioms
+entails(cax-sco, [subClassOf(C1,C2),classAssertion(C1,I)],[classAssertion(C2,I)]).
+entails(cax-eqc1, [equivalentClasses(L),pl(member(C1,L)),pl(member(C2,L)),pl(C1 \= C2),
+		   classAssertion(C1,X)],[classAssertion(C2,X)]).
+% rule cax-eqc2 is already satisfied from the member permutations
+% of the above.
+entails(cax-dw,	[disjointWith(L),pl(member(C1,L)),pl(member(C2,L)),pl(C1 \= C2),
+		   classAssertion(C1,X),classAssertion(C2,X)],[false]).
+entails(cax-adc, [allDisjointClasses(L),pl(member(C1,L)),pl(member(C2,L)),pl(C1 \= C2),
+		   classAssertion(C1,X),classAssertion(C2,X)],[false]).
+
+% Table 8. The Semantics of Datatypes - Nothing to be implemented here.
+
+% Table 9. The Semantics of Schema Vocabulary
+entails(scm-cls, [class(C)],[subClassOf(C,C)]). % ToDo also Thing and Nothing
+entails(scm-sco, [subClassOf(X,Z),subClassOf(Z,Y)],[subClassOf(X,Y)]).
+entails(scm-eqc, [equivalentClasses([C1,C2])],[subClassOf(C1,C2),subClassOf(C2,C1)]).
+entails(scm-op,  [objectProperty(P)],[subPropertyOf(P,P)]).
+entails(scm-dp,  [datatypePropert(P)],[subPropertyOf(P,P)]).
+entails(scm-spo, [subPropertyOf(X,Z),subPropertyOf(Z,Y)],[subPropertyOf(X,Y)]).
+entails(scm-eqp, [equivalentProperties([P1,P2])],[subPropertyOf(P1,P2),subPropertyOf(P2,P1)]).
+entails(scm-dom1,[propertyDomain(P,C1),subClassOf(C1,C2)],[propertyDomain(P,C2)]).
+entails(scm-dom2,[propertyDomain(P2,C),subPropertyOf(P1,P2)],[propertyDomain(P1,C)]).
+entails(scm-rng1,[propertyRange(P,C1),subClassOf(C1,C2)],[propertyRange(P,C2)]).
+entails(scm-rng2,[propertyRange(P2,C),subPropertyOf(P1,P2)],[propertyRange(P1,C)]).
+entails(scm-hv,[subClassOf(_,hasValue(P1,I)),subClassOf(_,hasValue(P2,I),_),subPropertyOf(P1,P2)],
+	[subClassOf(hasValue(P1,I),hasValue(P2,I))]).
+
+entails(scm-svf1,[subClassOf(_,someValuesFrom(P,Y1)),subClassOf(_,someValuesFrom(P,Y2)), pl( Y1 \= Y2),
+		  subClassOf(Y1,Y2)],[subClassOf(someValuesFrom(P,Y1),someValuesFrom(P,Y2))]).
+entails(scm-svf2,[subClassOf(_,someValuesFrom(P1,Y)),subClassOf(_,someValuesFrom(P2,Y)), pl( P1 \= P2),
+		  subPropertyOf(P1,P2)],[subPropertyOf(P1,P2)]).
+entails(scm-avf1,[subClassOf(_,allValuesFrom(P,Y1)),subClassOf(_,allValuesFrom(P,Y2)), pl(Y1 \= Y2),
+		  subClassOf(Y1,Y2)],[subClassOf(allValuesFrom(P,Y1),allValuesFrom(P,Y2))]).
+entails(scm-avf2,[subClassOf(_,allValuesFrom(P1,Y)),subClassOf(_,allValuesFrom(P2,Y)), pl(P1 \= P2),
+		  subPropertyOf(P1,P2)],[subPropertyOf(P1,P2)]).
+
+entails(scm-int, [subClassOf(C,intersectionOf(L)),pl(member(C1,L))],[subClassOf(C,C1)]).
+entails(scm-uni, [subClassOf(C,unionOf(L)),pl(member(C1,L))],[subClassOf(C1,C)]).
+
+
+% ----------------------------------------
+% Utility predicates
+% --------------------------------------
+classAssertionList([],_).
+classAssertionList([C|Rest],X) :-
+	classAssertion(C,X),
+	classAssertionList(Rest,X).
 
 
 % ----------------------------------------
@@ -74,9 +177,9 @@ entails(cls-hv1, [classAssertion(hasValue(P,V),I)],[propertyAssertion(P,I,V)]).
 %	the database.
 
 fire :-
-	aggregate_all(count,entailed(_,_,_),C),% print('# of inferred before'-C),nl,
+	aggregate_all(count,entailed(_,_,_),C), print('# of entailed before cycle'-C),
 	fire_cycle,
-	aggregate_all(count,entailed(_,_,_),C1),% print('# of inferred after'-C1),nl,read(_),
+	aggregate_all(count,entailed(_,_,_),C1), print('# of entailed after cycle'-C1),nl,
 	(   C1 = C -> true ; fire ).
 
 
@@ -105,6 +208,8 @@ clear_entailments :-
 %	entailed(Rule, Expl).
 holds(Axiom,axiom(Axiom)) :-
 	axiom(Axiom).
+holds(pl(Axiom),pl(Axiom)) :-
+	call(Axiom).
 holds(Axiom,entailed(Rule,Expl)):-
 	entailed(Axiom,Rule,Expl).
 
