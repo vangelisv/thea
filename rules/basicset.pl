@@ -26,9 +26,15 @@ entailed(subClassOfReflexive(X,X), _) :- class(X).
 
 
 entailed_2(classAssertion(C,I),EL) :-
+	nonvar(I),
         classAssertion(C2,I),
         debug(owl2_basic_reasoner,'testing ~w(~w) based on ~w(~w)',[C,I,C2,I]),
         entailed(subClassOf(C2,C),EL).
+
+entailed_2(classAssertion(C,I),EL) :-
+	var(I),
+	entailed(subClassOf(C2,C),EL),
+        classAssertion(C2,I).
 
 
 entailed_2(individual(I),_) :-
@@ -53,8 +59,13 @@ entailed_2(propertyAssertion(P,A,B), EL) :-
 % we avoid recursion by stratification - 10 cannot call a 5
 % 10 is either asserted or a precalculated set of assertions based on eg equivalentClass
 entailed_5(subClassOf(X,Y),EL) :-
-	debug(reasoner,'[trans] testing for ~w',[subClassOf(X,Y)]),
+	nonvar(X),
+	debug(reasoner,'[trans-up] testing for ~w',[subClassOf(X,Y)]),
 	entailed_10(subClassOf(X,Z),EL),\+member(X<Z,EL),entailed(subClassOf(Z,Y),[X<Z|EL]). % TODO: cycles
+entailed_5(subClassOf(X,Y),EL) :-
+	var(X),
+	debug(reasoner,'[trans-dn] testing for ~w',[subClassOf(X,Y)]),
+	entailed_10(subClassOf(Z,Y),EL),\+member(Z<Y,EL),entailed(subClassOf(X,Z),[Z<Y|EL]). % TODO: cycles
 
 
 % subclass over existential restrictions
