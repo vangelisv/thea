@@ -1,23 +1,28 @@
-/** <module> Test code for OWLLink interface
-
-This module processes structured comments and generates both formal
-mode declarations from them as well as documentation in the form of
-HTML or LaTeX.
-  test code for owllink
-  VV 25/9/09
-
-
-@author Vangelis Vassiliadis
-@license GPL
+/*
+    lkjkj lk
 
 */
 
+:- module(thea_owllink,[main/1]).
 
 :- use_module('../owl2_util.pl').
 :- use_module('../owl2_model.pl').
 :- use_module('../owl2_from_rdf.pl').
 :- use_module('../owl2_owllink.pl').
-:-use_module(library('http/http_client')).
+:- use_module(library('http/http_client')).
+
+
+/** <module> Test code for OWLLink interface
+
+This module processes structured comments and generates both formal
+mode declarations from them as well as documentation in the form of
+HTML or LaTeX
+zdfsa
+
+ @author  Vangelis Vassiliadis
+ @license GPL
+
+*/
 
 
 
@@ -126,17 +131,10 @@ main(URL) :-
 		      request_file='../examples/owllink/thea-owllink-example-PoolingRequests-request.xml',
 		      response_file='../examples/owllink/owllink-example-poolingrequests-response-20091016.xml']),
     print('--------------------'),nl,print(Response7),nl,
-/*
-       [kb(http://owllink.org/examples/KB_4, []),
-	syntaxError(Ignored non-valid OWLlink Tell requests: ((ClassAssertion                                            (Class A)                                            (Class iA)))),
-	setOfClasses([], [owl:Thing, C, B, E, A, D]), setOfClasses([], [E, D]),
-	booleanResponse(false, []), element(SetOfClassSynsets, [], []),
-	kbError(KB http://owllink.org/examples/KB_5 already exists, request denied),
-	ok([]),
-	ok([]),
-	kbError(KB http://owllink.org/examples/KB_4 not found. Request denied)]
-    */
-    % OWLLink Example 8 - Taxonomy Request
+
+% OWLLink Example 8 - Taxonomy Request
+%
+%
     owl_link(URL,[createKB([kb='http://owllink.org/examples/KB_1'],[]),
 			       getSubClassHierarchy('http://owllink.org/examples/KB_1',_),
 			       createKB([kb='http://owllink.org/examples/KB_2'],[]),
@@ -202,87 +200,21 @@ test :-
     print('--------------------'),nl,print(Response7),nl.
 
 
+load_wine(Response) :-
+	owl_link('http://localhost:8080',
+		 [createKB([kb='http://owllink.org/examples/wine'],[]),
+		  loadOntologies('http://owllink.org/examples/wine',
+				 ['OntologyIRI'('IRI'='http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine')],[],false)
+		 ],
+		 Response,
+		 [reasoner]).
 
-/*
+release_wine(Response) :- owl_link('http://localhost:8080',[releaseKB('http://owlink.org/examples/wine')],Response,[reasoner]).
 
+wine_classes(Response) :- owl_link('http://localhost:8080',[getAllClasses('http://owllink.org/examples/wine')],Response,[reasoner]).
 
-
-------------------------------
-[kb(http://owllink.org/examples/KB_1, []),
- ok([]),
- booleanResponse(true, []), ok([])
-]
---------------------
-[kb(http://owllink.org/examples/KB_1, []),
- settings([], [setting(uniqueNameAssumption, xsd:boolean, false),
-	       setting(verbose, xsd:boolean, false),
-	       setting(leanMode, xsd:boolean, false),
-	       setting(keepsAxioms, xsd:boolean, true),
-	       setting(usesLessMemory, xsd:boolean, false),
-	       setting(ignoresAnnotations, xsd:boolean, false),
-	       setting(ignoresDeclarations, xsd:boolean, false),
-	       setting(incremental, xsd:boolean, true),
-	       setting(abbreviatesIRIs, xsd:boolean, true)]),
- ok([])
-]
---------------------
-[kb(http://owllink.org/examples/KB_1, []),
- ok([]),
- settings([], [setting(uniqueNameAssumption, http://www.w3.org/2001/XMLSchema#boolean, false),
-	       setting(verbose, http://www.w3.org/2001/XMLSchema#boolean, false),
-	       setting(leanMode, http://www.w3.org/2001/XMLSchema#boolean, false),
-	       setting(keepsAxioms, http://www.w3.org/2001/XMLSchema#boolean, true),
-	       setting(usesLessMemory, http://www.w3.org/2001/XMLSchema#boolean, false),
-	       setting(ignoresAnnotations, http://www.w3.org/2001/XMLSchema#boolean, false),
-	       setting(ignoresDeclarations, http://www.w3.org/2001/XMLSchema#boolean, false),
-	       setting(incremental, http://www.w3.org/2001/XMLSchema#boolean, true),
-	       setting(abbreviatesIRIs, http://www.w3.org/2001/XMLSchema#boolean, false)]),
- ok([])
-]
---------------------
-[kb(http://owllink.org/examples/KB_2, []),
- ok([]),
- ok([]),
- semanticError(Reasoning error 'Undefined concept name                  http://owllink.org/examples/ontology#ClassA in TBox                  http://owllink.org/examples/KB_2' occured),
- element(SetOfClassSynsets, [], [element(ClassSynset, [], [element(owl:Class, [IRI=http://www.owllink.orgtest/ontClassA], [])])]), ok([]),
- semanticError(Reasoning error 'Undefined concept name                  http://owllink.org/examples/ontology#ClassA in TBox                  http://owllink.org/examples/KB_2' occured),
- ok([])]
---------------------
-[kb(http://owllink.org/examples/KB_3, []),
- syntaxError(No valid OWLlink KBRequest request: LoadOntology),
- ok([])]
---------------------
-[kb(http://owllink.org/examples/KB_1, []),
- syntaxError(Ignored non-valid OWLlink Tell requests: ((ClassAssertion                                            (Class A)                                            (Class iA)))),
- setOfClasses([], [owl:Thing, C, B, E, A, D]),
- setOfClasses([], [E, D]),
- booleanResponse(false, []),
- element(SetOfClassSynsets, [], []), kb(http://owllink.org/examples/KB_2, []),
- ok([]),
- ok([]),
- kbError(KB http://owllink.org/examples/KB_1 not found. Request denied)
-]
---------------------
-[kb(http://owllink.org/examples/KB_1, []),
- classHierarchy([], [classSubClassesPair(synset([owl:Thing]), [])]), kbError(KB http://owllink.org/examples/KB_2 already exists, request denied),
- ok([]),
- kbError(KB http://owllink.org/examples/KB_3 already exists, request denied),
- ok([]),
- kb(http://owllink.org/examples/KB_4, []),
- ok([]),
- classHierarchy([], [classSubClassesPair(synset([owl:Thing]), []), classSubClassesPair(synset([B]), [])]),
- classHierarchy([], [classSubClassesPair(synset([owl:Thing]), []), classSubClassesPair(synset([http://www.owllink.orgtest/ontClassA]), [])]),
- classHierarchy([], [classSubClassesPair(synset([owl:Thing, A]), []), classSubClassesPair(synset([owl:NoThing, C]), [])]),
- ok([]),
- ok([]),
- ok([]),
- ok([])]
-
-*/
-
-
-
-
+wine_ask(Ask,Response) :-
+	owl_link('http://localhost:8080',Ask,Response,[reasoner]).
 
 
 

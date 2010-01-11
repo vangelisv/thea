@@ -1,57 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <RequestMessage
-    xmlns:xns36="xsi"
-    xmlns:xns35="http://www.w3.org/2006/12/owl2-xml#"
+    xmlns:xns2="xsi"
+    xmlns:xns1="http://www.w3.org/2006/12/owl2-xml#"
     xmlns="http://www.owllink.org/owllink#"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xns36:schemaLocation="http://www.owllink.org/owllink# http://www.owllink.org/owllink-20091116.xsd">
+    xns2:schemaLocation="http://www.owllink.org/owllink# http://www.owllink.org/owllink-20091116.xsd">
   <CreateKB kb="http://owllink.org/examples/KB_1"/>
   <Tell kb="http://owllink.org/examples/KB_1">
-    <xns35:SubClassOf>
-      <xns35:Class URI="B"/>
-      <xns35:Class URI="A"/>
-    </xns35:SubClassOf>
-    <xns35:SubClassOf>
-      <xns35:Class URI="C"/>
-      <xns35:Class URI="A"/>
-    </xns35:SubClassOf>
-    <xns35:EquivalentClasses>
-      <xns35:Class URI="D"/>
-      <xns35:Class URI="E"/>
-    </xns35:EquivalentClasses>
-    <xns35:SubClassOf>
-      <xns35:Class URI="C"/>
-      <xns35:Class URI="A"/>
-    </xns35:SubClassOf>
+    <xns1:SubClassOf>
+      <xns1:Class URI="B"/>
+      <xns1:Class URI="A"/>
+    </xns1:SubClassOf>
+    <xns1:SubClassOf>
+      <xns1:Class URI="C"/>
+      <xns1:Class URI="A"/>
+    </xns1:SubClassOf>
+    <xns1:EquivalentClasses>
+      <xns1:Class URI="D"/>
+      <xns1:Class URI="E"/>
+    </xns1:EquivalentClasses>
+    <xns1:SubClassOf>
+      <xns1:Class URI="C"/>
+      <xns1:Class URI="A"/>
+    </xns1:SubClassOf>
   </Tell>
   <Tell kb="http://owllink.org/examples/KB_1">
-    <xns35:ClassAssertion>
-      <xns35:Class URI="A"/>
-      <xns35:Individual URI="iA"/>
-    </xns35:ClassAssertion>
+    <xns1:ClassAssertion>
+      <xns1:Class URI="A"/>
+      <xns1:Individual URI="iA"/>
+    </xns1:ClassAssertion>
   </Tell>
   <GetAllClasses kb="http://owllink.org/examples/KB_1"/>
   <GetSubClassHierarchy kb="http://owllink.org/examples/KB_1">
-    <xns35:Class URI="A"/>
+    <xns1:Class URI="A"/>
   </GetSubClassHierarchy>
   <GetEquivalentClasses kb="http://owllink.org/examples/KB_1">
-    <xns35:Class URI="D"/>
+    <xns1:Class URI="D"/>
   </GetEquivalentClasses>
   <IsClassSubsumedBy kb="http://owllink.org/examples/KB_1">
-    <xns35:Class URI="http://www.w3.org/2002/07/owl#Thing"/>
-    <xns35:Class URI="http://www.w3.org/2002/07/owl#Nothing"/>
+    <xns1:Class URI="http://www.w3.org/2002/07/owl#Thing"/>
+    <xns1:Class URI="http://www.w3.org/2002/07/owl#Nothing"/>
   </IsClassSubsumedBy>
   <GetSubClasses kb="http://owllink.org/examples/KB_1">
-    <xns35:Class URI="C"/>
+    <xns1:Class URI="C"/>
   </GetSubClasses>
   <GetAllIndividuals kb="http://owllink.org/examples/KB_1"/>
   <CreateKB kb="http://owllink.org/examples/KB_2"/>
   <Tell kb="http://owllink.org/examples/KB_2">
-    <xns35:SubClassOf>
-      <xns35:Class URI="A"/>
-      <xns35:Class URI="B"/>
-    </xns35:SubClassOf>
+    <xns1:SubClassOf>
+      <xns1:Class URI="A"/>
+      <xns1:Class URI="B"/>
+    </xns1:SubClassOf>
   </Tell>
   <ReleaseKB kb="http://owllink.org/examples/KB_1"/>
   <GetAllClasses kb="http://owllink.org/examples/KB_1"/>
