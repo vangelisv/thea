@@ -6,7 +6,7 @@ Hello
 
 
 :- module(thea_opencalais,
-	  [ rest/4 % File
+	  [ rest/3 % File
 	  ]).
 
 :-use_module(library('http/http_client')).
@@ -29,25 +29,43 @@ Open Calais service wrapper
 */
 
 
-:- dynamic open_calais_class/1.
+:- dynamic open_calais/1.
 
-open_calais_class('http://s.opencalais.com/1/type/er/Geo/Country').
+open_calais(class('http://s.opencalais.com/1/type/er/Geo/Country')).
+open_calais(class('http://s.opencalais.com/1/type/er/Geo/City')).
+open_calais(license('nbqjkw3dn3mfhmuejy7h9c62')).
 
-%% owl_link(+ReasonerURL, +Request:list, -Response:list, +Options:list) is det
-%  Implements OWLLink over HTTP. Sends an OWLLink request to the ReasonerURL and
-%  gets its Response.
+%% rest(+Request:list, +Params:string, -Result) is det
+%
+% Calls Open Calais Rest service and posts the Request.
+% Requires a valid Open_Calais license key in a dynamic
+% open_calais(license(License)) to be asserted.
+%
+% Request can be any of the following:
+%   * http(URL)
+%   * file(Filename)
+%   * text(Atom)
+% Params is a string encoded XML see description in http://www.opencalais.com/APICalls
+%
+% Result is the RDF response of Open_Calais see http://www.opencalais.com/documentation/calais-web-service-api/interpreting-api-response/rdf
+%
 
 
-rest(LicenseID,Content,Result,Params) :-
-	LicenseID='nbqjkw3dn3mfhmuejy7h9c62',
-	atomic_list_concat(['licenseID=',LicenseID,'&content=',Content,'&paramsXML=',Params],Atom),
-	atom_codes(Atom,Codes),
+rest(_Request,_Params,_Result) :-
+	not(open_calais(license(_))),
+	throw(open_calais_exception(missing_license)),!.
+
+rest(Request,Params,Result) :-
+	open_calais(license(LicenseID)),
+        (   Request = http(URL) -> http_get(URL,Content,[]);
+	Request = file(Filename) -> read_file_to_codes(Filename,Codes,[]),atom_codes(Content,Codes) ;
+	Request = text(Content) -> true ; throw(open_calais_exception(invalid_request_type))),
+
 	http_post('api.opencalais.com/enlighten/rest/',
-		  codes('application/x-www-form-urlencoded',Codes),
+		  form(['licenseID'=LicenseID,content=Content,paramsXML=Params]),
 		  Result,[]),
 	open('_opencalais',write,St),
-	write(St,'<?xml version="1.0"?>'),nl(St),
-	write(St,Result),
+	write(St,'<?xml version="1.0"?>'),nl(St),write(St,Result),
 	close(St),
 	owl_parse_rdf('_opencalais',[imports(false),clear(complete)]).
 
@@ -61,9 +79,12 @@ i(I) :-
 	       (   print(P),print('\t:\t'),print(V),nl)).
 
 
-dereference(URI,Options) :-
-	atom_concat(URI,'.rdf',RDF_URI),
-	catch(owl_parse_rdf(RDF_URI,Options),io_error(A,B,C),(nl,nl,print(A-B-C),nl,nl)).
+dereference(URI,Options):-
+	catch(owl_parse_rdf(URI,Options),io_error(A,B,C),(nl,nl,print(A-B-C),nl,nl)).
+
+dereference(URI,Options,Ext) :-
+	atom_concat(URI,Ext,Ext_URI),
+	catch(owl_parse_rdf(Ext_URI,Options),io_error(A,B,C),(nl,nl,print(A-B-C),nl,nl)).
 
 open_calais_entity(C,I) :-
 	open_calais_class(C),
