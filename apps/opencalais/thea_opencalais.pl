@@ -67,16 +67,8 @@ rest(Request,Params,Result) :-
 	open('_opencalais',write,St),
 	write(St,'<?xml version="1.0"?>'),nl(St),write(St,Result),
 	close(St),
-	owl_parse_rdf('_opencalais',[imports(false),clear(complete)]).
+	owl_parse_rdf('_opencalais',[imports(false)]).
 
-
-i(I) :-
-	classAssertion(C,I),
-	print('---------------------------------------------------'),nl,
-	print(I), print('\t::\t'), print(C),nl,
-	print('---------------------------------------------------'),nl,
-	forall(propertyAssertion(P,I,V),
-	       (   print(P),print('\t:\t'),print(V),nl)).
 
 
 dereference(URI,Options):-
@@ -86,8 +78,50 @@ dereference(URI,Options,Ext) :-
 	atom_concat(URI,Ext,Ext_URI),
 	catch(owl_parse_rdf(Ext_URI,Options),io_error(A,B,C),(nl,nl,print(A-B-C),nl,nl)).
 
-open_calais_entity(C,I) :-
-	open_calais_class(C),
-	classAssertion(C,I).
+oc_markup_entity(C,oc_me(I,PVList)) :-
+	class(C),subClassOf(C,'http://s.opencalais.com/1/type/em/e/MarkupEntity'),
+	classAssertion(C,I),
+	findall(P=V,propertyAssertion(P,I,V),PVList).
 
 
+
+
+% ---------------------------------------------------
+% OWL Statistics
+%
+%
+
+
+owl_statistics(all,[element(owl_statistics,[axiomCount=ACount],OList)]) :-
+	findall(OElem,
+		(ontology(O),owl_statistics(ontology(O),OElem)),
+		 OList),
+	aggregate_all(count,axiom(_),ACount),!.
+
+
+owl_statistics(ontology(O),element(ontology,[name=O,axiomCount=ACount],OntAxioms)) :-
+	findall(element(P-axioms,[axiomCount=APCount],PredAxioms),
+		(   axiompred(P/A),functor(T,P,A),
+		    findall(AT,
+			    (	ontologyAxiom(O,T),owl_stats_axiom_element(T,AT)),
+			    PredAxioms),
+		    aggregate_all(count,ontologyAxiom(O,T),APCount)
+		),
+		OntAxioms),
+	aggregate_all(count,ontologyAxiom(O,_Axiom),ACount),!.
+
+
+owl_stats_axiom_element(class(C),element(class,[name=C],[])) :- !.
+owl_stats_axiom_element(T,AT) :-
+	term_to_atom(T,AT).
+
+
+% -----------------------------------------
+% Usage
+%
+
+
+o :- owl_parse_rdf('owl.opencalais-4.3.xml.owl',[imports(false),clear(complete)]).
+pope :- rest(http('http://news.bbc.co.uk/2/hi/uk_news/8492597.stm'),'',_X).
+un :- rest(http('http://www.scoop.co.nz/stories/WO0002/S00002.htm'),'',_X).
+stats(File) :- owl_statistics(all,XML), open(File,write,S), xml_write(S,XML,[header(true)]),close(S).
