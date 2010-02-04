@@ -25,6 +25,8 @@ Hello
 
 Open Calais service wrapper
 
+  See thea_opencalais.txt
+
   @author Vangelis Vassiliadis
   @license GPL
 
