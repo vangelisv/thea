@@ -1,6 +1,8 @@
 /*
 
-Hello
+Thea module for Open Calais service
+Written by Vangelis Vassiliadis, Feb 2010
+GNU GPL License
 
 */
 
@@ -13,12 +15,9 @@ Hello
 	  ]).
 
 :-use_module(library('http/http_client')).
-:-use_module(library('sgml')).
-:-use_module(library('sgml_write')).
 :-use_module('../../owl2_model.pl').
 :-use_module('../../owl2_from_rdf.pl').
 :-use_module('../../owl2_rl_rules.pl').
-:-use_module('../../owl2_util.pl').
 
 
 /** <module> Thea wrapper for open calais service.
@@ -33,12 +32,8 @@ Open Calais service wrapper
 
 */
 
-
 :- dynamic open_calais/1.
-
-open_calais(class('http://s.opencalais.com/1/type/er/Geo/Country')).
-open_calais(class('http://s.opencalais.com/1/type/er/Geo/City')).
-open_calais(license('nbqjkw3dn3mfhmuejy7h9c62')).
+:- multifile open_calais/1.
 
 %% oc_rest(+Request, +Params:string, -Result) is det
 %
@@ -140,21 +135,6 @@ oc_resolution(R,C,PVList) :-
 	findall(P=V,propertyAssertion(P,R,V),PVList).
 
 
-% ---
-% Usage
-%
 
 
-o :- owl_parse_rdf('owl.opencalais-4.3.xml.owl',[imports(false),clear(complete)]).
-pope :- oc_rest(http('http://news.bbc.co.uk/2/hi/uk_news/8492597.stm'),'',_X).
-un :- oc_rest(http('http://www.scoop.co.nz/stories/WO0002/S00002.htm'),'',_X).
-%  papal_visits :- oc_rest(http('http://en.wikipedia.org/wiki/List_of_journeys_of_Pope_Benedict_XVI'),'',_X).
-papal_visits :- oc_rest(file(papal_visits),'',_X).
-stats(File) :- owl_statistics(all,XML), open(File,write,S), xml_write(S,XML,[header(true)]),close(S).
 
-dereference(URI,Options):-
-	catch(owl_parse_rdf(URI,Options),io_error(A,B,C),(nl,nl,print(A-B-C),nl,nl)).
-
-dereference(URI,Options,Ext) :-
-	atom_concat(URI,Ext,Ext_URI),
-	catch(owl_parse_rdf(Ext_URI,Options),io_error(A,B,C),(nl,nl,print(A-B-C),nl,nl)).
