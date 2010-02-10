@@ -16,7 +16,19 @@ equivalentClasses([n_cell,intersectionOf([cell,someValuesFrom(has_part,nuc)])]).
 equivalentClasses([e_cell,intersectionOf([cell,allValuesFrom(has_part,complementOf(nuc))])]).
 %equivalentClasses([cell,unionOf([e_cell,n_cell])]).
 subClassOf(cell,unionOf([e_cell,n_cell])).
+
 objectProperty(part_of).
 objectProperty(has_part).
 objectProperty(develops_from).
+transitiveProperty(has_part).
+inverseProperties(part_of,has_part).
 
+subClassOf(cell,material_anatomical_entity).
+subClassOf(neuron,cell).
+subClassOf(interneuron,neuron).
+
+subClassOf(nucleus,someValuesFrom(part_of,cell)).
+subClassOf(nucleolus,someValuesFrom(part_of,nucleus)).
+
+subClassOf(mt_nucleus,nucleus).
+classAssertion(interneuron,n1).

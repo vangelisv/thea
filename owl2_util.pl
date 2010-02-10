@@ -165,6 +165,15 @@ use_label_as_IRI(IRI,X) :-
         !.
 use_label_as_IRI(X,X).
 
+use_property_as_IRI(Prop,IRI,NewIRI) :-
+        anyPropertyAssertion(Prop,IRI,Literal),
+	Literal=literal(type(_,Val)),
+	concat_atom([NS,Local],':',Val),
+	rdf_global_id(NS:Local,NewIRI),
+        !.
+use_property_as_IRI(X,X).
+
+
 prefix_IRI(Pre,X,Y) :-
         (   entity(X) ; ontology(X)),
         !,

@@ -2,9 +2,9 @@
 
 :- module(owl2_basic_reasoner,
           [
-           entailed/1,
-           property_assertion_common_ancestor/5,
-           property_assertion_least_common_ancestor/5
+           entailed/1
+           %property_assertion_common_ancestor/5,
+           %property_assertion_least_common_ancestor/5
           ]).
 
 :- use_module(owl2_model).
@@ -21,8 +21,9 @@
 %% entailed(?Axiom) is nondet
 % true if Axiom is entailed
 entailed(A) :-
-        entailed(A,[]).
-
+	debug(reasoner,'<<testing for ~w',[A]),
+        entailed(A,[]),
+	debug(reasoner,'>>found       ~w',[A]).
 
 entailed(A,EL) :- entailed_2(A,EL).
 
@@ -81,21 +82,12 @@ unsatisfiable(X) :-
         entailed(subClassOf(X,A)),
         entailed(subClassOf(X,B)).
 
-% TODO: move this to a utility module
-property_assertion_common_ancestor(P,XI,YI,XC,YC) :-
-        propertyAssertion(P,XI,YI),
-        % TESTING ONLY:
-        sub_atom(XI,0,_,_,'http://ccdb.ucsd.edu/SAO/DPO/2.0/DPO.owl'),
-        debug(owl2_basic_reasoner,'Testing ~w ~w ~w',[P,XI,YI]),
-        entailed(classAssertion(XC,XI)),
-        entailed(classAssertion(YC,YI)).
-
-property_assertion_least_common_ancestor(P,XI,YI,XC,YC) :-
-        property_assertion_common_ancestor(P,XI,YI,XC,YC),
-        \+ ((property_assertion_common_ancestor(P,XI,YI,XC2,YC2),
-             entailed(subClassOfReflexive(XC2,XC)),
-             entailed(subClassOfReflexive(YC2,YC)),
-             (   XC2\=XC ; YC2\=YC))).
+%property_assertion_least_common_ancestor(P,XI,YI,XC,YC) :-
+%        property_assertion_common_ancestor(P,XI,YI,XC,YC),
+%        \+ ((property_assertion_common_ancestor(P,XI,YI,XC2,YC2),
+%             entailed(subClassOfReflexive(XC2,XC)),
+%             entailed(subClassOfReflexive(YC2,YC)),
+%             (   XC2\=XC ; YC2\=YC))).
 
 
 % ----------------------------------------
