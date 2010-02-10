@@ -1,0 +1,61 @@
+---+ Thea Open Calais wrapper module
+
+---++ 1 Introduction
+
+[[Open Calais][http://www.opencalais.com/]] is a Web service provided by Thomson Reuters. Open Calais analyses content
+using NLP and semantic tecnniques and returns an RDF based response containing entities and relationships identified in the
+source and associated metadata.
+
+thea_opencalais is a Prolog wrapper for accessing Open Calais and process the results. It is an application of [[Thea][http://www.semanticweb.gr/thea]] prolog library for OWL2 Ontologies. thea_opencalais
+uses the OpenCalais ontology and parses the service response first into Ontology axioms and finally into prolog terms and predicates, accessible
+from within a prolog program.
+
+---++ 2 Example
+
+  0. Get your Open Calais license key and assert it as a prolog fact:
+     ==
+	  :- assert(open_calais(license('Your open calais license key'))).
+     ==
+	 
+  1. Load the Open Calais Ontology into Prolog using Thea.
+     ==
+	 :- owl_parse_rdf('owl.opencalais-4.3.xml.owl',[imports(false),clear(complete)]).
+     ==
+     The Ontology in this example has been already downloaded in the working directory. Originaly it can be found [[here][http://www.opencalais.com/files/owl.opencalais-4.3a.xml]]
+
+  2. Post the content of a Wikipeadia page about papal visits to the Open Calais REST service
+     ==
+	 :- oc_rest(http('http://en.wikipedia.org/wiki/List_of_journeys_of_Pope_Benedict_XVI'),'',_X).  
+     ==
+	 
+  3. Use Prolog provided prolog predicates to examine Markup Elements (Entities and Relationships) in the result
+	 ==
+	  :-oc_entity(A,B,C,E,D).
+		A = 'http://d.opencalais.com/genericHasher-1/f545c2a6-ccd3-3095-adb0-c1c8dda96624',
+		B = 'http://s.opencalais.com/1/type/em/e/Anniversary',
+		C = ['http://s.opencalais.com/1/pred/name'=literal('the 500th anniversary of Catholic presence')],
+		E = [instance_info('http://d.opencalais.com/dochash-1/2d1827f8-c251-36b1-bfe6-043a4a6caba1/Instance/268', [.....
+		D = [] 
+	 ==	
+	 
+  4. You can also write custom predicates to query the resulted database of Markup Elements e.g. 
+     ==
+	 quotation(Person,Quotation) :-
+		 oc_relation(_I,'http://s.opencalais.com/1/type/em/r/Quotation',PVList),
+		 pv_attr('http://s.opencalais.com/1/pred/person',PVList,Person),
+		 pv_attr('http://s.opencalais.com/1/pred/quote',PVList,Quotation).
+     ==
+	 
+---++ 3 Predicate reference
+
+ * [[oc_rest/3]]
+ 
+ * [[oc_entity/5]]
+ 
+ * [[oc_relation/3]]
+ 
+ * [[oc_resolution/3]]
+ 
+---++ 4 Download
+ 
+Thea and thea_opencalais are open source licensed under GPL. You can download thea_opencalais from ...
