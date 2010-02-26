@@ -9,25 +9,31 @@
 :- multifile owl2_io:load_axioms_hook/3.
 owl2_io:load_axioms_hook(File,mansyn,Opts) :-
         owl_parse_manchester_syntax_file(File,Opts).
+owl2_io:load_axioms_hook(File,owlms,Opts) :-
+        owl_parse_manchester_syntax_file(File,Opts).
 
 owl_parse_manchester_syntax_file(File) :-
         owl_parse_manchester_syntax_file(File,[]).
 
 owl_parse_manchester_syntax_file(File,_Opts) :-
-        read_file_to_codes(File,Codes),
+        read_file_to_codes(File,Codes,[]),
         atom_codes(A,Codes),
         manchester_atom_ontology(A,_).
 
 tokens_ontology(Toks,Ont) :-
-        ontologyDocument( Ont, Toks ).
+        ontologyDocument( Ont, Toks, [] ).
 
 manchester_atom_ontology(A,Ont) :-
         tokenize(A, Toks),
-        ontologyDocument( Ont, Toks ).
+	trace,
+        ontologyDocument( Ont, Toks, [] ).
 
 % ----------------------------------------
 % Tokenization
 % ----------------------------------------
+
+tokenize(A,Toks) :-
+	concat_atom(Toks,' ',A). % temp
 
 % Documents in the Manchester OWL syntax consist of sequences of Unicode characters [UNICODE] and are encoded in UTF-8 [RFC3829].
 
@@ -104,9 +110,14 @@ full_IRI(X) --> [X],{X\='('}. % TODO
 % TODO
 
 % namespace := full-IRI
-namespace(X) --> full_IRI(X).
+% ?namespace(X) --> full_IRI(X).
 
-% prefix := NCName reference := irelative-ref
+% prefix := NCName
+
+prefix(P) --> [P].
+
+% reference := irelative-ref
+
 % curie := [ [ prefix ] ':' ] reference
 curie(X) --> [X],{X\='('}.
 % TODO
@@ -179,17 +190,17 @@ nodeID(X) --> [X]. % TODO
 annotations(L) --> ['Annotations:'], annotationAnnotatedList(L).
 
 % annotation ::= annotationPropertyIRI annotationTarget
-annotation(A-T) -->  annotationPropertyIRI( P),annotationTarget(T).
+annotation(P-T) -->  annotationPropertyIRI( P),annotationTarget(T).
 
 
 % annotationTarget ::= nodeID | IRI | literal
 annotationTarget(T) --> nodeID(T) ; iri(T) ; literal(T).
 
 % ontologyDocument ::= { namespace } ontology
-ontologyDocument(D) --> zeroOrMore(namespace,NSL),ontology(O).
+ontologyDocument(D) --> zeroOrMore(namespace,_NSL),ontology(O).
 
 % namespace ::= 'Namespace:' [ prefix ] full-IRI
-namespace(NS) --> ['Namespace:'], prefix( P), full_IRI(IRI).
+namespace(P-NS) --> ['Namespace:'], prefix( P), full_IRI(IRI).
 namespace(NS) --> ['Namespace:'], full_IRI(IRI).
 
 % ontology ::= 'Ontology:' [ ontologyIRI [ versionIRI ] ] { import } { annotations } { frame }
