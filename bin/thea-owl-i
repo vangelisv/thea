@@ -68,7 +68,7 @@ parse_arg(['--contract',X|L],L,settings(uri_translation(contract(X)))).
 parse_arg(['--statistics'|L],L,statistics(true)).
 parse_arg(['--import'|L],L,loadopt(imports(true))).
 parse_arg(['--save-opt',A|L],L,saveopt(O)) :- atom_to_term(A,O,_).
-parse_arg(['--format',Fmt|L],L,loadopt(format(Fmt))).
+parse_arg(['--format',A|L],L,loadopt(format(Fmt)))  :- atom_to_term(A,Fmt,_).
 parse_arg(['--ensure_loaded',MA|L],L,ensure_loaded(M)) :- atom_to_term(MA,M,_).
 %parse_arg(['--ensure_loaded',M|L],L,ensure_loaded(M)).
 parse_arg(['--to',Fmt|L],L,output_format(Fmt)).
