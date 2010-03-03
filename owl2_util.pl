@@ -22,7 +22,8 @@
            class_label_synonym_axiom/2,
            write_ontology_summary/0,
            treeview/1,
-           treeview/2
+           treeview/2,
+	   owl_statistics/2
           ]).
 
 :- use_module(swrl). % required for retracting swrl rules
@@ -293,12 +294,12 @@ treeview(Class,Opts) :-
                true).
 
 
-%% treeview(+Class,+Template,?Tab,+Opts)
-%
+% treeview(+Class, +Template, ?Tab, +Opts)
 % @param Class IRI of class to work back from
 % @param Template X-Y-Goal
-% @param Tab
-% @param Opts
+% @param Tab Description here
+% @param Opts Description here
+
 treeview(Class,Template,Tab2,Opts) :-
         copy_term(Template,Class-Parent-Goal),
         (   Goal
@@ -340,6 +341,42 @@ isalpha(X) :- X @>= 'A',X @=< 'Z'.
 isalpha(X) :- X @>= '0',X @=< '9'.
 
 
+%% owl_statistics(+Item, -XMLResult) is det
+%
+% @param Item Given either all OR a specific ontology(O), it returns
+% @param XMLResult an XML structure (see sgml SWI package) with
+% statistic info on the Ontology. Currently number or axioms per
+% axiompredicate plus axioms as CDATA.
+%
+% @tbd Complete with other statistic info.
+
+
+owl_statistics(all,[element(owl_statistics,[axiomCount=ACount],OList)]) :-
+	findall(OElem,
+		(ontology(O),owl_statistics(ontology(O),OElem)),
+		 OList),
+	aggregate_all(count,axiom(_),ACount),!.
+
+
+owl_statistics(ontology(O),element(ontology,[name=O,axiomCount=ACount],OntAxioms)) :-
+	findall(element(P-axioms,[axiomCount=APCount],PredAxioms),
+		(   axiompred(P/A),functor(T,P,A),
+		    findall(AT,
+			    (	ontologyAxiom(O,T),owl_stats_axiom_element(T,AT)),
+			    PredAxioms),
+		    aggregate_all(count,ontologyAxiom(O,T),APCount)
+		),
+		OntAxioms),
+	aggregate_all(count,ontologyAxiom(O,_Axiom),ACount),!.
+
+
+owl_stats_axiom_element(class(C),element(class,[name=C],[])) :- !.
+owl_stats_axiom_element(T,AT) :-
+	term_to_atom(T,AT).
+
+
+
+
 /** <module> Various utility predicates for OWL ontologies
 
   ---+ Synopsis
@@ -347,10 +384,10 @@ isalpha(X) :- X @>= '0',X @=< '9'.
 ==
 :- use_module(bio(owl2_util)).
 
-% 
+%
 demo:-
   nl.
-  
+
 
 ==
 

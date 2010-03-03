@@ -21,40 +21,36 @@ OWLLink Language Wrapper
 
 This module is an implementation of the OWLLink interface. It allows
 communication between a Prolog program and an OWLLink enabled reasoner.
-It is using SWI Prologs HTTP and SGML packages.
+It is using SWI Prologs HTTP and SGML packages. See more in
+owl2_owllink.txt
 
   @author Vangelis Vassiliadis
   @license GPL
 
-
 */
 
-
 %% owl_link(+ReasonerURL, +Request:list, -Response:list, +Options:list) is det
+%
 %  Implements OWLLink over HTTP. Sends an OWLLink request to the ReasonerURL and
-%  gets its Response.
+%  gets its Response. Both Request and Response are lists of Prolog
+%  terms. The complete grammar for the terms is given in
+%  owl2_owllink.txt
 
 owl_link(ReasonerURL,Request,Response,Options) :-
 	owl_link_request_l(Request,RequestXML),
 	% write Request to predefined file
 	(   member(request_file=Filename,Options) -> true ; Filename = '_thea_owllink_request.xml'),
 	(   member(response_file=FilenameResponse,Options) -> true ; FilenameResponse = '_thea_owllink_response.xml'),
-
-	% capture(Filename,(print('<?xml version=\"1.0\"?>'),print_elements(RequestXML,0))),
-	% Filename = 'protege_tell.xml',
 	open(Filename,write,St),
-	xml_write(St,element('RequestMessage',[xmlns='http://www.owllink.org/owllink#',
-					      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance',
-					      xsi:schemaLocation='http://www.owllink.org/owllink# http://www.owllink.org/owllink-20091116.xsd'],
-			     RequestXML),[layout(true)]),close(St),  % layout false to avoid newlines
-	size_file(Filename,_RLength), % size_file is not counting correctly newlines in
-	                                                     % windows environment.
-	% print(RLength),nl,
-        % read(RLength1), print(RLength1),
-	% RLength1 is RLength + N,
+	xml_write(St,element('RequestMessage',
+			     [xmlns='http://www.owllink.org/owllink#',
+			      xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance',
+			      xsi:schemaLocation='http://www.owllink.org/owllink# http://www.owllink.org/owllink-20091116.xsd'],
+			     RequestXML),[layout(true)]),close(St),
+			     % size_file(Filename,_RLength),  size_file is not counting correctly newlines in windows environment.
 	(   member(no_reasoner,Options) ->
 	       open(FilenameResponse,read,St),
-	       load_structure(St,ResponseXML,[dialect(xml),space(sgml)]),close(St),
+	       load_structure(St,ResponseXML,[dialect(xmlns),space(sgml)]),close(St),
 	       ResponseXML = [element('ResponseMessage',_,ResponsesXML)],
 	       owl_link_response(ResponsesXML,Response)
 	;
@@ -99,7 +95,7 @@ owl_link_request(set(KB,Key,Settings),element('Set',[kb=KB,key=Key],LiteralSetti
 owl_link_request(isKBSatisfiable(KB),element('IsKBSatisfiable',[kb=KB],[])) :- !.
 owl_link_request(isKBStructurallyConsistent(KB),element('IsKBStructurallyConsistent',[kb=KB],[])) :-!.
 owl_link_request(isTBoxConsistent(KB),element('IsTBoxConsistent',[kb=KB],[])) :- !.
-owl_link_request(loadOntology(KB,IRIs,IRIMappings),element('LoadOntology',[kb=KB],Elements)) :-
+owl_link_request(loadOntologies(KB,IRIs,IRIMappings,Imports),element('LoadOntologies',[kb=KB,considerImports=Imports],Elements)) :-
 	options_to_elements(IRIMappings,MappingsEL),
 	options_to_elements(IRIs,IRIsEL),
 	merge(IRIsEL,MappingsEL,Elements),!.
@@ -145,7 +141,8 @@ owl_link_request(getSuperClasses(KB,Class),element('GetSuperClasses',[kb=KB],[Cl
 	desc_xml(_,Class,ClassXML),!.
 owl_link_request(getSuperClasses(KB,Class,Direct),element('GetSuperClasses',[kb=KB,direct=Direct],[ClassXML])) :-
 	desc_xml(_,Class,ClassXML),!.
-
+owl_link_request(getDisjointClasses(KB,Class),element('GetDisjointClasses',[kb=KB],ClassElement)) :-
+	(   nonvar(Class) -> desc_xml(_,Class,ClassXML), ClassElement=[ClassXML] ; ClassElement= []),!.
 
 %      <!-- Ask-ClassHierarchy -->
 owl_link_request(getEquivalentClasses(KB,Class),element('GetEquivalentClasses',[kb=KB],ClassElement)) :-
@@ -153,21 +150,23 @@ owl_link_request(getEquivalentClasses(KB,Class),element('GetEquivalentClasses',[
 owl_link_request(getSubClassHierarchy(KB,Class),element('GetSubClassHierarchy',[kb=KB],ClassElement)) :-
 	(   nonvar(Class) -> desc_xml(_,Class,ClassXML), ClassElement=[ClassXML] ; ClassElement= []),!.
 
-
-
-%      <!-- Ask-Individuals -->
-owl_link_request(areIndividualsEquivalent(KB,Individuals),element('AreIndividualsEquivalent',[kb=KB],EIndividuals)) :-
-	axioms_elts(_,Individuals,EIndividuals),!.
-owl_link_request(areIndividualsDisjoint(KB,Individuals),element('AreIndividualsDisjoint',[kb=KB],EIndividuals)) :-
-	axioms_elts(_,Individuals,EIndividuals),!.
-owl_link_request(isInstanceOf(KB,Individual,Direct),element('IsInstanceOf',[kb=KB,direct=Direct],IndividualXML)) :-
-	axiom_xml(_,Individual,IndividualXML),!.
-
 %      <!-- Ask-IndividuualClassQuerysynsets -->
-owl_link_request(getTypes(KB,Individual,Direct),element('GetTypes',[kb=KB,direct=Direct],IndividualXML)) :-
+owl_link_request(getTypes(KB,Individual,Direct),
+		 element('GetTypes',[kb=KB,direct=Direct],[IndividualXML])) :-
 	axiom_xml(_,Individual,IndividualXML),!.
-owl_link_request(getFlattenTypes(KB,Individual,Direct),element('GetFlattenTypes',[kb=KB,direct=Direct],IndividualXML)) :-
+owl_link_request(getFlattenedTypes(KB,Individual,Direct),
+		 element('GetFlattenedTypes',[kb=KB,direct=Direct],[IndividualXML])) :-
 	axiom_xml(_,Individual,IndividualXML),!.
+owl_link_request(getSameIndividuals(KB,Individual,Direct),
+		 element('GetSameIndividuals',[kb=KB,direct=Direct],[IndividualXML])) :-
+	axiom_xml(_,Individual,IndividualXML),!.
+owl_link_request(getDifferentIndividuals(KB,Individual,Direct),
+		 element('GetDifferentIndividuals',[kb=KB,direct=Direct],[IndividualXML])) :-
+	axiom_xml(_,Individual,IndividualXML),!.
+owl_link_request(getFlattenedDifferentIndividuals(KB,Individual,Direct),
+		 element('GetFlattenedDifferentIndividuals',[kb=KB,direct=Direct],[IndividualXML])) :-
+	axiom_xml(_,Individual,IndividualXML),!.
+
 owl_link_request(getEquivalentIndividuals(KB,Individual),
 		 element('GetEquivalentIndividuals',[kb=KB],IndividualXML)) :-
 	axiom_xml(_,Individual,IndividualXML),!.
@@ -181,89 +180,119 @@ owl_link_request(getFlattenDisjointIndividuals(KB,Individual),
 
 %      <!-- Ask-IndividualPropertyQueries -->
 owl_link_request(getObjectPropertiesOfSource(KB,Individual,Negative),
-		 element('GetObjectPropertiesOfSource',[kb=KB,negative=Negative],IndividualXML)) :-
+		 element('GetObjectPropertiesOfSource',[kb=KB,negative=Negative],[IndividualXML])) :-
 	axiom_xml(_,Individual,IndividualXML),!.
 owl_link_request(getObjectPropertiesBetween(KB,I1,I2,Negative),
-		 element('GetObjectPropertiesBetween',[kb=KB,negative=Negative],IXML)) :-
+		 element('GetObjectPropertiesBetween',[kb=KB,negative=Negative],[I1XML,I2XML])) :-
 	axiom_xml(_,I1,I1XML),
-	axiom_xml(_,I2,I2XML),
-	append(I1XML,I2XML,IXML),!.
-owl_link_request(getObjectPropertiesOfFiller(KB,Individual,Negative),
-		 element('GetObjectPropertiesOfFiller',[kb=KB,negative=Negative],IndividualXML)) :-
+	axiom_xml(_,I2,I2XML),!.
+owl_link_request(getObjectPropertiesOfTarget(KB,Individual,Negative),
+		 element('GetObjectPropertiesOfTarget',[kb=KB,negative=Negative],[IndividualXML])) :-
 	axiom_xml(_,Individual,IndividualXML),!.
 
 %      <!-- Ask-IndividualDataPropertyQueries -->
-owl_link_request(getDataPropertiesOfSource(KB,Individual),
-		 element('GetDataPropertiesOfSource',[kb=KB],IndividualXML)) :-
+owl_link_request(getDataPropertiesOfSource(KB,Individual,Negative),
+		 element('GetDataPropertiesOfSource',[kb=KB,negative=Negative],[IndividualXML])) :-
 	axiom_xml(_,Individual,IndividualXML),!.
 owl_link_request(getDataPropertiesBetween(KB,I1,Literal,Negative),
-		 element('GetDataPropertiesBetween',[kb=KB,negative=Negative],ILXML)) :-
-	axiom_xml(_,I1,I1XML),
-	axiom_xml(_,Literal,LiteralXML),
-	append(I1XML,LiteralXML,ILXML),!.
+		 element('GetDataPropertiesBetween',[kb=KB,negative=Negative],[IXML,LiteralXML])) :-
+	axiom_xml(_,I1,IXML),
+	axiom_xml(_,Literal,LiteralXML),!.
 owl_link_request(getDataPropertiesOfLiteral(KB,Literal,Negative),
 		 element('GetDataPropertiesOfLiteral',[kb=KB,negative=Negative],LiteralXML)) :-
 	axiom_xml(_,Literal,LiteralXML),!.
 
 %      <!-- Ask-IndividualIndividualQueries -->
-owl_link_request(getInstances(KB,Class),[element('GetInstances',[kb=KB],ClassXML)]) :-
+owl_link_request(getInstances(KB,Class,Direct),element('GetInstances',[kb=KB,direct=Direct],[ClassXML])) :-
 	axiom_xml(_,Class,ClassXML),!.
-owl_link_request(getObjectPropertyFillers(KB,Individual,ObjectProperty,Negative),
-		 element('GetObjectPropertyFillers',[kb=KB,negative=Negative],[IndividualXML,ObjectPropertyXML])) :-
+owl_link_request(getObjectPropertyTargets(KB,ObjectProperty,Individual,Negative),
+		 element('GetObjectPropertyTargets',[kb=KB,negative=Negative],[ObjectPropertyXML,IndividualXML])) :-
+	axiom_xml(_,Individual,IndividualXML),
+	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
+owl_link_request(getObjectPropertySources(KB,ObjectProperty,Individual,Negative),
+		 element('GetObjectPropertySources',[kb=KB,negative=Negative],[ObjectPropertyXML,IndividualXML])) :-
 	axiom_xml(_,Individual,IndividualXML),
 	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
 
-owl_link_request(getObjectPropertySources(KB,Individual,ObjectProperty,Negative),
-		 element('GetObjectPropertySources',[kb=KB,negative=Negative],[IndividualXML,ObjectPropertyXML])) :-
+%      <!-- Ask-IndividualIndividualQueriesFlatten-->
+owl_link_request(getFlattenedInstances(KB,Class,Direct),element('GetFlattenedInstances',[kb=KB,direct=Direct],[ClassXML])) :-
+	axiom_xml(_,Class,ClassXML),!.
+owl_link_request(getFlattenedObjectPropertyTargets(KB,ObjectProperty,Individual,Negative),
+		 element('GetFlattenedObjectPropertyTargets',[kb=KB,negative=Negative],[ObjectPropertyXML,IndividualXML])) :-
+	axiom_xml(_,Individual,IndividualXML),
+	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
+owl_link_request(getFlattenedObjectPropertySources(KB,ObjectProperty,Individual,Negative),
+		 element('GetFlattenedObjectPropertySources',[kb=KB,negative=Negative],[ObjectPropertyXML,IndividualXML])) :-
 	axiom_xml(_,Individual,IndividualXML),
 	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
 
-/* TODO rest of requests...
-      <!-- Ask-IndividualIndividualQueriesFlatten-->
-      <xsd:element ref="ol:GetFlattenInstances" />
-      <xsd:element ref="ol:GetFlattenObjectPropertyFillers" />
-      <xsd:element ref="ol:GetFlattenObjectPropertySources" />
-      <!-- Ask-IndividualIndividualDataQueriesSynsets-->
-      <xsd:element ref="ol:GetDataPropertyFillers" />
-      <xsd:element ref="ol:GetDataPropertySources" />
-      <!-- Ask-IndividualIndividualDataQueriesFlatten -->
-      <xsd:element ref="ol:GetFlattenDataPropertySources" />
-      <!-- Ask-ObjectPropQueries -->
-      <xsd:element ref="ol:GetSubObjectProperties" />
-      <xsd:element ref="ol:GetSuperObjectProperties" />
-      <xsd:element ref="ol:GetEquivalentObjectProperties" />
-      <xsd:element ref="ol:GetDisjointObjectProperties" />
-      <!--  Ask-ObjectPropHierarchy -->
-      <xsd:element ref="ol:GetSubObjectPropertyHierarchy" />
-      <!--  Ask-ObjectPropAsks -->
-      <xsd:element ref="ol:AreObjectPropertiesEquivalent" />
-      <xsd:element ref="ol:IsObjectPropertySubsumedBy" />
-      <xsd:element ref="ol:IsObjectPropertySatisfiable" />
-      <xsd:element ref="ol:AreObjectPropertiesDisjoint" />
-      <xsd:element ref="ol:IsObjectPropertySymmetric" />
-      <xsd:element ref="ol:IsObjectPropertyTransitive" />
-      <xsd:element ref="ol:IsObjectPropertyFunctional" />
-      <xsd:element ref="ol:IsObjectPropertyInverseFunctional" />
-      <xsd:element ref="ol:IsObjectPropertyReflexive" />
-      <xsd:element ref="ol:IsObjectPropertyIrreflexive" />
-      <xsd:element ref="ol:IsObjectPropertyAsymmetric" />
-      <!--  Ask-DataPropAsks -->
-      <xsd:element ref="ol:AreDataPropertiesEquivalent" />
-      <xsd:element ref="ol:IsDataPropertySubsumedBy" />
-      <xsd:element ref="ol:IsDataPropertySatisfiable" />
-      <xsd:element ref="ol:AreDataPropertiesDisjoint" />
-      <xsd:element ref="ol:IsDataPropertyFunctional" />
-      <!-- Ask-DataPropQueries -->
-      <xsd:element ref="ol:GetSubDataProperties" />
-      <xsd:element ref="ol:GetSuperDataProperties" />
-      <!-- disjointness, equivalence -->
-      <xsd:element ref="ol:GetEquivalentDataProperties" />
-      <xsd:element ref="ol:GetDisjointDataProperties" />
-      <!--  Ask-DataPropHierarchy -->
-      <xsd:element ref="ol:GetSubDataPropertyHierarchy" />
-      <xsd:element ref="ol:AreIndividualsRelated" />
-      <xsd:element ref="ol:IsIndividualRelatedWithLiteral" />
-*/
+%      <!-- Ask-IndividualIndividualDataQueriesSynsets-->
+owl_link_request(getDataPropertyTargets(KB,DataProperty,Individual,Negative),
+		 element('GetDataPropertyTargets',[kb=KB,negative=Negative],[DataPropertyXML,IndividualXML])) :-
+	axiom_xml(_,Individual,IndividualXML),
+	axiom_xml(_,DataProperty,DataPropertyXML),!.
+owl_link_request(getDataPropertySources(KB,DataProperty,Literal,Negative),
+		 element('GetDataPropertySources',[kb=KB,negative=Negative],[DataPropertyXML,LiteralXML])) :-
+	axiom_xml(_,Literal,LiteralXML),
+	axiom_xml(_,DataProperty,DataPropertyXML),!.
+
+%       <!-- Ask-IndividualIndividualDataQueriesFlatten -->
+owl_link_request(getFlattenedDataPropertySources(KB,ObjectProperty,Literal,Negative),
+		 element('GetFlattenedDataPropertySources',[kb=KB,negative=Negative],[ObjectPropertyXML,LiteralXML])) :-
+	axiom_xml(_,Literal,LiteralXML),
+	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
+
+%      <!-- Ask-ObjectPropQueries -->
+owl_link_request(getSubObjectProperties(KB,ObjectProperty,Direct),
+		 element('GetSubObjectProperties',[kb=KB,direct=Direct],[ObjectPropertyXML])) :-
+	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
+owl_link_request(getSuperObjectProperties(KB,ObjectProperty,Direct),
+		 element('GetSuperObjectProperties',[kb=KB,direct=Direct],[ObjectPropertyXML])) :-
+	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
+owl_link_request(getEquivalentObjectProperties(KB,ObjectProperty,Direct),
+		 element('GetEquivalentObjectProperties',[kb=KB,direct=Direct],[ObjectPropertyXML])) :-
+	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
+owl_link_request(getDisjointObjectProperties(KB,ObjectProperty,Direct),
+		 element('GetDisjointObjectProperties',[kb=KB,direct=Direct],[ObjectPropertyXML])) :-
+	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
+
+%      <!--  Ask-ObjectPropHierarchy -->
+owl_link_request(getSubObjectPropertyHierarchy(KB,ObjectProperty),
+		 element('GetSubObjectPropertyHierarchy',[kb=KB],[ObjectPropertyXML])) :-
+	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
+
+
+	% <!--  Ask-ObjectPropAsks -->
+owl_link_request(isObjectPropertySatisfiable(KB,ObjectProperty),
+		 element('IsObjectPropertySatisfiable',[kb=KB],[ObjectPropertyXML])) :-
+	axiom_xml(_,ObjectProperty,ObjectPropertyXML),!.
+
+	% <!--  Ask-DataPropAsks -->
+owl_link_request(isDataPropertySatisfiable(KB,DataProperty),
+		 element('IsDataPropertySatisfiable',[kb=KB],[DataPropertyXML])) :-
+	axiom_xml(_,DataProperty,DataPropertyXML),!.
+
+	% <!-- Ask-DataPropQueries -->
+owl_link_request(getSubDataProperties(KB,DataProperty,Direct),
+		 element('GetSubDataProperties',[kb=KB,direct=Direct],[DataPropertyXML])) :-
+	axiom_xml(_,DataProperty,DataPropertyXML),!.
+owl_link_request(getSuperDataProperties(KB,DataProperty,Direct),
+		 element('GetSuperDataProperties',[kb=KB,direct=Direct],[DataPropertyXML])) :-
+	axiom_xml(_,DataProperty,DataPropertyXML),!.
+
+	% <!-- disjointness, equivalence -->
+owl_link_request(getEquivalentDataProperties(KB,DataProperty,Direct),
+		 element('GetEquivalentDataProperties',[kb=KB,direct=Direct],[DataPropertyXML])) :-
+	axiom_xml(_,DataProperty,DataPropertyXML),!.
+owl_link_request(getDisjointDataProperties(KB,DataProperty,Direct),
+		 element('GetDisjointDataProperties',[kb=KB,direct=Direct],[DataPropertyXML])) :-
+	axiom_xml(_,DataProperty,DataPropertyXML),!.
+
+	% <!--  Ask-DataPropHierarchy -->
+owl_link_request(getSubDataPropertyHierarchy(KB,DataProperty),
+		 element('GetSubDataPropertyHierarchy',[kb=KB],[DataPropertyXML])) :-
+	axiom_xml(_,DataProperty,DataPropertyXML),!.
+
 owl_link_request(tell(KB,Axioms),
 		 element('Tell',[kb=KB],AxiomsXML)) :-
 		  axioms_elts(_,Axioms,AxiomsXML),!.
@@ -301,138 +330,131 @@ owl_link_response(element(_:'Description',Attrs,Elements),
 		  description(Name,MessageO,Descriptions)) :-
 	member(name=Name,Attrs),
 	(   member(message=Message,Attrs) -> MessageO = [Message] ; MessageO = []),
-	maplist(response_elements,Elements,Descriptions).
+	maplist(response_elements,Elements,Descriptions),!.
 
 owl_link_response(element(_:'KB',Attrs,_Elements), kb(KB,WarningO)) :-
 	member(kb=KB,Attrs),
-	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []).
+	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),!.
 
 owl_link_response(element(_:'Settings',Attrs,Elements), settings(WarningO,Settings)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
-	maplist(response_elements,Elements,Settings).
+	maplist(response_elements,Elements,Settings),!.
 
 owl_link_response(element(_:'Prefixes',Attrs,SettingsE), settings(WarningO,Settings)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
-	maplist(response_elements,SettingsE,Settings).
+	maplist(response_elements,SettingsE,Settings),!.
 
 
 owl_link_response(element(_:'OK',Attrs,_Elements), ok(WarningO)) :-
-	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []).
+	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),!.
 
 owl_link_response(element(_:'SetOfAnnotationProperties',Attrs,Elements),
 		  annotationProperties(WarningO,AnnotationProperties)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
-	maplist(response_elements,Elements,AnnotationProperties).
+	maplist(response_elements,Elements,AnnotationProperties),!.
 
 owl_link_response(element(_:'SetOfClasses',Attrs,ClassLE), setOfClasses(WarningO,ClassL)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
-	maplist(xml_desc(_),ClassLE,ClassL).
+	maplist(xml_desc(_),ClassLE,ClassL),!.
 
 owl_link_response(element(_:'SetOfIndividuals',Attrs,IndLE), setOfIndividuals(WarningO,IndL)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
-	maplist(xml_axiom(_),IndLE,IndL).
+	maplist(xml_axiom(_),IndLE,IndL),!.
 
 	% untested
 owl_link_response(element(_:'SetOfObjectProperties',Attrs,ObjectPropertyLE), setOfLiterals(WarningO,ObjectPropertyL)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
-	maplist(xml_axiom(_),ObjectPropertyLE,ObjectPropertyL).
+	maplist(xml_axiom(_),ObjectPropertyLE,ObjectPropertyL),!.
 
 	% untested
 owl_link_response(element(_:'SetOfDataProperties',Attrs,DataPropertyLE), setOfLiterals(WarningO,DataPropertyL)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
-	maplist(xml_axiom(_),DataPropertyLE,DataPropertyL).
+	maplist(xml_axiom(_),DataPropertyLE,DataPropertyL),!.
 
 	% untested
 owl_link_response(element(_:'SetOfLiterals',Attrs,LitLE), setOfLiterals(WarningO,LitL)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
-	maplist(xml_axiom(_),LitLE,LitL).
+	maplist(xml_axiom(_),LitLE,LitL),!.
 
 	% untested
 owl_link_response(element(_:'SetOfDatatypes',Attrs,DatatypeLE), setOfLiterals(WarningO,DatatypeL)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
-	maplist(xml_axiom(_),DatatypeLE,DatatypeL).
+	maplist(xml_axiom(_),DatatypeLE,DatatypeL),!.
 
 
 owl_link_response(element(_:'BooleanResponse',Attrs,_Elements), booleanResponse(Result,WarningO)) :-
 	member(result=Result,Attrs),
-	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []).
+	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),!.
 
 	% untested
 owl_link_response(element(_:'StringReponse',Attrs,_), stringReponse(Result,WarningO)) :-
 	member(result=Result,Attrs),
-	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []).
+	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),!.
 
 
 owl_link_response(element(_:'ClassSynsets',Attrs,SynsetsLE), classSynsets(WarningO,SynsetsL)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
-	maplist(response_elements,SynsetsLE,SynsetsL).
+	maplist(response_elements,SynsetsLE,SynsetsL),!.
 
 owl_link_response(element(_:'Classes',Attrs,ClassesLE), classes(WarningO,ClassesL)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
-	maplist(xml_desc(_),ClassesLE,ClassesL).
+	maplist(xml_desc(_),ClassesLE,ClassesL),!.
 
 owl_link_response(element(_:'ClassHierarchy',Attrs,[SynsetLE|PairElements]), classHierarchy(WarningO,SynsetL,Pairs)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
 	response_elements(SynsetLE,SynsetL),
-	maplist(response_elements,PairElements,Pairs).
+	maplist(response_elements,PairElements,Pairs),!.
 
 owl_link_response(element(_:'SetOfDataPropertySynsets',Attrs,SynsetsLE), dataPropertySynsets(WarningO,SynsetsL)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
-	maplist(response_elements,SynsetsLE,SynsetsL).
+	maplist(response_elements,SynsetsLE,SynsetsL),!.
 
 owl_link_response(element(_:'DataPropertySynonyms',Attrs,SynonymsLE), dataPropertySynonyms(WarningO,SynonymsL)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
-	maplist(xml_axiom(_),SynonymsLE,SynonymsL).
+	maplist(xml_axiom(_),SynonymsLE,SynonymsL),!.
 
 
 owl_link_response(element(_:'SetOfIndividualSynsets',Attrs,SynsetsLE), individualSynsets(WarningO,SynsetsL)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
-	maplist(response_elements,SynsetsLE,SynsetsL).
+	maplist(response_elements,SynsetsLE,SynsetsL),!.
 
 owl_link_response(element(_:'IndividualSynonyms',Attrs,SynonymsLE), individualSynonyms(WarningO,SynonymsL)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
-	maplist(xml_axiom(_),SynonymsLE,SynonymsL).
+	maplist(xml_axiom(_),SynonymsLE,SynonymsL),!.
 
 owl_link_response(element(_:'ObjectPropertyHierarchy',Attrs,[SynsetLE|PairElements]),
 		  objectPropertyHierarchy(WarningO,SynsetL,Pairs)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
 	response_elements(SynsetLE,SynsetL),
-	maplist(response_elements,PairElements,Pairs).
+	maplist(response_elements,PairElements,Pairs),!.
 
 owl_link_response(element(_:'SetOfObjectPropertySynsets',Attrs,SynsetsLE), objectPropertySynsets(WarningO,SynsetsL)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
-	maplist(response_elements,SynsetsLE,SynsetsL).
+	maplist(response_elements,SynsetsLE,SynsetsL),!.
 
 owl_link_response(element(_:'ObjectPropertySynsets',Attrs,SynsetsLE), objectPropertySynsets(WarningO,SynsetsL)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
-	maplist(response_elements,SynsetsLE,SynsetsL).
+	maplist(response_elements,SynsetsLE,SynsetsL),!.
 
 owl_link_response(element(_:'DataPropertySynsets',Attrs,SynsetsLE), dataPropertySynsets(WarningO,SynsetsL)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
-	maplist(response_elements,SynsetsLE,SynsetsL).
+	maplist(response_elements,SynsetsLE,SynsetsL),!.
 
 owl_link_response(element(_:'DataPropertyHierarchy',Attrs,[SynsetLE|PairElements]),
 		  dataPropertyHierarchy(WarningO,SynsetL,Pairs)) :-
 	(   member(warning=Warning,Attrs) -> WarningO = [Warning] ; WarningO = []),
 	response_elements(SynsetLE,SynsetL),
-	maplist(response_elements,PairElements,Pairs).
+	maplist(response_elements,PairElements,Pairs),!.
 
 
-owl_link_response(element(_:'Error',[error=Message],_Elements), error(Message)).
-owl_link_response(element(_:'SyntaxError',[error=Message],_Elements), syntaxError(Message)).
-owl_link_response(element(_:'KBError',[error=Message],_Elements), kbError(Message)).
-owl_link_response(element(_:'SemanticError',[error=Message],_Elements), semanticError(Message)).
+owl_link_response(element(_:'Error',[error=Message],_Elements), error(Message)) :- !.
+owl_link_response(element(_:'SyntaxError',[error=Message],_Elements), syntaxError(Message)) :- !.
+owl_link_response(element(_:'KBError',[error=Message],_Elements), kbError(Message)) :- !.
+owl_link_response(element(_:'SemanticError',[error=Message],_Elements), semanticError(Message)) :- !.
 
 
-
-
-
-
-% pass all other responses unprocessed for now
-%  TODO: handle all remaining responses into Prolog terms.
-%  mainly inferred axioms....
-owl_link_response(Res,Res).
-
+owl_link_response(Res,_) :-
+	throw(cannot_parse_response(Res)).
 
 
 response_elements(element(protocolVersion,Attrs,_),protocolVersion(Attrs)) :- !.

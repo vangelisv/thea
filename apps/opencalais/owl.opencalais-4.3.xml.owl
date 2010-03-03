@@ -1,0 +1,4677 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY foaf "http://xmlns.com/foaf/0.1/" >
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+]>
+
+
+<rdf:RDF xmlns="http://s.opencalais.com/1/"
+     xml:base="http://s.opencalais.com/1/"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+	<owl:Ontology rdf:about="">
+		<rdfs:label>OpenCalais Semantic Tagging &amp; Linked Data Ontology</rdfs:label>
+        <rdfs:comment
+            >OpenCalais Semantic Tagging &amp; Linked Data OWL ontology</rdfs:comment>
+        <owl:versionInfo
+            >V 1.0, Release 2009-12-09</owl:versionInfo>
+        <rdfs:seeAlso rdf:resource="http://www.opencalais.com"/>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://s.opencalais.com/1/linkeddata/pred/address -->
+
+    <owl:ObjectProperty rdf:about="linkeddata/pred/address">
+        <rdfs:label>Address</rdfs:label>
+        <rdfs:comment></rdfs:comment>
+        <rdfs:domain rdf:resource="type/er/Company"/>
+        <rdfs:range rdf:resource="linkeddata/type/Address"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://s.opencalais.com/1/linkeddata/pred/alias -->
+
+    <owl:ObjectProperty rdf:about="linkeddata/pred/alias">
+        <rdfs:range rdf:resource="type/em/e/MarkupEntity"/>
+        <rdfs:domain rdf:resource="type/er/ResolvedEntity"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://s.opencalais.com/1/linkeddata/pred/attribute/filingurl -->
+
+    <owl:ObjectProperty rdf:about="linkeddata/pred/attribute/filingurl">
+        <rdfs:domain rdf:resource="linkeddata/type/EdgarFiling"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://s.opencalais.com/1/linkeddata/pred/attribute/officerurl -->
+
+    <owl:ObjectProperty rdf:about="linkeddata/pred/attribute/officerurl">
+        <rdfs:domain rdf:resource="linkeddata/type/PersonPosition"/>
+        
+    </owl:ObjectProperty>
+    
+    <!-- http://s.opencalais.com/1/linkeddata/pred/competitor -->
+
+    <owl:ObjectProperty rdf:about="linkeddata/pred/competitor">
+        <rdfs:label>Competitor</rdfs:label>
+        <rdfs:comment></rdfs:comment>
+        <rdfs:domain rdf:resource="type/er/Company"/>
+     </owl:ObjectProperty>
+    
+
+    <!-- http://s.opencalais.com/1/linkeddata/pred/disambiguation -->
+
+	<owl:ObjectProperty rdf:about="linkeddata/pred/disambiguation">
+		<rdfs:label>disambiguation</rdfs:label>
+		<rdfs:comment></rdfs:comment>
+		<rdfs:range rdf:resource="type/er/ResolvedEntity" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/e/Place" />
+					<owl:Class rdf:about="type/em/e/Product" />
+					<owl:Class rdf:about="type/em/e/Company" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+    
+
+
+    <!-- http://s.opencalais.com/1/linkeddata/pred/edgarfiling -->
+
+    <owl:ObjectProperty rdf:about="linkeddata/pred/edgarfiling">
+        <rdfs:label>Edgar Filing</rdfs:label>
+        <rdfs:comment></rdfs:comment>
+        <rdfs:domain rdf:resource="type/er/Company"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://s.opencalais.com/1/linkeddata/pred/employees -->
+
+    <owl:ObjectProperty rdf:about="linkeddata/pred/employees">
+        <rdfs:label>Employee Number</rdfs:label>
+        <rdfs:comment></rdfs:comment>
+        <rdfs:domain rdf:resource="type/er/Company"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://s.opencalais.com/1/linkeddata/pred/financialsummary -->
+
+    <owl:ObjectProperty rdf:about="linkeddata/pred/financialsummary">
+        <rdfs:label
+            >Financial Summary</rdfs:label>
+        <rdfs:comment></rdfs:comment>
+        <rdfs:domain rdf:resource="type/er/Company"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://s.opencalais.com/1/linkeddata/pred/incorporatedin -->
+
+    <owl:ObjectProperty rdf:about="linkeddata/pred/incorporatedin">
+        <rdfs:label>Incorported in</rdfs:label>
+        <rdfs:comment></rdfs:comment>
+        <rdfs:range rdf:resource="linkeddata/type/IncorporatedIn"/>
+        <rdfs:domain rdf:resource="type/er/Company"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://s.opencalais.com/1/linkeddata/pred/personposition -->
+
+    <owl:ObjectProperty rdf:about="linkeddata/pred/personposition">
+        <rdfs:label>Person Position</rdfs:label>
+        <rdfs:comment></rdfs:comment>
+        <rdfs:domain rdf:resource="type/er/Company"/>
+        <rdfs:range rdf:resource="linkeddata/type/PersonPosition"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://s.opencalais.com/1/linkeddata/pred/profile -->
+
+    <owl:ObjectProperty rdf:about="linkeddata/pred/profile">
+        <rdfs:label>Profile</rdfs:label>
+        <rdfs:comment></rdfs:comment>
+        <rdfs:domain rdf:resource="type/er/Company"/>
+        
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://s.opencalais.com/1/linkeddata/pred/redirection -->
+
+	<owl:ObjectProperty rdf:about="linkeddata/pred/redirection">
+		<rdfs:label>redirection</rdfs:label>
+		<rdfs:comment></rdfs:comment>
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/e/Place" />
+					<owl:Class rdf:about="type/em/e/Product" />
+					<owl:Class rdf:about="type/em/e/Company" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+    
+
+
+    <!-- http://s.opencalais.com/1/linkeddata/pred/sic -->
+
+    <owl:ObjectProperty rdf:about="linkeddata/pred/sic">
+        <rdfs:label>sic</rdfs:label>
+        <rdfs:comment></rdfs:comment>
+        <rdfs:domain rdf:resource="type/er/Company"/>
+        
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://s.opencalais.com/1/pred/category -->
+
+	<owl:ObjectProperty rdf:about="pred/category">
+		<rdfs:label>Category</rdfs:label>
+		<rdfs:comment>URI for the identified category/topic of the
+			submitted content based on the Calais document classification module
+		</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource" />
+		<rdfs:domain rdf:resource="type/cat/DocCat" />
+	</owl:ObjectProperty>
+    
+
+
+    <!-- http://s.opencalais.com/1/pred/city -->
+
+	<owl:ObjectProperty rdf:about="pred/city">
+		<rdfs:label>city</rdfs:label>
+		<rdfs:comment>Name of the city, village, settlement, etc.</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/City" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/PersonCareer" />
+					<owl:Class rdf:about="type/em/r/CompanyMeeting" />
+					<owl:Class rdf:about="type/em/r/CompanyLocation" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/company -->
+
+	<owl:ObjectProperty rdf:about="pred/company">
+		<rdfs:label>Company</rdfs:label>
+		<rdfs:comment>Full name of the company mentioned in the document.</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Company" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/CompanyExpansion" />
+					<owl:Class rdf:about="type/em/r/CompanyReorganization" />
+					<owl:Class rdf:about="type/em/r/PersonCareer" />
+					<owl:Class rdf:about="type/em/r/DelayedFiling" />
+					<owl:Class rdf:about="type/em/r/CompanyFounded" />
+					<owl:Class rdf:about="type/em/r/CompanyForceMajeure" />
+					<owl:Class rdf:about="type/em/r/CompanyListingChange" />
+					<owl:Class rdf:about="type/em/r/CompanyEarningsGuidance" />
+					<owl:Class rdf:about="type/em/r/Dividend" />
+					<owl:Class rdf:about="type/em/r/DebtFinancing" />
+					<owl:Class rdf:about="type/em/r/FDAPhase" />
+					<owl:Class rdf:about="type/em/r/CompanyCompetitor" />
+					<owl:Class rdf:about="type/em/r/CompanyLayoffs" />
+					<owl:Class rdf:about="type/em/r/Buybacks" />
+					<owl:Class rdf:about="type/em/r/PatentFiling" />
+					<owl:Class rdf:about="type/em/r/CompanyTicker" />
+					<owl:Class rdf:about="type/em/r/CompanyTechnology" />
+					<owl:Class rdf:about="type/em/r/PatentIssuance" />
+					<owl:Class rdf:about="type/em/r/BonusSharesIssuance" />
+					<owl:Class rdf:about="type/em/r/Alliance" />
+					<owl:Class rdf:about="type/em/r/CompanyLaborIssues" />
+					<owl:Class rdf:about="type/em/r/ProductIssues" />
+					<owl:Class rdf:about="type/em/r/ProductRelease" />
+					<owl:Class rdf:about="type/em/r/Bankruptcy" />
+					<owl:Class rdf:about="type/em/r/SecondaryIssuance" />
+					<owl:Class rdf:about="type/em/r/CompanyProduct" />
+					<owl:Class rdf:about="type/em/r/EmploymentChange" />
+					<owl:Class rdf:about="type/em/r/CompanyLocation" />
+					<owl:Class rdf:about="type/em/r/Merger" />
+					<owl:Class rdf:about="type/em/r/BusinessRelation" />
+					<owl:Class rdf:about="type/em/r/IPO" />
+					<owl:Class rdf:about="type/em/r/StockSplit" />
+					<owl:Class rdf:about="type/em/r/CompanyMeeting" />
+					<owl:Class rdf:about="type/em/r/ConferenceCall" />
+					<owl:Class rdf:about="type/em/r/CompanyAccountingChange" />
+					<owl:Class rdf:about="type/em/r/CompanyInvestment" />
+					<owl:Class rdf:about="type/em/r/JointVenture" />
+					<owl:Class rdf:about="type/em/r/CompanyEarningsAnnouncement" />
+					<owl:Class rdf:about="type/em/r/CompanyEmployeesNumber" />
+					<owl:Class rdf:about="type/em/r/CompanyRestatement" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/company_acquirer -->
+
+	<owl:ObjectProperty rdf:about="pred/company_acquirer">
+		<rdfs:label>Company Acquirer</rdfs:label>
+		<rdfs:comment>Company that acquires another company. Note: At least one of
+                 Company_Acquirer or Company_BeingAcquired attributes is required</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Company" />
+		<rdfs:domain rdf:resource="type/em/r/Acquisition" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/company_affiliate -->
+
+	<owl:ObjectProperty rdf:about="pred/company_affiliate">
+		<rdfs:label>Company Affiliate</rdfs:label>
+		<rdfs:comment>Company that is a subsidiary or division of another company</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Company" />
+		<rdfs:domain rdf:resource="type/em/r/CompanyAffiliates" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/company_beingacquired -->
+
+	<owl:ObjectProperty rdf:about="pred/company_beingacquired">
+		<rdfs:label>Company Being Acquired</rdfs:label>
+		<rdfs:comment>Company that is acquired by another company. Note: At least one of
+                 Company_Acquirer or Company_BeingAcquired attributes is required.</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Company" />
+		<rdfs:domain rdf:resource="type/em/r/Acquisition" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/company_customer -->
+
+	<owl:ObjectProperty rdf:about="pred/company_customer">
+		<rdfs:label>Company Customer</rdfs:label>
+		<rdfs:comment>Company that purchases products or services from
+			another entity</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Company" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/CompanyUsingProduct" />
+					<owl:Class rdf:about="type/em/r/CompanyCustomer" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/company_distributor -->
+
+	<owl:ObjectProperty rdf:about="pred/company_distributor">
+		<rdfs:label>Company Distributor</rdfs:label>
+		<rdfs:comment>Company that is a distributor of products
+		</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Company" />
+		<rdfs:domain rdf:resource="type/em/r/ProductRecall" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/company_formername -->
+
+	<owl:ObjectProperty rdf:about="pred/company_formername">
+		<rdfs:label>Company Formername</rdfs:label>
+		<rdfs:comment>Canonic company name prior to a name change
+		</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Company" />
+		<rdfs:domain rdf:resource="type/em/r/CompanyNameChange" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/company_investor -->
+
+	<owl:ObjectProperty rdf:about="pred/company_investor">
+		<rdfs:label>Company Investor</rdfs:label>
+		<rdfs:comment>Company making an investment in another company
+		</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Company" />
+		<rdfs:domain rdf:resource="type/em/r/CompanyInvestment" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/company_newname -->
+
+	<owl:ObjectProperty rdf:about="pred/company_newname">
+		<rdfs:label>Company Newname</rdfs:label>
+		<rdfs:comment>Canonic name of the company resulting from joint venture or a
+			name change</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Company" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/JointVenture" />
+					<owl:Class rdf:about="type/em/r/CompanyNameChange" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+    </owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/company_parent -->
+
+	<owl:ObjectProperty rdf:about="pred/company_parent">
+		<rdfs:label>Company Parent</rdfs:label>
+		<rdfs:comment>Company that is a parent of another company</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Company" />
+		<rdfs:domain rdf:resource="type/em/r/CompanyAffiliates" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/company_plaintiff -->
+
+	<owl:ObjectProperty rdf:about="pred/company_plaintiff">
+		<rdfs:label>Company Plaintiff</rdfs:label>
+		<rdfs:comment>Company that is suing in a legal issue
+		</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Company" />
+		<rdfs:domain rdf:resource="type/em/r/CompanyLegalIssues" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/company_provider -->
+
+	<owl:ObjectProperty rdf:about="pred/company_provider">
+		<rdfs:label>Company Provider</rdfs:label>
+		<rdfs:comment>Company that sells products or services to another 
+                 entity</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Company" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/CompanyUsingProduct" />
+					<owl:Class rdf:about="type/em/r/CompanyCustomer" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/company_rated -->
+
+	<owl:ObjectProperty rdf:about="pred/company_rated">
+		<rdfs:label>Company Rated</rdfs:label>
+		<rdfs:comment>Canonic name of the company rated.</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Company" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/CreditRating" />
+					<owl:Class rdf:about="type/em/r/AnalystRecommendation" />
+					<owl:Class rdf:about="type/em/r/AnalystEarningsEstimate" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/company_recalling -->
+
+	<owl:ObjectProperty rdf:about="pred/company_recalling">
+		<rdfs:label>Company Recalling</rdfs:label>
+		<rdfs:comment>Company that is recalling a product
+		</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Company" />
+		<rdfs:domain rdf:resource="type/em/r/ProductRecall" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/company_source -->
+
+	<owl:ObjectProperty rdf:about="pred/company_source">
+		<rdfs:label>Company Source</rdfs:label>
+		<rdfs:comment>Investment bank/analyst company issuing
+                 the estimate/rating or recommendation.</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Company" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/CreditRating" />
+					<owl:Class rdf:about="type/em/r/AnalystRecommendation" />
+					<owl:Class rdf:about="type/em/r/AnalystEarningsEstimate" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/company_sued -->
+
+	<owl:ObjectProperty rdf:about="pred/company_sued">
+		<rdfs:label>Company Sued</rdfs:label>
+		<rdfs:comment>Company that is being sued in a legal issue
+		</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Company" />
+		<rdfs:domain rdf:resource="type/em/r/CompanyLegalIssues" />
+	</owl:ObjectProperty>
+
+	<!-- http://s.opencalais.com/1/pred/country -->
+
+	<owl:ObjectProperty rdf:about="pred/country">
+		<rdfs:label>Country</rdfs:label>
+		<rdfs:comment>Name of a country mentioned in the document.</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Country" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/PersonCareer" />
+					<owl:Class rdf:about="type/em/r/CompanyMeeting" />
+					<owl:Class rdf:about="type/em/r/CompanyLocation" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+
+	<!-- http://s.opencalais.com/1/pred/diplomaticentity1 -->
+
+	<owl:ObjectProperty rdf:about="pred/diplomaticentity1">
+		<rdfs:label>Diplomatic Entity 1</rdfs:label>
+		<rdfs:comment>The first diplomatic entity in a diplomatic relationship.</rdfs:comment>
+		<rdfs:range>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/e/Organization" />
+					<owl:Class rdf:about="type/em/e/Person" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:range>
+		<rdfs:domain rdf:resource="type/em/r/DiplomaticRelations" />
+	</owl:ObjectProperty>
+	
+	<!-- http://s.opencalais.com/1/pred/diplomaticentity2 -->
+
+	<owl:ObjectProperty rdf:about="pred/diplomaticentity2">
+		<rdfs:label>Diplomatic Entity 2</rdfs:label>
+		<rdfs:comment>The second diplomatic entity in a diplomatic relationship.</rdfs:comment>
+		<rdfs:range>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/e/Organization" />
+					<owl:Class rdf:about="type/em/e/Person" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:range>
+		<rdfs:domain rdf:resource="type/em/r/DiplomaticRelations" />
+	</owl:ObjectProperty>
+
+	<!-- http://s.opencalais.com/1/pred/docId -->
+
+	<owl:ObjectProperty rdf:about="pred/docId">
+		<rdfs:label>Document Id</rdfs:label>
+		<rdfs:comment>URI of the processed content for future retrievals
+		</rdfs:comment>
+		<rdfs:range rdf:resource="type/sys/DocInfo" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/sys/RelevanceInfo" />
+					<owl:Class rdf:about="type/sys/InstanceInfo" />
+					<owl:Class rdf:about="type/sys/DocInfoMeta" />
+					<owl:Class rdf:about="type/lid/DefaultLangId" />
+					<owl:Class rdf:about="type/er/Product/Electronics" />
+					<owl:Class rdf:about="type/er/Geo" />
+					<owl:Class rdf:about="type/er/Company" />
+					<owl:Class rdf:about="type/cat/DocCat" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+
+	<!-- http://s.opencalais.com/pred/effect -->
+
+	<owl:DatatypeProperty rdf:about="pred/effect">
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/NaturalDisaster" />
+					<owl:Class rdf:about="type/em/r/ManMadeDisaster" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+		<rdfs:comment></rdfs:comment>
+	</owl:DatatypeProperty>
+
+	<!-- http://s.opencalais.com/1/pred/facility -->
+
+	<owl:ObjectProperty rdf:about="pred/facility">
+		<rdfs:label>Facility</rdfs:label>
+		<rdfs:comment>Name of a facility. Note: The following and those similar
+                 are tagged as organizations, not facilities: courts, churches, 
+                 office, centers, schools and universities, embassies, institutes
+                 and hospitals.</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Facility" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/PersonCommunication" />
+					<owl:Class rdf:about="type/em/r/ManMadeDisaster" />
+					<owl:Class rdf:about="type/em/r/CompanyMeeting" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+
+    <!-- http://s.opencalais.com/1/pred/groupendorsee -->
+
+	<owl:ObjectProperty rdf:about="pred/groupendorsee">
+		<rdfs:label>Group Endorsed</rdfs:label>
+		<rdfs:comment></rdfs:comment>
+        <rdfs:range>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/e/Organization" />
+					<owl:Class rdf:about="type/em/e/Person" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:range>
+		<rdfs:domain rdf:resource="type/em/r/PoliticalEndorsement"/>
+    </owl:ObjectProperty>
+    
+    <!-- http://s.opencalais.com/1/pred/groupendorser -->
+
+	<owl:ObjectProperty rdf:about="pred/groupendorser">
+		<rdfs:label>Group Endorser</rdfs:label>
+		<rdfs:comment></rdfs:comment>
+        <rdfs:range>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/e/Organization" />
+					<owl:Class rdf:about="type/em/e/Person" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:range>
+		<rdfs:domain rdf:resource="type/em/r/PoliticalEndorsement"/>
+     </owl:ObjectProperty>
+
+
+	<!-- http://s.opencalais.com/1/pred/lang -->
+
+	<owl:ObjectProperty rdf:about="pred/lang">
+		<rdfs:label>Language</rdfs:label>
+		<rdfs:comment>URI of the identified language for the submitted
+			content</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource" />
+		<rdfs:domain rdf:resource="type/lid/DefaultLangId" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/location -->
+
+	<owl:ObjectProperty rdf:about="pred/location">
+		<rdfs:label>Location</rdfs:label>
+		<rdfs:comment>Location of company or where event occurred</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Place" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/NaturalDisaster" />
+					<owl:Class rdf:about="type/em/r/ManMadeDisaster" />
+					<owl:Class rdf:about="type/em/r/Extinction" />
+					<owl:Class rdf:about="type/em/r/EnvironmentalIssue" />
+					<owl:Class rdf:about="type/em/r/CompanyLaborIssues" />
+					<owl:Class rdf:about="type/em/r/CompanyForceMajeure" />
+					<owl:Class rdf:about="type/em/r/CompanyExpansion" />
+					<owl:Class rdf:about="type/em/r/CompanyEmployeesNumber" />
+					<owl:Class rdf:about="type/em/r/DiplomaticRelations" />
+					<owl:Class rdf:about="type/em/e/PoliticalEvent" />
+					<owl:Class rdf:about="type/em/r/PollsResult" />
+					<owl:Class rdf:about="type/em/r/VotingResult" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+	
+	<!-- http://s.opencalais.com/1/pred/locationdestination -->
+
+	<owl:ObjectProperty rdf:about="pred/locationdestination">
+		<rdfs:label>Location Destination</rdfs:label>
+		<rdfs:comment>Location name that is a destination of a person&#39;s travel
+                 </rdfs:comment>
+        <rdfs:range rdf:resource="type/em/e/Place"/>
+		<rdfs:domain rdf:resource="type/em/r/PersonTravel"/>
+    </owl:ObjectProperty>
+    
+	<!-- http://s.opencalais.com/1/pred/locationorigin -->
+
+    <owl:ObjectProperty rdf:about="pred/locationorigin">
+        <rdfs:label>Location Origin</rdfs:label>
+       <rdfs:comment>Location name that is an origin of a person&#39;s travel</rdfs:comment>
+        <rdfs:range rdf:resource="type/em/e/Place"/>
+		<rdfs:domain rdf:resource="type/em/r/PersonTravel"/>
+    </owl:ObjectProperty>
+
+
+	<!-- http://s.opencalais.com/1/pred/message -->
+
+	<owl:ObjectProperty rdf:about="pred/message">
+		<rdfs:label>Message</rdfs:label>
+		<rdfs:comment>Container for messagecode and text - contains
+			info about the returned error message</rdfs:comment>
+		<rdfs:range rdf:resource="type/sys/Message" />
+		<rdfs:domain rdf:resource="type/sys/DocInfoMeta" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/movie -->
+
+	<owl:ObjectProperty rdf:about="pred/movie">
+		<rdfs:label>Movie</rdfs:label>
+		<rdfs:comment>Name of the movie/film</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Movie" />
+		<rdfs:domain rdf:resource="type/em/r/MovieRelease" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/musicalbum -->
+
+	<owl:ObjectProperty rdf:about="pred/musicalbum">
+		<rdfs:label>Music Album</rdfs:label>
+		<rdfs:comment>Name of the music album</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/MusicAlbum" />
+		<rdfs:domain rdf:resource="type/em/r/MusicAlbumRelease" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/musicgroup_performer -->
+
+	<owl:ObjectProperty rdf:about="pred/musicgroup_performer">
+		<rdfs:label>Music Group Performer</rdfs:label>
+		<rdfs:comment>Name of a music group performing or releasing a
+			music album</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/MusicGroup" />
+		<rdfs:domain rdf:resource="type/em/r/MusicAlbumRelease" />
+	</owl:ObjectProperty>
+
+	<!-- http://s.opencalais.com/1/pred/opponent -->
+
+	<owl:ObjectProperty rdf:about="pred/opponent">
+		<rdfs:label>Winning Candidate</rdfs:label>
+		<rdfs:comment></rdfs:comment>
+		<rdfs:range>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/e/Organization" />
+					<owl:Class rdf:about="type/em/e/Person" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:range>
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/PollsResult" />
+					<owl:Class rdf:about="type/em/r/VotingResult" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+
+	<!-- http://s.opencalais.com/1/pred/organization -->
+
+	<owl:ObjectProperty rdf:about="pred/organization">
+		<rdfs:label>Organization</rdfs:label>
+		<rdfs:comment>Name of a governmental, military or other organization.</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Organization" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/PersonCareer" />
+					<owl:Class rdf:about="type/em/r/PatentIssuance" />
+					<owl:Class rdf:about="type/em/r/PatentFiling" />
+					<owl:Class rdf:about="type/em/r/EmploymentChange" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/organization_customer -->
+
+	<owl:ObjectProperty rdf:about="pred/organization_customer">
+		<rdfs:label>Organization Customer</rdfs:label>
+		<rdfs:comment>Organization that purchases products or
+			services from another entity</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Organization" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/CompanyUsingProduct" />
+					<owl:Class rdf:about="type/em/r/CompanyCustomer" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/organization_issuer -->
+
+	<owl:ObjectProperty rdf:about="pred/organization_issuer">
+		<rdfs:label>Organization Issuer</rdfs:label>
+		<rdfs:comment>Organization that issues a warning about
+			products or services of another company</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Organization" />
+		<rdfs:domain rdf:resource="type/em/r/ProductIssues" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/organization_rated -->
+
+	<owl:ObjectProperty rdf:about="pred/organization_rated">
+		<rdfs:label>Organization Rated</rdfs:label>
+		<rdfs:comment>Canonic name of trhe rated organization.</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Organization" />
+		<rdfs:domain rdf:resource="type/em/r/CreditRating" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/organizationorcompany -->
+
+	<owl:ObjectProperty rdf:about="pred/organizationorcompany">
+		<rdfs:label>Organization or Company</rdfs:label>
+		<rdfs:comment>Name of a company or an organization</rdfs:comment>
+		<rdfs:range>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/e/Organization" />
+					<owl:Class rdf:about="type/em/e/Company" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:range>
+
+		<rdfs:domain rdf:resource="type/em/r/PersonCommunication" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/person -->
+
+	<owl:ObjectProperty rdf:about="pred/person">
+		<rdfs:label>Person</rdfs:label>
+		<rdfs:comment>Normalized person name.</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Person" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/PersonEmailAddress" />
+					<owl:Class rdf:about="type/em/r/PersonEducation" />
+					<owl:Class rdf:about="type/em/r/PersonAttributes" />
+					<owl:Class rdf:about="type/em/r/Trial" />
+					<owl:Class rdf:about="type/em/r/PersonCareer" />
+					<owl:Class rdf:about="type/em/r/Arrest" />
+					<owl:Class rdf:about="type/em/r/Indictment" />
+					<owl:Class rdf:about="type/em/r/Quotation" />
+					<owl:Class rdf:about="type/em/r/FamilyRelation" />
+					<owl:Class rdf:about="type/em/r/PersonRelation" />
+					<owl:Class rdf:about="type/em/r/Conviction" />
+					<owl:Class rdf:about="type/em/r/PersonCommunication" />
+					<owl:Class rdf:about="type/em/r/EmploymentChange" />
+					<owl:Class rdf:about="type/em/r/PersonTravel" />
+					<owl:Class rdf:about="type/em/r/PersonParty" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/person_employee -->
+
+	<owl:ObjectProperty rdf:about="pred/person_employee">
+		<rdfs:label>Person Employee</rdfs:label>
+		<rdfs:comment>Canonic name of a person who is an employee</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Person" />
+		<rdfs:domain rdf:resource="type/em/r/EmploymentRelation" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/person_employer -->
+
+	<owl:ObjectProperty rdf:about="pred/person_employer">
+		<rdfs:label>Person Employer</rdfs:label>
+		<rdfs:comment>Canonic name of a person who is an employer</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Person" />
+		<rdfs:domain rdf:resource="type/em/r/EmploymentRelation" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/person_performer -->
+
+	<owl:ObjectProperty rdf:about="pred/person_performer">
+		<rdfs:label>Person Performer</rdfs:label>
+		<rdfs:comment>Name of a person (artist) performing or releasing a
+			music album</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Person" />
+		<rdfs:domain rdf:resource="type/em/r/MusicAlbumRelease" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/person_plaintiff -->
+
+	<owl:ObjectProperty rdf:about="pred/person_plaintiff">
+		<rdfs:label>Person Plaintiff</rdfs:label>
+		<rdfs:comment>Person that is a plaintiff in a legal issue
+		</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Person" />
+		<rdfs:domain rdf:resource="type/em/r/CompanyLegalIssues" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/person_relative -->
+
+	<owl:ObjectProperty rdf:about="pred/person_relative">
+		<rdfs:label>Person Relative</rdfs:label>
+		<rdfs:comment>Name of a family relative</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Person" />
+		<rdfs:domain rdf:resource="type/em/r/FamilyRelation" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/person_source -->
+
+	<owl:ObjectProperty rdf:about="pred/person_source">
+		<rdfs:label>Person Source</rdfs:label>
+		<rdfs:comment>Name of the analyst (within theinvestment bank/research company) 
+                 who issued the rating/estimate.</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Person" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/AnalystRecommendation" />
+					<owl:Class rdf:about="type/em/r/AnalystEarningsEstimate" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+	
+	<!-- http://s.opencalais.com/1/pred/politicalentity1 -->
+
+	<owl:ObjectProperty rdf:about="pred/politicalentity1">
+		<rdfs:label>Political Entity 1</rdfs:label>
+		<rdfs:comment>The first political entity in a political
+			relationship.</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/PoliticalEntity" />
+		<rdfs:domain rdf:resource="type/em/r/PoliticalRelationship" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/politicalentity2 -->
+
+	<owl:ObjectProperty rdf:about="pred/politicalentity2">
+		<rdfs:label>Political Entity 2</rdfs:label>
+		<rdfs:comment>The second political entity in a political
+			relationship.</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/PoliticalEntity" />
+		<rdfs:domain rdf:resource="type/em/r/PoliticalRelationship" />
+	</owl:ObjectProperty>
+	
+	<!-- http://s.opencalais.com/1/pred/politicalevent -->
+
+	<owl:ObjectProperty rdf:about="pred/politicalevent">
+		<rdfs:label>Political Event</rdfs:label>
+		<rdfs:comment></rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/PoliticalEvent" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/PollsResult" />
+					<owl:Class rdf:about="type/em/r/VotingResult" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+	
+
+	<!-- http://s.opencalais.com/1/pred/position -->
+
+	<owl:ObjectProperty rdf:about="pred/position">
+		<rdfs:label>Position</rdfs:label>
+		<rdfs:comment>The person's position.</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Position" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/PersonCareer" />
+					<owl:Class rdf:about="type/em/r/EmploymentRelation" />
+					<owl:Class rdf:about="type/em/r/EmploymentChange" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/product -->
+
+	<owl:ObjectProperty rdf:about="pred/product">
+		<rdfs:label>Product</rdfs:label>
+		<rdfs:comment>Name of the product.</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Product" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/ProductRelease" />
+					<owl:Class rdf:about="type/em/r/ProductRecall" />
+					<owl:Class rdf:about="type/em/r/ProductIssues" />
+					<owl:Class rdf:about="type/em/r/FDAPhase" />
+					<owl:Class rdf:about="type/em/r/CompanyUsingProduct" />
+					<owl:Class rdf:about="type/em/r/CompanyProduct" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/provinceorstate -->
+
+	<owl:ObjectProperty rdf:about="pred/provinceorstate">
+		<rdfs:label>Province or State</rdfs:label>
+		<rdfs:comment>Name of a province, state, county or other part of a
+			country.</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/ProvinceOrState" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/PersonCareer" />
+					<owl:Class rdf:about="type/em/r/CompanyMeeting" />
+					<owl:Class rdf:about="type/em/r/CompanyLocation" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/relationobject -->
+
+	<owl:ObjectProperty rdf:about="pred/relationobject">
+		<rdfs:label>Relation Object</rdfs:label>
+		<rdfs:comment>The object of a GenericRelations
+			(subject-predicate-object) extraction</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/MarkupEntity" />
+		<rdfs:domain rdf:resource="type/em/r/GenericRelations" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/relationsubject -->
+
+	<owl:ObjectProperty rdf:about="pred/relationsubject">
+		<rdfs:label>Relation Subject</rdfs:label>
+		<rdfs:comment>The subject of a GenericRelations
+			(subject-predicate-object) extraction</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/MarkupEntity" />
+		<rdfs:domain rdf:resource="type/em/r/GenericRelations" />
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/subject -->
+
+	<owl:ObjectProperty rdf:about="pred/subject">
+		<rdfs:label>Subject</rdfs:label>
+		<rdfs:comment>Extracted entity that is pointed to by a
+			disambiguated entity</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/MarkupEntity" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/sys/RelevanceInfo" />
+					<owl:Class rdf:about="type/sys/InstanceInfo" />
+					<owl:Class rdf:about="type/er/Product/Electronics" />
+					<owl:Class rdf:about="type/er/Geo" />
+					<owl:Class rdf:about="type/er/Company" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/technology -->
+
+	<owl:ObjectProperty rdf:about="pred/technology">
+		<rdfs:label>Technology</rdfs:label>
+		<rdfs:comment>Name or description of a type of technology
+		</rdfs:comment>
+		<rdfs:range rdf:resource="type/em/e/Technology" />
+		<rdfs:domain rdf:resource="type/em/r/CompanyTechnology" />
+	</owl:ObjectProperty>
+	
+	<!-- http://s.opencalais.com/1/pred/winningcandidate -->
+
+	<owl:ObjectProperty rdf:about="pred/winningcandidate">
+		<rdfs:label>Winning Candidate</rdfs:label>
+		<rdfs:comment></rdfs:comment>
+		<rdfs:range>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/e/Organization" />
+					<owl:Class rdf:about="type/em/e/Person" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:range>
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/PollsResult" />
+					<owl:Class rdf:about="type/em/r/VotingResult" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:ObjectProperty>
+    
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+	<!-- http://s.opencalais.com/1/linkeddata/pred/attribute/age -->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/attribute/age">
+		<rdfs:domain rdf:resource="linkeddata/type/PersonPosition" />
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+		<rdfs:comment>The person's age.</rdfs:comment>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/linkeddata/pred/attribute/city -->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/attribute/city">
+		<rdfs:domain rdf:resource="linkeddata/type/Address" />
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/linkeddata/pred/attribute/code -->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/attribute/code">
+		<rdfs:domain rdf:resource="linkeddata/type/SIC" />
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+	</owl:DatatypeProperty>
+
+	<!-- http://s.opencalais.com/1/linkeddata/pred/containedBy -->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/containedBy">
+		<rdfs:label>contained by</rdfs:label>
+		<rdfs:comment></rdfs:comment>
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/er/Geo/ProvinceOrState" />
+					<owl:Class rdf:about="type/er/Geo/City" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+	<!-- http://s.opencalais.com/1/linkeddata/pred/attribute/country -->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/attribute/country">
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+		<rdfs:comment>Name of a country mentioned in the document.</rdfs:comment>
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="linkeddata/type/IncorporatedIn" />
+					<owl:Class rdf:about="linkeddata/type/Address" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/linkeddata/pred/attribute/description -->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/attribute/description">
+		<rdfs:domain rdf:resource="linkeddata/type/SIC" />
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+	</owl:DatatypeProperty>
+
+	<!--
+		http://s.opencalais.com/1/linkeddata/pred/attribute/employeesnumber
+	-->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/attribute/employeesnumber">
+		<rdfs:domain rdf:resource="linkeddata/type/Employees" />
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+		<rdfs:comment>Number of employees in a company or the number affected 
+                 by an event.</rdfs:comment>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/linkeddata/pred/attribute/filingdate -->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/attribute/filingdate">
+		<rdfs:domain rdf:resource="linkeddata/type/EdgarFiling" />
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/linkeddata/pred/attribute/filingtype -->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/attribute/filingtype">
+		<rdfs:domain rdf:resource="linkeddata/type/EdgarFiling" />
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+		<rdfs:comment>Canonic names of the report. Name values: Form 10-K, 
+                 Form 20-F, Form 10-Q, annual report, interim report. If none 
+                 can be identified, original text is used.</rdfs:comment>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/linkeddata/pred/attribute/firstname -->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/attribute/firstname">
+		<rdfs:domain rdf:resource="linkeddata/type/PersonPosition" />
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/linkeddata/pred/attribute/lastname -->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/attribute/lastname">
+		<rdfs:domain rdf:resource="linkeddata/type/PersonPosition" />
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/linkeddata/pred/attribute/lastupdated -->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/attribute/lastupdated">
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="linkeddata/type/Profile" />
+					<owl:Class rdf:about="linkeddata/type/PersonPosition" />
+					<owl:Class rdf:about="linkeddata/type/FinancialSummary" />
+					<owl:Class rdf:about="linkeddata/type/Employees" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/linkeddata/pred/attribute/middle -->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/attribute/middle">
+		<rdfs:domain rdf:resource="linkeddata/type/PersonPosition" />
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/linkeddata/pred/attribute/state -->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/attribute/state">
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="linkeddata/type/IncorporatedIn" />
+					<owl:Class rdf:about="linkeddata/type/Address" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!--
+		http://s.opencalais.com/1/linkeddata/pred/attribute/streetaddress1
+	-->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/attribute/streetaddress1">
+		<rdfs:domain rdf:resource="linkeddata/type/Address" />
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+	</owl:DatatypeProperty>
+
+
+
+	<!--
+		http://s.opencalais.com/1/linkeddata/pred/attribute/streetaddress2
+	-->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/attribute/streetaddress2">
+		<rdfs:domain rdf:resource="linkeddata/type/Address" />
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+	</owl:DatatypeProperty>
+
+
+
+	<!--
+		http://s.opencalais.com/1/linkeddata/pred/attribute/streetaddress3
+	-->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/attribute/streetaddress3">
+		<rdfs:domain rdf:resource="linkeddata/type/Address" />
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/linkeddata/pred/attribute/text -->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/attribute/text">
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="linkeddata/type/Profile" />
+					<owl:Class rdf:about="linkeddata/type/FinancialSummary" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/linkeddata/pred/attribute/title -->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/attribute/title">
+		<rdfs:domain rdf:resource="linkeddata/type/PersonPosition" />
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/linkeddata/pred/attribute/zip -->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/attribute/zip">
+		<rdfs:domain rdf:resource="linkeddata/type/Address" />
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/linkeddata/pred/auditor -->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/auditor">
+		<rdfs:label>Auditor</rdfs:label>
+		<rdfs:comment>Full name of the company mentioned in the document.</rdfs:comment>
+		<rdfs:domain rdf:resource="type/er/Company" />
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/linkeddata/pred/cik -->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/cik">
+		<rdfs:label>CIK</rdfs:label>
+		<rdfs:comment></rdfs:comment>
+		<rdfs:domain rdf:resource="type/er/Company" />
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/linkeddata/pred/indexmembership -->
+
+	<owl:DatatypeProperty rdf:about="linkeddata/pred/indexmembership">
+		<rdfs:label>Index Membership</rdfs:label>
+		<rdfs:comment></rdfs:comment>
+		<rdfs:domain rdf:resource="type/er/Company" />
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string" />
+	</owl:DatatypeProperty>
+    
+
+
+    <!-- http://s.opencalais.com/1/linkeddata/pred/transferagent -->
+
+    <owl:DatatypeProperty rdf:about="linkeddata/pred/transferagent">
+        <rdfs:label>Transfer Agent</rdfs:label>
+        <rdfs:comment></rdfs:comment>
+        <rdfs:domain rdf:resource="type/er/Company"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/accountingchangetype -->
+
+	<owl:DatatypeProperty rdf:about="pred/accountingchangetype">
+		<rdfs:label>Accounting Change Type</rdfs:label>
+		<rdfs:comment>The type of change in the accounting method/policy. Possible values:
+			"FY" (fiscal year), "depreciation policy", or "accounting standard"
+		</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/CompanyAccountingChange" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/affiliaterelationtype -->
+
+	<owl:DatatypeProperty rdf:about="pred/affiliaterelationtype">
+		<rdfs:label>Affiliate Relation Type</rdfs:label>
+		<rdfs:comment>Nature of a relationship between a Company_Affiliate and Company_Parent,
+                 for example, subsidiary, division, spinoff, child or parent.</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/CompanyAffiliates" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/age -->
+
+	<owl:DatatypeProperty rdf:about="pred/age">
+		<rdfs:label>age</rdfs:label>
+		<rdfs:comment>A person&#39;s age</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+		<rdfs:domain rdf:resource="type/em/r/PersonAttributes"/>
+    </owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/allowDistribution -->
+
+	<owl:DatatypeProperty rdf:about="pred/allowDistribution">
+		<rdfs:label>Allow Distribution</rdfs:label>
+		<rdfs:comment>Indicates whether the extracted metadata can be
+			distributed (user directive in paramsXML)</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfo" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/allowSearch -->
+
+	<owl:DatatypeProperty rdf:about="pred/allowSearch">
+		<rdfs:label>Allow Search</rdfs:label>
+		<rdfs:comment>Indicates whether future searches can be
+			performed on the extracted metadata (user directive in paramsXML)
+		</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfo" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/birthdate -->
+
+	<owl:DatatypeProperty rdf:about="pred/birthdate">
+		<rdfs:label>Birth Date</rdfs:label>
+		<rdfs:comment>A person&#39;s date of birth</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+		<rdfs:domain rdf:resource="type/em/r/PersonAttributes"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://s.opencalais.com/1/pred/birthplace -->
+
+    <owl:DatatypeProperty rdf:about="pred/birthplace">
+        <rdfs:label>Birth Place</rdfs:label>
+       <rdfs:comment>A person&#39;s place of birth</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+		<rdfs:domain rdf:resource="type/em/r/PersonAttributes"/>
+    </owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/bonussharesratio -->
+
+	<owl:DatatypeProperty rdf:about="pred/bonussharesratio">
+		<rdfs:label>Bonus Shares Ratio</rdfs:label>
+		<rdfs:comment>Proportion of shares held to shares to be received</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/BonusSharesIssuance" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/businessrelationtype -->
+
+	<owl:DatatypeProperty rdf:about="pred/businessrelationtype">
+		<rdfs:label>Business Relation Type</rdfs:label>
+		<rdfs:comment>Type of business relation between two entities</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/BusinessRelation" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/calaisRequestID -->
+
+	<owl:DatatypeProperty rdf:about="pred/calaisRequestID">
+		<rdfs:label>Calais Request ID</rdfs:label>
+		<rdfs:comment>Unique identifier for the processed request
+		</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfo" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/calculateRelevanceScore -->
+
+	<owl:DatatypeProperty rdf:about="pred/calculateRelevanceScore">
+		<rdfs:label>Calculate Relevance Score</rdfs:label>
+		<rdfs:comment>Indicates whether the extracted metadata will
+			include relevance score for each unique entity (processing directive
+			in paramsXML)</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfo" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/caller -->
+
+	<owl:DatatypeProperty rdf:about="pred/caller">
+		<rdfs:label>Caller</rdfs:label>
+		<rdfs:comment>Used internally by various Calais apps
+		</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfo" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/careertype -->
+
+	<owl:DatatypeProperty rdf:about="pred/careertype">
+		<rdfs:label>Career Type</rdfs:label>
+		<rdfs:comment>Type of career: Political or Professional</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/PersonCareer" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/categoryName -->
+
+	<owl:DatatypeProperty rdf:about="pred/categoryName">
+		<rdfs:label>Category Name</rdfs:label>
+		<rdfs:comment>Human-friendly name for the identified
+			content category/topic</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/cat/DocCat" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/certification -->
+
+	<owl:DatatypeProperty rdf:about="pred/certification">
+		<rdfs:label>Certification</rdfs:label>
+		<rdfs:comment>Professional credential or certification</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+		<rdfs:domain rdf:resource="type/em/r/PersonEducation"/>
+    </owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/changetype -->
+
+	<owl:DatatypeProperty rdf:about="pred/changetype">
+		<rdfs:label>Change Type</rdfs:label>
+		<rdfs:comment>Type of the change in the event, e.g., Enters,
+			Leaves, Retires</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/EmploymentChange" />
+					<owl:Class rdf:about="type/em/r/CompanyListingChange" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/charge -->
+
+	<owl:DatatypeProperty rdf:about="pred/charge">
+		<rdfs:label>charge</rdfs:label>
+		<rdfs:comment>Charge related to arrest, conviction, indictment
+			or trial events</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/Trial" />
+					<owl:Class rdf:about="type/em/r/Indictment" />
+					<owl:Class rdf:about="type/em/r/Conviction" />
+					<owl:Class rdf:about="type/em/r/Arrest" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/classifierName -->
+
+	<owl:DatatypeProperty rdf:about="pred/classifierName">
+		<rdfs:label>Classifier Name</rdfs:label>
+		<rdfs:comment>Internal name of the Calais document
+			classification module applied</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/cat/DocCat" />
+	</owl:DatatypeProperty>
+
+	<!-- http://s.opencalais.com/1/pred/commonname -->
+
+	<owl:DatatypeProperty rdf:about="pred/commonname">
+		<rdfs:label>Common Name</rdfs:label>
+		<rdfs:comment>The name with which a person is commonly referred by</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/e/Person" />
+	</owl:DatatypeProperty>
+	
+
+	<!-- http://s.opencalais.com/1/pred/companylocationtype -->
+
+	<owl:DatatypeProperty rdf:about="pred/companylocationtype">
+		<rdfs:label>Company Location Type</rdfs:label>
+		<rdfs:comment>Functional description of the company location, for
+			example: headquarters, branch, office, center of operations, 
+                  or N/A if not available.</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/CompanyLocation" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/companymeetingtype -->
+
+	<owl:DatatypeProperty rdf:about="pred/companymeetingtype">
+		<rdfs:label>Company Meeting Type</rdfs:label>
+		<rdfs:comment>Normalized nature of company meeting, based on topics to be
+			discussed: e.g., Annual General Meeting (AGM), Extraordinary
+			General Meeting (EGM), Shareholders' Meeting, etc.</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/CompanyMeeting" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/conferencecalltype -->
+
+	<owl:DatatypeProperty rdf:about="pred/conferencecalltype">
+		<rdfs:label>Conference Call Type</rdfs:label>
+		<rdfs:comment>Nature of conference call, based on topics to be
+			discussed</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/ConferenceCall" />
+	</owl:DatatypeProperty>
+
+	<!-- http://s.opencalais.com/1/pred/containedbycountry -->
+
+	<owl:DatatypeProperty rdf:about="pred/containedbycountry">
+		<rdfs:label>Contained by Country</rdfs:label>
+		<rdfs:comment>Country name that contains a resolved geography
+			(city, province/state, country)</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/er/Geo/ProvinceOrState" />
+					<owl:Class rdf:about="type/er/Geo/City" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/containedbystate -->
+
+	<owl:DatatypeProperty rdf:about="pred/containedbystate">
+		<rdfs:label>Contained by state</rdfs:label>
+		<rdfs:comment>State name that contains a resolved geography
+			(city)</rdfs:comment>
+		<rdfs:domain rdf:resource="type/er/Geo/City" />
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+	</owl:DatatypeProperty>
+
+
+	<!-- http://s.opencalais.com/1/pred/contentType -->
+
+	<owl:DatatypeProperty rdf:about="pred/contentType">
+		<rdfs:label>Content Type</rdfs:label>
+		<rdfs:comment>Format of the input content as submitted by the
+			user (processing direcgtive in paramsXML)</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfoMeta" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/date -->
+
+	<owl:DatatypeProperty rdf:about="pred/date">
+		<rdfs:label>Date</rdfs:label>
+		<rdfs:comment>An absolute date mentioned in text in reference to the event/fact, 
+			or a resolved date based on DateString and relative to the article's publication date.
+            </rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/BusinessRelation" />
+					<owl:Class rdf:about="type/em/r/Bankruptcy" />
+					<owl:Class rdf:about="type/em/r/CompanyRestatement" />
+					<owl:Class rdf:about="type/em/r/Conviction" />
+					<owl:Class rdf:about="type/em/r/MusicAlbumRelease" />
+					<owl:Class rdf:about="type/em/r/CompanyReorganization" />
+					<owl:Class rdf:about="type/em/r/CompanyLayoffs" />
+					<owl:Class rdf:about="type/em/r/CompanyLaborIssues" />
+					<owl:Class rdf:about="type/em/r/CompanyForceMajeure" />
+					<owl:Class rdf:about="type/em/r/IPO" />
+					<owl:Class rdf:about="type/em/r/DebtFinancing" />
+					<owl:Class rdf:about="type/em/r/ConferenceCall" />
+					<owl:Class rdf:about="type/em/r/Acquisition" />
+					<owl:Class rdf:about="type/em/r/Buybacks" />
+					<owl:Class rdf:about="type/em/r/ProductRelease" />
+					<owl:Class rdf:about="type/em/r/Arrest" />
+					<owl:Class rdf:about="type/em/r/CompanyExpansion" />
+					<owl:Class rdf:about="type/em/r/CompanyAccountingChange" />
+					<owl:Class rdf:about="type/em/r/Merger" />
+					<owl:Class rdf:about="type/em/r/CompanyMeeting" />
+					<owl:Class rdf:about="type/em/r/ProductIssues" />
+					<owl:Class rdf:about="type/em/r/Trial" />
+					<owl:Class rdf:about="type/em/r/CompanyNameChange" />
+					<owl:Class rdf:about="type/em/r/Alliance" />
+					<owl:Class rdf:about="type/em/r/ManMadeDisaster" />
+					<owl:Class rdf:about="type/em/r/SecondaryIssuance" />
+					<owl:Class rdf:about="type/em/r/CompanyUsingProduct" />
+					<owl:Class rdf:about="type/em/r/EmploymentRelation" />
+					<owl:Class rdf:about="type/em/r/JointVenture" />
+					<owl:Class rdf:about="type/em/r/BonusSharesIssuance" />
+					<owl:Class rdf:about="type/em/r/CompanyInvestment" />
+					<owl:Class rdf:about="type/em/r/PatentFiling" />
+					<owl:Class rdf:about="type/em/r/CompanyLegalIssues" />
+					<owl:Class rdf:about="type/em/r/NaturalDisaster" />
+					<owl:Class rdf:about="type/em/r/MovieRelease" />
+					<owl:Class rdf:about="type/em/r/EmploymentChange" />
+					<owl:Class rdf:about="type/em/r/PatentIssuance" />
+					<owl:Class rdf:about="type/em/r/CompanyListingChange" />
+					<owl:Class rdf:about="type/em/r/PersonRelation" />
+					<owl:Class rdf:about="type/em/r/Indictment" />
+					<owl:Class rdf:about="type/em/r/EnvironmentalIssue" />
+					<owl:Class rdf:about="type/em/r/PersonTravel" />
+					<owl:Class rdf:about="type/em/r/Extinction" />
+					<owl:Class rdf:about="type/em/r/ProductRecall" />
+					<owl:Class rdf:about="type/em/r/PersonCommunication" />
+					<owl:Class rdf:about="type/em/r/DiplomaticRelations" />
+					<owl:Class rdf:about="type/em/e/PoliticalEvent" />
+					<owl:Class rdf:about="type/em/r/PollsResult" />
+					<owl:Class rdf:about="type/em/r/VotingResult" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/datestring -->
+
+	<owl:DatatypeProperty rdf:about="pred/datestring">
+		<rdfs:label>Date String</rdfs:label>
+		<rdfs:comment>Temporal phrase mentioned in text in reference to the event/fact,
+                 for example, yesterday, next month, etc. </rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/Bankruptcy" />
+					<owl:Class rdf:about="type/em/r/ProductRecall" />
+					<owl:Class rdf:about="type/em/r/Conviction" />
+					<owl:Class rdf:about="type/em/r/ConferenceCall" />
+					<owl:Class rdf:about="type/em/r/CompanyInvestment" />
+					<owl:Class rdf:about="type/em/r/CompanyUsingProduct" />
+					<owl:Class rdf:about="type/em/r/BonusSharesIssuance" />
+					<owl:Class rdf:about="type/em/r/CompanyExpansion" />
+					<owl:Class rdf:about="type/em/r/SecondaryIssuance" />
+					<owl:Class rdf:about="type/em/r/Acquisition" />
+					<owl:Class rdf:about="type/em/r/CompanyReorganization" />
+					<owl:Class rdf:about="type/em/r/NaturalDisaster" />
+					<owl:Class rdf:about="type/em/r/Merger" />
+					<owl:Class rdf:about="type/em/r/ProductRelease" />
+					<owl:Class rdf:about="type/em/r/MovieRelease" />
+					<owl:Class rdf:about="type/em/r/MusicAlbumRelease" />
+					<owl:Class rdf:about="type/em/r/BusinessRelation" />
+					<owl:Class rdf:about="type/em/r/JointVenture" />
+					<owl:Class rdf:about="type/em/r/Arrest" />
+					<owl:Class rdf:about="type/em/r/CompanyForceMajeure" />
+					<owl:Class rdf:about="type/em/r/PatentFiling" />
+					<owl:Class rdf:about="type/em/r/Extinction" />
+					<owl:Class rdf:about="type/em/r/ProductIssues" />
+					<owl:Class rdf:about="type/em/r/CompanyListingChange" />
+					<owl:Class rdf:about="type/em/r/Indictment" />
+					<owl:Class rdf:about="type/em/r/ManMadeDisaster" />
+					<owl:Class rdf:about="type/em/r/EmploymentChange" />
+					<owl:Class rdf:about="type/em/r/Buybacks" />
+					<owl:Class rdf:about="type/em/r/CompanyNameChange" />
+					<owl:Class rdf:about="type/em/r/EnvironmentalIssue" />
+					<owl:Class rdf:about="type/em/r/EmploymentRelation" />
+					<owl:Class rdf:about="type/em/r/CompanyRestatement" />
+					<owl:Class rdf:about="type/em/r/IPO" />
+					<owl:Class rdf:about="type/em/r/PatentIssuance" />
+					<owl:Class rdf:about="type/em/r/CompanyLaborIssues" />
+					<owl:Class rdf:about="type/em/r/DebtFinancing" />
+					<owl:Class rdf:about="type/em/r/PersonCommunication" />
+					<owl:Class rdf:about="type/em/r/Alliance" />
+					<owl:Class rdf:about="type/em/r/PersonRelation" />
+					<owl:Class rdf:about="type/em/r/Trial" />
+					<owl:Class rdf:about="type/em/r/CompanyMeeting" />
+					<owl:Class rdf:about="type/em/r/PersonTravel" />
+					<owl:Class rdf:about="type/em/r/CompanyAccountingChange" />
+					<owl:Class rdf:about="type/em/r/CompanyLegalIssues" />
+					<owl:Class rdf:about="type/em/r/CompanyLayoffs" />
+					<owl:Class rdf:about="type/em/r/DiplomaticRelations" />
+					<owl:Class rdf:about="type/em/e/PoliticalEvent" />
+					<owl:Class rdf:about="type/em/r/PollsResult" />
+					<owl:Class rdf:about="type/em/r/VotingResult" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/debtaction -->
+
+	<owl:DatatypeProperty rdf:about="pred/debtaction">
+		<rdfs:label>Debt Action</rdfs:label>
+		<rdfs:comment>Action taken to complete the debt
+			financing event</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/DebtFinancing" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/debttype -->
+
+	<owl:DatatypeProperty rdf:about="pred/debttype">
+		<rdfs:label>Debt Type</rdfs:label>
+		<rdfs:comment>Debt entities involved.</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/DebtFinancing" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/degree -->
+
+	<owl:DatatypeProperty rdf:about="pred/degree">
+		<rdfs:label>Degree</rdfs:label>
+		<rdfs:comment>Academic degree awarded</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+		<rdfs:domain rdf:resource="type/em/r/PersonEducation"/>
+    </owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/detection -->
+
+	<owl:DatatypeProperty rdf:about="pred/detection">
+		<rdfs:label>Detection</rdfs:label>
+		<rdfs:comment>Text portions before and after a matched instance
+		</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/InstanceInfo" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/discardMetadata -->
+
+	<owl:DatatypeProperty rdf:about="pred/discardMetadata">
+		<rdfs:label>Discard Meta Data</rdfs:label>
+		<rdfs:comment>Indicates whether the output will exclude
+			Entity Disambiguation results (processing directives in paramsXML)
+		</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfo" />
+	</owl:DatatypeProperty>
+	
+	<!-- http://s.opencalais.com/1/pred/diplomaticaction -->
+
+	<owl:DatatypeProperty rdf:about="pred/diplomaticaction">
+		<rdfs:label>Diplomatic Action</rdfs:label>
+		<rdfs:comment></rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/DiplomaticRelations" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/dividendtype -->
+
+	<owl:DatatypeProperty rdf:about="pred/dividendtype">
+		<rdfs:label>Dividend Type</rdfs:label>
+		<rdfs:comment>Indicates the type of a dividend event - Cash
+			or Shares</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/Dividend" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/docDate -->
+
+	<owl:DatatypeProperty rdf:about="pred/docDate">
+		<rdfs:label>Document Date</rdfs:label>
+		<rdfs:comment>Identified date of the submitted content (if
+			mentioned)</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfo" />
+	</owl:DatatypeProperty>
+
+	<!-- http://s.opencalais.com/1/pred/docRDFaccessible -->
+
+	<owl:DatatypeProperty rdf:about="pred/docRDFaccessible">
+		<rdfs:label></rdfs:label>
+		<rdfs:comment></rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfo" />
+	</owl:DatatypeProperty>
+
+
+	<!-- http://s.opencalais.com/1/pred/docTitle -->
+
+	<owl:DatatypeProperty rdf:about="pred/docTitle">
+		<rdfs:label>Document Title</rdfs:label>
+		<rdfs:comment>Document title as identified by Calais (could
+			also be empty)</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfo" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/document -->
+
+	<owl:DatatypeProperty rdf:about="pred/document">
+		<rdfs:label>Document</rdfs:label>
+		<rdfs:comment>Original content submitted converted into a
+			Calais XML</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfo" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/emVer -->
+
+	<owl:DatatypeProperty rdf:about="pred/emVer">
+		<rdfs:label>em Version</rdfs:label>
+		<rdfs:comment>Internal version name/number of the Calais
+			extraction module</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfoMeta" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/emailaddress -->
+
+	<owl:DatatypeProperty rdf:about="pred/emailaddress">
+		<rdfs:label>emailaddress</rdfs:label>
+		<rdfs:comment>Email address mentioned in the document.</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/PersonEmailAddress" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/employeesnumber -->
+
+	<owl:DatatypeProperty rdf:about="pred/employeesnumber">
+		<rdfs:label>Employees Number</rdfs:label>
+		<rdfs:comment>The number of employees in a company or the number affected
+                 by an event.</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/CompanyLayoffs" />
+					<owl:Class rdf:about="type/em/r/CompanyEmployeesNumber" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/employeespercentage -->
+
+	<owl:DatatypeProperty rdf:about="pred/employeespercentage">
+		<rdfs:label>Employees Percentage</rdfs:label>
+		<rdfs:comment>The percentage of employees (out of the total number of 
+                 employees involved in the layoff event</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/CompanyLayoffs" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/employmentchangestatus -->
+
+	<owl:DatatypeProperty rdf:about="pred/employmentchangestatus">
+		<rdfs:label>Employment Change Status</rdfs:label>
+		<rdfs:comment>Status of the change in employment - Known,
+			Announced, Planned, etc.</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/EmploymentChange" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/enableMetadataType -->
+
+	<owl:DatatypeProperty rdf:about="pred/enableMetadataType">
+		<rdfs:label>Enable Metadata Type</rdfs:label>
+		<rdfs:comment>Indicates whether the output (RDF only) will
+			include Generic Relation extractions (processing directive in
+			paramsXML)</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfo" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/environmentalissue -->
+
+	<owl:DatatypeProperty rdf:about="pred/environmentalissue">
+		<rdfs:label>environmentalissue</rdfs:label>
+		<rdfs:comment>Extracted instance of an environmental issue</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/EnvironmentalIssue" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/exact -->
+
+	<owl:DatatypeProperty rdf:about="pred/exact">
+		<rdfs:label>exact</rdfs:label>
+		<rdfs:comment>Text portion of a matched instance</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/InstanceInfo" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/expansiontype -->
+
+	<owl:DatatypeProperty rdf:about="pred/expansiontype">
+		<rdfs:label>Expansion Type</rdfs:label>
+		<rdfs:comment>Type of an expansion event, either New Market or New
+			Unit</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/CompanyExpansion" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/externalID -->
+
+	<owl:DatatypeProperty rdf:about="pred/externalID">
+		<rdfs:label>External ID</rdfs:label>
+		<rdfs:comment>Indicates whether the extracted metadata can be
+			distributed (user directive in paramsXML)</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfo" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/externalMetadata -->
+
+	<owl:DatatypeProperty rdf:about="pred/externalMetadata">
+		<rdfs:label>External Metadata</rdfs:label>
+		<rdfs:comment>External Metadate section as submitted by the
+			user</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfo" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/familyrelationtype -->
+
+	<owl:DatatypeProperty rdf:about="pred/familyrelationtype">
+		<rdfs:label>Family Relation Type</rdfs:label>
+		<rdfs:comment>Family relationship of two individuals
+		</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/FamilyRelation" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/fdastage -->
+
+	<owl:DatatypeProperty rdf:about="pred/fdastage">
+		<rdfs:label>FDA Stage</rdfs:label>
+		<rdfs:comment>Stage in the FDA approval process.</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/FDAPhase" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/filingtype -->
+
+	<owl:DatatypeProperty rdf:about="pred/filingtype">
+		<rdfs:label>Filing Type</rdfs:label>
+		<rdfs:comment>Type of the filing associated with the event such as
+			Form 10-K, Form 10-Q, etc.</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/DelayedFiling" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/financialmetric -->
+
+	<owl:DatatypeProperty rdf:about="pred/financialmetric">
+		<rdfs:label>Financial Metric</rdfs:label>
+		<rdfs:comment>The reported metric, normalized to the most commonly used terms. 
+                 The possible metrics are: "Financial Results", "Revenues", "Earnings", 
+                 "Net Loss", "Earnings Per-Share (Diluted)", "Loss Per-Share (Diluted)".
+		</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/CompanyEarningsGuidance" />
+					<owl:Class rdf:about="type/em/r/CompanyEarningsAnnouncement" />
+					<owl:Class rdf:about="type/em/r/AnalystEarningsEstimate" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/financialtrend -->
+
+	<owl:DatatypeProperty rdf:about="pred/financialtrend">
+		<rdfs:label>Financial Trend</rdfs:label>
+		<rdfs:comment>The trend of the current recommendation with respect to the previous 
+                 recommendation: May be either "upgraded" or "downgraded" or "initiated" or 
+                 "reiterated" (SAME recommendation given AGAIN) or "initiated" (NEW
+                 recommendation as far we know, the default).
+            </rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/CreditRating" />
+					<owl:Class rdf:about="type/em/r/CompanyEarningsGuidance" />
+					<owl:Class rdf:about="type/em/r/AnalystRecommendation" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/forcemajeure -->
+
+	<owl:DatatypeProperty rdf:about="pred/forcemajeure">
+		<rdfs:label>Force Majeure</rdfs:label>
+		<rdfs:comment>The cause of the disruption of normal activity, such
+			as severe weather events, power outages, etc.</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/CompanyForceMajeure" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/gender -->
+
+	<owl:DatatypeProperty rdf:about="pred/gender">
+		<rdfs:label>Gender</rdfs:label>
+		<rdfs:comment>A person&#39;s gender</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+		<rdfs:domain rdf:resource="type/em/r/PersonAttributes"/>
+    </owl:DatatypeProperty>
+    
+	<!-- http://s.opencalais.com/1/pred/id -->
+
+	<owl:DatatypeProperty rdf:about="pred/id">
+		<rdfs:label>ID</rdfs:label>
+		<rdfs:comment>Shortened version of the docId</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfo" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/importance -->
+
+	<owl:DatatypeProperty rdf:about="pred/importance">
+		<rdfs:label>Importance</rdfs:label>
+		<rdfs:comment>Importance of an extracted element on a scale
+			of 1-2 (1 is most important)</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/tag/SocialTag" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/langIdVer -->
+
+	<owl:DatatypeProperty rdf:about="pred/langIdVer">
+		<rdfs:label>langIdVer</rdfs:label>
+		<rdfs:comment>Internal version name/number of the Calais
+			language identification module</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfoMeta" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/language -->
+
+	<owl:DatatypeProperty rdf:about="pred/language">
+		<rdfs:label>Language</rdfs:label>
+		<rdfs:comment>Human-friendly name for the Identified
+			language of the submitted content</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfoMeta" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/latitude -->
+
+	<owl:DatatypeProperty rdf:about="pred/latitude">
+		<rdfs:label>Latitude</rdfs:label>
+		<rdfs:comment>Latitude of a disambiguated geography
+		</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/er/Geo" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/lawsuitclass -->
+
+	<owl:DatatypeProperty rdf:about="pred/lawsuitclass">
+		<rdfs:label>Lawsuitclass</rdfs:label>
+		<rdfs:comment>Type of a legal issue. Possible values are: Class
+			action or lawsuit</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/CompanyLegalIssues" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/length -->
+
+	<owl:DatatypeProperty rdf:about="pred/length">
+		<rdfs:label>Length</rdfs:label>
+		<rdfs:comment>Length of the matched text (in characters) for
+			each identified instance</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/InstanceInfo" />
+	</owl:DatatypeProperty>
+	
+	<!-- http://s.opencalais.com/1/pred/lexiconIDList -->
+
+	<owl:ObjectProperty rdf:about="pred/lexiconIDList">
+		<rdfs:label></rdfs:label>
+		<rdfs:comment></rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfoMeta" />
+	</owl:ObjectProperty>
+	
+    <!-- http://s.opencalais.com/1/pred/longitude -->
+
+    <owl:DatatypeProperty rdf:about="pred/longitude">
+        <rdfs:label>Longitude</rdfs:label>
+        <rdfs:comment
+            >Longitude of a disambiguated geography</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+		<rdfs:domain rdf:resource="type/er/Geo"/>
+    </owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/manmadedisaster -->
+
+	<owl:DatatypeProperty rdf:about="pred/manmadedisaster">
+		<rdfs:label>Manmade Disaster</rdfs:label>
+		<rdfs:comment>Type of man-made disaster</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/ManMadeDisaster" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/messageCode -->
+
+	<owl:DatatypeProperty rdf:about="pred/messageCode">
+		<rdfs:label>Message Code</rdfs:label>
+		<rdfs:comment>Internal code for an error message
+		</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/Message" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/name -->
+
+	<owl:DatatypeProperty rdf:about="pred/name">
+		<rdfs:label>Name</rdfs:label>
+		<rdfs:comment>Name of an extracted or disambiguated element
+		</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/e/SportsLeague" />
+					<owl:Class rdf:about="type/em/e/Organization" />
+					<owl:Class rdf:about="type/em/e/Technology" />
+					<owl:Class rdf:about="type/er/Product/Electronics" />
+					<owl:Class rdf:about="type/em/e/SportsEvent" />
+					<owl:Class rdf:about="type/em/e/RadioProgram" />
+					<owl:Class rdf:about="type/em/e/EntertainmentAwardEvent" />
+					<owl:Class rdf:about="type/em/e/Movie" />
+					<owl:Class rdf:about="type/em/e/Holiday" />
+					<owl:Class rdf:about="type/em/e/RadioStation" />
+					<owl:Class rdf:about="type/em/e/Place" />
+					<owl:Class rdf:about="type/em/e/Company" />
+					<owl:Class rdf:about="type/em/e/Continent" />
+					<owl:Class rdf:about="type/em/e/Facility" />
+					<owl:Class rdf:about="type/em/e/PhoneNumber" />
+					<owl:Class rdf:about="type/em/e/URL" />
+					<owl:Class rdf:about="type/em/e/MarketIndex" />
+					<owl:Class rdf:about="type/em/e/IndustryTerm" />
+					<owl:Class rdf:about="type/em/e/Currency" />
+					<owl:Class rdf:about="type/em/e/MusicAlbum" />
+					<owl:Class rdf:about="type/em/e/Position" />
+					<owl:Class rdf:about="type/em/e/NaturalFeature" />
+					<owl:Class rdf:about="type/er/Geo" />
+					<owl:Class rdf:about="type/em/e/TVShow" />
+					<owl:Class rdf:about="type/em/e/Region" />
+					<owl:Class rdf:about="type/em/e/ProgrammingLanguage" />
+					<owl:Class rdf:about="type/em/e/Anniversary" />
+					<owl:Class rdf:about="type/em/e/PublishedMedium" />
+					<owl:Class rdf:about="type/em/e/Person" />
+					<owl:Class rdf:about="type/em/e/MedicalTreatment" />
+					<owl:Class rdf:about="type/em/e/MusicGroup" />
+					<owl:Class rdf:about="type/er/Company" />
+					<owl:Class rdf:about="type/em/e/OperatingSystem" />
+					<owl:Class rdf:about="type/em/e/EmailAddress" />
+					<owl:Class rdf:about="type/em/e/TVStation" />
+					<owl:Class rdf:about="type/em/e/FaxNumber" />
+					<owl:Class rdf:about="type/em/e/SportsGame" />
+					<owl:Class rdf:about="type/em/e/MedicalCondition" />
+					<owl:Class rdf:about="type/em/e/Product" />
+					<owl:Class rdf:about="type/em/e/PoliticalEvent" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/nationality -->
+
+	<owl:DatatypeProperty rdf:about="pred/nationality">
+		<rdfs:label>Nationality</rdfs:label>
+		<rdfs:comment>Nationality of an identified entity such as Person, Company, 
+			Organization if mentioned in the document. Otherwise, value is "N/A".
+		</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/e/Organization" />
+					<owl:Class rdf:about="type/em/e/Company" />
+					<owl:Class rdf:about="type/em/e/Person" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/naturaldisaster -->
+
+	<owl:DatatypeProperty rdf:about="pred/naturaldisaster">
+		<rdfs:label>Natural Disaster</rdfs:label>
+		<rdfs:comment>Type of disaster
+ 		</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/NaturalDisaster" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/offset -->
+
+	<owl:DatatypeProperty rdf:about="pred/offset">
+		<rdfs:label>Offset</rdfs:label>
+		<rdfs:comment>Offset of the matched text (in characters, from
+			the beginning of the document) for each identified instance
+		</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/InstanceInfo" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/organizationtype -->
+
+	<owl:DatatypeProperty rdf:about="pred/organizationtype">
+		<rdfs:label>Organization Type</rdfs:label>
+		<rdfs:comment>Organization classification to one of the following types: 
+                 sports, governmental military, governmental civilian or political party. 
+                 If no classification is available, the value is "N/A".</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/e/Organization" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/othercharges -->
+
+	<owl:DatatypeProperty rdf:about="pred/othercharges">
+		<rdfs:label>Other Charges</rdfs:label>
+		<rdfs:comment>Additional charges related to arrest,
+			conviction, indictment or trial events</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/Trial" />
+					<owl:Class rdf:about="type/em/r/Indictment" />
+					<owl:Class rdf:about="type/em/r/Conviction" />
+					<owl:Class rdf:about="type/em/r/Arrest" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/outputFormat -->
+
+	<owl:DatatypeProperty rdf:about="pred/outputFormat">
+		<rdfs:label>Output Format</rdfs:label>
+		<rdfs:comment>Format of the returned results (processing
+			directive in paramsXML)</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfo" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/patentdescription -->
+
+	<owl:DatatypeProperty rdf:about="pred/patentdescription">
+		<rdfs:label>Patent Description</rdfs:label>
+		<rdfs:comment>Phrase describing a filed patent</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/PatentIssuance" />
+					<owl:Class rdf:about="type/em/r/PatentFiling" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/patentnumber -->
+
+	<owl:DatatypeProperty rdf:about="pred/patentnumber">
+		<rdfs:label>Patent Number</rdfs:label>
+		<rdfs:comment>Number of an issued/registered patent</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/PatentIssuance" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/persondescription -->
+
+	<owl:DatatypeProperty rdf:about="pred/persondescription">
+		<rdfs:label>Person Description</rdfs:label>
+		<rdfs:comment>Description of person involved in an event/fact</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/PersonCommunication" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/personrelationtype -->
+
+	<owl:DatatypeProperty rdf:about="pred/personrelationtype">
+		<rdfs:label>Person Relation Type</rdfs:label>
+		<rdfs:comment>Type of relationship between two people, e.g.: business, 
+                 Academic Military, Romantic, etc.</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/PersonRelation" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/persontype -->
+
+	<owl:DatatypeProperty rdf:about="pred/persontype">
+		<rdfs:label>Person Type</rdfs:label>
+		<rdfs:comment>Person classification to one of the following types: 
+                 sports, entertainment, political, economic or military. If no 
+                 classification is available, the value will be "N/A".</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/e/Person" />
+	</owl:DatatypeProperty>
+	
+	<!-- http://s.opencalais.com/1/pred/politicaleventtype -->
+
+	<owl:DatatypeProperty rdf:about="pred/politicaleventtype">
+		<rdfs:label>Political Event Type</rdfs:label>
+		<rdfs:comment></rdfs:comment>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+		<rdfs:domain rdf:resource="type/em/e/PoliticalEvent"/>
+    </owl:DatatypeProperty>
+    
+	<!-- http://s.opencalais.com/1/pred/politicalrelationshiptype -->
+
+	<owl:DatatypeProperty rdf:about="pred/politicalrelationshiptype">
+		<rdfs:label>Political Relationship Type</rdfs:label>
+		<rdfs:comment>Type of political relationship:&quot;alliance&quot; 
+                 or &quot;rivalry&quot;.</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+		<rdfs:domain rdf:resource="type/em/r/PoliticalRelationship"/>
+    </owl:DatatypeProperty>
+    
+    <!-- http://s.opencalais.com/1/pred/pollconductor -->
+
+	<owl:DatatypeProperty rdf:about="pred/pollconductor">
+		<rdfs:label>Poll Conductor</rdfs:label>
+		<rdfs:comment></rdfs:comment>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+		<rdfs:domain rdf:resource="type/em/r/PollsResult"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://s.opencalais.com/1/pred/prefix -->
+
+	<owl:DatatypeProperty rdf:about="pred/prefix">
+		<rdfs:label>Prefix</rdfs:label>
+		<rdfs:comment>Text portion before a matched instance
+		</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/InstanceInfo" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/price_new -->
+
+	<owl:DatatypeProperty rdf:about="pred/price_new">
+		<rdfs:label>Price New</rdfs:label>
+		<rdfs:comment>Target price quoted by the analyst.</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/AnalystRecommendation" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/price_old -->
+
+	<owl:DatatypeProperty rdf:about="pred/price_old">
+		<rdfs:label>Price_Old</rdfs:label>
+		<rdfs:comment>Previous target price, quoted by the same analyst.</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/AnalystRecommendation" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/processingVer -->
+
+	<owl:DatatypeProperty rdf:about="pred/processingVer">
+		<rdfs:label>Processing Version</rdfs:label>
+		<rdfs:comment>Internal version of the tagging process
+		</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfoMeta" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/producttype -->
+
+	<owl:DatatypeProperty rdf:about="pred/producttype">
+		<rdfs:label>Product Type</rdfs:label>
+		<rdfs:comment>Product classification. Possible values: drug,
+			car model, aircraft, electronics, weapon. Note: For product 
+                  types other than these, ProductType=Other</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/ProductRelease" />
+					<owl:Class rdf:about="type/em/r/ProductRecall" />
+					<owl:Class rdf:about="type/em/r/ProductIssues" />
+					<owl:Class rdf:about="type/em/r/FDAPhase" />
+					<owl:Class rdf:about="type/em/r/CompanyUsingProduct" />
+					<owl:Class rdf:about="type/em/r/CompanyProduct" />
+					<owl:Class rdf:about="type/em/e/Product" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/quarter -->
+
+	<owl:DatatypeProperty rdf:about="pred/quarter">
+		<rdfs:label>Quarter</rdfs:label>
+		<rdfs:comment>Quarter to which the estimation refers, normalized. Possible values 
+                 are Q1, Q2, Q3, Q4 or H1, NINE_MONTHS and FY</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/Dividend" />
+					<owl:Class rdf:about="type/em/r/DelayedFiling" />
+					<owl:Class rdf:about="type/em/r/ConferenceCall" />
+					<owl:Class rdf:about="type/em/r/CompanyRestatement" />
+					<owl:Class rdf:about="type/em/r/CompanyEarningsGuidance" />
+					<owl:Class rdf:about="type/em/r/CompanyEarningsAnnouncement" />
+					<owl:Class rdf:about="type/em/r/AnalystEarningsEstimate" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/quote -->
+
+	<owl:DatatypeProperty rdf:about="pred/quote">
+		<rdfs:label>Quote</rdfs:label>
+		<rdfs:comment>Direct or indirect excerpt of communication</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/Quotation" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/rank_new -->
+
+	<owl:DatatypeProperty rdf:about="pred/rank_new">
+		<rdfs:label>Rank New</rdfs:label>
+		<rdfs:comment>New or current ranking of the company</rdfs:comment>
+	        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/CreditRating" />
+					<owl:Class rdf:about="type/em/r/AnalystRecommendation" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://s.opencalais.com/1/pred/rank_old -->
+
+    <owl:DatatypeProperty rdf:about="pred/rank_old">
+        <rdfs:label>Rank Old</rdfs:label>
+       <rdfs:comment>Previous company rank.</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/CreditRating" />
+					<owl:Class rdf:about="type/em/r/AnalystRecommendation" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+    </owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/recalledquantity -->
+
+	<owl:DatatypeProperty rdf:about="pred/recalledquantity">
+		<rdfs:label>Recalled Quantity</rdfs:label>
+		<rdfs:comment>Quantity of a product that is being recalled</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/ProductRecall" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/relevance -->
+
+	<owl:DatatypeProperty rdf:about="pred/relevance">
+		<rdfs:label>Relevance</rdfs:label>
+		<rdfs:comment>Relevance score in the rage 0-1 of each
+			extracted entity; indicates the importance of an entity relative to
+			the current document</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/RelevanceInfo" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/reltagBaseURL -->
+
+	<owl:DatatypeProperty rdf:about="pred/reltagBaseURL">
+		<rdfs:label>Rel Tag Base URL</rdfs:label>
+		<rdfs:comment>Base URL to be put in rel-tag microformats
+			(processing directives in paramsXML)</rdfs:comment>
+		<rdfs:domain rdf:resource="type/sys/DocInfo" />
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/schoolororganization -->
+
+	<owl:DatatypeProperty rdf:about="pred/schoolororganization">
+		<rdfs:label>School Organization</rdfs:label>
+		<rdfs:comment>Academic institution</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/PersonEducation" />
+	</owl:DatatypeProperty>
+    
+
+
+    <!-- http://s.opencalais.com/1/pred/score -->
+
+	<owl:DatatypeProperty rdf:about="pred/score">
+		<rdfs:label>Score</rdfs:label>
+		<rdfs:comment>Confidence score (range: 0 lowest - 1 highest)
+			of the assigned type/topic</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/er/ResolvedEntity" />
+					<owl:Class rdf:about="type/cat/DocCat" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/shortname -->
+
+	<owl:DatatypeProperty rdf:about="pred/shortname">
+		<rdfs:label>Short Name</rdfs:label>
+		<rdfs:comment>A name which a resolved entity is often referred by</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/er/Geo" />
+					<owl:Class rdf:about="type/er/Company" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/signature -->
+
+	<owl:DatatypeProperty rdf:about="pred/signature">
+		<rdfs:label>Signature</rdfs:label>
+		<rdfs:comment>Security signature of the RDF content returned
+			by Calais</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfoMeta" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/socialtag -->
+
+	<owl:DatatypeProperty rdf:about="pred/socialtag">
+		<rdfs:label>Social Tag</rdfs:label>
+		<rdfs:comment>The value of a topical tag suggested to describe the
+			general topic or aboutness of a submitted article</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/tag/SocialTag" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/species -->
+
+	<owl:DatatypeProperty rdf:about="pred/species">
+		<rdfs:label>Species</rdfs:label>
+		<rdfs:comment>Plant or animal species affected by extinction events</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/Extinction" />
+	</owl:DatatypeProperty>
+
+	<!-- http://s.opencalais.com/1/pred/stagsVer -->
+
+	<owl:DatatypeProperty rdf:about="pred/stagsVer">
+		<rdfs:label></rdfs:label>
+		<rdfs:comment></rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfoMeta" />
+	</owl:DatatypeProperty>
+	
+	<!-- http://s.opencalais.com/1/pred/status -->
+
+	<owl:DatatypeProperty rdf:about="pred/status">
+		<rdfs:label>Status</rdfs:label>
+		<rdfs:comment>Status of various events and facts based on the
+			context of the text. For example: announced, planned, cancelled,
+			postponed, rumored, known, closed, new, etc.</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/BonusSharesIssuance" />
+					<owl:Class rdf:about="type/em/r/MovieRelease" />
+					<owl:Class rdf:about="type/em/r/ProductRelease" />
+					<owl:Class rdf:about="type/em/r/ProductRecall" />
+					<owl:Class rdf:about="type/em/r/CompanyExpansion" />
+					<owl:Class rdf:about="type/em/r/PersonTravel" />
+					<owl:Class rdf:about="type/em/r/SecondaryIssuance" />
+					<owl:Class rdf:about="type/em/r/Dividend" />
+					<owl:Class rdf:about="type/em/r/ConferenceCall" />
+					<owl:Class rdf:about="type/em/r/CompanyNameChange" />
+					<owl:Class rdf:about="type/em/r/EmploymentRelation" />
+					<owl:Class rdf:about="type/em/r/PatentFiling" />
+					<owl:Class rdf:about="type/em/r/CompanyInvestment" />
+					<owl:Class rdf:about="type/em/r/DelayedFiling" />
+					<owl:Class rdf:about="type/em/r/ProductIssues" />
+					<owl:Class rdf:about="type/em/r/PersonCommunication" />
+					<owl:Class rdf:about="type/em/r/Buybacks" />
+					<owl:Class rdf:about="type/em/r/Bankruptcy" />
+					<owl:Class rdf:about="type/em/r/CompanyAccountingChange" />
+					<owl:Class rdf:about="type/em/r/Acquisition" />
+					<owl:Class rdf:about="type/em/r/JointVenture" />
+					<owl:Class rdf:about="type/em/r/PatentIssuance" />
+					<owl:Class rdf:about="type/em/r/Alliance" />
+					<owl:Class rdf:about="type/em/r/CompanyLaborIssues" />
+					<owl:Class rdf:about="type/em/r/CompanyLegalIssues" />
+					<owl:Class rdf:about="type/em/r/BusinessRelation" />
+					<owl:Class rdf:about="type/em/r/CompanyMeeting" />
+					<owl:Class rdf:about="type/em/r/CompanyUsingProduct" />
+					<owl:Class rdf:about="type/em/r/CompanyReorganization" />
+					<owl:Class rdf:about="type/em/r/IPO" />
+					<owl:Class rdf:about="type/em/r/CompanyLayoffs" />
+					<owl:Class rdf:about="type/em/r/MusicAlbumRelease" />
+					<owl:Class rdf:about="type/em/r/Merger" />
+					<owl:Class rdf:about="type/em/r/FDAPhase" />
+					<owl:Class rdf:about="type/em/r/CompanyRestatement" />
+					<owl:Class rdf:about="type/em/r/PersonCareer" />
+					<owl:Class rdf:about="type/em/r/DebtFinancing"/>
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/stockexchange -->
+
+	<owl:DatatypeProperty rdf:about="pred/stockexchange">
+		<rdfs:label>Stockexchange</rdfs:label>
+		<rdfs:comment>Normalized name of the relevant stock exchange
+		</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/CompanyTicker" />
+					<owl:Class rdf:about="type/em/r/CompanyNameChange" />
+					<owl:Class rdf:about="type/em/r/CompanyListingChange" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/stocksplitratio -->
+
+	<owl:DatatypeProperty rdf:about="pred/stocksplitratio">
+		<rdfs:label>Stock Split Ratio</rdfs:label>
+		<rdfs:comment>Proportion of shares held before the split to
+			shares after the split</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/StockSplit" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/submissionDate -->
+
+	<owl:DatatypeProperty rdf:about="pred/submissionDate">
+		<rdfs:label>Submission Date</rdfs:label>
+		<rdfs:comment>Time stamp for the processed request</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfoMeta" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/submitter -->
+
+	<owl:DatatypeProperty rdf:about="pred/submitter">
+		<rdfs:label>Submitter</rdfs:label>
+		<rdfs:comment>Identifier for the content submitter (user
+			directive in paramsXML)</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfo" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/submitterCode -->
+
+	<owl:DatatypeProperty rdf:about="pred/submitterCode">
+		<rdfs:label>Submitter Code</rdfs:label>
+		<rdfs:comment>Encrypted license key of the submitter
+		</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/DocInfoMeta" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/sueddescription -->
+
+	<owl:DatatypeProperty rdf:about="pred/sueddescription">
+		<rdfs:label>Sued Description</rdfs:label>
+		<rdfs:comment>Description of an entity that is being sued
+		</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/CompanyLegalIssues" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/suffix -->
+
+	<owl:DatatypeProperty rdf:about="pred/suffix">
+		<rdfs:label>Suffix</rdfs:label>
+		<rdfs:comment>Text portions after a matched instance
+		</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/InstanceInfo" />
+	</owl:DatatypeProperty>
+
+	<!-- http://s.opencalais.com/1/pred/symbol -->
+
+	<owl:DatatypeProperty rdf:about="pred/symbol">
+		<rdfs:label>Symbol</rdfs:label>
+		<rdfs:comment>Company's primary symbol in the relevant stock exchange.</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/er/Company" />
+	</owl:DatatypeProperty>
+
+	<!-- http://s.opencalais.com/1/pred/text -->
+
+	<owl:DatatypeProperty rdf:about="pred/text">
+		<rdfs:label>Text</rdfs:label>
+		<rdfs:comment>Human-friendly text that describes an
+			error message</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/sys/Message" />
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/ticker -->
+
+	<owl:DatatypeProperty rdf:about="pred/ticker">
+		<rdfs:label>Ticker</rdfs:label>
+		<rdfs:comment>Company's ticker symbol in the relevant stock exchange.
+                 </rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/er/Company" />
+					<owl:Class rdf:about="type/em/r/CompanyTicker" />
+					<owl:Class rdf:about="type/em/r/CompanyNameChange" />
+					<owl:Class rdf:about="type/em/r/CompanyListingChange" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/unit -->
+
+	<owl:DatatypeProperty rdf:about="pred/unit">
+		<rdfs:label>Unit</rdfs:label>
+		<rdfs:comment>Name of unit or department</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+		<rdfs:domain rdf:resource="type/em/r/CompanyEmployeesNumber"/>
+    </owl:DatatypeProperty>
+
+
+
+	<!-- http://s.opencalais.com/1/pred/verb -->
+
+	<owl:DatatypeProperty rdf:about="pred/verb">
+		<rdfs:label>Verb</rdfs:label>
+		<rdfs:comment>The main predicate/verb of a GenericRelations
+			(subject-predicate-object) extraction</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain rdf:resource="type/em/r/GenericRelations" />
+	</owl:DatatypeProperty>
+
+	<!-- http://s.opencalais.com/1/pred/year -->
+
+	<owl:DatatypeProperty rdf:about="pred/year">
+		<rdfs:label>Year</rdfs:label>
+		<rdfs:comment>Fiscal year related to an event/fact</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdfs:domain>
+			<owl:Class>
+				<owl:unionOf rdf:parseType="Collection">
+					<owl:Class rdf:about="type/em/r/Dividend" />
+					<owl:Class rdf:about="type/em/r/DelayedFiling" />
+					<owl:Class rdf:about="type/em/r/CompanyRestatement" />
+					<owl:Class rdf:about="type/em/r/CompanyFounded" />
+					<owl:Class rdf:about="type/em/r/CompanyEarningsGuidance" />
+					<owl:Class rdf:about="type/em/r/CompanyEarningsAnnouncement" />
+					<owl:Class rdf:about="type/em/r/AnalystEarningsEstimate" />
+				</owl:unionOf>
+			</owl:Class>
+		</rdfs:domain>
+	</owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <!-- http://s.opencalais.com/1/type/cat/DocCat -->
+
+    <owl:Class rdf:about="type/cat/DocCat">
+        <rdfs:label
+            >Document Category</rdfs:label>
+        <rdfs:comment
+            >The type of an extracted content category/topic</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/Anniversary -->
+
+    <owl:Class rdf:about="type/em/e/Anniversary">
+        <rdfs:label>Anniversary</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+        <rdfs:comment>Extracts a reference to an anniversary</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/City -->
+
+    <owl:Class rdf:about="type/em/e/City">
+        <rdfs:label>City</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+        <rdfs:subClassOf rdf:resource="type/em/e/Place"/>
+       <rdfs:comment>Extracted name of a city or independent settlement (including 
+             villages, settlements, etc.) Note: Districts or neighborhoods within a 
+             city (e.g., "in the Soho, London") are not extracted.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/Company -->
+
+    <owl:Class rdf:about="type/em/e/Company">
+        <rdfs:label>Company</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts a full or partial company name (the term "Company"
+             includes any business organization, including newspapers, media 
+             companies, law firms, etc.). The name is normalized to the fullest 
+             name occurring within the document.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/Continent -->
+
+    <owl:Class rdf:about="type/em/e/Continent">
+        <rdfs:label>Continent</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts a name of a continent.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/Country -->
+
+    <owl:Class rdf:about="type/em/e/Country">
+        <rdfs:label>Country</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+        <rdfs:subClassOf rdf:resource="type/em/e/Place"/>
+       <rdfs:comment>Extracts a name of a country, normalized to the 
+             fullest name occurring within the document.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/Currency -->
+
+    <owl:Class rdf:about="type/em/e/Currency">
+        <rdfs:label>Currency</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts a reference to a currency amount.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/EmailAddress -->
+
+    <owl:Class rdf:about="type/em/e/EmailAddress">
+        <rdfs:label>Email Address</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>An email address.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/EntertainmentAwardEvent -->
+
+    <owl:Class rdf:about="type/em/e/EntertainmentAwardEvent">
+        <rdfs:label
+            >Entertainment Award Event</rdfs:label>
+       <rdfs:comment>Extracts references to entertainment-related events and awards, such
+             as film and music festivals and awards related to the entertainment industry.
+        </rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/Facility -->
+
+    <owl:Class rdf:about="type/em/e/Facility">
+        <rdfs:label>Facility</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts a proper name of a man-made, specific structure or a group
+             of structures that provide(s) a particular service or is(are) used for a 
+             particular industry.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/FaxNumber -->
+
+    <owl:Class rdf:about="type/em/e/FaxNumber">
+        <rdfs:label>Fax Number</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts a full fax number, including prefix and extension, 
+             if available.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/Holiday -->
+
+    <owl:Class rdf:about="type/em/e/Holiday">
+        <rdfs:label>Holiday</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts references of holidays.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/IndustryTerm -->
+
+    <owl:Class rdf:about="type/em/e/IndustryTerm">
+        <rdfs:label>Industry Term</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts a description of an industry, segment, product family, 
+             or business.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/MarketIndex -->
+
+    <owl:Class rdf:about="type/em/e/MarketIndex">
+        <rdfs:label>Market Index</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts a name of a stock market index. The name is normalized 
+             to the common name of the index, e.g., "S&amp;P 500" or "FTSE 100".</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/MarkupEntity -->
+
+    <owl:Class rdf:about="type/em/e/MarkupEntity">
+        <rdfs:label>Markup Entity</rdfs:label>
+        <rdfs:comment
+            >A type of an extracted entity name</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/MedicalCondition -->
+
+    <owl:Class rdf:about="type/em/e/MedicalCondition">
+        <rdfs:label
+            >Medical Condition</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts references to human medical conditions, such as diseases,
+             disorders and syndromes.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/MedicalTreatment -->
+
+    <owl:Class rdf:about="type/em/e/MedicalTreatment">
+        <rdfs:label
+            >Medical Treatment</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts references to medical treatments - procedures, treatments
+             and therapeutics provided to any medical condition.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/Movie -->
+
+    <owl:Class rdf:about="type/em/e/Movie">
+        <rdfs:label>Movie</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts references to movies and films.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/MusicAlbum -->
+
+    <owl:Class rdf:about="type/em/e/MusicAlbum">
+        <rdfs:label>Music Album</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts references to music albums, CDs, etc.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/MusicGroup -->
+
+    <owl:Class rdf:about="type/em/e/MusicGroup">
+        <rdfs:label>Music Group</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts references to music groups and bands.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/NaturalFeature -->
+
+    <owl:Class rdf:about="type/em/e/NaturalFeature">
+        <rdfs:label>Natural Feature</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts a name of a specific geographical (not manmade) entity,
+             such as a geological formation or body of water.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/OperatingSystem -->
+
+    <owl:Class rdf:about="type/em/e/OperatingSystem">
+        <rdfs:label
+            >Operating System</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts references to operating systems.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/Organization -->
+
+    <owl:Class rdf:about="type/em/e/Organization">
+        <rdfs:label>Organization</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts a full or partial organization name, including governmental
+             and military organization. Any business organization extracted as Company is
+             not extracted as Organization. The name is normalized to the fullest name 
+             occurring within the document, or to the full, official name listed within 
+             the Organization dictionary (whichever is longer).</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/Person -->
+
+    <owl:Class rdf:about="type/em/e/Person">
+        <rdfs:label>Person</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts one of the following types of person references in the text:
+             1. A full or partial person name.
+             2. A full or partial person name with aliases, nicknames or tribal names. In 
+                such cases, the normalized name includes the alias/nickname/tribal name 
+                inside quotes or parentheses at the middle or end of the name, according 
+                to its appearance in the document. If there is a sequence of two aliases for
+                the same person, they appear with a "/" between them. If the alias/nickname/tribal
+                name appears by itself later in the document, it will also be extracted.
+             3. Anaphora of the form he/she/his/him/her, which refers to a person name previously
+                mentioned in the document. The IM resolves the anaphora and extracts it with the
+                relevant person name.
+             In each case, the name is normalized to the fullest name occurring in the document.
+             Note: The event/fact PersonDetails also extracts a full or partial person name, along
+             with position, affiliation and other person details. If the Person instance includes 
+             ONLY the name and no affiliation, the PersonDetails instance will NOT be extracted, 
+             ONLY the Person instance will be extracted. 
+         </rdfs:comment>
+    </owl:Class>
+    
+ 
+
+    <!-- http://s.opencalais.com/1/type/em/e/PhoneNumber -->
+
+    <owl:Class rdf:about="type/em/e/PhoneNumber">
+        <rdfs:label>Phone Number</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts a full phone number, including prefix and extension, 
+             if available.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/Place -->
+
+    <owl:Class rdf:about="type/em/e/Place">
+        <rdfs:label>Place</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+        <rdfs:comment
+            >A type of an extracted place name</rdfs:comment>
+    </owl:Class>
+    
+	<!-- http://s.opencalais.com/1/type/em/e/PoliticalEntity -->
+ 
+	<owl:Class rdf:about="type/em/e/PoliticalEntity">
+        <rdfs:label>Political Entity</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+        <rdfs:comment></rdfs:comment>
+    </owl:Class>
+    
+     <!-- http://s.opencalais.com/1/type/em/e/PoliticalEvent -->
+
+    <owl:Class rdf:about="type/em/e/PoliticalEvent">
+        <rdfs:label
+            >Political Event</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment></rdfs:comment>
+    </owl:Class>
+
+    <!-- http://s.opencalais.com/1/type/em/e/Position -->
+
+    <owl:Class rdf:about="type/em/e/Position">
+        <rdfs:label>Position</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts information concerning position that a person holds, 
+             will hold, or held.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/Product -->
+
+    <owl:Class rdf:about="type/em/e/Product">
+        <rdfs:label>Product</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>The entity type extracts references to products. The product
+             type is extracted for the following product types: drug products, 
+             electronic products, car models, aircraft models, and weapons.
+        </rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/ProgrammingLanguage -->
+
+    <owl:Class rdf:about="type/em/e/ProgrammingLanguage">
+        <rdfs:label
+            >Programming Language</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts references to programming languages</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/ProvinceOrState -->
+
+    <owl:Class rdf:about="type/em/e/ProvinceOrState">
+        <rdfs:label
+            >Province Or State</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+        <rdfs:subClassOf rdf:resource="type/em/e/Place"/>
+       <rdfs:comment>Extracts the name of a province, state or county or other 
+             politically defined part of a country (normalized to the full name).
+        </rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/PublishedMedium -->
+
+    <owl:Class rdf:about="type/em/e/PublishedMedium">
+        <rdfs:label
+            >Published Medium</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts references to published media, such as newspapers, 
+             journals and magazines.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/RadioProgram -->
+
+    <owl:Class rdf:about="type/em/e/RadioProgram">
+        <rdfs:label>Radio Program</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts references to radio programs.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/RadioStation -->
+
+    <owl:Class rdf:about="type/em/e/RadioStation">
+        <rdfs:label>Radio Station</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts references to radio stations. This entity type is currently 
+             focused on U.S. radio stations, although it may identify non-U.S. stations 
+             as well.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/Region -->
+
+    <owl:Class rdf:about="type/em/e/Region">
+        <rdfs:label>Region</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts a name of a (non-politically defined) geographical region
+             of theworld (excluding continents).</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/SportsEvent -->
+
+    <owl:Class rdf:about="type/em/e/SportsEvent">
+        <rdfs:label>Sports Event</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment> Extracts references to sports-related tournaments and championships.
+             </rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/SportsGame -->
+
+    <owl:Class rdf:about="type/em/e/SportsGame">
+        <rdfs:label>Sports Game</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts references to sports games like football, baseball, soccer, etc.
+            </rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/SportsLeague -->
+
+    <owl:Class rdf:about="type/em/e/SportsLeague">
+        <rdfs:label>Sports League</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts names of sports leagues. Note that some sports leagues may also be 
+             extracted as organizations.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/Technology -->
+
+    <owl:Class rdf:about="type/em/e/Technology">
+        <rdfs:label>Technology</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracted technology name or a description of the technology.
+             </rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/TVShow -->
+
+    <owl:Class rdf:about="type/em/e/TVShow">
+        <rdfs:label>TV Show</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts references to TV shows and programs.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/TVStation -->
+
+    <owl:Class rdf:about="type/em/e/TVStation">
+        <rdfs:label>TV Station</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts references to TV stations. This entity type is currently 
+             focused on U.S. TV stations, although it may identify non-U.S. stations as
+             well.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/e/URL -->
+
+    <owl:Class rdf:about="type/em/e/URL">
+        <rdfs:label>URL</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/e/MarkupEntity"/>
+       <rdfs:comment>Extracts a URL or FTP address.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/Acquisition -->
+
+    <owl:Class rdf:about="type/em/r/Acquisition">
+        <rdfs:label>Acquisition</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>Extracts a reference to an acquisition (in the past, present or future)
+             of shares in a company or of assets of another company. May also be extracted
+             from the document title. </rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/Alliance -->
+
+    <owl:Class rdf:about="type/em/r/Alliance">
+        <rdfs:label>Alliance</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>Extracts a reference to an alliance agreement signed recently, or in the 
+            past, between two or more companies</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/AnalystEarningsEstimate -->
+
+    <owl:Class rdf:about="type/em/r/AnalystEarningsEstimate">
+        <rdfs:label
+            >Analyst Earnings Estimate</rdfs:label>
+       <rdfs:comment>Extract reports about estimates given by external analysts regarding the
+             future (i.e., not-yet-reported) financial results of a publicly-traded company
+        </rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/AnalystRecommendation -->
+
+    <owl:Class rdf:about="type/em/r/AnalystRecommendation">
+        <rdfs:label
+            >Analyst Recommendation</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>Extracts references to a recommendation by an analyst (of an investment bank
+             or similar organization) regarding shares of a publicly traded company. The 
+             recommendation should be regarding shares (equity) only. Any recommendation 
+             regarding bonds or other credit instruments is not extracted by this concept. 
+             May also be extracted from the document title.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/Arrest -->
+
+    <owl:Class rdf:about="type/em/r/Arrest">
+        <rdfs:label>Arrest</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>Extracts references to the arrest of a person or a group of 
+             persons.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/Bankruptcy -->
+
+    <owl:Class rdf:about="type/em/r/Bankruptcy">
+        <rdfs:label>Bankruptcy</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>Extracted reference to bankruptcy issues that involve companies: 
+             Corporate insolvencies and bankruptcies, where a company has filed for bankruptcy
+             or been declared insolvent.
+
+             Voluntary and involuntary insolvency proceedings including creditor protection 
+             actions such as Chapter 11 federal bankruptcy code proceedings in the U.S. and 
+             administration orders elsewhere as well receiverships.
+
+             Company ceasing trading, bankruptcy court rulings and a company's emergence from 
+             a bankruptcy protection or administration process.
+        </rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/BonusSharesIssuance -->
+
+    <owl:Class rdf:about="type/em/r/BonusSharesIssuance">
+        <rdfs:label
+            >Bonus Shares Inssurance</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>Extracted reference to bonus shares issuance (past, present, future)</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/BusinessRelation -->
+
+    <owl:Class rdf:about="type/em/r/BusinessRelation">
+        <rdfs:label
+            >Business Relation</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>Extracted reference to a business agreement, signed recently or in the past,
+             between two or more companies.
+             Note: Agreements phrased as "alliances" or "partnerships" are extracted as an Alliance. 
+             "Weaker" contacts are extracted as a BusinessRelation.
+        </rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/Buybacks -->
+
+    <owl:Class rdf:about="type/em/r/Buybacks">
+        <rdfs:label>Buybacks</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>Extracted reference to a company�s plan to repurchase its own securities
+             in the open market (buyback events).</rdfs:comment>
+    </owl:Class>
+    
+    
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyAccountingChange -->
+
+    <owl:Class rdf:about="type/em/r/CompanyAccountingChange">
+        <rdfs:label
+            >Company Accounting Change</rdfs:label>
+       <rdfs:comment>Extracted reference to a company's change in its accounting
+             method or policy, such as fiscal year change, changed depreciation policy, or new 
+             accounting standards.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyAffiliates -->
+
+    <owl:Class rdf:about="type/em/r/CompanyAffiliates">
+        <rdfs:label
+            >Company Affiliates</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted parent-subsidiary relation between two companies
+        </rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyCompetitor -->
+
+    <owl:Class rdf:about="type/em/r/CompanyCompetitor">
+        <rdfs:label
+            >Company Competitor</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment
+            >An extracted competition relation between two companies</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyCustomer -->
+
+    <owl:Class rdf:about="type/em/r/CompanyCustomer">
+        <rdfs:label
+            >Company Customer</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment
+            >An extracted supplier-customer relation between two companies</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyEarningsAnnouncement -->
+
+    <owl:Class rdf:about="type/em/r/CompanyEarningsAnnouncement">
+        <rdfs:label
+            >Company Earnings Announcement</rdfs:label>
+       <rdfs:comment>An extracted official announcement event made by publicly traded
+             companies</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyEarningsGuidance -->
+
+    <owl:Class rdf:about="type/em/r/CompanyEarningsGuidance">
+        <rdfs:label
+            >Company Earnings Guidance</rdfs:label>
+       <rdfs:comment>An extracted reference to projected earnings made by a publicly traded
+             company.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyEmployeesNumber -->
+
+    <owl:Class rdf:about="type/em/r/CompanyEmployeesNumber">
+        <rdfs:label
+            >Company Employees Number</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment
+            >An extracted mention of the number of employees in a company.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyExpansion -->
+
+    <owl:Class rdf:about="type/em/r/CompanyExpansion">
+        <rdfs:label
+            >Company Expansion</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>One of two types of an extracted event of company expansion: 
+             company entering a new market, or company creating a new unit</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyForceMajeure -->
+
+    <owl:Class rdf:about="type/em/r/CompanyForceMajeure">
+        <rdfs:label
+            >Company Force Majeure</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted interruption of regular activity in a company
+             due to unexpected external events</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyFounded -->
+
+    <owl:Class rdf:about="type/em/r/CompanyFounded">
+        <rdfs:label>Company Founded</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted mention of the year in which a company was
+             founded.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyInvestment -->
+
+    <owl:Class rdf:about="type/em/r/CompanyInvestment">
+        <rdfs:label
+            >Company Investment</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted reference to an investment in one company by another 
+             company.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyLaborIssues -->
+
+    <owl:Class rdf:about="type/em/r/CompanyLaborIssues">
+        <rdfs:label
+            >Company Labor Issues</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted labor-related event, such as strikes, brought about 
+             labor disagreements</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyLayoffs -->
+
+    <owl:Class rdf:about="type/em/r/CompanyLayoffs">
+        <rdfs:label>Company Layoffs</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment
+            >An extracted mention of companies reducing their workforces by cutting 
+            the number of employees, jobs, positions.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyLegalIssues -->
+
+    <owl:Class rdf:about="type/em/r/CompanyLegalIssues">
+        <rdfs:label
+            >Company Legal Issues</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment
+            >An extracted legal issue involving a company. One of two types: 
+            Class Action, Corporate Litigation.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyListingChange -->
+
+    <owl:Class rdf:about="type/em/r/CompanyListingChange">
+        <rdfs:label
+            >Company Listing Change</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+        <rdfs:comment>An extracted reference to any change in listing for a company 
+              in any known Stock Exchange.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyLocation -->
+
+    <owl:Class rdf:about="type/em/r/CompanyLocation">
+        <rdfs:label
+            >Company Location</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment
+            >An extracted reference to the location (city and state or country 
+            if available) of the company's headquarters.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyMeeting -->
+
+    <owl:Class rdf:about="type/em/r/CompanyMeeting">
+        <rdfs:label>Company Meeting</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+        <rdfs:comment
+            >An extracted eference to a shareholders' meeting (e.g., AGM, EGM)
+            held by a company</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyNameChange -->
+
+    <owl:Class rdf:about="type/em/r/CompanyNameChange">
+        <rdfs:label
+            >Company Name Change</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted reference to the event of company changing its 
+            name</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyProduct -->
+
+    <owl:Class rdf:about="type/em/r/CompanyProduct">
+        <rdfs:label>Company Product</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted reference to companies and their products.
+             </rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyReorganization -->
+
+    <owl:Class rdf:about="type/em/r/CompanyReorganization">
+        <rdfs:label
+            >Company Reorganization</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted mention of reorganization/restructuring 
+             of companies</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyRestatement -->
+
+    <owl:Class rdf:about="type/em/r/CompanyRestatement">
+        <rdfs:label
+            >Company Restatement</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted reference to a company's restatement of its 
+             financial statement for some period</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyTechnology -->
+
+    <owl:Class rdf:about="type/em/r/CompanyTechnology">
+        <rdfs:label
+            >Company Technology</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+        <rdfs:comment>An extracted reference to a technology employed by a company
+              </rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyTicker -->
+
+    <owl:Class rdf:about="type/em/r/CompanyTicker">
+        <rdfs:label>Company Ticker</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted mention of company&#39;s name followed by its 
+             stock symbol</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CompanyUsingProduct -->
+
+    <owl:Class rdf:about="type/em/r/CompanyUsingProduct">
+        <rdfs:label
+            >Company Using Product</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted mention of a customer (company or organization) 
+             using product(product name or product description) of a provider company
+        </rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/ConferenceCall -->
+
+    <owl:Class rdf:about="type/em/r/ConferenceCall">
+        <rdfs:label>Conference Call</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted reference to a conference call (present, past
+             future) held by a company, usually to report financial results
+             for the latest period.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/Conviction -->
+
+    <owl:Class rdf:about="type/em/r/Conviction">
+        <rdfs:label>Conviction</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted reference to a conviction event</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/CreditRating -->
+
+    <owl:Class rdf:about="type/em/r/CreditRating">
+        <rdfs:label>Credit Rating</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted reference to a recent rating from a rating agency regarding 
+             the credit of companies or organizations</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/DebtFinancing -->
+
+    <owl:Class rdf:about="type/em/r/DebtFinancing">
+        <rdfs:label>Debt Financing</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted mention of debt financing information from 
+             finance-related documents</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/DelayedFiling -->
+
+    <owl:Class rdf:about="type/em/r/DelayedFiling">
+        <rdfs:label>Delayed Filing</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted mention of company's delay in filing reports
+             </rdfs:comment>
+    </owl:Class>
+    
+	<!-- http://s.opencalais.com/1/type/em/r/DiplomaticRelations -->
+
+    <owl:Class rdf:about="type/em/r/DiplomaticRelations">
+        <rdfs:label>Diplomatic Relations</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment></rdfs:comment>
+    </owl:Class>
+    
+    <!-- http://s.opencalais.com/1/type/em/r/Dividend -->
+
+    <owl:Class rdf:about="type/em/r/Dividend">
+        <rdfs:label>Dividend</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment
+            >An extracted reference to dividend-related announcement.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/EmploymentChange -->
+
+    <owl:Class rdf:about="type/em/r/EmploymentChange">
+        <rdfs:label
+            >Employment Change</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted mention of an appointment, retirement, dismissal, 
+            promotion of an executive in a company or organization.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/EmploymentRelation -->
+
+    <owl:Class rdf:about="type/em/r/EmploymentRelation">
+        <rdfs:label
+            >Employment Relation</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted reference to a person's employment by another person.
+             </rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/EnvironmentalIssue -->
+
+    <owl:Class rdf:about="type/em/r/EnvironmentalIssue">
+        <rdfs:label
+            >Environmental Issue</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+        <rdfs:comment
+            >An extracted mention of an environmental issues</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/Extinction -->
+
+    <owl:Class rdf:about="type/em/r/Extinction">
+        <rdfs:label>Extinction</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted mention of species extinction</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/FDAPhase -->
+
+    <owl:Class rdf:about="type/em/r/FDAPhase">
+        <rdfs:label>FDA Phase</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted mention of a drug&#39;s phase in the US FDA&#39;s approval process</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/FamilyRelation -->
+
+    <owl:Class rdf:about="type/em/r/FamilyRelation">
+        <rdfs:label>Family Relation</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment
+            >An extracted mention of family relation between two persons.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/GenericRelations -->
+
+    <owl:Class rdf:about="type/em/r/GenericRelations">
+        <rdfs:label
+            >Generic Relations</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+        <rdfs:comment
+            >The type of an extracted relation of the form:Subject - Verb / Predicate - Object</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/IPO -->
+
+    <owl:Class rdf:about="type/em/r/IPO">
+        <rdfs:label>IPO</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted mention of company&#39;s initial public offering of 
+             stock.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/Indictment -->
+
+    <owl:Class rdf:about="type/em/r/Indictment">
+        <rdfs:label>Indictment</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted reference to an indictment event</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/JointVenture -->
+
+    <owl:Class rdf:about="type/em/r/JointVenture">
+        <rdfs:label>Joint Venture</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted reference to a joint venture event between 
+             companies</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/Layoffs -->
+
+    <owl:Class rdf:about="type/em/r/Layoffs">
+        <rdfs:label>Layoffs</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+        <rdfs:comment
+            >The type of an extracted layoffs</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/ManMadeDisaster -->
+
+    <owl:Class rdf:about="type/em/r/ManMadeDisaster">
+        <rdfs:label
+            >Man Made Disaster</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted mention of a man-made disaster</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/Merger -->
+
+    <owl:Class rdf:about="type/em/r/Merger">
+        <rdfs:label>Merger</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted merger event between companies (past, present,
+             future).</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/MovieRelease -->
+
+    <owl:Class rdf:about="type/em/r/MovieRelease">
+        <rdfs:label>Movie Release</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted reference to a movie release (past, present, future)
+             or mentions of new movies.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/MusicAlbumRelease -->
+
+    <owl:Class rdf:about="type/em/r/MusicAlbumRelease">
+        <rdfs:label
+            >Music Album Release</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted mention of a music album release (past, present
+             future) or mentions of new music albums.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/NaturalDisaster -->
+
+    <owl:Class rdf:about="type/em/r/NaturalDisaster">
+        <rdfs:label
+            >Natural Disaster</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted mention of a specific natural disaster</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/PatentFiling -->
+
+    <owl:Class rdf:about="type/em/r/PatentFiling">
+        <rdfs:label>Patent Filing</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted mention of patent filing by companies or organizations and
+             information about the patent.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/PatentIssuance -->
+
+    <owl:Class rdf:about="type/em/r/PatentIssuance">
+        <rdfs:label>Patent Issuance</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+        <rdfs:comment>An extracted mention of patent issuance granted to companies or organizations</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/PersonAttributes -->
+
+    <owl:Class rdf:about="type/em/r/PersonAttributes">
+        <rdfs:label
+            >Person Attributes</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted reference to personal information, such as age, gender, 
+             birthdate and birthplace</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/PersonCareer -->
+
+    <owl:Class rdf:about="type/em/r/PersonCareer">
+        <rdfs:label>Person Career</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted reference to a professional position and the associated company, organization or place</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/PersonCommunication -->
+
+    <owl:Class rdf:about="type/em/r/PersonCommunication">
+        <rdfs:label
+            >Person Communication</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted reference to communications (meeting, phone call, etc.) 
+             between people or groups of people</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/PersonEducation -->
+
+    <owl:Class rdf:about="type/em/r/PersonEducation">
+        <rdfs:label
+            >Person Education</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted mention of person&#39;s academic degrees or 
+             certifications.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/PersonEmailAddress -->
+
+    <owl:Class rdf:about="type/em/r/PersonEmailAddress">
+        <rdfs:label
+            >Person Email Address</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted mention of a person&#39;s email address</rdfs:comment>
+    </owl:Class>
+    
+ 
+	<!-- http://s.opencalais.com/1/type/em/r/PersonParty -->
+
+    <owl:Class rdf:about="type/em/r/PersonParty">
+        <rdfs:label>Person Relation</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+        <rdfs:comment></rdfs:comment>
+    </owl:Class>
+	
+	
+    <!-- http://s.opencalais.com/1/type/em/r/PersonRelation -->
+
+    <owl:Class rdf:about="type/em/r/PersonRelation">
+        <rdfs:label>Person Relation</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+        <rdfs:comment
+            >The type of an extracted mention of various relationships between people, such as Military, Romantic, etc.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/PersonTravel -->
+
+    <owl:Class rdf:about="type/em/r/PersonTravel">
+        <rdfs:label>Person Travel</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted mention of a person&#39;s travel from one place to another</rdfs:comment>
+    </owl:Class>
+    
+
+	<!-- http://s.opencalais.com/1/type/em/r/PoliticalEndorsement -->
+
+    <owl:Class rdf:about="type/em/r/PoliticalEndorsement">
+        <rdfs:label
+            >Political Endorsement</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment></rdfs:comment>
+    </owl:Class>
+        
+    <!-- http://s.opencalais.com/1/type/em/r/PoliticalRelationship -->
+
+    <owl:Class rdf:about="type/em/r/PoliticalRelationship">
+        <rdfs:label
+            >Political Relationship</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted relation (Alliance or Rivalry) between two political entities</rdfs:comment>
+    </owl:Class>
+    
+    <!-- http://s.opencalais.com/1/type/em/r/PollsResult -->
+
+    <owl:Class rdf:about="type/em/r/PollsResult">
+        <rdfs:label
+            >Polls Result</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment></rdfs:comment>
+    </owl:Class>
+
+    <!-- http://s.opencalais.com/1/type/em/r/ProductIssues -->
+
+    <owl:Class rdf:about="type/em/r/ProductIssues">
+        <rdfs:label>Product Issues</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted mention of issues/problems with certain products</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/ProductRecall -->
+
+    <owl:Class rdf:about="type/em/r/ProductRecall">
+        <rdfs:label>Product Recall</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted reference to recall of products</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/ProductRelease -->
+
+    <owl:Class rdf:about="type/em/r/ProductRelease">
+        <rdfs:label>Product Release</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted reference of a company announcement releasing new 
+             products</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/Quotation -->
+
+    <owl:Class rdf:about="type/em/r/Quotation">
+        <rdfs:label>Quotation</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted quotation and its speaker</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/Relation -->
+
+    <owl:Class rdf:about="type/em/r/Relation">
+        <rdfs:label>Relation</rdfs:label>
+        <rdfs:comment
+            >A type of an extracted relation</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/SecondaryIssuance -->
+
+    <owl:Class rdf:about="type/em/r/SecondaryIssuance">
+        <rdfs:label
+            >Secondary Issuance</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted mention of secondary stock issuance</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/StockSplit -->
+
+    <owl:Class rdf:about="type/em/r/StockSplit">
+        <rdfs:label>Stock Split</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted reference to a stock split announced by a company
+             </rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/em/r/Trial -->
+
+    <owl:Class rdf:about="type/em/r/Trial">
+        <rdfs:label>Trial</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment>An extracted reference to a trial event</rdfs:comment>
+    </owl:Class>
+    
+    <!-- http://s.opencalais.com/1/type/em/r/VotingResult -->
+
+    <owl:Class rdf:about="type/em/r/VotingResult">
+        <rdfs:label>Voting Result</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/em/r/Relation"/>
+       <rdfs:comment></rdfs:comment>
+    </owl:Class>
+
+
+    <!-- http://s.opencalais.com/1/linkeddata/type/Address -->
+
+    <owl:Class rdf:about="linkeddata/type/Address">
+        <rdfs:label></rdfs:label>
+        <rdfs:comment></rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/er/Company -->
+
+    <owl:Class rdf:about="type/er/Company">
+        <rdfs:label
+            >Company-disambiguated</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/er/ResolvedEntity"/>
+        <rdfs:comment
+            >The type of a disambiguated company name</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/linkeddata/type/EdgarFiling -->
+
+    <owl:Class rdf:about="linkeddata/type/EdgarFiling">
+        <rdfs:label></rdfs:label>
+        <rdfs:comment></rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/linkeddata/type/Employees -->
+
+    <owl:Class rdf:about="linkeddata/type/Employees">
+        <rdfs:label></rdfs:label>
+        <rdfs:comment></rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/linkeddata/type/FinancialSummary -->
+
+    <owl:Class rdf:about="linkeddata/type/FinancialSummary">
+        <rdfs:label></rdfs:label>
+        <rdfs:comment></rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/er/Geo -->
+
+    <owl:Class rdf:about="type/er/Geo">
+        <rdfs:label
+            >Geographical entity-disambiguated</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/er/ResolvedEntity"/>
+        <rdfs:comment
+            >The type of a disambiguated city name</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/er/Geo/City -->
+
+    <owl:Class rdf:about="type/er/Geo/City">
+        <rdfs:label
+            >City-disambiguated</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/er/Geo"/>
+        <rdfs:comment
+            >The type of a disambiguated city name</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/er/Geo/Country -->
+
+    <owl:Class rdf:about="type/er/Geo/Country">
+        <rdfs:label
+            >Country-disambiguated</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/er/Geo"/>
+        <rdfs:comment
+            >The type of a disambiguated country name</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/er/Geo/ProvinceOrState -->
+
+    <owl:Class rdf:about="type/er/Geo/ProvinceOrState">
+        <rdfs:label
+            >ProvinceOrState-disambiguated</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/er/Geo"/>
+        <rdfs:comment
+            >The type of a disambiguated province/state name</rdfs:comment>
+    </owl:Class>
+  
+    <!-- http://s.opencalais.com/1/linkeddata/type/IncorporatedIn -->
+
+    <owl:Class rdf:about="linkeddata/type/IncorporatedIn">
+        <rdfs:label></rdfs:label>
+        <rdfs:comment></rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/linkeddata/type/PersonPosition -->
+
+    <owl:Class rdf:about="linkeddata/type/PersonPosition">
+        <rdfs:label></rdfs:label>
+        <rdfs:comment></rdfs:comment>
+    </owl:Class>
+    
+ 	<!-- http://s.opencalais.com/1/type/er/Product/Electronics -->
+
+    <owl:Class rdf:about="type/er/Product/Electronics">
+        <rdfs:label
+            >Electronics-disambiguated</rdfs:label>
+        <rdfs:subClassOf rdf:resource="type/er/ResolvedEntity"/>
+        <rdfs:comment
+            >The type of a disambiguated product name of type Electronics</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/linkeddata/type/Profile -->
+
+    <owl:Class rdf:about="linkeddata/type/Profile">
+        <rdfs:label></rdfs:label>
+        <rdfs:comment></rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/er/ResolvedEntity -->
+
+    <owl:Class rdf:about="type/er/ResolvedEntity">
+        <rdfs:label>Resolved Entity</rdfs:label>
+        <rdfs:comment
+            >A type of a resolved entity</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/linkeddata/type/SIC -->
+
+    <owl:Class rdf:about="linkeddata/type/SIC">
+        <rdfs:label></rdfs:label>
+        <rdfs:comment></rdfs:comment>
+    </owl:Class>
+
+    <!-- http://s.opencalais.com/1/type/lid/DefaultLangId -->
+
+    <owl:Class rdf:about="type/lid/DefaultLangId">
+        <rdfs:label
+            >Default Language Id</rdfs:label>
+        <rdfs:comment
+            >The type of the identified language for the current document</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/sys/DocInfo -->
+
+    <owl:Class rdf:about="type/sys/DocInfo">
+        <rdfs:label
+            >Document Information</rdfs:label>
+        <rdfs:comment
+            >The type of the node that includes the tentire transaction: paramsXML and the submitted content</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/sys/DocInfoMeta -->
+
+    <owl:Class rdf:about="type/sys/DocInfoMeta">
+        <rdfs:label
+            >Document Information Meta</rdfs:label>
+        <rdfs:comment
+            >The type of the node that presents meta-info generated by Calais</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/sys/InstanceInfo -->
+
+    <owl:Class rdf:about="type/sys/InstanceInfo">
+        <rdfs:label
+            >Instance Information</rdfs:label>
+        <rdfs:comment
+            >The type of the node that presents details about individual instances of Calais types</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/sys/Message -->
+
+    <owl:Class rdf:about="type/sys/Message">
+        <rdfs:label>Message</rdfs:label>
+        <rdfs:comment
+            >The type of the node that contains error messages</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/sys/RelevanceInfo -->
+
+    <owl:Class rdf:about="type/sys/RelevanceInfo">
+        <rdfs:label
+            >Relevance Information</rdfs:label>
+        <rdfs:comment
+            >The type of the node that presents information about relevance ranking assiged to Calais entities</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://s.opencalais.com/1/type/tag/SocialTag -->
+
+    <owl:Class rdf:about="type/tag/SocialTag">
+        <rdfs:label>Social Tag</rdfs:label>
+        <rdfs:comment
+            >The type of a tag suggested to describe the general topic or aboutness of a submitted article</rdfs:comment>
+    </owl:Class>
+    
+    
+</rdf:RDF>
+

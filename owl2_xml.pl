@@ -179,7 +179,7 @@ xml_annotation(element(_:'Annotation',Atts,Elts),annotation(P,V)) :-
         Elts=[element(_:'Constant',_,[V])].
 
 atts_iri(Atts,TIRI) :-
-  	(   TIRI = i(IRI) ; TIRI = c(IRI) ; TIRI = op(IRI); var(IRI)),!,
+  	(   TIRI = i(IRI) ; TIRI = c(IRI) ; TIRI = op(IRI); TIRI = dp(IRI) ; var(IRI)),!,
 	iri_att(A),
         member(A=IRI,Atts).
 
@@ -234,10 +234,11 @@ axioms_elts(O,[A|_],_) :-
         throw(axiom(A,O)).
 
 % translate entity axiom to XML
-axiom_xml(_Ont,Axiom,element('http://www.w3.org/2006/12/owl2-xml#':Name,['URI'=IRI],[])) :-
-                                % TODO: annotations
-        xmle_entity(Name,Axiom,[IRI]),
-	!.
+axiom_xml(_Ont,Axiom,XML) :-
+                               % TODO: annotations
+        xmle_entity(_Name,Axiom,[Arg]),
+	axiom_arg_xml(Axiom,Arg,XML),!.
+
 % translate full axiom to XML, translating description arguments also
 axiom_xml(_Ont,Axiom,element('http://www.w3.org/2006/12/owl2-xml#':Name,[],Subs)) :-
         xmle_axiom(Name,Axiom,Args),
@@ -255,6 +256,8 @@ axiom_arg_xml(ParentAxiom,c(Arg),Element) :-
 
 % everything else return the argument itself eg. property, individual
 %
+axiom_arg_xml(_ParentAxiom,c(IRI),element('http://www.w3.org/2006/12/owl2-xml#':'Class',['URI'=IRI],[])) :- !.
+axiom_arg_xml(_ParentAxiom,i(IRI),element('http://www.w3.org/2006/12/owl2-xml#':'NamedIndividual',['URI'=IRI],[])) :- !.
 axiom_arg_xml(_ParentAxiom,i(IRI),element('http://www.w3.org/2006/12/owl2-xml#':'Individual',['URI'=IRI],[])) :- !.
 axiom_arg_xml(_ParentAxiom,op(IRI),element('http://www.w3.org/2006/12/owl2-xml#':'ObjectProperty',['URI'=IRI],[])) :- !.
 axiom_arg_xml(_ParentAxiom,dp(IRI),element('http://www.w3.org/2006/12/owl2-xml#':'DataProperty',['URI'=IRI],[])) :- !.
