@@ -6,6 +6,8 @@
            owl_parse_manchester_syntax_file/2
            ]).
 
+:- use_module(owl2_model,[assert_axiom/1]).
+
 :- multifile owl2_io:load_axioms_hook/3.
 owl2_io:load_axioms_hook(File,mansyn,Opts) :-
         owl_parse_manchester_syntax_file(File,Opts).
@@ -17,23 +19,126 @@ owl_parse_manchester_syntax_file(File) :-
 
 owl_parse_manchester_syntax_file(File,_Opts) :-
         read_file_to_codes(File,Codes,[]),
-        atom_codes(A,Codes),
-        manchester_atom_ontology(A,_).
+	codes_tokens_filtered(Codes,Tokens),
+	writeln(toks=Tokens),
+	ontologyDocument( Ont, Tokens, [] ),
+	writeln(ont=Ont),
+	process_ontdoc(Ont).
 
-tokens_ontology(Toks,Ont) :-
-        ontologyDocument( Ont, Toks, [] ).
 
-manchester_atom_ontology(A,Ont) :-
-        tokenize(A, Toks),
-	trace,
-        ontologyDocument( Ont, Toks, [] ).
+process_ontdoc( NSL-ontology(O,_L1,_L2,Frames) ) :-
+	process_frames(Frames,O-NSL).
+
+process_frames([],_).
+process_frames([F|Fs],O) :-
+	!,
+	process_frame(F,O),
+	process_frames(Fs,O).
+
+process_frame(frame(Type,Name,Props),O) :-
+	expand_curie(Name,O,IRI),
+	Unary =.. [Type,IRI],
+	assert_axiom(Unary),
+	process_properties(Props,IRI,Type,O).
+
+process_properties([],_,_,_).
+process_properties([Prop|Props],IRI,Type,O) :-
+	process_property(Prop,IRI,Type,O),
+	process_properties(Props,IRI,Type,O).
+
+process_property(characteristics=CL,IRI,Type,O) :-
+	!,
+	forall(member(C,CL),
+	       process_characteristic(C,IRI,Type,O)).
+
+process_property(P=VL,IRI,Type,O) :-
+	!,
+	forall(member(V,VL),
+	       process_slot_value(P,V,IRI,Type,O)).
+
+process_characteristic(C,IRI,_Type,_) :-
+	slot_predicate(C,P),
+	Unary =.. [P,IRI],
+	writeln(u=Unary),
+	assert_axiom(Unary).
+
+process_slot_value(S,V,IRI,T,O) :-
+	process_slot_value(S,V,IRI,T,O,Ax),
+	writeln(ax=Ax),
+	assert_axiom(Ax).
+	
+process_slot_value(disjointWith,V,IRI,objectProperty,O,Ax) :-
+	!,
+	expand_curie(V,O,VX),
+	Ax =.. [disjointProperties,[IRI,VX]].
+process_slot_value(inverseOf,V,IRI,_,O,Ax) :-
+	!,
+	expand_curie(V,O,VX),
+	Ax =.. [inverseProperties,IRI,VX].
+process_slot_value(S,V,IRI,T,O,Ax) :-
+	writeln(eh(S,T)),
+	expand_curie(V,O,VX),
+	Ax =.. [S,IRI,VX].
+
+
+
+
+expand_curie(Name,O-_NSL,IRI) :-
+	concat_atom([O,'#',Name],IRI). % TODO
+
+	
+slot_predicate(S,P) :-
+	sub_atom(S,0,1,_,C1),
+	C1 @>= 'A',
+	C1 @=< 'Z',
+	!,
+	downcase_atom(C1,C2),
+	sub_atom(S,1,_,0,S2),
+	atom_concat(C2,S2,P).
+slot_predicate(S,S).
+
+
+
+
+
+
+
 
 % ----------------------------------------
 % Tokenization
 % ----------------------------------------
 
-tokenize(A,Toks) :-
-	concat_atom(Toks,' ',A). % temp
+codes_tokens_filtered(Codes,Tokens2) :-
+	codes_tokens(Codes,[],Tokens),
+	findall(T,(member(T,Tokens),T\=''),Tokens2).
+
+codes_tokens([],Buf,[A]) :-
+	!,
+	atom_rcodes(A,Buf).
+codes_tokens([C|Cs],Buf,[A|Toks]) :-
+	ws(C),
+	!,
+	atom_rcodes(A,Buf),
+	codes_tokens(Cs,[],Toks).
+codes_tokens([C|Cs],Buf,[A1,A2|Toks]) :-
+	sep(C),
+	!,
+	atom_rcodes(A1,Buf),
+	atom_codes(A2,[C]),
+	codes_tokens(Cs,[],Toks).
+codes_tokens([C|Cs],Buf,Toks) :-
+	codes_tokens(Cs,[C|Buf],Toks).
+
+atom_rcodes(A,L) :-
+	reverse(L,RL),
+	atom_codes(A,RL).
+
+ws(0' ).
+ws(0'\n).
+ws(0'\r).
+sep(0',).
+
+
 
 % Documents in the Manchester OWL syntax consist of sequences of Unicode characters [UNICODE] and are encoded in UTF-8 [RFC3829].
 
@@ -102,7 +207,8 @@ oneOrMore(Delim,F,L,In,Rest):-
 % ----------------------------------------
 
 % full-IRI := 'IRI as defined in [RFC3987], enclosed in a pair of < (U+3C) and > (U+3E) characters' 
-full_IRI(X) --> [X],{X\='('}. % TODO
+full_IRI(IRI) --> [X],{atom_concat('<',Y,X),atom_concat(IRI,'>',Y)}.
+
 % NCName := 'as defined in [XML Namespaces]'
 % TODO
 
@@ -197,11 +303,11 @@ annotation(P-T) -->  annotationPropertyIRI( P),annotationTarget(T).
 annotationTarget(T) --> nodeID(T) ; iri(T) ; literal(T).
 
 % ontologyDocument ::= { namespace } ontology
-ontologyDocument(D) --> zeroOrMore(namespace,_NSL),ontology(O).
+ontologyDocument( NSL-O ) --> zeroOrMore(namespace,NSL),ontology(O).
 
 % namespace ::= 'Namespace:' [ prefix ] full-IRI
-namespace(P-NS) --> ['Namespace:'], prefix( P), full_IRI(IRI).
-namespace(NS) --> ['Namespace:'], full_IRI(IRI).
+namespace(P-NS) --> ['Namespace:'], prefix( P), full_IRI(NS).
+namespace(NS) --> ['Namespace:'], full_IRI(NS).
 
 % ontology ::= 'Ontology:' [ ontologyIRI [ versionIRI ] ] { import } { annotations } { frame }
 ontology(ontology(X,Imports,AL,Frames)) --> ['Ontology:'], ontologyIRI( X), zeroOrMore(import,Imports),zeroOrMore(annotations,AL),zeroOrMore(frame,Frames).
@@ -258,7 +364,7 @@ dataAtomic(A) --> datatypeRestriction(A).
 dataAtomic(A) --> ['('],dataRange(A),[')'].
 
 % datatypeRestriction ::= Datatype '[' facet restrictionValue { ',' facet restrictionValue } ']'
-datatypeRestriction(foo) --> datatype(X),['['],facet( F),restrictionValue(V), zeroOrMore(',',facetRestrictionValue(FVs)),[']'].
+datatypeRestriction(X-F-V-FVs) --> datatype(X),['['],facet( F),restrictionValue(V), zeroOrMore(',',facetRestrictionValue(FVs)),[']'].
 facetRestrictionValue(F-V) --> facet(F),restrictionValue(V).
                                                                                         
 % facet ::= 'length' | 'minLength' | 'maxLength' | 'pattern' | 'langPattern' | '<=' | '<' | '>=' | '>'
@@ -303,8 +409,8 @@ optNegRestriction(R) --> restriction(R).
 
 restriction(someValuesFrom(OPE,C)) --> objectPropertyExpression(OPE),[some],primary(C).
 restriction(onlyValuesFrom(OPE,C)) --> objectPropertyExpression(OPE),[only],primary(C).
-restriction(hasValue(OPE,C)) --> objectPropertyExpression(OPE),[value],individual(I).
-restriction(hasSelf(OPE,C)) --> objectPropertyExpression(OPE),['Self'].
+restriction(hasValue(OPE,I)) --> objectPropertyExpression(OPE),[value],individual(I).
+restriction(hasSelf(OPE)) --> objectPropertyExpression(OPE),['Self'].
 restriction(minCardinality(OPE,Card,CE)) --> objectPropertyExpression(OPE),[min],nni(Card),primary(CE).
 restriction(minCardinality(OPE,Card)) --> objectPropertyExpression(OPE),[min],nni(Card).
 restriction(maxCardinality(OPE,Card,CE)) --> objectPropertyExpression(OPE),[max],nni(Card),primary(CE).
@@ -314,8 +420,8 @@ restriction(exactCardinality(OPE,Card)) --> objectPropertyExpression(OPE),[exact
 
 restriction(someValuesFrom(OPE,C)) --> dataPropertyExpression(OPE),[some],dataPrimary(C).
 restriction(onlyValuesFrom(OPE,C)) --> dataPropertyExpression(OPE),[only],dataPrimary(C).
-restriction(hasValue(OPE,C)) --> dataPropertyExpression(OPE),[value],individual(I).
-restriction(hasSelf(OPE,C)) --> dataPropertyExpression(OPE),['Self'].
+restriction(hasValue(OPE,I)) --> dataPropertyExpression(OPE),[value],individual(I).
+restriction(hasSelf(OPE)) --> dataPropertyExpression(OPE),['Self'].
 restriction(minCardinality(OPE,Card,CE)) --> dataPropertyExpression(OPE),[min],nni(Card),dataPrimary(CE).
 restriction(minCardinality(OPE,Card)) --> dataPropertyExpression(OPE),[min],nni(Card).
 restriction(maxCardinality(OPE,Card,CE)) --> dataPropertyExpression(OPE),[max],nni(Card),dataPrimary(CE).
@@ -332,7 +438,12 @@ atomic(X) --> ['('], description(X), [')'].
 % <NT>AnnotatedList ::= [annotations] <NT> { , [annotations] <NT> }
 annotationAnnotatedList([A|L]) --> annotatedAnnotation(A),zeroOrMoreA(',',annotatedAnnotation,L). % TODO
 descriptionAnnotatedList([D|L]) --> annotatedDescription(D),zeroOrMore(',',description,L). % TODO
-objectPropertyCharacteristicAnnotatedList([PC|L]) --> annotatedbjectPropertyCharacteristic(PC),zeroOrMore(',',annotatedObjectPropertyCharacteristic,L). % TODO
+objectPropertyCharacteristicAnnotatedList([PC|L]) --> annotatedObjectPropertyCharacteristic(PC),zeroOrMore(',',annotatedObjectPropertyCharacteristic,L).
+objectPropertyExpressionAnnotatedList([PC|L]) --> annotatedObjectPropertyExpression(PC),zeroOrMore(',',annotatedObjectPropertyExpression,L).
+
+annotatedObjectPropertyCharacteristic(X) --> objectPropertyCharacteristic(X). % TODO
+annotatedObjectPropertyExpression(X) --> objectPropertyExpression(X). % TODO
+
 
 % <NT>2List ::= <NT> , <NT>List
 description2List([D|L]) --> description(D),[','],oneOrMore(',',description,L).
@@ -350,12 +461,19 @@ annotatedDescription(D) --> description(D).
 % descriptionAnnotatedList | 'DisjointUnionOf:' annotations
 % description2List }
 
-classFrame(C-EL) --> ['Class:'],classIRI(C),zeroOrMore(classFrameElement,EL).
+classFrame( frame(class,C,EL) ) --> ['Class:'],classIRI(C),zeroOrMore(classFrameElement,EL).
 classFrameElement(annotation=AL) --> ['Annotations:'],annotationAnnotatedList(AL).
 classFrameElement(subClassOf=AL) --> ['SubClassOf:'],descriptionAnnotatedList(AL).
 classFrameElement(equivalentTo=AL) --> ['EquivalentTo:'],descriptionAnnotatedList(AL).
 classFrameElement(disjointWith=AL) --> ['DisjointWith:'],descriptionAnnotatedList(AL).
 classFrameElement(disjointUnionOf=AL) --> ['DisjointUnionOf:'],descriptionAnnotatedList(AL).
+
+% ?
+classFrameElement(annotation=AL) --> ['Annotations:'],annotationAnnotatedList(AL).
+classFrameElement(types=AL) --> ['Types:'],descriptionAnnotatedList(AL).
+classFrameElement(facts=AL) --> ['Facts:'],factAnnotatedList(AL).
+classFrameElement(sameAs=AL) --> ['SameAs:'],individualAnnotatedList(AL).
+classFrameElement(differentFrom=AL) --> ['DifferentFrom:'],individualAnnotatedList(AL).
 
 
 % objectPropertyFrame ::= 'ObjectProperty:' objectPropertyIRI {
@@ -369,7 +487,7 @@ classFrameElement(disjointUnionOf=AL) --> ['DisjointUnionOf:'],descriptionAnnota
 %annotations objectPropertyExpression 'o' objectPropertyExpression {
 %'o' objectPropertyExpression } }
 
-objectPropertyFrame(C-EL) --> ['ObjectProperty:'],objectPropertyIRI(C),zeroOrMore(objectPropertyFrameElement,EL).
+objectPropertyFrame( frame(objectProperty,C,EL) ) --> ['ObjectProperty:'],objectPropertyIRI(C),zeroOrMore(objectPropertyFrameElement,EL).
 objectPropertyFrameElement(domain=AL) --> ['Domain:'],descriptionAnnotatedList(AL).
 objectPropertyFrameElement(range=AL) --> ['Range:'],descriptionAnnotatedList(AL).
 objectPropertyFrameElement(characteristics=AL) --> ['Characteristics:'],objectPropertyCharacteristicAnnotatedList(AL).
@@ -401,7 +519,7 @@ objectPropertyCharacteristic('Transitive').
 % dataPropertyExpressionAnnotatedList | 'DisjointWith:'
 % dataPropertyExpressionAnnotatedList }
 
-dataPropertyFrame(C-EL) --> ['DataProperty:'],dataPropertyIRI(C),zeroOrMore(dataPropertyFrameElement,EL).
+dataPropertyFrame( frame(dataProperty,C,EL) ) --> ['DataProperty:'],dataPropertyIRI(C),zeroOrMore(dataPropertyFrameElement,EL).
 dataPropertyFrameElement(domain=AL) --> ['Domain:'],descriptionAnnotatedList(AL).
 dataPropertyFrameElement(range=AL) --> ['Range:'],descriptionAnnotatedList(AL).
 dataPropertyFrameElement(characteristics=AL) --> ['Characteristics:'],dataPropertyCharacteristicAnnotatedList(AL).
@@ -417,7 +535,7 @@ dataPropertyCharacteristic('Functional').
 %'Domain:' IRIAnnotatedList | 'Range:' IRIAnnotatedList |
 %'SubPropertyOf:' annotationPropertyIRIAnnotatedList
 
-annotationPropertyFrame(C-EL) --> ['AnnotationProperty:'],annotationPropertyIRI(C),zeroOrMore(annotationPropertyFrameElement,EL).
+annotationPropertyFrame( frame(annotationProperty,C,EL) ) --> ['AnnotationProperty:'],annotationPropertyIRI(C),zeroOrMore(annotationPropertyFrameElement,EL).
 annotationPropertyFrameElement(domain=AL) --> ['Domain:'],descriptionAnnotatedList(AL).
 annotationPropertyFrameElement(range=AL) --> ['Range:'],descriptionAnnotatedList(AL).
 annotationPropertyFrameElement(subPropertyOf=AL) --> ['SubPropertyOf:'],annotationPropertyExpressionAnnotatedList(AL).
@@ -428,11 +546,7 @@ annotationPropertyFrameElement(subPropertyOf=AL) --> ['SubPropertyOf:'],annotati
 %'Facts:' factAnnotatedList | 'SameAs:' individualAnnotatedList |
 %'DifferentFrom:' individualAnnotatedList }
 individualFrame(I-EL) --> ['Individual:'], individual(I),zeroOrMore(individualFrameElement,EL).
-classFrameElement(annotation=AL) --> ['Annotations:'],annotationAnnotatedList(AL).
-classFrameElement(types=AL) --> ['Types:'],descriptionAnnotatedList(AL).
-classFrameElement(facts=AL) --> ['Facts:'],factAnnotatedList(AL).
-classFrameElement(sameAs=AL) --> ['SameAs:'],individualAnnotatedList(AL).
-classFrameElement(differentFrom=AL) --> ['DifferentFrom:'],individualAnnotatedList(AL).
+
 
 % fact ::= [ 'not' ] (objectPropertyFact | dataPropertyFact)
 fact(not(F)) --> [not],(objectPropertyFact(F) ;  dataPropertyFact(F)).
