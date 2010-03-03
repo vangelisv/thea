@@ -47,7 +47,8 @@ owl2_util.pl\
 owl2_xml.pl\
 swrl.pl\
 swrl_rdf_hooks.pl\
-rules
+rules/advancedset.pl\
+rules/basicset.pl
 
 LIBALL=		$(LIBPL) $(SUPPORT)
 EXAMPLES=	README
