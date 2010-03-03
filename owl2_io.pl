@@ -126,7 +126,9 @@ suffix_format(plsyn,plsyn).
 suffix_format(owl,owl).
 suffix_format(ttl,owl).
 suffix_format(owlx,owlx).
-
+suffix_format(owlms,owlms).
+suffix_format(owlapi(F),owlapi(F)).
+suffix_format(owlapi,owlapi).
 
 :- multifile format_module/3.
 format_module(read,rdf,owl2_from_rdf).
@@ -134,9 +136,12 @@ format_module(read,owl,owl2_from_rdf).
 format_module(read,ttl,owl2_from_rdf).
 format_module(read,xml,owl2_xml).
 format_module(read,owlx,owl2_xml).
+format_module(read,owlms,owl2_manchester_parser).
 format_module(read,pl_swrl,swrl).
 format_module(read,pl_swrl_owl,swrl).
 format_module(read,plsyn,owl2_plsyn).
+format_module(read,owlapi,owl2_java_owlapi).
+format_module(read,owlapi(_),owl2_java_owlapi).
 
 format_module(write,owl,owl2_export_rdf).
 format_module(write,owlx,owl2_xml).
