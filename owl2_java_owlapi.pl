@@ -82,11 +82,26 @@ build_ontology(Man,Fac,Ont) :-
                (   debug(owl2,'Adding axiom: ~w',[Ax]),
                    add_axiom(Man,Fac,Ont,Ax,_))).
 
+:- multifile owl2_io:load_axioms_hook/3.
+owl2_io:load_axioms_hook(File,owlapi,Opts) :-
+	owl2_io:load_axioms_hook(File,owlapi(_),Opts).
+owl2_io:load_axioms_hook(File,owlapi(_Fmt),_Opts) :-
+        create_factory(Man,Fac),
+        load_ontology(Man,Ont,File).
+
 :- multifile owl2_io:save_axioms_hook/3.
+owl2_io:save_axioms_hook(File,owlapi,Opts) :-
+	owl2_io:save_axioms_hook(File,owlapi(_),Opts).
 owl2_io:save_axioms_hook(File,owlapi(_Fmt),_Opts) :-
         create_factory(Man,Fac),
         build_ontology(Man,Fac,Ont),
         save_ontology(Man,Ont,File).
+
+%% load_ontology(+Man,?Ont,+File) is det
+% TODO - need to maps java axioms to owlpl axioms
+load_ontology(Man,Ont,File) :-
+        atom_javaURI(File,URI),
+        jpl_call(Man,loadOntologyFromPhysicalURI,[URI],Ont).
 
 
 %% save_ontology(+Man,+Ont,+File) is det
@@ -336,6 +351,7 @@ reasoner_equivalent_to(R,Fac,C,P) :-
         java_namedentity(JP,P).
 
 %% add_axiom(+Manager,+Factory,+Ont,+Axiom,?Obj) is det
+% adds an axiom to Ont from the prolog databases
 add_axiom(Manager,Factory,Ont,Axiom,JAx) :-
         owlterm_java(Factory,_,Axiom,JAx),
         debug(owl2,' axiom ~w = ~w',[Axiom,JAx]),
@@ -604,6 +620,8 @@ decl_method(dataType,getOWLDatatype,datatype).
 decl_method(dataProperty,getOWLDataProperty,_).
 decl_method(individual,getOWLIndividual,_). % anonymous individuals?
 decl_method(entity,getOWLIndividual,_). % anonymous individuals?
+
+:- discontiguous axiom_method/2,axiom_method/4.
 
 axiom_method(subClassOf,getOWLSubClassAxiom).
 axiom_method(equivalentClasses,getOWLEquivalentClassesAxiom).
