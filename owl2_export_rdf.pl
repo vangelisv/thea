@@ -267,6 +267,13 @@ owl2_export_axiom(annotationAssertion(AP,As,Av),main_triple(TAs,AP,TAv)) :-
 	owl_rdf_assert(TAs,AP,TAv),!.
 
 %
+% Property Expressions (Descriptions)
+%
+owl2_export_axiom(inverseOf(P),main_triple(BNode,'owl:inverseOf',P)) :-
+	as2rdf_bnode(inverseOf(P),BNode),
+	owl_rdf_assert(BNode,'owl:inverseOf', P),!.
+
+%
 % Class Expressions (Descriptions)
 %
 
