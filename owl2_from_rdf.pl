@@ -194,6 +194,7 @@ owl_canonical_parse_3([IRI|Rest]) :-
 	% First parse the Ontology axiom
         owl_parse_annotated_axioms(ontology/1),
 
+        debug(owl_parser,'Replacing patterns [see table 5]',[]),
 	% remove triples based on pattern match (Table 5)
 	forall((triple_remove(Pattern,Remove), test_use_owl(Pattern)),
 	        forall(member(owl(S,P,O),Remove),use_owl(S,P,O,removed))),
@@ -614,7 +615,7 @@ owl_get_bnode(_,_).
 owl_description_list('http://www.w3.org/1999/02/22-rdf-syntax-ns#nil',[]) :- !.
 
 owl_description_list(X,[F|R]) :-
-	% use_owl(X,'rdf:type','rdf:List',list),
+	% use_owl(X,'rdf:type','rdf:List',list), % this is now removed from graph
 	use_owl(X,'rdf:first',Element,first),
 	owl_description(Element,F),
 	use_owl(X,'rdf:rest',Y,rest),
@@ -629,7 +630,7 @@ owl_description_list(X,[F|R]) :-
 owl_individual_list('http://www.w3.org/1999/02/22-rdf-syntax-ns#nil',[]) :- !.
 
 owl_individual_list(X,[F|R]) :-
-	% use_owl(X,'rdf:type','rdf:List',list),
+	% use_owl(X,'rdf:type','rdf:List',list), % this is now removed from graph
 	use_owl(X,'rdf:first',F,first),
 	use_owl(X,'rdf:rest',Y,rest),
 	!,owl_individual_list(Y,R).
@@ -642,7 +643,7 @@ owl_individual_list(X,[F|R]) :-
 owl_property_list('http://www.w3.org/1999/02/22-rdf-syntax-ns#nil',[]) :- !.
 
 owl_property_list(X,[F|R]) :-
-	% use_owl(X,'rdf:type','rdf:List',list),
+	% use_owl(X,'rdf:type','rdf:List',list), % this is now removed from graph
 	use_owl(X,'rdf:first',Element,first),
 	owl_property_expression(Element,F),
 	use_owl(X,'rdf:rest',Y,rest),
@@ -656,7 +657,7 @@ owl_property_list(X,[F|R]) :-
 owl_datarange_list('http://www.w3.org/1999/02/22-rdf-syntax-ns#nil',[]) :- !.
 
 owl_datarange_list(X,[F|R]) :-
-	% use_owl(X,'rdf:type','rdf:List',list),
+	% use_owl(X,'rdf:type','rdf:List',list), % this is now removed from graph
 	use_owl(X,'rdf:first',Element,first),
 	owl_datarange(Element,F),
 	use_owl(X,'rdf:rest',Y,rest),
@@ -670,7 +671,7 @@ owl_datarange_list(X,[F|R]) :-
 owl_datatype_restriction_list('http://www.w3.org/1999/02/22-rdf-syntax-ns#nil',[]) :- !.
 
 owl_datatype_restriction_list(X,[W-L|R]) :-
-	use_owl(X,'rdf:type','rdf:List'),
+	% use_owl(X,'rdf:type','rdf:List'), % this is now removed from graph
 	use_owl(X,'rdf:first',Element),
 	use_owl(Element,W,L),
 	use_owl(X,'rdf:rest',Y),
@@ -931,6 +932,14 @@ owl_description(D,oneOf(L)) :-
 	use_owl(D,'owl:oneOf',L1),
 	owl_individual_list(L1,L),
 	owl_get_bnode(D,oneOf(L)),!.
+
+owl_description(D,datatypeRestriction(DY,L)) :-
+	use_owl(D,'rdf:type','rdfs:Datatype'),
+	use_owl(D,'owl:onDatatype',Y),
+	owl_datarange(Y,DY),
+	use_owl(D,'owl:withRestrictions',L1),
+	owl_datatype_restriction_list(L1,L),
+	owl_get_bnode(D,datatypeRestriction(DY,L)).
 
 owl_description(D,Restriction) :-
 	owl_restriction(D, Restriction),
