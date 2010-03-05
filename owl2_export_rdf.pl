@@ -295,6 +295,16 @@ owl2_export_axiom(oneOf([E|Rest]),main_triple(BNode,'rdf:type',Type)) :-
 	(   classExpression(E) -> Type = 'owl:Class'; Type = 'owl:Datatype'),
 	owl_rdf_assert(BNode,'owl:oneOf', LNode),!.	  
 
+owl2_export_axiom(datatypeRestriction(DT,FVs),main_triple(BNode,'rdf:type','rdfs:Datatype')) :-
+	as2rdf_bnode(datatypeRestriction(DT,FVs),BNode),
+	owl_rdf_assert(BNode,'rdf:type','rdfs:Datatype'),
+	owl2_export_axiom(DT,main_triple(Tpe,_,_)),owl_rdf_assert(BNode,'owl:onDatatype',Tpe),
+	owl2_export_list(FVs,LNode),
+	owl_rdf_assert(BNode,'owl:withRestrictions',LNode).
+
+owl2_export_axiom(facetRestriction(F,V),main_triple(BNode,F,V)) :-
+	as2rdf_bnode(facetRestriction(FmV),BNode),
+	owl_rdf_assert(BNode,F,V).
 
 owl2_export_axiom(complementOf(E),main_triple(BNode,'rdf:type',Type)) :-
 	as2rdf_bnode(complementOf(E),BNode),

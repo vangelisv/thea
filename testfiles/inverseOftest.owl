@@ -1,0 +1,191 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY phenoscape "http://phenoscape.org#" >
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY owl2xml "http://www.w3.org/2006/12/owl2-xml#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+]>
+
+
+<rdf:RDF xmlns="http://phenoscape.org#"
+     xml:base="http://phenoscape.org"
+     xmlns:owl2xml="http://www.w3.org/2006/12/owl2-xml#"
+     xmlns:phenoscape="http://phenoscape.org#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#">
+    <owl:Ontology rdf:about=""/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://phenoscape.org#descendedFrom -->
+
+    <owl:ObjectProperty rdf:about="#descendedFrom">
+        <rdf:type rdf:resource="&owl;TransitiveProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://phenoscape.org#directlyDescendedFrom -->
+
+    <owl:ObjectProperty rdf:about="#directlyDescendedFrom">
+        <rdfs:subPropertyOf rdf:resource="#descendedFrom"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://phenoscape.org#homologousTo -->
+
+    <owl:ObjectProperty rdf:about="#homologousTo">
+        <rdf:type rdf:resource="&owl;SymmetricProperty"/>
+        <rdf:type rdf:resource="&owl;TransitiveProperty"/>
+        <owl:propertyChainAxiom rdf:parseType="Collection">
+            <rdf:Description rdf:about="#descendedFrom"/>
+            <owl:ObjectProperty>
+                <owl:inverseOf rdf:resource="#descendedFrom"/>
+            </owl:ObjectProperty>
+        </owl:propertyChainAxiom>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://phenoscape.org#partOf -->
+
+    <owl:ObjectProperty rdf:about="#partOf"/>
+    
+
+
+    <!-- http://phenoscape.org#part_of -->
+
+    <owl:ObjectProperty rdf:about="#part_of"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://phenoscape.org#A -->
+
+    <owl:Class rdf:about="#A">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty>
+                    <owl:ObjectProperty>
+                        <owl:inverseOf rdf:resource="#descendedFrom"/>
+                    </owl:ObjectProperty>
+                </owl:onProperty>
+                <owl:someValuesFrom rdf:resource="#X"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty>
+                    <owl:ObjectProperty>
+                        <owl:inverseOf rdf:resource="#descendedFrom"/>
+                    </owl:ObjectProperty>
+                </owl:onProperty>
+                <owl:someValuesFrom rdf:resource="#Y"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://phenoscape.org#B -->
+
+    <owl:Class rdf:about="#B"/>
+    
+
+
+    <!-- http://phenoscape.org#C -->
+
+    <owl:Class rdf:about="#C"/>
+    
+
+
+    <!-- http://phenoscape.org#X -->
+
+    <owl:Class rdf:about="#X">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#descendedFrom"/>
+                <owl:someValuesFrom rdf:resource="#A"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://phenoscape.org#Y -->
+
+    <owl:Class rdf:about="#Y">
+        <rdfs:subClassOf rdf:resource="&owl;Thing"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#descendedFrom"/>
+                <owl:someValuesFrom rdf:resource="#A"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.w3.org/2002/07/owl#Thing -->
+
+    <owl:Class rdf:about="&owl;Thing"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // General axioms
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <owl:Class>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#part_of"/>
+                <owl:someValuesFrom rdf:resource="#C"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <owl:intersectionOf rdf:parseType="Collection">
+            <rdf:Description rdf:about="#B"/>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#partOf"/>
+                <owl:someValuesFrom rdf:resource="#Y"/>
+            </owl:Restriction>
+        </owl:intersectionOf>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 2.2.1.1138) http://owlapi.sourceforge.net -->
+

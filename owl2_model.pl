@@ -916,10 +916,9 @@ dataOneOf(oneOf(DRs)) :-
 %% datatypeRestriction(+DR) is semidet
 % 
 % TODO: multiple args
-datatypeRestriction(datatypeRestriction(DR,Facet,Value)):-
+datatypeRestriction(datatypeRestriction(DR,FacetValues)):-
 	datatype(DR),
-	iri(Facet),
-	literal(Value).
+	FacetValues=[_|_].
 
 %% dataSomeValuesFrom(+DR) is semidet
 dataSomeValuesFrom(someValuesFrom(DPE,DR)):-

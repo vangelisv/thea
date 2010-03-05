@@ -670,7 +670,7 @@ owl_datarange_list(X,[F|R]) :-
 
 owl_datatype_restriction_list('http://www.w3.org/1999/02/22-rdf-syntax-ns#nil',[]) :- !.
 
-owl_datatype_restriction_list(X,[W-L|R]) :-
+owl_datatype_restriction_list(X,[facetRestriction(W,L)|R]) :-
 	% use_owl(X,'rdf:type','rdf:List'), % this is now removed from graph
 	use_owl(X,'rdf:first',Element),
 	use_owl(Element,W,L),
