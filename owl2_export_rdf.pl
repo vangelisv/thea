@@ -303,7 +303,7 @@ owl2_export_axiom(datatypeRestriction(DT,FVs),main_triple(BNode,'rdf:type','rdfs
 	owl_rdf_assert(BNode,'owl:withRestrictions',LNode).
 
 owl2_export_axiom(facetRestriction(F,V),main_triple(BNode,F,V)) :-
-	as2rdf_bnode(facetRestriction(FmV),BNode),
+	as2rdf_bnode(facetRestriction(F,V),BNode),
 	owl_rdf_assert(BNode,F,V).
 
 owl2_export_axiom(complementOf(E),main_triple(BNode,'rdf:type',Type)) :-
