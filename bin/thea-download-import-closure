@@ -1,0 +1,39 @@
+#!/usr/bin/swipl -L0 -G0 -A0 -T0 -q -g main -t halt -s
+
+:- use_module(library('thea2/owl2_util')).
+
+main :-
+        current_prolog_flag(argv, Arguments),
+        append(_SytemArgs, [--|Args], Arguments), !,
+        set_prolog_flag(verbose,normal),
+        parse_args(Args,Opts),
+        findall(F,member(rest(F),Opts),Fs),
+	download_import_closure(Fs).
+
+
+parse_args([],[]).
+parse_args(Args,[Opt|Opts]) :-
+        parse_arg(Args,Rest,Opt),
+        !,
+        parse_args(Rest,Opts).
+parse_args([A|Args],[rest(A)|Opts]) :-
+        parse_args(Args,Opts).
+
+parse_arg(['--debug',D|L],L,null) :- debug(D).
+parse_arg(['--prolog'|L],L,prolog(true)).
+parse_arg(['--no_uri_expansion'|L],L,settings(uri_translation(none))).
+parse_arg(['--uri_translation',X|L],L,settings(uri_translation(X))).
+parse_arg(['--contract',X|L],L,settings(uri_translation(contract(X)))).
+parse_arg(['--statistics'|L],L,statistics(true)).
+parse_arg(['--import'|L],L,loadopt(imports(true))).
+parse_arg(['--save-opt',A|L],L,saveopt(O)) :- atom_to_term(A,O,_).
+parse_arg(['--format',A|L],L,loadopt(format(Fmt)))  :- atom_to_term(A,Fmt,_).
+parse_arg(['--ensure_loaded',MA|L],L,ensure_loaded(M)) :- atom_to_term(MA,M,_).
+%parse_arg(['--ensure_loaded',M|L],L,ensure_loaded(M)).
+parse_arg(['--to',Fmt|L],L,output_format(Fmt)).
+parse_arg(['--out',File|L],L,output_file(File)).
+parse_arg(['--use-labels'|L],L,goal(use_labels_for_IRIs)).
+parse_arg(['--use-safe-labels'|L],L,goal(use_safe_labels_for_IRIs)).
+parse_arg(['--goal',GA|L],L,goal(G)) :- atom_to_term(GA,G,_).
+parse_arg(['--query',GA|L],L,query(T,G)) :- atom_to_term(GA,G-T,_).
+

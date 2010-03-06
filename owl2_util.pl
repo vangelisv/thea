@@ -6,6 +6,7 @@
            owlx_file_to_prolog/1,
            rdf_file_to_prolog/1,
            rdf_file_to_prolog/2,
+	   download_import_closure/1,
            write_owl_as_prolog/0,
            expand_namespaces/0,
            remove_namespaces/0,
@@ -71,6 +72,37 @@ write_axioms(P/A):-
 
 write_axioms(H):-
         forall(H,format('~q.~n',[H])).
+
+download_import_closure(F) :-
+	download_import_closure(F,[]).
+download_import_closure([],_) :- !.
+download_import_closure([F|Fs],IL) :-
+	member(F,IL),
+	!,
+	download_import_closure(Fs,IL).
+download_import_closure([F|Fs],IL) :-
+	!,
+	get_import_closure(F,Xs),
+	append(Fs,Xs,Fs2),
+	download_import_closure(Fs2,[F|IL]).
+
+get_import_closure(F,Xs) :-
+	import_url_local(F,Local),
+	rdf_load(Local,[]),
+	findall(X,rdf_has(_,'http://www.w3.org/2002/07/owl#imports',X),Xs),
+	debug(download,'adding ~w',[Xs]),
+	rdf_retractall(_,_,_).
+
+import_url_local(F,Local) :-
+	sub_atom(F,0,_,_,'http:'),
+	!,
+	concat_atom(Toks,'/',F),
+	reverse([Local|_],Toks),
+	debug(download,'downloading ~w from ~w',[Local,F]),
+	sformat(Cmd,'wget ~w -O ~w',[F,Local]),
+	shell(Cmd).
+import_url_local(F,F).
+
 
 
 %% remove_namespaces
