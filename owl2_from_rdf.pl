@@ -268,7 +268,8 @@ owl_parse_annotated_axioms(Pred/Arity) :-
 	       (   assert_axiom(Head),
                    debug(owl_parser_detail,' parsed: ~w : anns: ~w',[Head,Annotations]),
 		   forall(member(X,Annotations),
-			  forall(annotation(X,AP,AV),assert_axiom(annotation(Head,AP,AV)))
+			  forall(annotation(X,AP,AV),
+				 assert_axiom(annotation(Head,AP,AV)))
 			 )
 	       )
 	      ),
