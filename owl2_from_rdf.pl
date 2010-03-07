@@ -707,7 +707,7 @@ triple_remove([owl(X,'rdf:type','rdfs:Datatype'),owl(X,'rdf:type','rdfs:Class')]
 triple_remove([owl(X,'rdf:type','owl:DataRange'),owl(X,'rdf:type','rdfs:Class')],[owl(X,'rdf:type','rdfs:Class')]).
 triple_remove([owl(X,'rdf:type','owl:Restriction'),owl(X,'rdf:type','rdfs:Class')],[owl(X,'rdf:type','rdfs:Class')]).
 triple_remove([owl(X,'rdf:type','owl:Restriction'),owl(X,'rdf:type','owl:Class')],[owl(X,'rdf:type','owl:Class')]).
-triple_remove([owl(X,'rdf:type','owl:ObjectProperty'),owl(X,'rdf:type','rdf:Property')],[owl(X,'rdf:type','rdf:Property')]).
+triple_remove([owl(X,'rdf:type','owl:annotatedTargetProperty'),owl(X,'rdf:type','rdf:Property')],[owl(X,'rdf:type','rdf:Property')]).
 triple_remove([owl(X,'rdf:type','owl:FunctionalProperty'),owl(X,'rdf:type','rdf:Property')],[owl(X,'rdf:type','rdf:Property')]).
 triple_remove([owl(X,'rdf:type','owl:InverseFunctionalProperty'),owl(X,'rdf:type','rdf:Property')],[owl(X,'rdf:type','rdf:Property')]).
 triple_remove([owl(X,'rdf:type','owl:TransitiveProperty'),owl(X,'rdf:type','rdf:Property')],[owl(X,'rdf:type','rdf:Property')]).
@@ -719,9 +719,9 @@ triple_remove([owl(X,'rdf:type','rdf:List'),owl(X,'rdf:first',_Y),owl(X,'rdf:res
 % See table 6.
 % http://www.w3.org/TR/2008/WD-owl2-mapping-to-rdf-20081202/
 triple_replace([owl(X,'rdf:type','owl:OntologyProperty')],[owl(X,'rdf:type','owl:AnnotationProperty')]).
-triple_replace([owl(X,'rdf:type','owl:InverseFunctionalProperty')],[owl(X,'rdf:type','owl:ObjectProperty'),owl(X,'rdf:type','owl:InverseFunctionalProperty')]).
-triple_replace([owl(X,'rdf:type','owl:TransitiveProperty')],[owl(X,'rdf:type','owl:ObjectProperty'),owl(X,'rdf:type','owl:TransitiveProperty')]).
-triple_replace([owl(X,'rdf:type','owl:SymmetricProperty')],[owl(X,'rdf:type','owl:ObjectProperty'),owl(X,'rdf:type','owl:SymmetricProperty')]).
+triple_replace([owl(X,'rdf:type','owl:InverseFunctionalProperty')],[owl(X,'rdf:type','owl:annotatedTargetProperty'),owl(X,'rdf:type','owl:InverseFunctionalProperty')]).
+triple_replace([owl(X,'rdf:type','owl:TransitiveProperty')],[owl(X,'rdf:type','owl:annotatedTargetProperty'),owl(X,'rdf:type','owl:TransitiveProperty')]).
+triple_replace([owl(X,'rdf:type','owl:SymmetricProperty')],[owl(X,'rdf:type','owl:annotatedTargetProperty'),owl(X,'rdf:type','owl:SymmetricProperty')]).
 
 % NOTE: this is not specified in table 6. However, we treat rdfs:Classes as equivalent to owl:Classes
 triple_replace([owl(X,'rdf:type','rdfs:Class')],[owl(X,'rdf:type','owl:Class')]).
@@ -749,9 +749,9 @@ owl_parse_axiom(datatype(D), AnnMode, List) :-
 
 
 owl_parse_axiom(objectProperty(D), AnnMode, List) :-
-        test_use_owl(D,'rdf:type','owl:ObjectProperty'),
+        test_use_owl(D,'rdf:type','owl:annotatedTargetProperty'),
         valid_axiom_annotation_mode(AnnMode,D,'rdf:type','rdf:ObjectProperty',List),
-        use_owl(D,'rdf:type','owl:ObjectProperty',objectProperty(D)),
+        use_owl(D,'rdf:type','owl:annotatedTargetProperty',objectProperty(D)),
 	not(objectProperty(D)).
 
 
@@ -1121,25 +1121,25 @@ owl_restriction_type(E, P, maxCardinality(N,PX,DX)) :-
 collect_r_nodes :-
 	retractall(axiom_r_node(_,_,_,_)),
 	forall(( test_use_owl(Node,'rdf:type','owl:Axiom'),
-		 test_use_owl(Node,'owl:subject',S),
-		 test_use_owl(Node,'owl:predicate',P),
-		 test_use_owl(Node,'owl:object',O)),
+		 test_use_owl(Node,'owl:annotatedSource',S),
+		 test_use_owl(Node,'owl:annotatedProperty',P),
+		 test_use_owl(Node,'owl:annotatedTarget',O)),
 	       (assert(axiom_r_node(Node,S,P,O)),
 		use_owl([owl(Node,'rdf:type','owl:Axiom'),
-			 owl(Node,'owl:subject',S),
-			 owl(Node,'owl:predicate',P),
-			 owl(Node,'owl:object',O)]))),
+			 owl(Node,'owl:annotatedSource',S),
+			 owl(Node,'owl:annotatedProperty',P),
+			 owl(Node,'owl:annotatedTarget',O)]))),
 
 	retractall(annotation_r_node(_,_,_,_)),
 	forall(( test_use_owl(W,'rdf:type','owl:Annotation'),
-		 test_use_owl(W,'owl:subject',S),
-		 test_use_owl(W,'owl:predicate',P),
-		 test_use_owl(W,'owl:object',O)),
+		 test_use_owl(W,'owl:annotatedSource',S),
+		 test_use_owl(W,'owl:annotatedProperty',P),
+		 test_use_owl(W,'owl:annotatedTarget',O)),
 	       (assert(annotation_r_node(Node,S,P,O)),
 		use_owl([owl(W,'rdf:type','owl:Annotation'),
-			 owl(W,'owl:subject',S),
-			 owl(W,'owl:predicate',P),
-			 owl(W,'owl:object',O)]))).
+			 owl(W,'owl:annotatedSource',S),
+			 owl(W,'owl:annotatedProperty',P),
+			 owl(W,'owl:annotatedTarget',O)]))).
 
 
 valid_axiom_annotation_mode(_Mode,S,P,O,List) :-
