@@ -1,0 +1,8 @@
+server(started, 1267452719).
+/*Mon Mar 01 16:11:59 2010*/ request(1, 1267452719.254, [peer(ip(127, 0, 0, 1)), method(get), path(/), http_version(1-1), host(localhost), port(4000), user_agent('Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1.8) Gecko/20100202 Firefox/3.5.8 (.NET CLR 3.5.30729)'), keep_alive('300'), connection('keep-alive')]).
+completed(1, 0.00, 353, 303, see_other('/doc/c:/sw/development/pl/thea2/thea2/index.html')).
+/*Mon Mar 01 16:11:59 2010*/ request(2, 1267452719.270, [peer(ip(127, 0, 0, 1)), method(get), path('/doc/c:/sw/development/pl/thea2/thea2/index.html'), http_version(1-1), host(localhost), port(4000), user_agent('Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1.8) Gecko/20100202 Firefox/3.5.8 (.NET CLR 3.5.30729)'), keep_alive('300'), connection('keep-alive')]).
+completed(2, 1.28, 8192, 200, ok).
+/*Mon Mar 01 16:37:36 2010*/ request(3, 1267454256.215, [peer(ip(127, 0, 0, 1)), method(get), path('/doc/c:/sw/development/pl/thea2/thea2/cookbook.txt'), http_version(1-1), host(localhost), port(4000), user_agent('Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.1.8) Gecko/20100202 Firefox/3.5.8 (.NET CLR 3.5.30729)'), keep_alive('300'), connection('keep-alive'), referer('http://localhost:4000/doc/c:/sw/development/pl/thea2/thea2/index.html')]).
+completed(3, 0.05, 431, 500, error("atomic_list_concat/2: Type error: `text' expected, found `h3(class(wiki), [w(Converting),  , w(OWL),  , w(to),  , w(Logic),  , w(Programs)])'")).
+server(stopped, 1267457812).
