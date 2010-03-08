@@ -87,7 +87,7 @@
            dataComplementOf/1,
            dataOneOf/1,
            datatypeRestriction/1,
-           
+
            axiompred/1,
 
            anyPropertyAssertion/3,
@@ -99,14 +99,14 @@
            axiom_directly_references/2,
            axiom_about/2,
            axiom_references/2,
-           
+
            assert_axiom/1,
            assert_axiom/2,
            retract_axiom/1,
            retract_all_axioms/0,
 	   owl2_model_init/0,
            consult_axioms/1
-	   
+
 	  ]).
 %:- require([ is_list/1
 %	   , current_prolog_flag/2
@@ -115,7 +115,7 @@
 %	   ]).
 
 
-:- use_module(library(lists),[member/2]). 
+:- use_module(library(lists),[member/2]).
 
 %% axiompred(?PredSpec)
 % @param PredSpec Predicate/Arity
@@ -135,7 +135,7 @@
 
 %% entity(?IRI)
 % the fundamental building blocks of owl 2 ontologies, and they define the vocabulary (the named terms) of an ontology
-% 
+%
 % @see individual/1, property/1, class/1, datatype/1
 entity(A) :- individual(A).
 entity(A) :- property(A).
@@ -148,6 +148,7 @@ valid_axiom(entity(A)) :- subsumed_by([A],[iri]).
 declarationAxiom(namedIndividual(A)) :- namedIndividual(A).
 declarationAxiom(objectProperty(A)) :- objectProperty(A).
 declarationAxiom(dataProperty(A)) :- dataProperty(A).
+declarationAxiom(annotationProperty(A)) :- annotationProperty(A).  % VV added 9/3/2010
 declarationAxiom(class(A)) :- class(A).
 declarationAxiom(datatype(A)) :- datatype(A).
 % TODO: check. here we treat the ontology declaration as an axiom;
@@ -173,7 +174,7 @@ valid_axiom(datatype(A)) :- subsumed_by([A],[iri]).
 
 %% property(?IRI)
 % Properties connect individuals with either other individuals or with literals
-% 
+%
 % @see dataProperty/1, objectProperty/1, annotationProperty/1
 property(A) :- dataProperty(A).
 property(A) :- objectProperty(A).
@@ -263,7 +264,7 @@ valid_axiom(classAxiom(A)) :- subsumed_by([A],[axiom]).
 
 %% subClassOf(?SubClass:ClassExpression, ?SuperClass:ClassExpression)
 % A subclass axiom SubClassOf( CE1 CE2 ) states that the class expression CE1 is a subclass of the class expression CE2
-% 
+%
 %   @param SubClass a classExpression/1 representing the more specific class
 %   @param SuperClass a classExpression/1 representing the more general class
 :- dynamic(subClassOf/2).
@@ -299,7 +300,7 @@ valid_axiom(disjointUnion(A,B)) :- subsumed_by([A,B],[classExpression,set(classE
 
 %% propertyAxiom(?Axiom)
 % OWL 2 provides axioms that can be used to characterize and establish relationships between object property expressions. This predicate reifies the actual axiom
-% 
+%
 % @see symmetricProperty/1, inverseFunctionalProperty/1, transitiveProperty/1, asymmetricProperty/1, subPropertyOf/2, functionalProperty/1, irreflexiveProperty/1, disjointProperties/1, propertyDomain/2, reflexiveProperty/1, propertyRange/2, equivalentProperties/1, inverseProperties/2
 propertyAxiom(symmetricProperty(A)) :- symmetricProperty(A).
 propertyAxiom(inverseFunctionalProperty(A)) :- inverseFunctionalProperty(A).
@@ -375,7 +376,7 @@ axiom_arguments(disjointProperties,[set(propertyExpression)]).
 valid_axiom(disjointProperties(A)) :- subsumed_by([A],[set(propertyExpression)]).
 
 %% disjointObjectProperties(?PropertyExpressions:set(ObjectPropertyExpression))
-% A disjoint object properties axiom DisjointProperties( OPE1 ... OPEn ) states that all of the object property expressions OPEi, 1 <= i <= n, are pairwise disjoint; that is, no individual x can be connected to an individual y by both OPEi and OPEj for i != j. 
+% A disjoint object properties axiom DisjointProperties( OPE1 ... OPEn ) states that all of the object property expressions OPEi, 1 <= i <= n, are pairwise disjoint; that is, no individual x can be connected to an individual y by both OPEi and OPEj for i != j.
 disjointObjectProperties(A) :- disjointProperties(A),subsumed_by([A],[set(objectPropertyExpression)]).
 axiom_arguments(disjointObjectProperties,[set(objectPropertyExpression)]).
 valid_axiom(disjointObjectProperties(A)) :- subsumed_by([A],[set(objectPropertyExpression)]).
@@ -635,7 +636,7 @@ valid_axiom(annotation(A,B,C)) :- subsumed_by([A,B,C],[iri,annotationProperty,an
 %% ontologyAnnotation(?Ontology, ?AnnotationProperty, ?AnnotationValue)
 ontologyAnnotation(Ontology,AP,AV) :-
 	annotation(Ontology,AP,AV),
-	ontology(Ontology).	
+	ontology(Ontology).
 axiom_arguments(ontologyAnnotation,[ontology, annotationProperty, annotationValue]).
 valid_axiom(ontologyAnnotation(A, B, C)) :- subsumed_by([A, B, C],[ontology, annotationProperty, annotationValue]).
 
@@ -707,7 +708,7 @@ valid_axiom(ontologyVersionInfo(A, B)) :- subsumed_by([A, B],[ontology, iri]).
 % (The property hierarchy relation ->* is the reflexive-transitive closure of ->)
 %simpleObjectPropertyExpresion(OPE) :-
 %        objectPropertyExpression(OPE),
-        
+
 
 /****************************************
   EXPRESSIONS
@@ -730,12 +731,12 @@ subsumed_by(I,T):-
 
 %% iri(?IRI)
 % true if IRI is an IRI. TODO: currently underconstrained, any atomic term can be an IRI
-iri(IRI) :- atomic(IRI).	% 
+iri(IRI) :- atomic(IRI).	%
 
 %% literal(?Lit)
 % true if Lit is an rdf literal
-%literal(_).			% TODO 
-literal(literal(_)).			% TODO 
+%literal(_).			% TODO
+literal(literal(_)).			% TODO
 
 
 %% objectPropertyExpression(?OPE)
@@ -812,7 +813,7 @@ objectUnionOf(unionOf(CEs)) :-
 	       classExpression(CE)).
 
 %% objectComplementOf(+CE) is semidet
-% 
+%
 objectComplementOf(complementOf(CE)) :-
 	classExpression(CE).
 
@@ -914,7 +915,7 @@ dataOneOf(oneOf(DRs)) :-
 	       dataRange(DR)).
 
 %% datatypeRestriction(+DR) is semidet
-% 
+%
 % TODO: multiple args
 datatypeRestriction(datatypeRestriction(DR,FacetValues)):-
 	datatype(DR),
@@ -1007,13 +1008,13 @@ anyPropertyAssertion(P,E,V) :- annotationAssertion(P,E,V).
 
 
 %% labelAnnotation_value(?X,?Val)
-labelAnnotation_value(X,Val) :- 
+labelAnnotation_value(X,Val) :-
         anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(type(_,Val))),atom(Val).
-labelAnnotation_value(X,Val) :- 
+labelAnnotation_value(X,Val) :-
         anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(lang(_,Val))),atom(Val).
-labelAnnotation_value(X,Val) :- 
+labelAnnotation_value(X,Val) :-
         anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(Val)),atom(Val).
-labelAnnotation_value(X,Val) :- 
+labelAnnotation_value(X,Val) :-
         anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(lang(_,Val))),atom(Val).
 
 /****************************************
@@ -1053,7 +1054,7 @@ axiom_references(Ax,Ref) :-
         axiom_directly_references(Ax,X),
         axiom_references(X,Ref).
 
-        
+
 
 /****************************************
   UTILITY
@@ -1136,7 +1137,7 @@ subClassOf(animal,organism).
 equivalentClasses([carnivore,intersectionOf([animal,someValuesFrom(eats,animal)])]).
 disjointClasses([herbivore,carnivore]).
 ==
-  
+
 ---+ Details
 
 This module is a prolog model of the OWL2 language. It consists of predicates for both OWL2 axioms and expressions.
@@ -1178,7 +1179,7 @@ OWL Axioms can take either entities or expressions as arguments.
  e.g. =|intersectionOf(a,someValuesFrom(inverseOf(p),b))|=
 
  (Class expressions are also known as Descriptions)
- 
+
  Optional run-time checking of predicates using valid_axiom/1.
 
  For example =|subClassOf(intersectionOf(c1,c2),unionOf(c3,c4))|= is
@@ -1202,13 +1203,13 @@ axiomAnnotation(SubClassOf(cat,mammal),author,linnaeus).
 
   OWL2 allows classes to act as individuals, so this is legal (TODO: check!):
 
-  
+
 ==
 class(polarBear).
 class(endangered).
 classAssertion(endangered,polarBear).
 ==
-  
+
   ---++ Ontologies
 
   We use a similar scheme for annotations:
@@ -1253,13 +1254,13 @@ We provide semi-deterministic predicates of the form
 
 ---++ Ontologies
 
-  continue using ontologyAxiom/2? Alternatively use builtin prolog module mechanism..? 
-   
+  continue using ontologyAxiom/2? Alternatively use builtin prolog module mechanism..?
+
 ---+ See Also
 
 * owl2_from_rdf.pl
 * swrl.pl
-  
+
 ---+ Additional Information
 
 @see     README

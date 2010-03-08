@@ -144,7 +144,8 @@ owl_parse(URL, RDF_Load_Mode, OWL_Parse_Mode,ImportFlag) :-
 	(   OWL_Parse_Mode=complete
         ->  owl_clear_as,
             retractall(owl(_,_,_,used(_))),
-            retractall(owl(_,_,_,used))
+            retractall(owl(_,_,_,used)),
+	    retractall(owl(_,_,_,used1))
         ;   true),
         !,
 	owl2_model_init,
