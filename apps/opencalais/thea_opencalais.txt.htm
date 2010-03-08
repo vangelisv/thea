@@ -1,0 +1,153 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+
+<title>Thea Open Calais wrapper module</title>
+
+<link rel="stylesheet" type="text/css" href="thea_opencalais.txt_files/pldoc.css">
+<script type="text/javascript" src="thea_opencalais.txt_files/pldoc.js">
+</script>
+
+<script charset="utf-8" id="injection_graph_func" src="thea_opencalais.txt_files/injection_graph_func.js"></script><script id="_nameHighlight_injection"></script><link class="skype_name_highlight_style" href="thea_opencalais.txt_files/injection_nh_graph.css" type="text/css" rel="stylesheet" charset="utf-8" id="_injection_graph_nh_css"><link href="thea_opencalais.txt_files/skypeplugin_dropdownmenu.css" type="text/css" rel="stylesheet" charset="utf-8" id="_skypeplugin_dropdownmenu_css"></head><body>
+
+
+<h1 class="wiki">Thea Open Calais wrapper module</h1>
+
+<h2 class="wiki">1 Introduction</h2>
+
+<p>
+<a href="http://www.opencalais.com/">Open Calais</a> is a Web service provided by Thomson Reuters. Open Calais analyses content
+using NLP and semantic tecnniques and returns an RDF based response containing entities and relationships identified in the
+source and associated metadata.
+
+</p><p>
+thea_opencalais is a Prolog wrapper for accessing Open Calais and process the results. It is an application of <a href="http://www.semanticweb.gr/thea">Thea</a>
+prolog library for OWL2 Ontologies. thea_opencalais
+uses the OpenCalais ontology and parses the service response first into
+Ontology axioms and finally into prolog terms and predicates,
+accessible
+from within a prolog program.
+</p><h2 class="wiki">2 Example</h2>
+
+<ol>
+<li>Get your Open Calais license key and assert it as a prolog fact:
+
+<pre class="code">     :- assert(thea_opencalais:open_calais(license('Your open calais license key'))).
+</pre>
+
+</li>
+<li>Load the Open Calais Ontology into Prolog using Thea.
+
+<pre class="code">    :- owl_parse_rdf('owl.opencalais-4.3.xml.owl',[imports(false),clear(complete)]).
+</pre>
+
+<p>
+The Ontology in this example has been already downloaded in the working directory. Originaly it can be found <a href="http://www.opencalais.com/files/owl.opencalais-4.3a.xml">here</a>
+</p></li><li>Post the content of a Wikipeadia page about papal visits to the Open Calais REST service
+
+<pre class="code">    :- oc_rest(http('http://en.wikipedia.org/wiki/List_of_journeys_of_Pope_Benedict_XVI'),'',_X).
+</pre>
+
+</li>
+<li>Use Prolog provided prolog predicates to examine Markup Elements (Entities and Relationships) in the result
+
+<pre class="code"> :-oc_entity(A,B,C,E,D).
+       A = 'http://d.opencalais.com/genericHasher-1/f545c2a6-ccd3-3095-adb0-c1c8dda96624',
+       B = 'http://s.opencalais.com/1/type/em/e/Anniversary',
+       C = ['http://s.opencalais.com/1/pred/name'=literal('the 500th anniversary of Catholic presence')],
+       E = [instance_info('http://d.opencalais.com/dochash-1/2d1827f8-c251-36b1-bfe6-043a4a6caba1/Instance/268', [.....
+       D = []
+</pre>
+
+</li>
+<li>You can also write custom predicates to query the resulted database of Markup Elements e.g.
+
+<pre class="code">    quotation(Person,Quotation) :-
+            oc_relation(_I,'http://s.opencalais.com/1/type/em/r/Quotation',PVList),
+            pv_attr('http://s.opencalais.com/1/pred/person',PVList,Person),
+            pv_attr('http://s.opencalais.com/1/pred/quote',PVList,Quotation).
+</pre>
+
+</li>
+</ol>
+
+<h2 class="wiki">3 Predicate reference</h2>
+
+<dl class="predicates">
+<dt class="pubdef"><span style="float: right;"></span><a name="oc_rest/3"><b class="pred">oc_rest</b><var class="arglist">(+Request, +Params:string, -Result)</var></a> is <b class="det">det</b></dt><dd class="defbody">Calls Open Calais Rest service and posts the <var>Request</var>.
+Requires a valid Open_Calais license key in a dynamic
+open_calais(license(License)) to be asserted.
+
+<dl class="tags">
+<dt class="tag">Parameters:</dt><dd>
+
+<table class="paramlist">
+<tbody><tr><td><var>Request</var></td><td class="argdescr">- can be any of the following:
+
+<dl class="termlist">
+<dt class="term"><b class="pred">http</b><var class="arglist">(URL)</var></dt><dd>
+</dd><dt class="term"><b class="pred">file</b><var class="arglist">(Filename)</var></dt><dd>
+</dd><dt class="term"><b class="pred">text</b><var class="arglist">(Atom)</var></dt><dd>
+</dd></dl>
+
+</td></tr>
+<tr><td><var>Params</var></td><td class="argdescr">- is a string encoded XML see description in
+<a href="http://www.opencalais.com/APICalls">http://www.opencalais.com/APICalls</a></td></tr>
+<tr><td><var>Result</var></td><td class="argdescr">- is the RDF response of Open_Calais see
+<a href="http://www.opencalais.com/documentation/calais-web-service-api/interpreting-api-response/rdf">http://www.opencalais.com/documentation/calais-web-service-api/interpreting-api-response/rdf</a></td></tr>
+</tbody></table>
+
+</dd></dl>
+
+</dd><dt class="pubdef"><span style="float: right;"></span><a name="oc_entity/5"><b class="pred">oc_entity</b><var class="arglist">(?I, ?C, -PV:list, +Instance:list, +Resolutions:list)</var></a> is <b class="det">nondet</b></dt><dd class="defbody">Returns the markup element entities in the response to an Open Calais
+request
+
+<dl class="tags">
+<dt class="tag">Parameters:</dt><dd>
+
+<table class="paramlist">
+<tbody><tr><td><var>I</var></td><td class="argdescr">- is the returned markup entity ID (IRI)</td></tr>
+<tr><td><var>C</var></td><td class="argdescr">- is the entitie's markup type</td></tr>
+<tr><td><var>PV</var></td><td class="argdescr">- list of property value pairs for the entity</td></tr>
+<tr><td><var>Instance</var></td><td class="argdescr">- List of instance_info terms for the specific entity</td></tr>
+<tr><td><var>Resolutions</var></td><td class="argdescr">- List of resolution terms for the specific
+entity</td></tr>
+</tbody></table>
+
+</dd></dl>
+
+</dd><dt class="pubdef"><span style="float: right;"></span><a name="oc_relation/3"><b class="pred">oc_relation</b><var class="arglist">(?I, ?C, -PV:list)</var></a> is <b class="det">nondet</b></dt><dd class="defbody">Returns the markup element relations in the response to an Open Calais
+request
+
+<dl class="tags">
+<dt class="tag">Parameters:</dt><dd>
+
+<table class="paramlist">
+<tbody><tr><td><var>I</var></td><td class="argdescr">- is the returned markup relation ID (IRI)</td></tr>
+<tr><td><var>C</var></td><td class="argdescr">- is the relation's markup type</td></tr>
+<tr><td><var>PV</var></td><td class="argdescr">- list of property value pairs for the relation</td></tr>
+</tbody></table>
+
+</dd></dl>
+
+</dd><dt class="pubdef"><span style="float: right;"></span><a name="oc_resolution/3"><b class="pred">oc_resolution</b><var class="arglist">(?R, ?C, -PV:list)</var></a> is <b class="det">nondet</b></dt><dd class="defbody">Returns the resolutions in the response to an Open Calais request
+
+<dl class="tags">
+<dt class="tag">Parameters:</dt><dd>
+
+<table class="paramlist">
+<tbody><tr><td><var>R</var></td><td class="argdescr">- is the returned resolution ID (IRI)</td></tr>
+<tr><td><var>C</var></td><td class="argdescr">- is the resolution's type</td></tr>
+<tr><td><var>PV</var></td><td class="argdescr">- list of property value pairs for the resolution</td></tr>
+</tbody></table>
+
+</dd></dl>
+
+</dd></dl>
+
+<h2 class="wiki">4 Download and use</h2>
+
+<p>
+Thea and thea_opencalais are open source licensed under GPL and are hosted on <a href="http://github.com/vangelisv/thea">github</a>. thea_opencalais module and examples can be found in apps/opencalais folder
+</p></body></html>

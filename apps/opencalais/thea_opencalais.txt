@@ -14,7 +14,7 @@ from within a prolog program.
 
   0. Get your Open Calais license key and assert it as a prolog fact:
      ==
-	  :- assert(open_calais(license('Your open calais license key'))).
+	  :- assert(thea_opencalais:open_calais(license('Your open calais license key'))).
      ==
 	 
   1. Load the Open Calais Ontology into Prolog using Thea.
@@ -56,6 +56,6 @@ from within a prolog program.
  
  * [[oc_resolution/3]]
  
----++ 4 Download
+---++ 4 Download and use
  
-Thea and thea_opencalais are open source licensed under GPL. You can download thea_opencalais from ...
+Thea and thea_opencalais are open source licensed under GPL and are hosted on [[github][http://github.com/vangelisv/thea]]. thea_opencalais module and examples can be found in apps/opencalais folder

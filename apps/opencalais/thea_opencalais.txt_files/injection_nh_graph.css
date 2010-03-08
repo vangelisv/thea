@@ -1,0 +1,132 @@
+@media screen
+{
+.skype_name_highlight {
+    /*azimuth:  !important;*/
+    accelerator: false !important;
+    background-attachment: scroll !important;
+    background-color: transparent !important;
+    background-position: 0% 0% !important;
+    background-position-x: 0% !important;
+    background-position-y: 0% !important;
+    background-repeat: no-repeat !important;
+    behavior: !important;
+    block-direction: ltr !important;
+    border-color: #000000 !important;
+    border-style: none !important;
+    border-width: 0 !important;
+    border-left: 0 none #000000 !important;
+    border-top: 0 none #000000 !important;
+    border-right: 0 none #000000 !important;
+    border-bottom: 0 none #000000 !important;
+    border-left-color: #000000 !important;
+    border-left-style: none !important;
+    border-left-width: 0 !important;
+    border-top-color: #000000 !important;
+    border-top-style: none !important;
+    border-top-width: 0 !important;
+    border-right-color: #000000 !important;
+    border-right-style: none !important;
+    border-right-width: 0 !important;
+    border-bottom-color: #000000 !important;
+    border-bottom-style: none !important;
+    border-bottom-width: 0 !important;
+    border-collapse: separate !important;
+    bottom: auto !important;
+    /*box-sizing:  !important;*/
+    clear: none !important;
+    clip: auto !important;
+    clip-left: auto !important;
+    clip-top: auto !important;
+    clip-right: auto !important;
+    clip-bottom: auto !important;
+    color: #000000 !important;
+    cursor: hand !important;
+    cursor: pointer !important;
+    direction: ltr !important;
+    display: inline !important;
+    filter:  !important;
+    float: none !important;
+    font-family: Tahoma,Verdana,Arial,Helvetica,sans-serif !important;
+    font-size: 12px !important;
+    font-style: normal !important;
+    font-weight: bold !important;
+    has-layout: 0 !important;
+    height: 12px !important;
+    ime-mode:  !important;
+    layout-flow: horizontal !important;
+    layout-grid-char: none !important;
+    layout-grid-loine: none !important;
+    layout-grid-mode: both !important;
+    layout-grid-type: loose !important;
+    left: auto !important;
+    letter-spacing: 0 !important;
+    line-break: normal !important;
+    line-height: normal !important;
+    list-style-image: none !important;
+    list-style-position: outside !important;
+    list-style-type: disc !important;
+    margin: 0px !important;
+    margin-left: 2px !important;
+    margin-top: 0px !important;
+    margin-right: 0px !important;
+    margin-bottom: 0px !important;
+    overflow: visible !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    padding: 0 !important;
+    padding-left: 0 !important;
+    padding-top: 0 !important;
+    padding-right: 0 !important;
+    padding-bottom: 0 !important;
+    page-break-after: auto !important;
+    page-break-before: auto !important;
+    page-break-inside: auto !important;
+    position: static !important;
+    right: auto !important;
+    ruby-align: auto !important;
+    ruby-overhang: auto !important;
+    ruby-position: above !important;
+    scrollbar-3dlight-color: #f1efe2 !important;
+    scrollbar-arrow-color: #000000 !important;
+    scrollbar-base-color: #000000 !important;
+    scrollbar-darkshadow-color: #716f64 !important;
+    scrollbar-face-color: #ece9d8 !important;
+    scrollbar-highlight-color: #ffffff !important;
+    scrollbar-shadow-color: #aca899 !important;
+    scrollbar-track-color:  !important;
+    table-layout: auto !important;
+    text-align: left !important;
+    text-align-last: auto !important;
+    text-autospace: none !important;
+    text-decoration: none !important;
+    text-indent: 0 !important;
+    text-justify: auto !important;
+    text-justify-trim:  !important;
+    text-kashida: 0 !important;
+    text-kashida-space: 0 !important;
+    text-overflow: clip !important;
+    text-transform: none !important;
+    text-underline-position: auto !important; 
+    top: auto !important;
+    unicode-bidi: normal !important;
+    vertical-align: middle !important;
+    /*visibility: visible !important;*/
+    voice-family: inherit !important;
+    /*volume: inherit !important;*/
+    white-space: nowrap !important;
+    width: 12px !important;
+    /*widows: inherit !important;*/
+    word-break: nowrap !important;
+    word-spacing: normal !important;
+    word-wrap: nowrap !important;
+    writing-mode: lr-tb !important;
+    z-index: 0 !important;
+    zoom: normal !important;
+}	
+}
+@media print
+{
+.skype_name_highlight {    
+    display: none !important;
+}	
+}

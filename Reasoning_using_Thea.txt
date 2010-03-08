@@ -1,4 +1,4 @@
- %TOC%
+%TOC%
 
 ---+ Using Thea for Reasoning
 
