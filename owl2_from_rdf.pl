@@ -31,6 +31,8 @@
 %  Changes for GIT
 % **********************************************************************
 
+
+
 :- module(owl2_from_rdf,
 	  [
             owl_parse_rdf/1,
@@ -81,7 +83,8 @@ The file owl2_from_rdf.plt has some examples
 :- dynamic(owl_parser_log/2).
 :- dynamic(blanknode_gen/2).
 :- dynamic(outstream/1).
-:- dynamic(annotation/3). % implements the ANN(X) function.
+%  VV 10/3/2010 multifile from owl2_model
+% :- dynamic(annotation/3). % implements the ANN(X) function.
 :- dynamic(annotation_r_node/4).
 :- dynamic(axiom_r_node/4).
 :- dynamic(owl_repository/2). % implements a simple OWL repository: if URL not found, Ontology is read from a repository (local) RURL
@@ -95,11 +98,16 @@ The file owl2_from_rdf.plt has some examples
 % hookable
 :- multifile owl_parse_axiom_hook/3.
 
+:- include('owl2_from_rdf_utils.pl').
+
 % -----------------------------------------------------------------------
 %                                Top Level  Predicates
 % -----------------------------------------------------------------------
 
 :- multifile owl2_io:load_axioms_hook/3.
+
+
+
 owl2_io:load_axioms_hook(File,owl,Opts) :-
         owl_parse_rdf(File,Opts).
 
@@ -190,6 +198,8 @@ owl_canonical_parse_3([IRI|Rest]) :-
 	retractall(owl(_,_,_,not_used)),
 	% Copy the owl facts of the IRI document to the 'not_used'
 	forall(owl(S,P,O,IRI),assert(owl(S,P,O,not_used))),
+
+
 	collect_r_nodes,
 
 	% First parse the Ontology axiom
@@ -238,6 +248,11 @@ owl_canonical_parse_3([IRI|Rest]) :-
 			      'owl:AllDifferent','owl:NegativePropertyAssertion']),
 		    test_use_owl(X,'rdf:type',Y)), RIND),
 	nb_setval(rind,RIND),
+
+	% VV 10/3/2010 get the annotation properties before collecting the annotations.
+	forall( test_use_owl(D,'rdf:type','owl:AnnotationProperty'),
+		assert_axiom(annotationProperty(D))),
+
 	findall(_,ann(_,_),_), % find all annotations, assert annotation(X,AP,AV) axioms.
         debug(owl_parser,'Commencing parse of annotated axioms',[]),
 
@@ -267,7 +282,7 @@ owl_parse_annotated_axioms(Pred/Arity) :-
 %                   assert(Mod:Head))).
 	forall(owl_parse_axiom(Head,true,Annotations),
 	       (   assert_axiom(Head),
-                   debug(owl_parser_detail,' parsed: ~w : anns: ~w',[Head,Annotations]),
+                   debug(owl_parser_detail_anns,' parsed: ~w : anns: ~w',[Head,Annotations]),
 		   forall(member(X,Annotations),
 			  forall(annotation(X,AP,AV),
 				 assert_axiom(annotation(Head,AP,AV)))
@@ -283,58 +298,6 @@ owl_parse_nonannotated_axioms(Pred/Arity) :-
 	       assert_axiom(Head)
 	      ).
 
-
-% -----------------------------------------------------------------------
-%                                UTILITY Predicates
-% -----------------------------------------------------------------------
-
-%%       owl_parser_log(+Log)
-%
-%       Log is a list; together with a timestamp it is asserted as
-%       an owl_parser_log/2 term.
-
-owl_parser_log(Log) :-
-	debug(owl_parser,'~w',[Log]),
-	get_time(T),convert_time(T,TS),
-	assertz(owl_parser_log(TS, Log)).
-
-
-%%       owl_clear_as
-%
-%       Clears the prolog terms that store the Abstract Syntax
-%       implementation of the OWL ontology.
-
-owl_clear_as :-
-        debug(owl_parser,'Clearing abstract syntax',[]),
-        forall((axiompred(PredSpec),predspec_head(PredSpec,Head)),
-               retractall(Head)).
-
-predspec_head(Pred/A,Head) :- functor(Head,Pred,A).
-
-u_assert(Term) :-
-	call(Term), !; assert(Term).
-
-
-convert(T,V,typed_value(T,V)).
-
-
-%%	rdf_2_owl(+Base, +Ont) is det
-%
-%       Converts RDF triples to OWL/4 triples so that
-%	their use can tracked by the OWL parser.
-
-
-rdf_2_owl(Base,Ont) :-
-	owl_parser_log(['Removing existing owl triples']),
-	retractall(owl(_,_,_,Ont)),
-	owl_parser_log('Copying RDF triples to OWL triples'),
-	rdf(X,Y,Z,Base:_),
-%	owl_fix_no(X,X1), owl_fix_no(Y,Y1), owl_fix_no(Z,Z1),
-	assert(owl(X,Y,Z,Ont)), fail.
-
-rdf_2_owl(_,Ont) :-
-	owl_count(Ont,Z),
-	owl_parser_log(['Number of owl triples copied: ',Z]).
 
 
 %%       rdf_load_stream(+URL, -Ontology, -BaseURI, -Imports:list) is det
@@ -370,229 +333,6 @@ rdf_load_stream(URL,Ontology,BaseURI,Imports) :-
         ->  findall(I,rdf(Ontology,'http://www.w3.org/2002/07/owl#imports',I,BaseURI:_),Imports)
 	;   Imports = []
 	).
-
-
-%%	owl_count(?U).
-%       Returns/Checks the number of unused OWL triples.
-
-owl_count(O,U) :-
-	findall(1,owl(_,_,_,O),X), length(X,U).
-
-%% expand_and_assert(S,P,O) is det
-%
-% adds a owl(S,P,O,not_used) after expanding namespaces.
-% this is required for the triple replacement rules,
-% which use shortened rdfs/owl namespaces.
-% (or we could just use the expanded forms here which
-%  may be faster..)
-expand_and_assert(X1,Y1,Z1) :-
-	expand_ns(X1,X),
-	expand_ns(Y1,Y),
-	expand_ns(Z1,Z),!,
-	retractall(owl(X,Y,Z, used1)),
-	assert(owl(X,Y,Z, not_used)).
-
-
-%%       test_use_owl(+Triples:list) is nondet
-%
-%       As use_owl/1, but does not consume the triple.  If owl(S,P,O)
-%       in Triples has a non-ground variable then this will succeed
-%       non-deterministically.  If all variables are ground, then this
-%       will succeed semi-deterministically.
-test_use_owl([]).
-test_use_owl([owl(S,P,O)|Rest]) :-
-	test_use_owl(S,P,O),
-	test_use_owl(Rest).
-
-
-%%       test_use_owl(?S,?P,?O)
-%	As use_owl/3, but does not consume the triple. Expands the S,P,O.
-%
-%       If any of S, P or O is non-ground then this will succeed
-%       non-deterministically.  If all variables are ground, then this
-%       will succeed semi-deterministically.
-test_use_owl(X1,Y1,Z1) :-
-	expand_ns(X1,X),
-	expand_ns(Y1,Y),
-	expand_ns(Z1,Z),!,
-	owl(X,Y,Z, not_used).
-
-test_use_owl(X1,Y1,Z1,named) :-
-	expand_ns(X1,X),
-	expand_ns(Y1,Y),
-	expand_ns(Z1,Z),
-	owl(X,Y,Z, not_used),
-	not(sub_string(X,0,2,_,'__')).
-
-
-%%       use_owl(+Triples:list)
-%	Marks a list of OWL triples as used, but only if all match. Expands the S,P,O.
-
-use_owl(Triples) :-
-        test_use_owl(Triples),
-        use_owl_2(Triples).
-
-% consume all triples; we have already tested the list and know that all match
-use_owl_2([]).
-use_owl_2([owl(S,P,O)|Triples]) :-
-        use_owl(S,P,O),
-        use_owl_2(Triples).
-
-%%       use_owl(?S,?P,?O)
-%	Marks an OWL triple as used. Expands the S,P,O.
-
-use_owl(X1,Y1,Z1) :-
-	expand_ns(X1,X),
-	expand_ns(Y1,Y),
-	expand_ns(Z1,Z),
-	owl(X,Y,Z, not_used),
-	debug(owl_parser_detail,'using ~w ~w ~w',[X,Y,Z]),
-	retract(owl(X,Y,Z, not_used)),
-	assert(owl(X,Y,Z,used1)).
-
-
-%%	use_owl(?S,?P,?O,+Named)
-%
-%       Named = named: Same as use_owl/3, but marks only if S 	is Named URI (i.e. non blank node).
-
-use_owl(X1,Y1,Z1,named) :-
-	expand_ns(X1,X),
-	expand_ns(Y1,Y),
-	expand_ns(Z1,Z),
-	owl(X,Y,Z, not_used),
-	not(sub_string(X,0,2,_,'__')),
-	retract(owl(X,Y,Z, not_used)),
-	assert(owl(X,Y,Z,used2)).
-
-%%       use_owl(?S,?P,?O,Term)
-%
-%	Marks an OWL triple as used. Expands the S,P,O.
-
-use_owl(X1,Y1,Z1,Term) :-
-	expand_ns(X1,X),
-	expand_ns(Y1,Y),
-	expand_ns(Z1,Z),
-	owl(X,Y,Z, not_used),
-	debug(owl_parser_detail,'using ~w ~w ~w',[X,Y,Z]),
-	retract(owl(X,Y,Z, not_used)),
-	assert(owl(X,Y,Z,used(Term))).
-
-
-%%	use_owl(?S,?P,?O,+Named,Term)
-%
-%       Named = named: Same as use_owl/3, but marks only if S 	is Named URI (i.e. non blank node).
-
-use_owl(X1,Y1,Z1,named,Term) :-
-	expand_ns(X1,X),
-	expand_ns(Y1,Y),
-	expand_ns(Z1,Z),
-	owl(X,Y,Z, not_used),
-	not(sub_string(X,0,2,_,'__')),
-	retract(owl(X,Y,Z, not_used)),
-	assert(owl(X,Y,Z,used(Term))).
-
-
-%%       expand_ns(+NS_URL, ?Full_URL)
-%
-%       Expands a 'namespaced' URI of the form ns:fragment to a full URI
-%       substituting the full expansion for ns from the ns/2 facts
-expand_ns(NS_URL, Full_URL) :-
-	nonvar(NS_URL),
-	not(NS_URL = literal(_)),
-	uri_split(NS_URL,Short_NS,Term, ':'),
-	rdf_db:ns(Short_NS,Long_NS),!,
-	concat_atom([Long_NS,Term],Full_URL).
-
-expand_ns(URL, URL).
-
-
-%%       collapse_ns(+FullURL, ?NSURL, +Char, +Options)
-%
-%	Collapses a full URI of the form Path#fragment to a Namespaced
-%	URI NS:fragment substituting the full expansion for ns from
-%	the ns/2 facts
-%	Char is either ':' for normal ns notation or '_' for builing
-%	prolog terms.
-%	Options supported: no_base(ShortNs): Use only term!
-
-
-collapse_ns(FullURL, NSURL,Char,Options) :-
-	nonvar(FullURL),
-	not(FullURL = literal(_)),
-	uri_split(FullURL,LongNS, Term, '#'),
-	concat(LongNS,'#',LongNS1),
-	rdf_db:ns(ShortNS,LongNS1),
-	(   member(no_base(ShortNS),Options), ! , NSURL = Term
-	;
-	concat_atom([ShortNS,Char,Term],NSURL)
-	),!.
-% CJM
-collapse_ns(FullURL, NSURL,_Char,Options) :-
-	nonvar(FullURL),
-	not(FullURL = literal(_)),
-	uri_split(FullURL,LongNS, Term, '#'),
-	member(no_base(LongNS),Options),
-        !,
-        NSURL = Term.
-
-
-collapse_ns(URL, URL,_,_).
-
-
-
-%%       uri_split(+URI,-Namespace,-Term,+Split_Char) is det
-%
-%       Splits a URI into the Namespace and the Term parts
-%       separated by the Split_Char character.
-%       It supposes URI = concat(Namespace,Split_Char,Term)
-
-uri_split(URI,Namespace,Term,Split_Char) :-
-	sub_atom(URI,Start,_,After,Split_Char),
-	sub_atom(URI,0,Start,_,Namespace),
-	Start1 is Start + 1,
-	sub_atom(URI,Start1,After,_,Term).
-
-
-%%       owl_collect_linked_nodes(+Node,+Predicate, +InList,-OutList)
-
-%	Appends Node to the InList, and recursively, all other
-%	Nodes that are linked with the Predicate to the Node. The
-%	result is returned to OutList.
-
-owl_collect_linked_nodes(Node,Predicate,InList,OutList) :-
-	use_owl(Node,Predicate,A),!,
-	owl_collect_linked_nodes(Node,Predicate,InList,List1),
-	owl_collect_linked_nodes(A,Predicate,List1,OutList).
-
-owl_collect_linked_nodes(Node,Predicate,InList,OutList) :-
-	use_owl(A,Predicate,Node),!,
-	owl_collect_linked_nodes(Node,Predicate,InList,List1),
-	owl_collect_linked_nodes(A,Predicate,List1,OutList).
-
-owl_collect_linked_nodes(Node,_,List, [Node|List]) :-
-	not(memberchk(Node, List)),!.
-
-owl_collect_linked_nodes(_,_,List, List) :- !.
-
-
-% ----------------------------------------------------------------
-%                OWL Parser implementation predicates
-% ----------------------------------------------------------------
-
-
-%%       owl_get_bnode(+Node,+Description)
-%
-%	if Node is a blank (not named) node, then it is asserted in
-%	the database as a blanknode(Node,Description,used) term.
-%	The purpose is to record when a blank node has been used, so
-%	subsequent uses of it will result in structure sharing.
-
-owl_get_bnode(Node,Description) :-
-	sub_string(Node,0,2,_,'__'),!,
-	not( blanknode(Node,_,_)),
-	assert(blanknode(Node,Description, used)).
-
-owl_get_bnode(_,_).
 
 
 
@@ -767,7 +507,8 @@ owl_parse_axiom(dataProperty(D), AnnMode, List) :-
 owl_parse_axiom(annotationProperty(D), AnnMode, List) :-
         test_use_owl(D,'rdf:type','owl:AnnotationProperty'),
         valid_axiom_annotation_mode(AnnMode,D,'rdf:type','rdf:AnnotationProperty',List),
-        use_owl(D,'rdf:type','owl:AnnotationProperty',annotationProperty(D)).
+        use_owl(D,'rdf:type','owl:AnnotationProperty',annotationProperty(D)),
+	not(annotationProperty(D)).
 
 
 % TODO: check this. do we need to assert individual axioms if all we have is an rdf:type?
@@ -808,6 +549,11 @@ ann(X,X1, annotation(X1,Y,Z)) :-
 ann2(X,Y,Z,X1) :-
 	annotation_r_node(W,X,Y,Z),
 	ann(W,annotation(X1,Y,Z),Term),u_assert(Term).
+
+ann2(X,Y,Z,X1) :-
+	axiom_r_node(W,X,Y,Z),
+	ann(W,annotation(X1,Y,Z),Term),u_assert(Term).
+
 
 ann2(_,_,_,_).
 
@@ -1395,6 +1141,7 @@ owl_parse_axiom(annotationAssertion(P,A,B),AnnMode,List) :-
         valid_axiom_annotation_mode(AnnMode,A,P,B,List),
         use_owl(A,P,B).
 
+
 dothislater(classAssertion/2).
 owl_parse_axiom(classAssertion(CX,X),AnnMode,List) :-
 	test_use_owl(X,'rdf:type',C),
@@ -1439,7 +1186,8 @@ parse_annotation_assertions :-
 	forall((annotation(X,AP,AV),findall(annotation(annotation(X,AP,AV),AP1,AV1),
 					    annotation(annotation(X,AP,AV),AP1,AV1),ANN), \+member(X,RIND)),
 	       (   assert_axiom(annotationAssertion(AP,X,AV)),
-		   retract(annotation(X,AP,AV)),
+		  %  VV 10/3/2010 keep annotation/3
+		  % retract(annotation(X,AP,AV)),
 		   forall(member(annotation(_,AP1,AV1),ANN),
 			  assert_axiom(annotation(annotationAssertion(AP,X,AV),AP1,AV1))))
 	      ).
