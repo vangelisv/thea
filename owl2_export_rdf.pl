@@ -306,7 +306,7 @@ owl2_export_axiom(facetRestriction(F,V),main_triple(BNode,F2,V2)) :-
 	(   sub_atom(F,_,_,_,'#')
 	->  F2=F2
 	;   atom_concat('xsd:',F,F2)),
-	as2rdf_bnode(facetRestriction(F,V),BNode),
+	as2rdf_bnode(facetRestriction(F2,V2),BNode),
 	owl_rdf_assert(BNode,F,V).
 
 owl2_export_axiom(complementOf(E),main_triple(BNode,'rdf:type',Type)) :-
