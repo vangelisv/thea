@@ -35,6 +35,11 @@
 :- use_module(owl2_basic_reasoner).
 
 
+:-use_module(library('http/http_open')).
+:-use_module(library('http/http_client')).
+:-use_module(library('http/thread_httpd.pl')).
+
+
 % @Deprecated
 % use owl2_io
 owl_parse_pro(F):-
@@ -172,7 +177,7 @@ replace_ns_prefix(_,_,X,X).
 
 contract_ns(URI,ID) :-
         atom(URI),
-        rdf_global_id(NS:Local,URI),
+        rdf_db:rdf_global_id(NS:Local,URI),
         NS \= rdf,
         NS \= rdfs,
         NS \= owl,
@@ -406,6 +411,186 @@ owl_stats_axiom_element(class(C),element(class,[name=C],[])) :- !.
 owl_stats_axiom_element(T,AT) :-
 	term_to_atom(T,AT).
 
+
+
+% ---------------------------------------------------------------
+%
+%
+
+init_service(Port) :-
+	(   nonvar(Port), !, http_server(graph_http_reply,[port(Port),workers(1)]) ; true).
+
+
+graph_http_reply(Request) :-
+	format('Content-type: text/xml\r\n\r\n'),
+	member(input(StIn),Request),
+	member(peer(_Peer),Request),
+	member(path(Path),Request),
+
+	(   Path = '/crossdomain.xml',!,
+	    xml_write(element('cross-domain-policy',[],[element(allow-access-from,[domain='*'],[])]),[])
+	;
+	     set_stream(StIn,timeout(0)),
+	     load_structure(StIn, RequestXML,[dialect(xml),space(sgml)])
+
+	),
+	open('graph_http.log',append,Log),write(Log,RequestXML),nl(Log),
+	owl_generate_graph(_,true,Result),
+	xml_write([Result],[header(true)]),
+	xml_write(Log,[Result],[header(true)]),nl(Log),
+	close(Log).
+
+
+graph(File,Reify) :-
+	(   ontology(Ontology) -> owl_generate_graph(Ontology,Reify,Result) ;
+	    Result = element(error,[],[no_ontology_found])
+	),
+	open(File,write,S), xml_write(S,[Result],[header(true)]),close(S).
+
+owl_generate_graph(Ontology,ReifyAxioms,Result) :-
+	(   var(Ontology), ontology(Ontology) ->
+	    owl_generate_graph(Ontology,ReifyAxioms,Result,[])
+	 ;
+	    Result = element(error,[],[no_ontology_found])).
+
+owl_generate_graph(Ontology,ReifyAxioms,element(ontology_graph,[name=Ontology],Nodes),AxiomPreds) :-
+	findall(Node,
+		(   axiompred(P/A), (AxiomPreds = [_|_] , member(P/A,AxiomPreds) ; AxiomPreds = []),
+		    functor(T,P,A),
+		    ontologyAxiom(Ontology,T), owl_generate_axiom_graph(T,ReifyAxioms,Node)
+		),
+		Nodes).
+
+owl_generate_axiom_graph(subClassOf(Sub,Super),true,element(node, [type=subClassOf],Children)) :-
+	Children = [element(arc,[type=axiom_argument],[SubNode]),
+		    element(arc,[type=axiom_argument],[SuperNode])],
+	owl2_generate_ce_graph(Sub,element(E,L,C)),
+	SubNode = element(E,L,[element(arc,[type=subClassOf],[SuperNode])|C]),
+	owl2_generate_ce_graph(Super,SuperNode).
+
+owl_generate_axiom_graph(subClassOf(Sub,Super),false,SubNode) :-
+	owl2_generate_ce_graph(Sub,element(E,L,C)),
+	SubNode = element(E,L,[element(arc,[type=subClassOf],[SuperNode])|C]),
+	owl2_generate_ce_graph(Super,SuperNode).
+
+
+% owl_generate_axiom_graph(_,_,element(node,[type=axiom_error],[])).
+
+%
+% Class Expressions (Descriptions)
+%
+
+owl2_generate_ce_graph(intersectionOf([E|Rest]),element(node,[type=intersectionOf],Children)) :-
+	findall(element(arc,type=[member],[Node]),
+		(member(X,[E|Rest]), owl2_generate_ce_graph(X,Node)),
+		Children),!.
+
+owl2_export_axiom(unionOf([E|Rest]),main_triple(BNode,'rdf:type',Type)) :-
+	as2rdf_bnode(unionOf([E|Rest]),BNode),
+	owl2_export_list([E|Rest],LNode),
+	(   classExpression(E) -> Type = 'owl:Class'; Type = 'owl:Datatype'),
+	owl_rdf_assert(BNode,'owl:unionOf', LNode),!.
+
+owl2_export_axiom(oneOf([E|Rest]),main_triple(BNode,'rdf:type',Type)) :-
+	as2rdf_bnode(oneOf([E|Rest]),BNode),
+	owl2_export_list([E|Rest],LNode),
+	(   classExpression(E) -> Type = 'owl:Class'; Type = 'owl:Datatype'),
+	owl_rdf_assert(BNode,'owl:oneOf', LNode),!.
+
+owl2_export_axiom(datatypeRestriction(DT,FVs),main_triple(BNode,'rdf:type','rdfs:Datatype')) :-
+	as2rdf_bnode(datatypeRestriction(DT,FVs),BNode),
+	owl_rdf_assert(BNode,'rdf:type','rdfs:Datatype'),
+	owl2_export_axiom(DT,main_triple(Tpe,_,_)),owl_rdf_assert(BNode,'owl:onDatatype',Tpe),
+	owl2_export_list(FVs,LNode),
+	owl_rdf_assert(BNode,'owl:withRestrictions',LNode).
+
+owl2_export_axiom(facetRestriction(F,V),main_triple(BNode,F2,V2)) :-
+	(   sub_atom(F,_,_,_,'#')
+	->  F2=F2
+	;   atom_concat('xsd:',F,F2)),
+	as2rdf_bnode(facetRestriction(F,V),BNode),
+	owl_rdf_assert(BNode,F,V).
+
+owl2_export_axiom(complementOf(E),main_triple(BNode,'rdf:type',Type)) :-
+	as2rdf_bnode(complementOf(E),BNode),
+	owl2_export_axiom(E,main_triple(Te,_,_)),
+	(   classExpression(E) -> Type = 'owl:complementOf'; Type = 'owl:datatypeComplementOf'),
+	owl_rdf_assert(BNode,'owl:complementOf', Te),!.
+
+
+
+owl2_export_axiom(someValuesFrom(PE,CEorDR),main_triple(BNode,'rdf:type','owl:Restriction')) :-
+	as2rdf_bnode(someValuesFrom(PE,CEorDR),BNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:Restriction'),
+	owl2_export_axiom(PE,main_triple(Tpe,_,_)),owl_rdf_assert(BNode,'owl:onProperty',Tpe),
+	owl2_export_axiom(CEorDR,main_triple(Tce,_,_)),owl_rdf_assert(BNode,'owl:someValuesFrom',Tce),!.
+
+
+owl2_export_axiom(allValuesFrom(PE,CEorDR),main_triple(BNode,'rdf:type','owl:Restriction')) :-
+	as2rdf_bnode(allValuesFrom(PE,CEorDR),BNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:Restriction'),
+	owl2_export_axiom(PE,main_triple(Tpe,_,_)),owl_rdf_assert(BNode,'owl:onProperty',Tpe),
+	owl2_export_axiom(CEorDR,main_triple(Tce,_,_)),owl_rdf_assert(BNode,'owl:allValuesFrom',Tce),!.
+
+owl2_export_axiom(hasValue(PE,Value),main_triple(BNode,'rdf:type','owl:Restriction')) :-
+	as2rdf_bnode(hasValue(PE,Value),BNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:Restriction'),
+	owl2_export_axiom(PE,main_triple(Tpe,_,_)),owl_rdf_assert(BNode,'owl:onProperty',Tpe),
+	owl2_export_axiom(Value,main_triple(TValue,_,_)),owl_rdf_assert(BNode,'owl:hasValue',TValue),!.
+
+owl2_export_axiom(hasSelf(OPE),main_triple(BNode,'rdf:type','owl:Restriction')) :-
+	as2rdf_bnode(hasValue(OPE),BNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:Restriction'),
+	owl2_export_axiom(OPE,main_triple(Tope,_,_)),owl_rdf_assert(BNode,'owl:onProperty',Tope),
+	owl_rdf_assert(BNode,'owl:hasSelf',	literal(type('http://www.w3.org/2001/XMLSchema#boolean','true'))),!.
+
+
+owl2_export_axiom(minCardinality(N,OPE),main_triple(BNode,'rdf:type','owl:Restriction')) :-
+	as2rdf_bnode(minCardinality(N,OPE),BNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:Restriction'),
+	owl_rdf_assert(BNode,'owl:minCardinality',literal(type('http://www.w3.org/2001/XMLSchema#nonNegativeInteger',N))),
+	owl2_export_axiom(OPE,main_triple(Tope,_,_)),owl_rdf_assert(BNode,'owl:onProperty',Tope),!.
+
+owl2_export_axiom(minCardinality(N,OPE,CEorDR),main_triple(BNode,'rdf:type','owl:Restriction')) :-
+	as2rdf_bnode(minCardinality(N,OPE,CEorDR),BNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:Restriction'),
+	owl_rdf_assert(BNode,'owl:minQualifiedCardinality',literal(type('http://www.w3.org/2001/XMLSchema#nonNegativeInteger',N))),
+	owl2_export_axiom(OPE,main_triple(Tope,_,_)),owl_rdf_assert(BNode,'owl:onProperty',Tope),
+	owl2_export_axiom(CEorDR,main_triple(Tce,_,_)),
+	(   classExpression(CEorDR) -> owl_rdf_assert(BNode,'owl:onClass',Tce); owl_rdf_assert(BNode,'owl:onDataRange',Tce)),!.
+
+
+owl2_export_axiom(maxCardinality(N,OPE),main_triple(BNode,'rdf:type','owl:Restriction')) :-
+	as2rdf_bnode(maxCardinality(N,OPE),BNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:Restriction'),
+	owl_rdf_assert(BNode,'owl:maxCardinality',literal(type('http://www.w3.org/2001/XMLSchema#nonNegativeInteger',N))),
+	owl2_export_axiom(OPE,main_triple(Tope,_,_)),owl_rdf_assert(BNode,'owl:onProperty',Tope),!.
+
+owl2_export_axiom(maxCardinality(N,OPE,CEorDR),main_triple(BNode,'rdf:type','owl:Restriction')) :-
+	as2rdf_bnode(maxCardinality(N,OPE,CEorDR),BNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:Restriction'),
+	owl_rdf_assert(BNode,'owl:maxQualifiedCardinality',literal(type('http://www.w3.org/2001/XMLSchema#nonNegativeInteger',N))),
+	owl2_export_axiom(OPE,main_triple(Tope,_,_)),owl_rdf_assert(BNode,'owl:onProperty',Tope),
+	owl2_export_axiom(CEorDR,main_triple(Tce,_,_)),
+	(   classExpression(CEorDR) -> owl_rdf_assert(BNode,'owl:onClass',Tce); owl_rdf_assert(BNode,'owl:onDataRange',Tce)),!.
+
+
+owl2_export_axiom(exactCardinality(N,OPE),main_triple(BNode,'rdf:type','owl:Restriction')) :-
+	as2rdf_bnode(exactCardinality(N,OPE),BNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:Restriction'),
+	owl_rdf_assert(BNode,'owl:cardinality',literal(type('http://www.w3.org/2001/XMLSchema#nonNegativeInteger',N))),
+	owl2_export_axiom(OPE,main_triple(Tope,_,_)),owl_rdf_assert(BNode,'owl:onProperty',Tope),!.
+
+owl2_export_axiom(exactCardinality(N,OPE,CEorDR),main_triple(BNode,'rdf:type','owl:Restriction')) :-
+	as2rdf_bnode(exactCardinality(N,OPE,CEorDR),BNode),
+	owl_rdf_assert(BNode,'rdf:type','owl:Restriction'),
+	owl_rdf_assert(BNode,'owl:qualifiedCardinality',literal(type('http://www.w3.org/2001/XMLSchema#nonNegativeInteger',N))),
+	owl2_export_axiom(OPE,main_triple(Tope,_,_)),owl_rdf_assert(BNode,'owl:onProperty',Tope),
+	owl2_export_axiom(CEorDR,main_triple(Tce,_,_)),
+	(   classExpression(CEorDR) -> owl_rdf_assert(BNode,'owl:onClass',Tce); owl_rdf_assert(BNode,'owl:onDataRange',Tce)),!.
+
+
+owl2_generate_ce_graph(IRI,element(node,[type=class,id=NSLocal],[])) :- atom(IRI),contract_ns(IRI,NSLocal),!. % better iri(IRI).
 
 
 

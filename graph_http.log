@@ -1,0 +1,2685 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<error>no_ontology_found</error>[element(graph, [], [])]
+[element(graph, [], [])]
+[element(graph, [], [])]
+<?xml version="1.0" encoding="UTF-8"?>
+
+<error>no_ontology_found</error>
+[element(graph, [], [])]
+<?xml version="1.0" encoding="UTF-8"?>
+
+<error>no_ontology_found</error>
+[element(graph, [], [])]
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ontology_graph name="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine">
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PotableLiquid"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PotableLiquid"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineGrape">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Grape"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Grape"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineColor">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineSugar">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineFlavor">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineBody">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#SweetRiesling">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Sauternes">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Sauternes">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Bordeaux"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Bordeaux"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Port">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#EarlyHarvest">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Chianti">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#ItalianWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#ItalianWine"/>
+    </arc>
+  </node>
+</ontology_graph>
+[element(graph, [], [])]
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ontology_graph name="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine">
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PotableLiquid"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PotableLiquid"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineGrape">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Grape"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Grape"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineColor">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineSugar">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineFlavor">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineBody">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#SweetRiesling">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Sauternes">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Sauternes">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Bordeaux"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Bordeaux"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Port">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#EarlyHarvest">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Chianti">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#ItalianWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#ItalianWine"/>
+    </arc>
+  </node>
+</ontology_graph>
+[element(graph, [], [])]
+[element(graph, [], [])]
+[element(graph, [], [])]
+[element(graph, [], [])]
+[element(graph, [], [])]
+<?xml version="1.0" encoding="UTF-8"?>
+
+<error>no_ontology_found</error>
+[element(graph, [], [])]
+<?xml version="1.0" encoding="UTF-8"?>
+
+<error>no_ontology_found</error>
+[element(graph, [], [])]
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ontology_graph name="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine">
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PotableLiquid"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PotableLiquid"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineGrape">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Grape"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Grape"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineColor">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineSugar">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineFlavor">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineBody">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#SweetRiesling">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Sauternes">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Sauternes">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Bordeaux"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Bordeaux"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Port">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#EarlyHarvest">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Chianti">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#ItalianWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#ItalianWine"/>
+    </arc>
+  </node>
+</ontology_graph>
+[element(graph, [], [])]
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ontology_graph name="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine">
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PotableLiquid"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PotableLiquid"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineGrape">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Grape"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Grape"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineColor">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineSugar">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineFlavor">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineBody">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#SweetRiesling">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Sauternes">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Sauternes">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Bordeaux"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Bordeaux"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Port">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#EarlyHarvest">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Chianti">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#ItalianWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#ItalianWine"/>
+    </arc>
+  </node>
+</ontology_graph>
+[element(graph, [], [])]
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ontology_graph name="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine">
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PotableLiquid"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PotableLiquid"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineGrape">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Grape"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Grape"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineColor">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineSugar">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineFlavor">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineBody">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#SweetRiesling">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Sauternes">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Sauternes">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Bordeaux"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Bordeaux"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Port">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#EarlyHarvest">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Chianti">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#ItalianWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#ItalianWine"/>
+    </arc>
+  </node>
+</ontology_graph>
+[element(graph, [], [])]
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ontology_graph name="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine">
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PotableLiquid"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PotableLiquid"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineGrape">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Grape"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Grape"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineColor">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineSugar">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineFlavor">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineBody">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#SweetRiesling">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Sauternes">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Sauternes">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Bordeaux"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Bordeaux"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Port">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#EarlyHarvest">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Chianti">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#ItalianWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#ItalianWine"/>
+    </arc>
+  </node>
+</ontology_graph>
+[element(graph, [], [])]
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ontology_graph name="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine">
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PotableLiquid"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PotableLiquid"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineGrape">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Grape"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Grape"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineColor">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineSugar">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineFlavor">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineBody">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#SweetRiesling">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Sauternes">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Sauternes">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Bordeaux"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Bordeaux"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Port">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#EarlyHarvest">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Chianti">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#ItalianWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#ItalianWine"/>
+    </arc>
+  </node>
+</ontology_graph>
+[element(graph, [], [])]
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ontology_graph name="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine">
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PotableLiquid"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PotableLiquid"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineGrape">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Grape"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Grape"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineColor">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineSugar">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineFlavor">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineBody">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#SweetRiesling">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Sauternes">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Sauternes">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Bordeaux"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Bordeaux"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Port">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#EarlyHarvest">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Chianti">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#ItalianWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#ItalianWine"/>
+    </arc>
+  </node>
+</ontology_graph>
+[element(graph, [], [])]
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ontology_graph name="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine">
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PotableLiquid"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PotableLiquid"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineGrape">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Grape"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Grape"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineColor">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineDescriptor"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineSugar">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineFlavor">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineBody">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#SweetRiesling">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Sauternes">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Sauternes">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Bordeaux"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Bordeaux"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Port">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#LateHarvest">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#EarlyHarvest">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#DessertWine">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Chianti">
+	<arc type="subClassOf">
+	  <node
+	      type="class"
+	      id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#ItalianWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node
+	  type="class"
+	  id="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#ItalianWine"/>
+    </arc>
+  </node>
+</ontology_graph>
+[element(graph, [], [])]
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ontology_graph name="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine">
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node type="class" id="vin:Wine">
+	<arc type="subClassOf">
+	  <node type="class" id="food:PotableLiquid"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node type="class" id="food:PotableLiquid"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node type="class" id="vin:WineGrape">
+	<arc type="subClassOf">
+	  <node type="class" id="food:Grape"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node type="class" id="food:Grape"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node type="class" id="vin:WineTaste">
+	<arc type="subClassOf">
+	  <node type="class" id="vin:WineDescriptor"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node type="class" id="vin:WineDescriptor"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node type="class" id="vin:WineColor">
+	<arc type="subClassOf">
+	  <node type="class" id="vin:WineDescriptor"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node type="class" id="vin:WineDescriptor"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node type="class" id="vin:WineSugar">
+	<arc type="subClassOf">
+	  <node type="class" id="vin:WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node type="class" id="vin:WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node type="class" id="vin:WineFlavor">
+	<arc type="subClassOf">
+	  <node type="class" id="vin:WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node type="class" id="vin:WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node type="class" id="vin:WineBody">
+	<arc type="subClassOf">
+	  <node type="class" id="vin:WineTaste"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node type="class" id="vin:WineTaste"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node type="class" id="vin:SweetRiesling">
+	<arc type="subClassOf">
+	  <node type="class" id="vin:DessertWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node type="class" id="vin:DessertWine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node type="class" id="vin:Sauternes">
+	<arc type="subClassOf">
+	  <node type="class" id="vin:LateHarvest"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node type="class" id="vin:LateHarvest"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node type="class" id="vin:Sauternes">
+	<arc type="subClassOf">
+	  <node type="class" id="vin:Bordeaux"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node type="class" id="vin:Bordeaux"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node type="class" id="vin:Port">
+	<arc type="subClassOf">
+	  <node type="class" id="vin:RedWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node type="class" id="vin:RedWine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node type="class" id="vin:LateHarvest">
+	<arc type="subClassOf">
+	  <node type="class" id="vin:Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node type="class" id="vin:Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node type="class" id="vin:EarlyHarvest">
+	<arc type="subClassOf">
+	  <node type="class" id="vin:Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node type="class" id="vin:Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node type="class" id="vin:DessertWine">
+	<arc type="subClassOf">
+	  <node type="class" id="vin:Wine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node type="class" id="vin:Wine"/>
+    </arc>
+  </node>
+  <node type="subClassOf">
+    <arc type="axiom_argument">
+      <node type="class" id="vin:Chianti">
+	<arc type="subClassOf">
+	  <node type="class" id="vin:ItalianWine"/>
+	</arc>
+      </node>
+    </arc>
+    <arc type="axiom_argument">
+      <node type="class" id="vin:ItalianWine"/>
+    </arc>
+  </node>
+</ontology_graph>
+[element(graph, [], [])]
