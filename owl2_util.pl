@@ -38,6 +38,7 @@
 :-use_module(library('http/http_open')).
 :-use_module(library('http/http_client')).
 :-use_module(library('http/thread_httpd.pl')).
+:-use_module(library(sgml)).
 
 
 % @Deprecated
@@ -378,6 +379,10 @@ isalpha(X) :- X @>= 'A',X @=< 'Z'.
 isalpha(X) :- X @>= '0',X @=< '9'.
 
 
+
+
+stats(File) :- owl_statistics(all,XML), open(File,write,S), xml_write(S,XML,[header(true)]),close(S).
+
 %% owl_statistics(+Item, -XMLResult) is det
 %
 % @param Item Given either all OR a specific ontology(O), it returns
@@ -388,28 +393,51 @@ isalpha(X) :- X @>= '0',X @=< '9'.
 % @tbd Complete with other statistic info.
 
 
-owl_statistics(all,[element(owl_statistics,[axiomCount=ACount],OList)]) :-
-	findall(OElem,
-		(ontology(O),owl_statistics(ontology(O),OElem)),
-		 OList),
+owl_statistics(all,[element(all_axioms,[axiomCount=ACount],[AxiomsElement|OList1])]) :-
+
+	findall(element(owl4,[source=Source,count=Count],[]),
+		(   aggregate_all(set(S),(owl2_from_rdf:owl(_,_,_,Source),
+					       (atom(Source),S=Source ; Source = used(_),S=used)),SetSource),
+		    member(Source,SetSource),
+		    aggregate_all(count,((Source = used, Source1 = used(_) ; Source1=Source),owl2_from_rdf:owl(_,_,_,Source1)),Count)),
+		OWL4),
+
+	owl_statistics(axioms,AxiomsElement),
+	findall(OElem,(ontology(O),owl_statistics(ontology(O),OElem)), OList),
+	append(OWL4,OList,OList1),
 	aggregate_all(count,axiom(_),ACount),!.
 
 
-owl_statistics(ontology(O),element(ontology,[name=O,axiomCount=ACount],OntAxioms)) :-
-	findall(element(P-axioms,[axiomCount=APCount],PredAxioms),
+owl_statistics(ontology(O),element(ontology,[name=O,axiomCount=ACount,axiomPredCount=AxiomPredCount],OntAxioms)) :-
+	findall(element(P-axioms,[axiomCount=APCount],[]),  % or enter P
 		(   axiompred(P/A),functor(T,P,A),
-		    findall(AT,
-			    (	ontologyAxiom(O,T),owl_stats_axiom_element(T,AT)),
-			    PredAxioms),
+		    % findall(AT,
+			%    (	ontologyAxiom(O,T),owl_stats_axiom_element(T,AT)),
+			%    _PredAxioms),
 		    aggregate_all(count,ontologyAxiom(O,T),APCount)
 		),
 		OntAxioms),
-	aggregate_all(count,ontologyAxiom(O,_Axiom),ACount),!.
+	aggregate_all(count,ontologyAxiom(O,_Axiom),ACount),
+	aggregate_all(sum(X), member(element(_Pred,[axiomCount=X],_),OntAxioms),AxiomPredCount).
+
+
+owl_statistics(axioms,element(allAxioms,[axiomCount=ACount,axiomPredCount=AxiomPredCount],OntAxioms)) :-
+	findall(element(P-axioms,[axiomCount=APCount],[]),  % or enter P
+		(   axiompred(P/A),functor(T,P,A),
+		    % findall(AT,
+			%    (	ontologyAxiom(O,T),owl_stats_axiom_element(T,AT)),
+			%    _PredAxioms),
+		    aggregate_all(count,axiom(T),APCount)
+		),
+		OntAxioms),
+	aggregate_all(count,axiom(_Axiom),ACount),
+	aggregate_all(sum(X), member(element(_Pred,[axiomCount=X],_),OntAxioms),AxiomPredCount).
 
 
 owl_stats_axiom_element(class(C),element(class,[name=C],[])) :- !.
 owl_stats_axiom_element(T,AT) :-
 	term_to_atom(T,AT).
+
 
 
 
@@ -435,7 +463,7 @@ graph_http_reply(Request) :-
 
 	),
 	open('graph_http.log',append,Log),write(Log,RequestXML),nl(Log),
-	owl_generate_graph(_,true,Result),
+	owl_generate_graph(_,false,Result),
 	xml_write([Result],[header(true)]),
 	xml_write(Log,[Result],[header(true)]),nl(Log),
 	close(Log).
@@ -448,7 +476,7 @@ graph(File,Reify) :-
 	open(File,write,S), xml_write(S,[Result],[header(true)]),close(S).
 
 owl_generate_graph(Ontology,ReifyAxioms,Result) :-
-	(   var(Ontology), ontology(Ontology) ->
+	(   ontology(Ontology) ->
 	    owl_generate_graph(Ontology,ReifyAxioms,Result,[])
 	 ;
 	    Result = element(error,[],[no_ontology_found])).
@@ -461,6 +489,7 @@ owl_generate_graph(Ontology,ReifyAxioms,element(ontology_graph,[name=Ontology],N
 		),
 		Nodes).
 
+
 owl_generate_axiom_graph(subClassOf(Sub,Super),true,element(node, [type=subClassOf],Children)) :-
 	Children = [element(arc,[type=axiom_argument],[SubNode]),
 		    element(arc,[type=axiom_argument],[SuperNode])],
@@ -468,10 +497,24 @@ owl_generate_axiom_graph(subClassOf(Sub,Super),true,element(node, [type=subClass
 	SubNode = element(E,L,[element(arc,[type=subClassOf],[SuperNode])|C]),
 	owl2_generate_ce_graph(Super,SuperNode).
 
+owl_generate_axiom_graph(equivalentClasses([Sub,Super]),true,element(node, [type=equivalentClass],Children)) :-
+	Children = [element(arc,[type=axiom_argument],[SubNode]),
+		    element(arc,[type=axiom_argument],[SuperNode])],
+	owl2_generate_ce_graph(Sub,element(E,L,C)),
+	SubNode = element(E,L,[element(arc,[type=equivalentClass],[SuperNode])|C]),
+	owl2_generate_ce_graph(Super,SuperNode).
+
+
 owl_generate_axiom_graph(subClassOf(Sub,Super),false,SubNode) :-
 	owl2_generate_ce_graph(Sub,element(E,L,C)),
 	SubNode = element(E,L,[element(arc,[type=subClassOf],[SuperNode])|C]),
 	owl2_generate_ce_graph(Super,SuperNode).
+
+owl_generate_axiom_graph(equivalentClasses([Sub,Super]),false,SubNode) :-
+	owl2_generate_ce_graph(Sub,element(E,L,C)),
+	SubNode = element(E,L,[element(arc,[type=equivalentClass],[SuperNode])|C]),
+	owl2_generate_ce_graph(Super,SuperNode).
+
 
 
 % owl_generate_axiom_graph(_,_,element(node,[type=axiom_error],[])).
@@ -481,15 +524,15 @@ owl_generate_axiom_graph(subClassOf(Sub,Super),false,SubNode) :-
 %
 
 owl2_generate_ce_graph(intersectionOf([E|Rest]),element(node,[type=intersectionOf],Children)) :-
-	findall(element(arc,type=[member],[Node]),
+	findall(element(arc,[type=member],[Node]),
 		(member(X,[E|Rest]), owl2_generate_ce_graph(X,Node)),
 		Children),!.
 
-owl2_export_axiom(unionOf([E|Rest]),main_triple(BNode,'rdf:type',Type)) :-
-	as2rdf_bnode(unionOf([E|Rest]),BNode),
-	owl2_export_list([E|Rest],LNode),
-	(   classExpression(E) -> Type = 'owl:Class'; Type = 'owl:Datatype'),
-	owl_rdf_assert(BNode,'owl:unionOf', LNode),!.
+owl2_generate_ce_graph(unionOf([E|Rest]),element(node,[type=unionOf],Children)) :-
+	findall(element(arc,[type=member],[Node]),
+		(member(X,[E|Rest]), owl2_generate_ce_graph(X,Node)),
+		Children),!.
+
 
 owl2_export_axiom(oneOf([E|Rest]),main_triple(BNode,'rdf:type',Type)) :-
 	as2rdf_bnode(oneOf([E|Rest]),BNode),
@@ -590,8 +633,11 @@ owl2_export_axiom(exactCardinality(N,OPE,CEorDR),main_triple(BNode,'rdf:type','o
 	(   classExpression(CEorDR) -> owl_rdf_assert(BNode,'owl:onClass',Tce); owl_rdf_assert(BNode,'owl:onDataRange',Tce)),!.
 
 
-owl2_generate_ce_graph(IRI,element(node,[type=class,id=NSLocal],[])) :- atom(IRI),contract_ns(IRI,NSLocal),!. % better iri(IRI).
+owl2_generate_ce_graph(IRI,element(node,[type=class,id=NSLocalA],[])) :- atom(IRI),rdf_db:rdf_global_id(NSLocal,IRI),
+	term_to_atom(NSLocal,NSLocalA),!. % better iri(IRI).
 
+%  owl2_generate_ce_graph(_,element(node,[type=unhandled_ce_node],[])) :-
+%  !.
 
 
 /** <module> Various utility predicates for OWL ontologies
