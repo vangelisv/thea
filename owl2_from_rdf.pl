@@ -67,11 +67,11 @@ The file owl2_from_rdf.plt has some examples
 
 :- use_module(owl2_model).
 
-:- use_module(library('semweb/rdf_db.pl')).
-:- use_module(library('semweb/rdf_edit.pl')).
-:- use_module(library('semweb/rdfs.pl')).
-:- use_module(library('url.pl')).
-:- use_module(library('http/http_open.pl')).
+:- use_module(library('semweb/rdf_db')).
+:- use_module(library('semweb/rdf_edit')).
+:- use_module(library('semweb/rdfs')).
+:- use_module(library('url')).
+:- use_module(library('http/http_open')).
 
 :- dynamic(owl/4).
 %% blanknode(Node,Description,Used)
