@@ -73,6 +73,11 @@ write_axioms(P/A):-
 write_axioms(H):-
         forall(H,format('~q.~n',[H])).
 
+%% download_import_closure(+F)
+% given a file or URL, calling this predicate will
+% download all imported files to the current directory.
+% the full closure is followed - downloaded files will
+% also have their imports chains downloaded.
 download_import_closure(F) :-
 	download_import_closure(F,[]).
 download_import_closure([],_) :- !.
