@@ -32,6 +32,7 @@ LIBPL=\
 owl2_basic_reasoner.pl\
 owl2_export_rdf.pl\
 owl2_from_rdf.pl\
+owl2_from_rdf_utils.pl\
 owl2_io.pl\
 owl2_java_owlapi.pl\
 owl2_manchester_parser.pl\
