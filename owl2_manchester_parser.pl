@@ -3,7 +3,8 @@
 :- module(owl2_manchester_parser,
           [
            owl_parse_manchester_syntax_file/1,
-           owl_parse_manchester_syntax_file/2
+           owl_parse_manchester_syntax_file/2,
+	   owl_parse_manchester_expression/2
            ]).
 
 :- use_module(owl2_model,[assert_axiom/1]).
@@ -20,10 +21,17 @@ owl_parse_manchester_syntax_file(File) :-
 owl_parse_manchester_syntax_file(File,_Opts) :-
         read_file_to_codes(File,Codes,[]),
 	codes_tokens_filtered(Codes,Tokens),
-	writeln(toks=Tokens),
+	%writeln(toks=Tokens),
 	ontologyDocument( Ont, Tokens, [] ),
-	writeln(ont=Ont),
+	%writeln(ont=Ont),
 	process_ontdoc(Ont).
+
+%% owl_parse_manchester_expression(+DescAtom,?Desc) is semidet
+owl_parse_manchester_expression(A,X) :-
+	atom_codes(A,L),
+	codes_tokens_filtered(L,Toks),
+	writeln(toks=Toks),
+	description(X,Toks,[]).
 
 
 process_ontdoc( NSL-ontology(O,_L1,_L2,Frames) ) :-
@@ -80,12 +88,8 @@ process_slot_value(S,V,IRI,T,O,Ax) :-
 	expand_curie(V,O,VX),
 	Ax =.. [S,IRI,VX].
 
-
-
-
 expand_curie(Name,O-_NSL,IRI) :-
 	concat_atom([O,'#',Name],IRI). % TODO
-
 	
 slot_predicate(S,P) :-
 	sub_atom(S,0,1,_,C1),
@@ -96,13 +100,6 @@ slot_predicate(S,P) :-
 	sub_atom(S,1,_,0,S2),
 	atom_concat(C2,S2,P).
 slot_predicate(S,S).
-
-
-
-
-
-
-
 
 % ----------------------------------------
 % Tokenization
@@ -137,8 +134,8 @@ ws(0' ).
 ws(0'\n).
 ws(0'\r).
 sep(0',).
-
-
+sep(0'().
+sep(0')).
 
 % Documents in the Manchester OWL syntax consist of sequences of Unicode characters [UNICODE] and are encoded in UTF-8 [RFC3829].
 
@@ -164,8 +161,6 @@ sep(0',).
 % there is an ambiguity the keyword use is to be used.
 
 % TODO!
-
-
 
 % ----------------------------------------
 % Meta-productions
@@ -384,7 +379,7 @@ description(D) --> conjunction(D).
 
 % conjunction ::= classIRI 'that' [ 'not' ] restriction { 'and' [ 'not' ] restriction } | primary 'and' primary { 'and' primary }| primary
 conjunction(intersectionOf([Genus,D|DL])) --> classIRI(Genus), [that], optNegRestriction(D), zeroOrMore(and, optNegRestriction,DL).
-conjunction(intersectionOf([D1,D2|DL])) --> primary(D1),[and],primary(D2),zeroOrMore(primary,DL).
+conjunction(intersectionOf([D|DL])) --> primary(D),oneOrMore('and',conjunction,DL).
 conjunction(D) --> primary(D).
 
 % primary ::= [ 'not' ] ( restriction | atomic )
@@ -415,8 +410,8 @@ restriction(minCardinality(OPE,Card,CE)) --> objectPropertyExpression(OPE),[min]
 restriction(minCardinality(OPE,Card)) --> objectPropertyExpression(OPE),[min],nni(Card).
 restriction(maxCardinality(OPE,Card,CE)) --> objectPropertyExpression(OPE),[max],nni(Card),primary(CE).
 restriction(maxCardinality(OPE,Card)) --> objectPropertyExpression(OPE),[max],nni(Card).
-restriction(exactCardinality(OPE,Card,CE)) --> objectPropertyExpression(OPE),[exact],nni(Card),primary(CE).
-restriction(exactCardinality(OPE,Card)) --> objectPropertyExpression(OPE),[exact],nni(Card).
+restriction(exactCardinality(OPE,Card,CE)) --> objectPropertyExpression(OPE),[exactly],nni(Card),primary(CE).
+restriction(exactCardinality(OPE,Card)) --> objectPropertyExpression(OPE),[exactly],nni(Card).
 
 restriction(someValuesFrom(OPE,C)) --> dataPropertyExpression(OPE),[some],dataPrimary(C).
 restriction(onlyValuesFrom(OPE,C)) --> dataPropertyExpression(OPE),[only],dataPrimary(C).
@@ -426,8 +421,10 @@ restriction(minCardinality(OPE,Card,CE)) --> dataPropertyExpression(OPE),[min],n
 restriction(minCardinality(OPE,Card)) --> dataPropertyExpression(OPE),[min],nni(Card).
 restriction(maxCardinality(OPE,Card,CE)) --> dataPropertyExpression(OPE),[max],nni(Card),dataPrimary(CE).
 restriction(maxCardinality(OPE,Card)) --> dataPropertyExpression(OPE),[max],nni(Card).
-restriction(exactCardinality(OPE,Card,CE)) --> dataPropertyExpression(OPE),[exact],nni(Card),dataPrimary(CE).
-restriction(exactCardinality(OPE,Card)) --> dataPropertyExpression(OPE),[exact],nni(Card).
+restriction(exactCardinality(OPE,Card,CE)) --> dataPropertyExpression(OPE),[exactly],nni(Card),dataPrimary(CE).
+restriction(exactCardinality(OPE,Card)) --> dataPropertyExpression(OPE),[exactly],nni(Card).
+
+nni(N) --> [A],{atom_number(A,N)}.
 
 
 % atomic ::= classIRI | '{' individual { ',' individual } '}' | '(' description ')'
