@@ -86,8 +86,8 @@ build_ontology(Man,Fac,Ont) :-
 owl2_io:load_axioms_hook(File,owlapi,Opts) :-
 	owl2_io:load_axioms_hook(File,owlapi(_),Opts).
 owl2_io:load_axioms_hook(File,owlapi(_Fmt),_Opts) :-
-        create_factory(Man,Fac),
-        load_ontology(Man,Ont,File).
+        create_factory(Man,_Fac),
+        load_ontology(Man,_Ont,File).
 
 :- multifile owl2_io:save_axioms_hook/3.
 owl2_io:save_axioms_hook(File,owlapi,Opts) :-
