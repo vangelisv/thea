@@ -2,16 +2,6 @@
 %                                UTILITY Predicates
 % -----------------------------------------------------------------------
 
-%%       owl_parser_log(+Log)
-%
-%       Log is a list; together with a timestamp it is asserted as
-%       an owl_parser_log/2 term.
-
-owl_parser_log(Log) :-
-	debug(owl_parser,'~w',[Log]),
-	get_time(T),convert_time(T,TS),
-	assertz(owl_parser_log(TS, Log)).
-
 
 %%       owl_clear_as
 %
@@ -39,17 +29,16 @@ convert(T,V,typed_value(T,V)).
 
 
 rdf_2_owl(Base,Ont) :-
-	owl_parser_log(['Removing existing owl triples']),
+	debug(owl_parser, 'Removing existing owl triples',[]),
 	retractall(owl(_,_,_,Ont)),
-	owl_parser_log('Copying RDF triples to OWL triples'),
+	debug(owl_parser,'Copying RDF triples to OWL triples',[]),
 	rdf(X,Y,Z,Base:_),
 %	owl_fix_no(X,X1), owl_fix_no(Y,Y1), owl_fix_no(Z,Z1),
 	assert(owl(X,Y,Z,Ont)), fail.
 
 rdf_2_owl(_,Ont) :-
 	owl_count(Ont,Z),
-	owl_parser_log(['Number of owl triples copied: ',Z]).
-
+	debug(owl_parser,'Number of owl triples copied: ~w',[Z]).
 
 
 %%	owl_count(?U).
@@ -125,6 +114,9 @@ use_owl(X1,Y1,Z1) :-
 	expand_ns(X1,X),
 	expand_ns(Y1,Y),
 	expand_ns(Z1,Z),
+	(    X = 'http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine', Y = 'http://www.w3.org/2002/07/owl#intersectionOf' ->
+         print(1),nl ;
+	true),
 	owl(X,Y,Z, not_used),
 	debug(owl_parser_detail,'using ~w ~w ~w',[X,Y,Z]),
 	retract(owl(X,Y,Z, not_used)),

@@ -1,0 +1,619 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ontology_graph name="http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine">
+  <node type="class" id="vin:'Wine'">
+    <arc type="subClassOf">
+      <node type="class" id="food:'PotableLiquid'"/>
+    </arc>
+  </node>
+  <node type="class" id="vin:'WineGrape'">
+    <arc type="subClassOf">
+      <node type="class" id="food:'Grape'"/>
+    </arc>
+  </node>
+  <node type="class" id="vin:'WineTaste'">
+    <arc type="subClassOf">
+      <node type="class" id="vin:'WineDescriptor'"/>
+    </arc>
+  </node>
+  <node type="class" id="vin:'WineColor'">
+    <arc type="subClassOf">
+      <node type="class" id="vin:'WineDescriptor'"/>
+    </arc>
+  </node>
+  <node type="class" id="vin:'WineSugar'">
+    <arc type="subClassOf">
+      <node type="class" id="vin:'WineTaste'"/>
+    </arc>
+  </node>
+  <node type="class" id="vin:'WineFlavor'">
+    <arc type="subClassOf">
+      <node type="class" id="vin:'WineTaste'"/>
+    </arc>
+  </node>
+  <node type="class" id="vin:'WineBody'">
+    <arc type="subClassOf">
+      <node type="class" id="vin:'WineTaste'"/>
+    </arc>
+  </node>
+  <node type="class" id="vin:'SweetRiesling'">
+    <arc type="subClassOf">
+      <node type="class" id="vin:'DessertWine'"/>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Sauternes'">
+    <arc type="subClassOf">
+      <node type="class" id="vin:'LateHarvest'"/>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Sauternes'">
+    <arc type="subClassOf">
+      <node type="class" id="vin:'Bordeaux'"/>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Port'">
+    <arc type="subClassOf">
+      <node type="class" id="vin:'RedWine'"/>
+    </arc>
+  </node>
+  <node type="class" id="vin:'LateHarvest'">
+    <arc type="subClassOf">
+      <node type="class" id="vin:'Wine'"/>
+    </arc>
+  </node>
+  <node type="class" id="vin:'EarlyHarvest'">
+    <arc type="subClassOf">
+      <node type="class" id="vin:'Wine'"/>
+    </arc>
+  </node>
+  <node type="class" id="vin:'DessertWine'">
+    <arc type="subClassOf">
+      <node type="class" id="vin:'Wine'"/>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Chianti'">
+    <arc type="subClassOf">
+      <node type="class" id="vin:'ItalianWine'"/>
+    </arc>
+  </node>
+  <node type="class" id="vin:'WineDescriptor'">
+    <arc type="equivalentClass">
+      <node type="unionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'WineTaste'"/>
+	</arc>
+	<arc type="member">
+	  <node type="class" id="vin:'WineColor'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'WhiteWine'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'WhiteTableWine'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'TableWine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'WhiteNonSweetWine'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'WhiteWine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'WhiteLoire'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Loire'"/>
+	</arc>
+	<arc type="member">
+	  <node type="class" id="vin:'WhiteWine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'WhiteBurgundy'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Burgundy'"/>
+	</arc>
+	<arc type="member">
+	  <node type="class" id="vin:'WhiteWine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'WhiteBordeaux'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Bordeaux'"/>
+	</arc>
+	<arc type="member">
+	  <node type="class" id="vin:'WhiteWine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Zinfandel'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Tours'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Loire'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'TableWine'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'SweetWine'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'SweetRiesling'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Riesling'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'StEmilion'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Bordeaux'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'SemillonOrSauvignonBlanc'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Semillon'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'SemillonOrSauvignonBlanc'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'SauvignonBlanc'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'SemillonOrSauvignonBlanc'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Sancerre'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Loire'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'RoseWine'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Riesling'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'RedWine'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'RedTableWine'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'TableWine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'RedBurgundy'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Burgundy'"/>
+	</arc>
+	<arc type="member">
+	  <node type="class" id="vin:'RedWine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'RedBordeaux'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Bordeaux'"/>
+	</arc>
+	<arc type="member">
+	  <node type="class" id="vin:'RedWine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'PinotNoir'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'PinotBlanc'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'PetiteSyrah'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Pauillac'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Medoc'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Muscadet'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Loire'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Meursault'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'WhiteBurgundy'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Merlot'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Meritage'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Medoc'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Bordeaux'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Margaux'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Medoc'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Loire'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'ItalianWine'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'IceWine'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'LateHarvest'"/>
+	</arc>
+	<arc type="member">
+	  <node type="class" id="vin:'DessertWine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'GermanWine'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Gamay'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'FullBodiedWine'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'FrenchWine'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'DryWine'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'DryWhiteWine'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'DryWine'"/>
+	</arc>
+	<arc type="member">
+	  <node type="class" id="vin:'WhiteWine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'DryRiesling'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Riesling'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'DryRedWine'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'DryWine'"/>
+	</arc>
+	<arc type="member">
+	  <node type="class" id="vin:'RedWine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'CotesDOr'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'RedBurgundy'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'CheninBlanc'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Chardonnay'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'CaliforniaWine'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'TexasWine'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'CabernetSauvignon'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'CabernetFranc'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Burgundy'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Bordeaux'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Beaujolais'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'Anjou'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Loire'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'AmericanWine'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+  <node type="class" id="vin:'AlsatianWine'">
+    <arc type="equivalentClass">
+      <node type="intersectionOf">
+	<arc type="member">
+	  <node type="class" id="vin:'Wine'"/>
+	</arc>
+      </node>
+    </arc>
+  </node>
+</ontology_graph>

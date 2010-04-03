@@ -46,9 +46,8 @@
 	    uri_split/4,
 
             owl_description/2,
-	    blanknode/3,
-	    blanknode_gen/2,
-	    owl_parser_log/2
+	    blanknode/3
+	    % owl_parser_log/2 -- deprecated, use debug instead.
 	  ]).
 
 /** <module> Translates an RDF database to OWL2 axioms
@@ -80,8 +79,6 @@ The file owl2_from_rdf.plt has some examples
 % Description - prolog term corresponding to owl Description
 % Used - used | shared
 :- dynamic(blanknode/3).
-:- dynamic(owl_parser_log/2).
-:- dynamic(blanknode_gen/2).
 :- dynamic(outstream/1).
 %  VV 10/3/2010 multifile from owl2_model
 % :- dynamic(annotation/3). % implements the ANN(X) function.
@@ -145,19 +142,15 @@ owl_parse_rdf(F,Opts):-
 % http://www.w3.org/TR/2008/WD-owl2-mapping-to-rdf-20081202/
 owl_parse(URL, RDF_Load_Mode, OWL_Parse_Mode,ImportFlag) :-
 	(   RDF_Load_Mode=complete
-        ->  rdf_retractall(_,_,_)
+	->  rdf_retractall(_,_,_), retractall(rdf_db:rdf_source(_,_,_,_))
         ;   true),
-	retractall(rdf_db:rdf_source(_,_,_,_)),
+	(   OWL_Parse_Mode=complete
+        ->  owl_clear_as,retractall(blanknode(_,_,_)), retractall(owl(_,_,_,_))
+        ;   true),
+        !,
         debug(owl_parser,'Loading stream ~w',[URL]),
 	owl_canonical_parse_2([URL],URL,ImportFlag,[],ProcessedIRIs),
         debug(owl_parser,'rdf_db populated, the following IRIs were processed: ~w',[ProcessedIRIs]),
-	(   OWL_Parse_Mode=complete
-        ->  owl_clear_as,
-            retractall(owl(_,_,_,used(_))),
-            retractall(owl(_,_,_,used)),
-	    retractall(owl(_,_,_,used1))
-        ;   true),
-        !,
 	owl2_model_init,
 	owl_canonical_parse_3(ProcessedIRIs).
 
@@ -201,7 +194,6 @@ owl_canonical_parse_3([IRI|Rest]) :-
 	% Copy the owl facts of the IRI document to the 'not_used'
 	forall(owl(S,P,O,IRI),assert(owl(S,P,O,not_used))),
 
-
 	collect_r_nodes,
 
 	% First parse the Ontology axiom
@@ -218,7 +210,7 @@ owl_canonical_parse_3([IRI|Rest]) :-
                 atom(BNode),
                 sub_string(BNode,0,2,_,'__'),
                 test_use_owl(BNode,'http://www.w3.org/1999/02/22-rdf-syntax-ns#datatype',literal(_))),
-               (   use_owl(S,P,BNode),
+               (   use_owl(S,P,BNode,datatype_fix),
                    use_owl(BNode,'http://www.w3.org/1999/02/22-rdf-syntax-ns#datatype',literal(_)),
                    expand_and_assert(S,P,literal('')))),
 
@@ -329,12 +321,13 @@ rdf_load_stream(URL,Ontology,BaseURI,Imports) :-
 rdf_load_stream(URL,Ontology,BaseURI,Imports) :-
   	(   sub_string(URL,0,4,_,'http')
         ->  catch((http_open(URL,RDF_Stream,[]),
-                   rdf_load(RDF_Stream,[if(true),base_uri(BaseURI),blank_nodes(noshare),result(Action, Triples, MD5)]),
+                   rdf_load(RDF_Stream,[if(true),base_uri(BaseURI),blank_nodes(noshare),
+					result(Action, Triples, MD5),register_namespaces(true)]),
                    debug(owl_parser,' Loaded ~w stream: ~w Action: ~w Triples:~w MD5: ~w',[URL,RDF_Stream,Action,Triples,MD5]),
                    close(RDF_Stream)),
                   Message,
                   throw(io_error(URL,'rdf_load/2 failed',Message))) % re-throw with more information
-        ;   RDF_Stream = URL, rdf_load(RDF_Stream,[blank_nodes(noshare),if(true),base_uri(BaseURI)])
+        ;   RDF_Stream = URL, rdf_load(RDF_Stream,[blank_nodes(noshare),if(true),base_uri(BaseURI),register_namespaces(true)])
 	),
         % collect all imports directives
 	(   rdf(Ontology,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type','http://www.w3.org/2002/07/owl#Ontology',BaseURI:_)
@@ -422,12 +415,12 @@ owl_datatype_restriction_list('http://www.w3.org/1999/02/22-rdf-syntax-ns#nil',[
 
 owl_datatype_restriction_list(X,[facetRestriction(W2,L)|R]) :-
 	% use_owl(X,'rdf:type','rdf:List'), % this is now removed from graph
-	use_owl(X,'rdf:first',Element),
-	use_owl(Element,W,L),
+	use_owl(X,'rdf:first',Element,first_datatype_restr),
+	use_owl(Element,W,L,datatype_restr),
 	(   concat_atom([_,W2],'#',W)
 	->  true
 	;   W2=W),
-	use_owl(X,'rdf:rest',Y),
+	use_owl(X,'rdf:rest',Y,rest_datatype_restr),
 	!,owl_datatype_restriction_list(Y,R).
 
 
@@ -442,10 +435,10 @@ owl_parse_axiom(ontology(O),AnnMode,List) :-
         test_use_owl(O,'rdf:type','owl:Ontology'),
 	\+ test_use_owl([owl(U,_W,O),owl(U,'rdf:type','owl:Ontology')]),
 	valid_axiom_annotation_mode(AnnMode,O,'rdf:type','owl:Ontology',List),
-        use_owl(O,'rdf:type','owl:Ontology'),
+        use_owl(O,'rdf:type','owl:Ontology',ontology),
         nb_setval(current_ontology,O),
-	forall(use_owl(O,'owl:imports',IRI), assert_axiom(ontologyImport(O,IRI))),
-	forall(use_owl(O,'owl:versionInfo',IRI2), assert_axiom(ontologyVersionInfo(O,IRI2))),!. % Do Once
+	forall(use_owl(O,'owl:imports',IRI,ontology_import), assert_axiom(ontologyImport(O,IRI))),
+	forall(use_owl(O,'owl:versionInfo',IRI2,ontology_version_info), assert_axiom(ontologyVersionInfo(O,IRI2))),!. % Do Once
 
 
 % See table 5.
@@ -466,6 +459,7 @@ triple_remove([owl(X,'rdf:type','owl:AnnotationProperty'),owl(X,'rdf:type','rdf:
 triple_remove([owl(X,'rdf:type','owl:OntologyProperty'),owl(X,'rdf:type','rdf:Property')],[owl(X,'rdf:type','rdf:Property')]).
 triple_remove([owl(X,'rdf:type','rdf:List'),owl(X,'rdf:first',_Y),owl(X,'rdf:rest',_Z)],[owl(X,'rdf:type','rdf:List')]).
 
+triple_remove([owl(X,'rdf:type','owl:Thing')],[owl(X,'rdf:type','owl:Thing')]).
 % See table 6.
 % http://www.w3.org/TR/2008/WD-owl2-mapping-to-rdf-20081202/
 triple_replace([owl(X,'rdf:type','owl:OntologyProperty')],[owl(X,'rdf:type','owl:AnnotationProperty')]).
@@ -499,9 +493,9 @@ owl_parse_axiom(datatype(D), AnnMode, List) :-
 
 
 owl_parse_axiom(objectProperty(D), AnnMode, List) :-
-        test_use_owl(D,'rdf:type','owl:annotatedTargetProperty'),
-        valid_axiom_annotation_mode(AnnMode,D,'rdf:type','rdf:ObjectProperty',List),
-        use_owl(D,'rdf:type','owl:annotatedTargetProperty',objectProperty(D)),
+        test_use_owl(D,'rdf:type','owl:ObjectProperty'),
+        valid_axiom_annotation_mode(AnnMode,D,'rdf:type','owl:ObjectProperty',List),
+        use_owl(D,'rdf:type','owl:ObjectProperty',objectProperty(D)),
 	not(objectProperty(D)).
 
 
@@ -548,7 +542,7 @@ ann(X,Y) :-
 
 
 ann(X,X1, annotation(X1,Y,Z)) :-
-	annotationProperty(Y),use_owl(X,Y,Z),
+	annotationProperty(Y),use_owl(X,Y,Z,annotationProperty(Y)),
 	% print(annotation(X-Y-Z-X1)),nl,
 	u_assert(annotation(X1,Y,Z)),
 	ann2(X,Y,Z,X1).
@@ -577,7 +571,7 @@ owl_property_expression(C,C) :-
 
 owl_property_expression(C,D) :-
 	blanknode(C,D,Use),
-	(   Use = used, owl_parser_log(C-D),
+	(   Use = used,
 	    retractall(blanknode(C,D,used)),
 	    assert(blanknode(C,D,shared))
 	;
@@ -595,57 +589,57 @@ owl_datarange(D,D) :-
 
 owl_datarange(C,D) :-
 	blanknode(C,D,Use),
-	(   Use = used, owl_parser_log(C-D),
+	(   Use = used,
 	    retractall(blanknode(C,D,used)),
 	    assert(blanknode(C,D,shared))
 	;
 	true).
 
 owl_datarange(D,intersectionOf(L)) :-
-	use_owl(D,'rdf:type','rdfs:Datatype'),
-	use_owl(D,'owl:intersectionOf',Y,D),
+	use_owl(D,'rdf:type','rdfs:Datatype',datarange(D)),
+	use_owl(D,'owl:intersectionOf',Y,datarange(D)),
 	print(D-inter-Y),nl,
         owl_datarange_list(Y,L),
 	owl_get_bnode(D,intersectionOf(L)).
 
 owl_datarange(D,unionOf(L)) :-
-	use_owl(D,'rdf:type','rdfs:Datatype'),
-	use_owl(D,'owl:unionOf',Y),
+	use_owl(D,'rdf:type','rdfs:Datatype',datarange(D)),
+	use_owl(D,'owl:unionOf',Y,datarange(D)),
         owl_datarange_list(Y,L),
 	owl_get_bnode(D,unionOf(L)).
 
 
 owl_datarange(D,complementOf(DY)) :-
-	use_owl(D,'rdf:type','rdfs:Datatype'),
-	use_owl(D,'owl:datatypeComplementOf',Y),
+	use_owl(D,'rdf:type','rdfs:Datatype',dataRange(D)),
+	use_owl(D,'owl:datatypeComplementOf',Y,datacomplement(D)),
         owl_datarange(Y,DY),
 	owl_get_bnode(D,complementOf(DY)).
 
 % Table 14, case 2
  owl_datarange(D,complementOf('rdfs:Literal')) :-
-	use_owl(D,'rdf:type','rdfs:DataRange'),
-	use_owl(D,'owl:oneOf',[]),
+	use_owl(D,'rdf:type','rdfs:DataRange',dataRange(D)),
+	use_owl(D,'owl:oneOf',[],oneOf(D)),
 	owl_get_bnode(D,complementOf('rdfs:Literal')).
 
 owl_datarange(D,oneOf(L)) :-
-	use_owl(D,'rdf:type','rdfs:Datatype'),
-	use_owl(D,'owl:oneOf',L1),
+	use_owl(D,'rdf:type','rdfs:Datatype',dataType(D)),
+	use_owl(D,'owl:oneOf',L1,oneOf(D)),
 	owl_individual_list(L1,L),
 	owl_get_bnode(D,oneOf(L)).
 
 % Table 14, case 1
 owl_datarange(D,oneOf(L)) :-
-	use_owl(D,'rdf:type','rdfs:DataRange'),
-	use_owl(D,'owl:oneOf',L1),
+	use_owl(D,'rdf:type','rdfs:DataRange',datarange(D)),
+	use_owl(D,'owl:oneOf',L1,datarange(D)),
 	owl_individual_list(L1,L),
 	owl_get_bnode(D,oneOf(L)).
 
 
 owl_datarange(D,datatypeRestriction(DY,L)) :-
-	use_owl(D,'rdf:type','rdfs:Datatype'),
-	use_owl(D,'owl:onDatatype',Y),
+	use_owl(D,'rdf:type','rdfs:Datatype',datarange(D)),
+	use_owl(D,'owl:onDatatype',Y,datarange(D)),
 	owl_datarange(Y,DY),
-	use_owl(D,'owl:withRestrictions',L1),
+	use_owl(D,'owl:withRestrictions',L1,datarange(D)),
 	owl_datatype_restriction_list(L1,L),
 	owl_get_bnode(D,datatypeRestriction(DY,L)).
 
@@ -663,7 +657,7 @@ owl_description(C,C) :-
 
 owl_description(C,D) :-
 	blanknode(C,D,Use),
-	(   Use = used, owl_parser_log(C-D),
+	(   Use = used,
 	    retractall(blanknode(C,D,used)),
 	    assert(blanknode(C,D,shared))
 	;
@@ -671,32 +665,33 @@ owl_description(C,D) :-
 
 % TODO: this leaves behind classAssertions of type owlClass for the bnodes
 owl_description(D,intersectionOf(L)) :-
-	use_owl(D,'owl:intersectionOf',L1,D),
+	use_owl(D,'owl:intersectionOf',L1,intersectionOf(D)),
 	owl_description_list(L1,L),
 	\+L = [],
 	owl_get_bnode(D,intersectionOf(L)),!.
 
 owl_description(D,unionOf(L)) :-
-	use_owl(D,'owl:unionOf',L1),
+	use_owl(D,'owl:unionOf',L1,union(D)),
 	owl_description_list(L1,L),
 	owl_get_bnode(D,unionOf(L)),!.
 
 
 owl_description(D,complementOf(Descr)) :-
-	use_owl(D,'owl:complementOf',D1),
+	use_owl(D,'owl:complementOf',D1,complementOf(D)),
 	owl_description(D1,Descr),
 	owl_get_bnode(D,complementOf(Descr)),!.
 
 owl_description(D,oneOf(L)) :-
-	use_owl(D,'owl:oneOf',L1),
+	use_owl(D,'owl:oneOf',L1,oneOf(D)),
+	(   use_owl(D,'rdf:type','owl:Class',oneOf(D,L)) ; true),
 	owl_individual_list(L1,L),
 	owl_get_bnode(D,oneOf(L)),!.
 
 owl_description(D,datatypeRestriction(DY,L)) :-
-	use_owl(D,'rdf:type','rdfs:Datatype'),
-	use_owl(D,'owl:onDatatype',Y),
+	use_owl(D,'rdf:type','rdfs:Datatype',datatypeRestr(D)),
+	use_owl(D,'owl:onDatatype',Y,dataType(D)),
 	owl_datarange(Y,DY),
-	use_owl(D,'owl:withRestrictions',L1),
+	use_owl(D,'owl:withRestrictions',L1,withRestrictions(D)),
 	owl_datatype_restriction_list(L1,L),
 	owl_get_bnode(D,datatypeRestriction(DY,L)).
 
@@ -709,8 +704,8 @@ owl_description(D,Restriction) :-
 %
 owl_description(D,Result) :-
 	not(sub_string(D,0,2,_,'__')),
-	use_owl(D,'rdf:type','owl:Class'),
-	use_owl(D,'owl:unionOf',L),
+	use_owl(D,'rdf:type','owl:Class',description(D)),
+	use_owl(D,'owl:unionOf',L,unionOf(L)),
 	owl_description_list(L,DL),
 	(   DL = [], Result = 'owl:Nothing' ;
 	    DL = [D1], Result = D1),
@@ -718,8 +713,8 @@ owl_description(D,Result) :-
 
 owl_description(D,Result) :-
 	not(sub_string(D,0,2,_,'__')),
-	use_owl(D,'rdf:type','owl:Class'),
-	use_owl(D,'owl:intersectionOf',L,D),
+	use_owl(D,'rdf:type','owl:Class',dl_compatibility_descr(D)),
+	use_owl(D,'owl:intersectionOf',L,intersectionOf(D)),
 	owl_description_list(L,DL),
 	(   DL = [], Result = 'owl:Thing' ;
 	    DL = [D1], Result = D1),
@@ -727,16 +722,16 @@ owl_description(D,Result) :-
 
 owl_description(D,Result) :-
 	not(sub_string(D,0,2,_,'__')),!,
-	use_owl(D,'rdf:type','owl:Class'),
-	use_owl(D,'owl:oneOf',[]),
+	use_owl(D,'rdf:type','owl:Class',dl_compatibility_descr(D)),
+	use_owl(D,'owl:oneOf',[],oneOf(D)),
 	Result = 'owl:Nothing',
 	owl_get_bnode(D,Result).
 
 % support older deprecated versions of OWL2 spec. See for example hydrology.owl
-onClass(E,D) :- use_owl(E,'http://www.w3.org/2006/12/owl2#onClass',D).
-onClass(E,D) :- use_owl(E,'owl:onClass',D).
+onClass(E,D) :- use_owl(E,'http://www.w3.org/2006/12/owl2#onClass',D,onClass(E)).
+onClass(E,D) :- use_owl(E,'owl:onClass',D,onClass(E)).
 
-onDataRange(E,D) :- use_owl(E, 'owl:onDataRange',D).
+onDataRange(E,D) :- use_owl(E, 'owl:onDataRange',D,onDatarange(E)).
 
 
 %       owl_restriction(+Element,-Restriction).
@@ -746,9 +741,9 @@ onDataRange(E,D) :- use_owl(E, 'owl:onDataRange',D).
 %	according to OWL Abstract syntax specification.
 
 owl_restriction(Element,Restriction) :-
-	use_owl(Element,'rdf:type','owl:Restriction'),
-	(   use_owl(Element, 'owl:onProperty',PropertyID) ;
-    	    use_owl(Element, 'owl:onProperties',PropertyID)
+	use_owl(Element,'rdf:type','owl:Restriction',restriction(Element)),
+	(   use_owl(Element, 'owl:onProperty',PropertyID,onProperty(Element,PropertyID)) ;
+    	    use_owl(Element, 'owl:onProperties',PropertyID,onProperties(Element,PropertyID))
 	),
 	owl_restriction_type(Element,PropertyID, Restriction),
         debug(owl_parser_detail,'Restriction: ~w',[Restriction]).
@@ -756,26 +751,26 @@ owl_restriction(Element,Restriction) :-
 
 
 owl_restriction_type(E, P, someValuesFrom(PX, DX)) :-
-	use_owl(E, 'owl:someValuesFrom',D),
+	use_owl(E, 'owl:someValuesFrom',D,someValuesFrom(E,P)),
 	(   owl_description(D, DX) ; owl_datarange(D,DX)),
         (   P = [_|_], owl_property_list(P,PX) ;  owl_property_expression(P, PX)).
 
 
 owl_restriction_type(E, P, allValuesFrom(PX,DX)) :-
-	use_owl(E, 'owl:allValuesFrom',D),
+	use_owl(E, 'owl:allValuesFrom',D,allValuesFrom(E,P)),
 	(   owl_description(D, DX) ; owl_datarange(D,DX)),
         (   P = [_|_], owl_property_list(P,PX) ;  owl_property_expression(P, PX)).
 
 
 % changed from thea value-->hasValue
 owl_restriction_type(E, P, hasValue(PX,Value)) :-
-	use_owl(E, 'owl:hasValue',Value),
+	use_owl(E, 'owl:hasValue',Value,hasValue(E)),
         owl_property_expression(P, PX).
 
 % VV:check if RDF parser returns a triple with O=true for
 % "true"^^xsd:boolean
 owl_restriction_type(E, P, hasSelf(PX)) :-
-	use_owl(E, 'owl:hasSelf', true),
+	use_owl(E, 'owl:hasSelf', true,hasSelf(E)),
         owl_property_expression(P, PX).
 
 % Support of deprecated translations:
@@ -793,7 +788,7 @@ owl_restriction_type(E, P, exactCardinality(N,PX,DX)) :-
 	test_use_owl(E, 'owl:cardinality',Lit),
         onClass(E,D),
 	owl_description(D, DX),!,
-	use_owl(E, 'owl:cardinality',Lit),
+	use_owl(E, 'owl:cardinality',Lit,cardinality(E)),
         literal_integer(Lit,N),
         owl_property_expression(P, PX).
 
@@ -803,7 +798,7 @@ owl_restriction_type(E, P, minCardinality(N,PX,DX)) :-
         ;   onDataRange(E,D), owl_datarange(D,DX)),
 	!,
         % we are sure this is an old-style unqualified CR - now consume triples
-	use_owl(E, 'owl:minCardinality',Lit),
+	use_owl(E, 'owl:minCardinality',Lit,minCardinality(E)),
         literal_integer(Lit,N),
         owl_property_expression(P, PX).
 
@@ -813,7 +808,7 @@ owl_restriction_type(E, P, maxCardinality(N,PX,DX)) :-
         ;   onDataRange(E,D), owl_datarange(D,DX)),
 	!,
         % we are sure this is an old-style unqualified CR - now consume triples
-	use_owl(E, 'owl:maxCardinality',Lit),
+	use_owl(E, 'owl:maxCardinality',Lit,maxCard(E)),
         literal_integer(Lit,N),
         owl_property_expression(P, PX).
 
@@ -823,7 +818,7 @@ owl_restriction_type(E, P, maxCardinality(N,PX,DX)) :-
 
 % changed from Thea1->2: cardinality->exactCardinality
 owl_restriction_type(E, P,exactCardinality(N,PX)) :-
-	use_owl(E, 'owl:cardinality',Lit),
+	use_owl(E, 'owl:cardinality',Lit,cardinality(E)),
         literal_integer(Lit,N),
         owl_property_expression(P, PX).
 
@@ -836,11 +831,11 @@ owl_restriction_type(E, P,exactCardinality(N,PX,DX)) :-
 
 
 owl_restriction_type(E, P, minCardinality(N,PX)) :-
-	use_owl(E, 'owl:minCardinality',Lit),literal_integer(Lit,N),
+	use_owl(E, 'owl:minCardinality',Lit,cardinality(E)),literal_integer(Lit,N),
         owl_property_expression(P, PX).
 
 owl_restriction_type(E, P, minCardinality(N,PX,DX)) :-
-	use_owl(E, 'owl:minQualifiedCardinality',Lit),literal_integer(Lit,N),
+	use_owl(E, 'owl:minQualifiedCardinality',Lit,cardinality(E)),literal_integer(Lit,N),
 	(   onClass(E,D),owl_description(D, DX);
 	    onDataRange(E,D), owl_datarange(D,DX)
 	),
@@ -848,11 +843,12 @@ owl_restriction_type(E, P, minCardinality(N,PX,DX)) :-
 
 
 owl_restriction_type(E, P, maxCardinality(N,PX)) :-
-	use_owl(E, 'owl:maxCardinality',Lit),literal_integer(Lit,N),
+	use_owl(E, 'owl:maxCardinality',Lit,maxCardinality(E)),literal_integer(Lit,N),
         owl_property_expression(P, PX).
 
 owl_restriction_type(E, P, maxCardinality(N,PX,DX)) :-
-	use_owl(E, 'owl:maxQualifiedCardinality',Lit),literal_integer(Lit,N),
+	use_owl(E, 'owl:maxQualifiedCardinality',Lit,cardinality(E,Lit)),
+	literal_integer(Lit,N),
 	(   onClass(E,D),owl_description(D, DX);
 	    onDataRange(E,D), owl_datarange(D,DX)),
         owl_property_expression(P, PX).
@@ -950,7 +946,7 @@ owl_parse_axiom(equivalentClasses([C,D])) :-
 owl_parse_axiom(disjointClasses([DX,DY]),AnnMode,List) :-
 	test_use_owl(X,'owl:disjointWith',Y),
 	valid_axiom_annotation_mode(AnnMode,X,'owl:disjointWith',Y,List),
-	use_owl(X,'owl:disjointWith',Y),
+	use_owl(X,'owl:disjointWith',Y,disjointWith(X,Y)),
         owl_description(X,DX),
 	owl_description(Y,DY).
 
@@ -960,15 +956,15 @@ owl_parse_axiom(disjointClasses([DX,DY]),AnnMode,List) :-
 
 owl_parse_axiom(disjointClasses(L),_AnnMode,[X]) :-
         % TODO: X may be referred to in an annotation axiom??
-	use_owl(X,'rdf:type','owl:AllDisjointClasses'),
-        use_owl(X,'owl:members',L1),
+	use_owl(X,'rdf:type','owl:AllDisjointClasses',allDisjointClasses(X)),
+        use_owl(X,'owl:members',L1,members(L1)),
         owl_description_list(L1,L).
 
 
 owl_parse_axiom(disjointUnion(DX,DY),AnnMode,List) :-
 	test_use_owl(X,'owl:disjointUnionOf',Y),
 	valid_axiom_annotation_mode(AnnMode,X,'owl:disjointUnionOf',Y,List),
-	use_owl(X,'owl:disjointUnionOf',Y),
+	use_owl(X,'owl:disjointUnionOf',Y,disjointUnionOf(X,Y)),
         owl_description(X,DX),
         owl_description_list(Y,DY).
 
@@ -980,14 +976,14 @@ owl_parse_axiom(disjointUnion(DX,DY),AnnMode,List) :-
 owl_parse_axiom(subPropertyOf(propertyChain(PL),QX),AnnMode,List) :-
 	test_use_owl(Q,'owl:propertyChainAxiom',L1),
 	valid_axiom_annotation_mode(AnnMode,Q,'owl:propertyChainAxiom',L1,List),
-	use_owl(Q,'owl:propertyChainAxiom',L1),
+	use_owl(Q,'owl:propertyChainAxiom',L1,propertyChainAxiom(Q)),
 	owl_property_list(L1,PL),
         owl_property_expression(Q,QX).
 
 owl_parse_axiom(subPropertyOf(PX,QX),AnnMode,List) :-
 	test_use_owl(P,'rdfs:subPropertyOf',Q),
 	valid_axiom_annotation_mode(AnnMode,P,'rdfs:subPropertyOf',Q,List),
-	use_owl(P,'rdfs:subPropertyOf',Q),
+	use_owl(P,'rdfs:subPropertyOf',Q,subPropertyOf(P,Q)),
         owl_property_expression(P,PX),
         owl_property_expression(Q,QX).
 
@@ -1000,7 +996,7 @@ owl_parse_axiom(subPropertyOf(PX,QX),AnnMode,List) :-
 owl_parse_axiom(equivalentProperties(OPEL),AnnMode,List) :-
 	test_use_owl(X,'owl:equivalentProperty',Y),
 	valid_axiom_annotation_mode(AnnMode,X,'owl:equivalentProperty',Y,List),
-	use_owl(X,'owl:equivalentProperty',Y),
+	use_owl(X,'owl:equivalentProperty',Y,equivProperty(X,Y)),
 	% maximally_connected_subgraph_over('owl:equivalentProperty',L),
 	maplist(owl_property_expression,[X,Y],OPEL).
 
@@ -1012,7 +1008,7 @@ owl_parse_axiom(equivalentProperties(OPEL),AnnMode,List) :-
 owl_parse_axiom(disjointProperties([DX,DY]),AnnMode,List) :-
 	test_use_owl(X,'owl:propertyDisjointWith',Y),
 	valid_axiom_annotation_mode(AnnMode,X,'owl:propertyDisjointWith',Y,List),
-	use_owl(X,'owl:propertyDisjointWith',Y),
+	use_owl(X,'owl:propertyDisjointWith',Y,propertyDisjointWith(X,Y)),
         owl_description(X,DX),
 	owl_description(Y,DY).
 
@@ -1022,8 +1018,8 @@ owl_parse_axiom(disjointProperties([DX,DY]),AnnMode,List) :-
 
 owl_parse_axiom(disjointProperties(L),_AnnMode,[X]) :-
         % TODO: X may be referred to in an annotation axiom??
-	use_owl(X,'rdf:type','owl:AllDisjointProperties'),
-        use_owl(X,'owl:members',L1),
+	use_owl(X,'rdf:type','owl:AllDisjointProperties',allDisjointProps(X,L1)),
+        use_owl(X,'owl:members',L1,members(L1)),
         L1 = [_,_|_],           % length >= 2
         owl_property_list(L1,L).
 
@@ -1031,7 +1027,7 @@ owl_parse_axiom(disjointProperties(L),_AnnMode,[X]) :-
 owl_parse_axiom(propertyDomain(PX,CX),AnnMode,List) :-
 	test_use_owl(P,'rdfs:domain',C),
 	valid_axiom_annotation_mode(AnnMode,P,'rdfs:domain',C,List),
-        use_owl(P,'rdfs:domain',C),
+        use_owl(P,'rdfs:domain',C,domain(P,C)),
 	(   annotationProperty(P),CX = C ;
 	    owl_property_expression(P,PX),
 	    owl_description(C,CX)
@@ -1045,7 +1041,7 @@ owl_parse_axiom(propertyDomain(PX,CX),AnnMode,List) :-
 owl_parse_axiom(propertyRange(PX,CX),AnnMode,List) :-
 	test_use_owl(P,'rdfs:range',C),
 	valid_axiom_annotation_mode(AnnMode,P,'rdfs:range',C,List),
-        use_owl(P,'rdfs:range',C),
+        use_owl(P,'rdfs:range',C,range(P,C)),
 	(   annotationProperty(P) -> PX = P, CX = C ;
 	    owl_property_expression(P,PX),
             (   owl_description(C,CX) -> true ; owl_datarange(C,CX))
@@ -1054,49 +1050,49 @@ owl_parse_axiom(propertyRange(PX,CX),AnnMode,List) :-
 owl_parse_axiom(inverseProperties(PX,QX),AnnMode,List) :-
 	test_use_owl(P,'owl:inverseOf',Q),
 	valid_axiom_annotation_mode(AnnMode,P,'owl:inverseOf',Q,List),
-	use_owl(P,'owl:inverseOf',Q),
+	use_owl(P,'owl:inverseOf',Q,inverseOf(P,Q)),
         owl_property_expression(P,PX),
         owl_property_expression(Q,QX).
 
 owl_parse_axiom(functionalProperty(P),AnnMode,List) :-
 	test_use_owl(P,'rdf:type','owl:FunctionalProperty'),
 	valid_axiom_annotation_mode(AnnMode,P,'rdf:type','owl:FunctionalProperty',List),
-        use_owl(P,'rdf:type','owl:FunctionalProperty').
+        use_owl(P,'rdf:type','owl:FunctionalProperty',functionalProperty(P)).
 
 owl_parse_axiom(inverseFunctionalProperty(P),AnnMode,List) :-
 	test_use_owl(P,'rdf:type','owl:InverseFunctionalProperty'),
 	valid_axiom_annotation_mode(AnnMode,P,'rdf:type','owl:InverseFunctionalProperty',List),
-        use_owl(P,'rdf:type','owl:InverseFunctionalProperty').
+        use_owl(P,'rdf:type','owl:InverseFunctionalProperty',inverseFunctionalProperty(P)).
 
 owl_parse_axiom(reflexiveProperty(P),AnnMode,List) :-
 	test_use_owl(P,'rdf:type','owl:ReflexiveProperty'),
 	valid_axiom_annotation_mode(AnnMode,P,'rdf:type','owl:ReflexiveProperty',List),
-        use_owl(P,'rdf:type','owl:ReflexiveProperty').
+        use_owl(P,'rdf:type','owl:ReflexiveProperty',reflexiveProperty(P)).
 
 owl_parse_axiom(irreflexiveProperty(P),AnnMode,List) :-
 	test_use_owl(P,'rdf:type','owl:IrreflexiveProperty'),
 	valid_axiom_annotation_mode(AnnMode,P,'rdf:type','owl:IrreflexiveProperty',List),
-        use_owl(P,'rdf:type','owl:IrreflexiveProperty').
+        use_owl(P,'rdf:type','owl:IrreflexiveProperty',irreflexiveProperty(P)).
 
 owl_parse_axiom(symmetricProperty(P),AnnMode,List) :-
 	test_use_owl(P,'rdf:type','owl:SymmetricProperty'),
 	valid_axiom_annotation_mode(AnnMode,P,'rdf:type','owl:SymmetricProperty',List),
-        use_owl(P,'rdf:type','owl:SymmetricProperty').
+        use_owl(P,'rdf:type','owl:SymmetricProperty',symmetricProperty(P)).
 
 owl_parse_axiom(asymmetricProperty(P),AnnMode,List) :-
 	test_use_owl(P,'rdf:type','owl:AsymmetricProperty'),
 	valid_axiom_annotation_mode(AnnMode,P,'rdf:type','owl:AsymmetricProperty',List),
-        use_owl(P,'rdf:type','owl:AsymmetricProperty').
+        use_owl(P,'rdf:type','owl:AsymmetricProperty',assymetricProperty(P)).
 
 owl_parse_axiom(transitiveProperty(P),AnnMode,List) :-
 	test_use_owl(P,'rdf:type','owl:TransitiveProperty'),
 	valid_axiom_annotation_mode(AnnMode,P,'rdf:type','owl:TransitiveProperty',List),
-	use_owl(P,'rdf:type','owl:TransitiveProperty').
+	use_owl(P,'rdf:type','owl:TransitiveProperty',transitiveProperty(P)).
 
 owl_parse_axiom(hasKey(CX,L),AnnMode,List) :-
 	test_use_owl(C,'owl:hasKey',L1),
 	valid_axiom_annotation_mode(AnnMode,C,'owl:hasKey',L1,List),
-	use_owl(C,'owl:hasKey',L1),
+	use_owl(C,'owl:hasKey',L1,hasKey(C)),
 	owl_description(C,CX),
         L1 = [_,_|_],           % length >= 2
         owl_property_list(L1,L).
@@ -1106,21 +1102,21 @@ owl_parse_axiom(hasKey(CX,L),AnnMode,List) :-
 owl_parse_axiom(sameIndividual([X,Y]),AnnMode,List) :-
 	test_use_owl(X,'owl:sameAs',Y),
 	valid_axiom_annotation_mode(AnnMode,X,'owl:sameAs',Y,List),
-	use_owl(X,'owl:sameAs',Y).
+	use_owl(X,'owl:sameAs',Y,sameAs(X,Y)).
 
 owl_parse_axiom(differentIndividuals([X,Y]),AnnMode,List) :-
 	test_use_owl(X,'owl:differentFrom',Y),
 	valid_axiom_annotation_mode(AnnMode,X,'owl:differentFrom',Y,List),
-	use_owl(X,'owl:differentFrom',Y).
+	use_owl(X,'owl:differentFrom',Y,differentFrom(X,Y)).
 
 owl_parse_axiom(differentIndividuals(L),_AnnMode,[X]) :-
-	use_owl(X,'rdf:type','owl:AllDifferent'),
-	use_owl(X,'owl:distinctMembers',L1),
+	use_owl(X,'rdf:type','owl:AllDifferent',allDifferent(L)),
+	use_owl(X,'owl:distinctMembers',L1,distinctMembers(L)),
         owl_individual_list(L1,L).
 
 owl_parse_axiom(differentIndividuals(L),_AnnMode,[X]) :-
-	use_owl(X,'rdf:type','owl:AllDifferent'),
-	use_owl(X,'owl:members',L1),
+	use_owl(X,'rdf:type','owl:AllDifferent',allDifferent(X)),
+	use_owl(X,'owl:members',L1,members(L)),
         owl_individual_list(L1,L).
 
 % make sure this is done before fetching classAssertion/2;
@@ -1128,14 +1124,14 @@ owl_parse_axiom(differentIndividuals(L),_AnnMode,[X]) :-
 owl_parse_axiom(annotationAssertion('owl:deprecated', X, true),AnnMode,List) :-
 	test_use_owl(X, 'rdf:type', 'owl:DeprecatedClass'),
 	valid_axiom_annotation_mode(AnnMode,X,'rdf:type','owl:DeprecatedClass',List),
-	use_owl(X, 'rdf:type', 'owl:DeprecatedClass').
+	use_owl(X, 'rdf:type', 'owl:DeprecatedClass',deprecatedClass(X)).
 
 % make sure this is done before fetching propertyAssertion/3
 % this clause should precede it
 owl_parse_axiom(annotationAssertion('owl:deprecated', X, true),AnnMode,List) :-
 	test_use_owl(X, 'rdf:type', 'owl:DeprecatedProperty'),
 	valid_axiom_annotation_mode(AnnMode,X,'rdf:type','owl:DeprecatedProperty',List),
-	use_owl(X, 'rdf:type', 'owl:DeprecatedProperty').
+	use_owl(X, 'rdf:type', 'owl:DeprecatedProperty',deprecatedProperty(X)).
 
 % Table 17. Parsing of Annotated Axioms
 
@@ -1147,15 +1143,16 @@ owl_parse_axiom(annotationAssertion(P,A,B),AnnMode,List) :-
         annotationProperty(P),
         test_use_owl(A,P,B),         % B can be literal or individual
         valid_axiom_annotation_mode(AnnMode,A,P,B,List),
-        use_owl(A,P,B).
+        use_owl(A,P,B,annotationProperty(P)).
 
 
 dothislater(classAssertion/2).
 owl_parse_axiom(classAssertion(CX,X),AnnMode,List) :-
 	test_use_owl(X,'rdf:type',C),
         C\='http://www.w3.org/2002/07/owl#DeprecatedClass',
+	class(C),
 	valid_axiom_annotation_mode(AnnMode,X,'rdf:type',C,List),
-	use_owl(X,'rdf:type',C),
+	use_owl(X,'rdf:type',C,classAssertion(CX,X)),
         % I added this to avoid class assertions for bNodes. Perhaps a better
         % way is to simply consume the owl4/ triple at the time of translating
         % the description? --CJM
@@ -1169,16 +1166,17 @@ owl_parse_axiom(propertyAssertion(PX,A,B),AnnMode,List) :-
         test_use_owl(A,P,B), % B can be literal or individual
         P\='http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
 	valid_axiom_annotation_mode(AnnMode,A,P,B,List),
+	property(P),
         \+ annotationProperty(P), % these triples should have been removed before, during ann parsing
-        use_owl(A,P,B),
+        use_owl(A,P,B,propertyAssertion(PX,A,B)),
         owl_property_expression(P,PX). % can also be inverse
 
 
 owl_parse_axiom(negativePropertyAssertion(PX,A,B),_,X) :-
-        use_owl(X,'rdf:type','owl:NegativePropertyAssertion'),
-        use_owl(X,'owl:sourceIndividual',A),
-        use_owl(X,'owl:assertionProperty',P),
-        use_owl(X,'owl:targetValue',B),
+        use_owl(X,'rdf:type','owl:NegativePropertyAssertion',negPropertyAssertion(PX,A,B)),
+        use_owl(X,'owl:sourceIndividual',A,negPropertyAssertion(PX,A,B)),
+        use_owl(X,'owl:assertionProperty',P,negPropertyAssertion(PX,A,B)),
+        use_owl(X,'owl:targetValue',B,negPropertyAssertion(PX,A,B)),
         owl_property_expression(P,PX).
 
 
@@ -1238,7 +1236,7 @@ maximally_connected_subgraph_over(P,Used,[CSet|All]):-
         test_use_owl(X,P,Y), % seed
         \+ member(X,Used),
         \+ member(Y,Used),
-        use_owl(X,P,Y), % seed
+        use_owl(X,P,Y,maximally_conected), % seed
         !,
         extend_set_over(P,[X,Y],CSet),
         append(CSet,Used,Used2),
@@ -1251,13 +1249,13 @@ extend_set_over(P,L,L2):-
         member(X,L),
         test_use_owl(X,P,Y),
         \+ member(Y,L),
-        use_owl(X,P,Y),
+        use_owl(X,P,Y,extend_set_over),
         !,extend_set_over(P,[Y|L],L2).
 extend_set_over(P,L,L2):-
         member(X,L),
         test_use_owl(Y,P,X),
         \+ member(Y,L),
-        use_owl(Y,P,X),
+        use_owl(Y,P,X,extend_set_over),
         !,extend_set_over(P,[Y|L],L2).
 extend_set_over(_,L,L):- !.
 
