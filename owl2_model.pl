@@ -1110,7 +1110,8 @@ retract_all_axioms :-
         findall(A,axiom(A),Axioms),
         maplist(retract,Axioms),
         findall(ontologyAxiom(O,A),ontologyAxiom(O,A),OAxioms),
-        maplist(retract,OAxioms).
+        maplist(retract,OAxioms),
+	!.
 
 
 owl2_model_init :-
