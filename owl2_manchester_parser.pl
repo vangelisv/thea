@@ -21,17 +21,20 @@ owl_parse_manchester_syntax_file(File) :-
 owl_parse_manchester_syntax_file(File,_Opts) :-
         read_file_to_codes(File,Codes,[]),
 	codes_tokens_filtered(Codes,Tokens),
-	%writeln(toks=Tokens),
 	ontologyDocument( Ont, Tokens, [] ),
-	%writeln(ont=Ont),
 	process_ontdoc(Ont).
 
 %% owl_parse_manchester_expression(+DescAtom,?Desc) is semidet
 owl_parse_manchester_expression(A,X) :-
 	atom_codes(A,L),
 	codes_tokens_filtered(L,Toks),
-	writeln(toks=Toks),
 	description(X,Toks,[]).
+
+%% owl_parse_manchester_frame(+FrameAtom,?Axiom) is semidet
+owl_parse_manchester_expression(A,X) :-
+	atom_codes(A,L),
+	codes_tokens_filtered(L,Toks),
+	frame(X,Toks,[]).
 
 
 process_ontdoc( NSL-ontology(O,_L1,_L2,Frames) ) :-
@@ -403,26 +406,26 @@ optNegRestriction(R) --> restriction(R).
 % dataPropertyExpression 'exactly' nonNegativeInteger [ dataPrimary ]
 
 restriction(someValuesFrom(OPE,C)) --> objectPropertyExpression(OPE),[some],primary(C).
-restriction(onlyValuesFrom(OPE,C)) --> objectPropertyExpression(OPE),[only],primary(C).
+restriction(allValuesFrom(OPE,C)) --> objectPropertyExpression(OPE),[only],primary(C).
 restriction(hasValue(OPE,I)) --> objectPropertyExpression(OPE),[value],individual(I).
 restriction(hasSelf(OPE)) --> objectPropertyExpression(OPE),['Self'].
-restriction(minCardinality(OPE,Card,CE)) --> objectPropertyExpression(OPE),[min],nni(Card),primary(CE).
-restriction(minCardinality(OPE,Card)) --> objectPropertyExpression(OPE),[min],nni(Card).
-restriction(maxCardinality(OPE,Card,CE)) --> objectPropertyExpression(OPE),[max],nni(Card),primary(CE).
-restriction(maxCardinality(OPE,Card)) --> objectPropertyExpression(OPE),[max],nni(Card).
-restriction(exactCardinality(OPE,Card,CE)) --> objectPropertyExpression(OPE),[exactly],nni(Card),primary(CE).
-restriction(exactCardinality(OPE,Card)) --> objectPropertyExpression(OPE),[exactly],nni(Card).
+restriction(minCardinality(Card,OPE,CE)) --> objectPropertyExpression(OPE),[min],nni(Card),primary(CE).
+restriction(minCardinality(Card,OPE)) --> objectPropertyExpression(OPE),[min],nni(Card).
+restriction(maxCardinality(Card,OPE,CE)) --> objectPropertyExpression(OPE),[max],nni(Card),primary(CE).
+restriction(maxCardinality(Card,OPE)) --> objectPropertyExpression(OPE),[max],nni(Card).
+restriction(exactCardinality(Card,OPE,CE)) --> objectPropertyExpression(OPE),[exactly],nni(Card),primary(CE).
+restriction(exactCardinality(Card,OPE)) --> objectPropertyExpression(OPE),[exactly],nni(Card).
 
 restriction(someValuesFrom(OPE,C)) --> dataPropertyExpression(OPE),[some],dataPrimary(C).
-restriction(onlyValuesFrom(OPE,C)) --> dataPropertyExpression(OPE),[only],dataPrimary(C).
+restriction(allValuesFrom(OPE,C)) --> dataPropertyExpression(OPE),[only],dataPrimary(C).
 restriction(hasValue(OPE,I)) --> dataPropertyExpression(OPE),[value],individual(I).
 restriction(hasSelf(OPE)) --> dataPropertyExpression(OPE),['Self'].
-restriction(minCardinality(OPE,Card,CE)) --> dataPropertyExpression(OPE),[min],nni(Card),dataPrimary(CE).
-restriction(minCardinality(OPE,Card)) --> dataPropertyExpression(OPE),[min],nni(Card).
-restriction(maxCardinality(OPE,Card,CE)) --> dataPropertyExpression(OPE),[max],nni(Card),dataPrimary(CE).
-restriction(maxCardinality(OPE,Card)) --> dataPropertyExpression(OPE),[max],nni(Card).
-restriction(exactCardinality(OPE,Card,CE)) --> dataPropertyExpression(OPE),[exactly],nni(Card),dataPrimary(CE).
-restriction(exactCardinality(OPE,Card)) --> dataPropertyExpression(OPE),[exactly],nni(Card).
+restriction(minCardinality(Card,OPE,CE)) --> dataPropertyExpression(OPE),[min],nni(Card),dataPrimary(CE).
+restriction(minCardinality(Card,OPE)) --> dataPropertyExpression(OPE),[min],nni(Card).
+restriction(maxCardinality(Card,OPE,CE)) --> dataPropertyExpression(OPE),[max],nni(Card),dataPrimary(CE).
+restriction(maxCardinality(Card,OPE)) --> dataPropertyExpression(OPE),[max],nni(Card).
+restriction(exactCardinality(Card,OPE,CE)) --> dataPropertyExpression(OPE),[exactly],nni(Card),dataPrimary(CE).
+restriction(exactCardinality(Card,OPE)) --> dataPropertyExpression(OPE),[exactly],nni(Card).
 
 nni(N) --> [A],{atom_number(A,N)}.
 
@@ -568,7 +571,9 @@ dataPropertyFact( P-L) --> dataPropertyIRI( P), literal(L).
 %dataPropertyExpression ) { objectPropertyExpression |
 %dataPropertyExpression }
 
-misc(A-DL) --> ['EquivalentClasses:'],annotations(A),description2List(DL).
+misc(A-equivalentClasses(DL)) --> ['EquivalentClasses:'],annotations(A),description2List(DL).
+misc(A-disjointClasses(DL)) --> ['DisjointClasses:'],annotations(A),description2List(DL).
+misc(A-equivalentProperties(DL)) --> ['EquivalentProperties:'],annotations(A),description2List(DL).
 
 
 
