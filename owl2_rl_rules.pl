@@ -191,7 +191,7 @@ fire_cycle :-
 	forall((entails(Rule,Antecedants,Consequents),
 		hold(Antecedants),
 		member(Consequent,Consequents)),
-	       assert_u(entailed(Consequent,Rule,Antecedants))
+	       assert_entailment(entailed(Consequent,Rule,Antecedants))
 	      ).
 
 %%	clear_entailments is det
@@ -250,7 +250,7 @@ is_entailed(Axiom,entailed(Rule,Expl)) :-
 	are_entailed(HoldedAntecedants,Expl), 	% resolve rules
 	% if resolution succeeds assert axiom if not already there
 	not( holds(Axiom,_)), % put this axiom once but generate all entailments for its children...
-	assert_u(entailed(Axiom,Rule,Expl)). % backtrack to next rule.
+	assert_entailment(entailed(Axiom,Rule,Expl)). % backtrack to next rule.
 
 
 %%	are_entailed(+Axiom:List,-Explanation:List) is nondet
@@ -275,8 +275,17 @@ hold_augment(Axiom,[Ant1|Rest],[holds(Ant1)|Rest]) :-
 hold_augment(_,Antecedants,Antecedants).
 
 
-assert_u(Fact) :- call(Fact),!.
-assert_u(Fact) :- assert(Fact).
+assert_entailment(entailed(Axiom,Rule,Explanation)) :-
+	entailed(Axiom,Rule,Explanation),!.
+
+/*
+assert_entailment(entailed(Axiom,Rule,Explanation)) :-
+	entailed(Axiom,RuleIn,ExplIn),!,
+	(   RuleIn = [_|_] -> RuleL=RuleIn; RuleL = [RuleIn]),
+	assert(entailed(Axiom,[Rule|RuleIn],[Explanation|ExplIn])).
+*/
+
+assert_entailment(Fact) :- assert(Fact).
 
 
 
