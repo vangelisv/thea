@@ -208,7 +208,8 @@ clear_entailments :-
 %	entailed(Rule, Expl).
 holds(Axiom,axiom(Axiom)) :-
 	axiom(Axiom).
-holds(pl(Axiom),pl(Axiom)) :-
+holds(A,A) :-
+	nonvar(A),A = pl(Axiom),
 	call(Axiom).
 holds(Axiom,entailed(Rule,Expl)):-
 	entailed(Axiom,Rule,Expl).
@@ -232,8 +233,10 @@ hold([Antecedent|Rest]) :-
 %	has been entailed it is not tried again. This prevents endless
 %	loops.
 
-is_entailed(holds(Axiom),Expl) :-
-	holds(Axiom,Expl).
+is_entailed(A,axiom(Axiom)) :-
+	nonvar(A),
+	A = holds(Axiom),
+	axiom(Axiom),!.
 
 is_entailed(Axiom,Expl) :-
 	holds(Axiom,Expl).
@@ -242,6 +245,7 @@ is_entailed(Axiom,entailed(Rule,Expl)) :-
 	not(entailed(Axiom,_,_)),
 	% find rules to be executed.
 	entails(Rule,Antecedants,Consequents),	member(Axiom,Consequents),
+	debug(rl-rules,'rule matched ~w',Rule),
 	hold_augment(Axiom,Antecedants,HoldedAntecedants),
 	are_entailed(HoldedAntecedants,Expl), 	% resolve rules
 	% if resolution succeeds assert axiom if not already there
@@ -275,20 +279,22 @@ assert_u(Fact) :- call(Fact),!.
 assert_u(Fact) :- assert(Fact).
 
 
-/*
-Testbed
+
+% Testbed
 
 %entails(r1,[e(X,Y)],[s(X,Y)]).
-entails(r2,[s(X,Z),s(Z,Y)],[s(X,Y)]).
 
-axiom1(s(a,b)).
-axiom1(s(b,c)).
-axiom1(s(c,b)).
+entails(r2,[subClassOf(X,Z),subClassOf(Z,Y)],[subClassOf(X,Y)]).
+
+g :-
+	assert_axiom(subClassOf(a,b)),
+	assert_axiom(subClassOf(b,c)),
+	assert_axiom(subClassOf(c,b)).
 
 % usage:
-:- owl_parse_rdf('testfiles/wine.owl',[clear(complete)]).
+% :- owl_parse_rdf('testfiles/wine.owl',[clear(complete)]).
 
-*/
+
 
 
 

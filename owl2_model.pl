@@ -1121,7 +1121,6 @@ consult_axioms(File) :-
         consult(File).
 
 
-
 /** <module> Ontology language axioms and expressions
 
 ---+ Synopsis

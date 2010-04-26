@@ -46,7 +46,9 @@
 	    uri_split/4,
 
             owl_description/2,
-	    blanknode/3
+	    blanknode/3,
+	    use_owl/4,
+	    test_use_owl/3 % expose them to allow external handling of triples, e.g. for rdfs support
 	    % owl_parser_log/2 -- deprecated, use debug instead.
 	  ]).
 
@@ -80,8 +82,8 @@ The file owl2_from_rdf.plt has some examples
 % Used - used | shared
 :- dynamic(blanknode/3).
 :- dynamic(outstream/1).
-%  VV 10/3/2010 multifile from owl2_model
-% :- dynamic(annotation/3). % implements the ANN(X) function.
+
+:- dynamic(aNN/3). % implements the ANN(X) function.
 :- dynamic(annotation_r_node/4).
 :- dynamic(axiom_r_node/4).
 :- dynamic(owl_repository/2). % implements a simple OWL repository: if URL not found, Ontology is read from a repository (local) RURL
@@ -535,8 +537,7 @@ ann(X,Y) :-
 
 ann(X,X1, annotation(X1,Y,Z)) :-
 	annotationProperty(Y),use_owl(X,Y,Z,annotationProperty(Y)),
-	% print(annotation(X-Y-Z-X1)),nl,
-	u_assert(annotation(X1,Y,Z)),
+	u_assert(aNN(X1,Y,Z)),
 	ann2(X,Y,Z,X1).
 
 
@@ -1181,14 +1182,18 @@ owl_parse_axiom(A,AnnMode,List) :-
 
 parse_annotation_assertions :-
 	( nb_current(rind,RIND) -> true ; RIND = []),!,
-	forall((annotation(X,AP,AV),findall(annotation(annotation(X,AP,AV),AP1,AV1),
-					    annotation(annotation(X,AP,AV),AP1,AV1),ANN), \+member(X,RIND)),
+	forall((aNN(X,AP,AV),findall( aNN(annotation(X,AP,AV),AP1,AV1),
+				      aNN(annotation(X,AP,AV),AP1,AV1),ANN), \+member(X,RIND)),
 	       (   assert_axiom(annotationAssertion(AP,X,AV)),
 		  %  VV 10/3/2010 keep annotation/3
 		  % retract(annotation(X,AP,AV)),
-		   forall(member(annotation(_,AP1,AV1),ANN),
-			  assert_axiom(annotation(annotationAssertion(AP,X,AV),AP1,AV1))))
-	      ).
+		   forall(member(aNN(_,AP1,AV1),ANN),
+			    assert_axiom(annotation(annotationAssertion(AP,X,AV),AP1,AV1))
+			 )
+	       )
+	      ),
+	forall(aNN(X,Y,Z),assert(annotation(X,Y,Z))),
+	retractall(aNN(X,Y,Z)).
 
 % Table 18. Parsing of Axioms for Compatibility with OWL DL
 
