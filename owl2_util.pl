@@ -21,6 +21,7 @@
            map_IRIs/3,
            use_class_labels_as_synonyms/1,
            class_label_synonym_axiom/2,
+	   any_axiom_template/1,
            write_ontology_summary/0,
            treeview/1,
            treeview/2,
@@ -277,7 +278,40 @@ class_label_synonym_axiom(NS,Ax) :-
         (   Ax=class(C)
         ;   Ax=equivalentClasses([C,IRI])).
 
+any_axiom_template(T) :-
+	findall(T,
+		(   axiom(A),
+		    extract_axiom_template(A,T)),
+		Ts),
+	uniqify(Ts,Ts2),
+	member(T,Ts2).
 
+uniqify([],[]).
+uniqify([H|L],L2) :-
+	\+ \+ member(H,L),
+	uniqify(L,L2).
+uniqify([H|L],[H|L2]) :-
+	uniqify(L,L2).
+
+	
+
+
+extract_axiom_template(A,_) :-
+	atom(A),
+	!.
+extract_axiom_template(literal(_),_) :-
+	!.
+extract_axiom_template([],[]).
+extract_axiom_template(L,L2) :-
+	L=[_|_],
+	maplist(extract_axiom_template,L,L2).
+	%uniqify(L2,L3).
+extract_axiom_template(A,T) :-
+	A=..[P|L],
+	maplist(extract_axiom_template,L,L2),
+	T=..[P|L2].
+
+	
 
 write_ontology_summary:-
         forall(axiompred(PS),
@@ -538,6 +572,11 @@ owl2_generate_ce_graph(unionOf([E|Rest]),element(node,[type=unionOf],Children)) 
 		(member(X,[E|Rest]), owl2_generate_ce_graph(X,Node)),
 		Children),!.
 
+owl2_generate_ce_graph(IRI,element(node,[type=class,id=NSLocalA],[])) :- atom(IRI),rdf_db:rdf_global_id(NSLocal,IRI),
+	term_to_atom(NSLocal,NSLocalA),!. % better iri(IRI).
+
+%  owl2_generate_ce_graph(_,element(node,[type=unhandled_ce_node],[])) :-
+%  !.
 
 owl2_export_axiom(oneOf([E|Rest]),main_triple(BNode,'rdf:type',Type)) :-
 	as2rdf_bnode(oneOf([E|Rest]),BNode),
@@ -552,7 +591,7 @@ owl2_export_axiom(datatypeRestriction(DT,FVs),main_triple(BNode,'rdf:type','rdfs
 	owl2_export_list(FVs,LNode),
 	owl_rdf_assert(BNode,'owl:withRestrictions',LNode).
 
-owl2_export_axiom(facetRestriction(F,V),main_triple(BNode,F2,V2)) :-
+owl2_export_axiom(facetRestriction(F,V),main_triple(BNode,F2,_V2)) :-
 	(   sub_atom(F,_,_,_,'#')
 	->  F2=F2
 	;   atom_concat('xsd:',F,F2)),
@@ -638,11 +677,6 @@ owl2_export_axiom(exactCardinality(N,OPE,CEorDR),main_triple(BNode,'rdf:type','o
 	(   classExpression(CEorDR) -> owl_rdf_assert(BNode,'owl:onClass',Tce); owl_rdf_assert(BNode,'owl:onDataRange',Tce)),!.
 
 
-owl2_generate_ce_graph(IRI,element(node,[type=class,id=NSLocalA],[])) :- atom(IRI),rdf_db:rdf_global_id(NSLocal,IRI),
-	term_to_atom(NSLocal,NSLocalA),!. % better iri(IRI).
-
-%  owl2_generate_ce_graph(_,element(node,[type=unhandled_ce_node],[])) :-
-%  !.
 
 
 /** <module> Various utility predicates for OWL ontologies

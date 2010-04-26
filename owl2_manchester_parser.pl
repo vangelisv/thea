@@ -4,7 +4,8 @@
           [
            owl_parse_manchester_syntax_file/1,
            owl_parse_manchester_syntax_file/2,
-	   owl_parse_manchester_expression/2
+	   owl_parse_manchester_expression/2,
+	   owl_parse_manchester_frame/2
            ]).
 
 :- use_module(owl2_model,[assert_axiom/1]).
@@ -31,52 +32,59 @@ owl_parse_manchester_expression(A,X) :-
 	description(X,Toks,[]).
 
 %% owl_parse_manchester_frame(+FrameAtom,?Axiom) is semidet
-owl_parse_manchester_expression(A,X) :-
+owl_parse_manchester_frame(A,Axioms) :-
 	atom_codes(A,L),
 	codes_tokens_filtered(L,Toks),
-	frame(X,Toks,[]).
-
+	frame(X,Toks,[]),
+	process_frame(X,'',Axioms).
 
 process_ontdoc( NSL-ontology(O,_L1,_L2,Frames) ) :-
-	process_frames(Frames,O-NSL).
+	process_frames(Frames,O-NSL,Axioms),
+	maplist(assert_axiom,Axioms).
 
-process_frames([],_).
-process_frames([F|Fs],O) :-
+process_frames([],_,[]).
+process_frames([F|Fs],O,Axioms) :-
 	!,
-	process_frame(F,O),
-	process_frames(Fs,O).
+	process_frame(F,O,Axioms1),
+	process_frames(Fs,O,Axioms2),
+	append(Axioms1,Axioms2,Axioms).
 
-process_frame(frame(Type,Name,Props),O) :-
+process_frame(frame(Type,Name,Props),O,[Unary|Axioms]) :-
+	!,
 	expand_curie(Name,O,IRI),
 	Unary =.. [Type,IRI],
 	assert_axiom(Unary),
-	process_properties(Props,IRI,Type,O).
+	process_properties(Props,IRI,Type,O,Axioms).
+process_frame(A,_,[A]).
 
-process_properties([],_,_,_).
-process_properties([Prop|Props],IRI,Type,O) :-
-	process_property(Prop,IRI,Type,O),
-	process_properties(Props,IRI,Type,O).
+process_properties([],_,_,_,[]).
+process_properties([Prop|Props],IRI,Type,O,[Axiom|Axioms]) :-
+	process_property(Prop,IRI,Type,O,Axioms1),
+	process_properties(Props,IRI,Type,O,Axioms2),
+	append(Axioms1,Axioms2,Axioms).
 
-process_property(characteristics=CL,IRI,Type,O) :-
+process_property(characteristics=CL,IRI,Type,O,Axioms) :-
 	!,
-	forall(member(C,CL),
-	       process_characteristic(C,IRI,Type,O)).
+	findall(Axiom,(member(C,CL),
+		       process_characteristic(C,IRI,Type,O,Axiom)),
+		Axioms).
 
-process_property(P=VL,IRI,Type,O) :-
+process_property(P=VL,IRI,Type,O,Axioms) :-
 	!,
-	forall(member(V,VL),
-	       process_slot_value(P,V,IRI,Type,O)).
+	findall(Axiom,(member(V,VL),
+		       process_slot_value(P,V,IRI,Type,O,Axiom)),
+		Axioms).
 
-process_characteristic(C,IRI,_Type,_) :-
+process_characteristic(C,IRI,_Type,_,Unary) :-
 	slot_predicate(C,P),
-	Unary =.. [P,IRI],
-	writeln(u=Unary),
-	assert_axiom(Unary).
+	Unary =.. [P,IRI].
+	%writeln(u=Unary),
+	%assert_axiom(Unary).
 
-process_slot_value(S,V,IRI,T,O) :-
-	process_slot_value(S,V,IRI,T,O,Ax),
-	writeln(ax=Ax),
-	assert_axiom(Ax).
+process_slot_value(S,V,IRI,T,O,Ax) :-
+	process_slot_value(S,V,IRI,T,O,Ax).
+	%writeln(ax=Ax),
+	%assert_axiom(Ax).
 	
 process_slot_value(disjointWith,V,IRI,objectProperty,O,Ax) :-
 	!,
@@ -93,7 +101,7 @@ process_slot_value(S,V,IRI,T,O,Ax) :-
 
 expand_curie(Name,O-_NSL,IRI) :-
 	concat_atom([O,'#',Name],IRI). % TODO
-	
+
 slot_predicate(S,P) :-
 	sub_atom(S,0,1,_,C1),
 	C1 @>= 'A',
@@ -446,7 +454,7 @@ annotatedObjectPropertyExpression(X) --> objectPropertyExpression(X). % TODO
 
 
 % <NT>2List ::= <NT> , <NT>List
-description2List([D|L]) --> description(D),[','],oneOrMore(',',description,L).
+description2List([D|L]) --> description(D),zeroOrMore(',',description,L).
 
 annotatedDescription(A-D) --> annotations(A),description(D).
 annotatedDescription(D) --> description(D).
@@ -572,8 +580,11 @@ dataPropertyFact( P-L) --> dataPropertyIRI( P), literal(L).
 %dataPropertyExpression }
 
 misc(A-equivalentClasses(DL)) --> ['EquivalentClasses:'],annotations(A),description2List(DL).
+misc(equivalentClasses(DL)) --> ['EquivalentClasses:'],description2List(DL).
 misc(A-disjointClasses(DL)) --> ['DisjointClasses:'],annotations(A),description2List(DL).
+misc(disjointClasses(DL)) --> ['DisjointClasses:'],description2List(DL).
 misc(A-equivalentProperties(DL)) --> ['EquivalentProperties:'],annotations(A),description2List(DL).
+misc(equivalentProperties(DL)) --> ['EquivalentProperties:'],description2List(DL).
 
 
 

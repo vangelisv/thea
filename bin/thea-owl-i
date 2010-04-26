@@ -1,4 +1,4 @@
-#!/usr/bin/swipl -L0 -G0 -A0 -T0 -q -g main -t halt -s
+#!/usr/bin/swipl -L0 -G0 -T0 -q -g main -t halt -s
 
 :- use_module(library('thea2/owl2_model')).
 :- use_module(library('thea2/owl2_util')).

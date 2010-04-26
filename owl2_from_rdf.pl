@@ -319,6 +319,9 @@ rdf_load_stream(URL,Ontology,BaseURI,Imports) :-
         rdf_load_stream(RURL,Ontology,BaseURI,Imports).
 
 rdf_load_stream(URL,Ontology,BaseURI,Imports) :-
+	(   var(BaseURI)	% TEMP CODE - testing - change with swipl5.10?
+	->  BaseURI=temp
+	;   true),
   	(   sub_string(URL,0,4,_,'http')
         ->  catch((http_open(URL,RDF_Stream,[]),
                    rdf_load(RDF_Stream,[if(true),base_uri(BaseURI),blank_nodes(noshare),
