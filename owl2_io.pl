@@ -83,7 +83,7 @@ save_axioms(File,Fmt) :-
 %% save_axioms(+File,+Fmt,+Opts)
 % as save_axioms/2 with options
 % Opts are Fmt specific - see individual modules for details
-save_axioms(File,Fmt,_Opts) :-
+save_axioms(File,Fmt,Opts) :-
         nonvar(Fmt),
         (   Fmt=prolog
         ;   Fmt=owlpl
@@ -96,6 +96,10 @@ save_axioms(File,Fmt,_Opts) :-
                (   A=implies(_,_)
                ->  format('swrl:~q.~n',[A]) % ugly hack - assume owl2_model module for everything except this
                ;   format('~q.~n',[A]))),
+	(   member(exclude(ontologyAxiom),Opts)
+	->  true
+	;   forall(ontologyAxiom(O,A),
+		   format('~q.~n',[ontologyAxiom(O,A)]))),
         told.
 save_axioms(File,Fmt,Opts) :-
         load_handler(write,Fmt),
