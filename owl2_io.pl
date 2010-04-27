@@ -82,7 +82,12 @@ save_axioms(File,Fmt) :-
 
 %% save_axioms(+File,+Fmt,+Opts)
 % as save_axioms/2 with options
-% Opts are Fmt specific - see individual modules for details
+% Opts are Fmt specific - see individual modules for details.
+%
+% Builtin formats:
+%
+% * owlpl -- owl2_model.pl native prolog form
+%   Options - exclude(ontologyAxiom)
 save_axioms(File,Fmt,Opts) :-
         nonvar(Fmt),
         (   Fmt=prolog
