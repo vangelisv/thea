@@ -85,6 +85,7 @@ write_axioms(H):-
 % download all imported files to the current directory.
 % the full closure is followed - downloaded files will
 % also have their imports chains downloaded.
+% TODO - create a catalog.xml file
 download_import_closure(F) :-
 	download_import_closure(F,[]).
 download_import_closure([],_) :- !.
@@ -97,23 +98,35 @@ download_import_closure([F|Fs],IL) :-
 	get_import_closure(F,Xs),
 	append(Fs,Xs,Fs2),
 	download_import_closure(Fs2,[F|IL]).
+download_import_closure(F,IL) :-
+	\+ is_list(F), % allow non-lists
+	!,
+	download_import_closure([F],IL).
+
 
 get_import_closure(F,Xs) :-
 	import_url_local(F,Local),
+	exists_file(Local),
+	!,
 	rdf_load(Local,[]),
 	findall(X,rdf_has(_,'http://www.w3.org/2002/07/owl#imports',X),Xs),
 	debug(download,'adding ~w',[Xs]),
 	rdf_retractall(_,_,_).
+get_import_closure(F,[]) :-
+	format(user_error,'Could not download: ~w~n',[F]).
+
 
 import_url_local(F,Local) :-
-	sub_atom(F,0,_,_,'http:'),
+	%sub_atom(F,0,_,_,'http:'),
+	concat_atom(['',Local],'http://',F),
 	!,
-	concat_atom(Toks,'/',F),
-	reverse([Local|_],Toks),
-	debug(download,'downloading ~w from ~w',[Local,F]),
-	sformat(Cmd,'wget ~w -O ~w',[F,Local]),
+	%truncate_url_to_local(F,Local),
+	%debug(download,'downloading ~w from ~w',[Local,F]),
+	sformat(Cmd,'wget -x ~w',[F]),
+	debug(download,'cmd: ~w',[Cmd]),
 	shell(Cmd).
 import_url_local(F,F).
+
 
 
 
