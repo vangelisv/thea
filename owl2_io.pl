@@ -9,7 +9,7 @@
            convert_axioms/5
           ]).
 
-:- use_module(owl2_model,[consult_axioms/1,axiom/1]).
+:- use_module(owl2_model,[consult_axioms/1, axiom/1]).
 
 :- multifile load_axioms_hook/3.
 :- multifile save_axioms_hook/3.
@@ -103,7 +103,7 @@ save_axioms(File,Fmt,Opts) :-
                ;   format('~q.~n',[A]))),
 	(   member(exclude(ontologyAxiom),Opts)
 	->  true
-	;   forall(ontologyAxiom(O,A),
+	;   forall(owl2_model:ontologyAxiom(O,A),
 		   format('~q.~n',[ontologyAxiom(O,A)]))),
         told.
 save_axioms(File,Fmt,Opts) :-
