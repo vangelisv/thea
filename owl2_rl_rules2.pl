@@ -1,12 +1,10 @@
 /* -*- Mode: Prolog -*- */
 
-:-module(owl2_rl_rules,
-	 [fire/0,
-	  fire_cycle/0,
-
+:-module(owl2_rl_rules2,
+	 [
 	  clear_entailments/0,
 	  is_entailed/2,
-	  are_entailed/2
+	  are_entailed/4
 
 	 ]).
 
@@ -51,7 +49,7 @@ See http://www.w3.org/TR/2008/WD-owl2-profiles-20081202/#Reasoning_in_OWL_2_RL_a
 %  Database of entails facts representing the rule database%  it is used by the rule engine to infer new axioms based on existing
 %  axioms
 %
-
+/*
 % Semantics of Equality (Table 4)
 entails(eq-sym, [sameAs(X,Y)],[sameAs(Y,X)]).
 entails(eq-trans, [sameAs(X,Z),sameAs(Z,Y)],[sameAs(X,Y)]).
@@ -155,7 +153,7 @@ entails(scm-avf2,[subClassOf(_,allValuesFrom(P1,Y)),subClassOf(_,allValuesFrom(P
 
 entails(scm-int, [subClassOf(C,intersectionOf(L)),pl(member(C1,L))],[subClassOf(C,C1)]).
 entails(scm-uni, [subClassOf(C,unionOf(L)),pl(member(C1,L))],[subClassOf(C1,C)]).
-
+*/
 
 % ----------------------------------------
 % Utility predicates
@@ -170,28 +168,6 @@ classAssertionList([C|Rest],X) :-
 % Rule engine
 % ----------------------------------------
 
-%%	fire is nondet
-%	Forward chaining engine. Fire executes continuoysly
-%	fire_cycle/0 until no new entailments have been added to
-%	the database.
-
-fire :-
-	aggregate_all(count,entailed(_,_,_),C), print('# of entailed before cycle'-C),
-	fire_cycle,
-	aggregate_all(count,entailed(_,_,_),C1), print('# of entailed after cycle'-C1),nl,
-	(   C1 = C -> true ; fire ).
-
-
-%%	fire_cycle is nondet
-%	Execute all possible entailments based on existing entails/3
-%	rules and axiom/1 facts.
-
-fire_cycle :-
-	forall((entails(Rule,Antecedants,Consequents),
-		hold(Antecedants),
-		member(Consequent,Consequents)),
-	       assert_entailment(entailed(Consequent,Rule,Antecedants))
-	      ).
 
 %%	clear_entailments is det
 %       Retracts all entailed/3 facts.
@@ -199,27 +175,6 @@ fire_cycle :-
 clear_entailments :-
 	retractall(entailed(_,_,_)).
 
-
-%%	holds(+Axiom,-Explanation) is nondet
-%	Axiom holds if either an axiom/1 exists --in which
-%	case Explanation binds to axiom(Axiom)-- or Axiom is
-%	already entailed by -- Explanation binds to
-%	entailed(Rule, Expl).
-holds(Axiom,axiom(Axiom)) :-
-	axiom(Axiom).
-holds(A,A) :-
-	nonvar(A),A = pl(Axiom),
-	call(Axiom).
-holds(Axiom,entailed(Rule,Expl)):-
-	entailed(Axiom,Rule,Expl).
-
-
-%%	hold(+Axiom:list) is nondet
-%       All members of Axiom list hold.
-hold([]).
-hold([Antecedent|Rest]) :-
-	holds(Antecedent,_),
-	hold(Rest).
 
 
 %%	is_entailed(+Axiom,-Explanation) is nondet
@@ -232,59 +187,31 @@ hold([Antecedent|Rest]) :-
 %	has been entailed it is not tried again. This prevents endless
 %	loops.
 
-is_entailed(A,axiom(Axiom)) :-
-	nonvar(A),
-	A = holds(Axiom),
-	axiom(Axiom),!.
-
 is_entailed(Axiom,Expl) :-
-	holds(Axiom,Expl).
+	is_entailed(Axiom,Expl,[],_OutVisited).
 
-is_entailed(Axiom,entailed(Rule,Expl)) :-
-	not(entailed(Axiom,_,_)),
+is_entailed(Axiom,Expl,In,In) :-
+	member(Axiom-Expl,In),!.
+
+is_entailed(A,axiom,In,[A-axiom|In]) :-
+	axiom(A).
+
+is_entailed(Axiom,entailed(Rule,Expl),In,Out) :-
 	% find rules to be executed.
 	entails(Rule,Antecedants,Consequents),	member(Axiom,Consequents),
 	debug(rl-rules,'rule matched ~w',Rule),
-	hold_augment(Axiom,Antecedants,HoldedAntecedants),
-	are_entailed(HoldedAntecedants,Expl), 	% resolve rules
+	are_entailed(Antecedants,Expl,[Axiom|In],Out). 	% resolve rules
 	% if resolution succeeds assert axiom if not already there
-	not( holds(Axiom,_)), % put this axiom once but generate all entailments for its children...
-	assert_entailment(entailed(Axiom,Rule,Expl)). % backtrack to next rule.
+	% assert_entailment(entailed(Axiom,Rule,Expl)). % backtrack to next rule.
 
 
 %%	are_entailed(+Axiom:List,-Explanation:List) is nondet
 %	Calls is_entailed for all Axioms in list
 
-are_entailed([],[]).
-are_entailed([Axiom|Rest],[Expl|RestExpl]) :-
-	is_entailed(Axiom,Expl),
-	are_entailed(Rest,RestExpl).
-
-
-%%	hold_augment(+Axiom,+Antecedants,-AugmentedAntecedants) is det
-%       If Axiom matches first element of Antecedants (Ant1) then
-%	Ant1 is augmented as holds(Ant1).
-%
-%	Enables write a rule as S:- S,S1. The antecedant S should hold
-%       already: is_entailed will not try to resolve it.
-
-hold_augment(_,[],[]):- !.
-hold_augment(Axiom,[Ant1|Rest],[holds(Ant1)|Rest]) :-
-	functor(Axiom,P,A),functor(Ant1,P,A),!.
-hold_augment(_,Antecedants,Antecedants).
-
-
-assert_entailment(entailed(Axiom,Rule,Explanation)) :-
-	entailed(Axiom,Rule,Explanation),!.
-
-/*
-assert_entailment(entailed(Axiom,Rule,Explanation)) :-
-	entailed(Axiom,RuleIn,ExplIn),!,
-	(   RuleIn = [_|_] -> RuleL=RuleIn; RuleL = [RuleIn]),
-	assert(entailed(Axiom,[Rule|RuleIn],[Explanation|ExplIn])).
-*/
-
-assert_entailment(Fact) :- assert(Fact).
+are_entailed([],[],In,In).
+are_entailed([Axiom|Rest],[Expl|RestExpl],In,Out) :-
+	is_entailed(Axiom,Expl,In,Out1),
+	are_entailed(Rest,RestExpl,Out1,Out).
 
 
 
@@ -292,7 +219,7 @@ assert_entailment(Fact) :- assert(Fact).
 
 %entails(r1,[e(X,Y)],[s(X,Y)]).
 
-% entails(r2,[subClassOf(X,Z),subClassOf(Z,Y)],[subClassOf(X,Y)]).
+entails(r2,[subClassOf(X,Z),subClassOf(Z,Y)],[subClassOf(X,Y)]).
 
 g :-
 	assert_axiom(subClassOf(a,b)),
@@ -301,9 +228,6 @@ g :-
 
 % usage:
 % :- owl_parse_rdf('testfiles/wine.owl',[clear(complete)]).
-
-
-
 
 
 
