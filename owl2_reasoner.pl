@@ -22,6 +22,10 @@ initialize_reasoner(Type,Reasoner) :-
 	initialize_reasoner(Type,Reasoner,[]).
 
 %% initialize_reasoner(+Type,?Reasoner,+Opts)
+%
+% Given a type of reasoner, generate a Reasoner object.
+% This can be used in subsequent calls
+%
 % Example:
 % ==
 % initialize_reasoner(pellet,R,[])
@@ -31,6 +35,7 @@ initialize_reasoner(Type,Reasoner,Opts) :-
 	initialize_reasoner_hook(Type,Reasoner,Opts).
 	
 %% reasoner_tell(+Reasoner,+Axiom)
+% feed an axiom to the reasoner
 reasoner_tell(Reasoner,Axiom) :- 
 	reasoner_tell_hook(Reasoner,Axiom).
 
@@ -43,6 +48,14 @@ reasoner_tell_all(Reasoner) :-
 	       reasoner_tell(Reasoner,A)).
 
 %% reasoner_ask(+Reasoner,?Axiom)
+% in general Axiom should be one of
+% * subClassOf
+% * classAssertion
+% with arguments that are either ground atoms or
+% variables.
+% some reasoners may be able to give results for class expressions
+% that contain variables.
+% TODO - isConsistent
 reasoner_ask(Reasoner,Axiom) :- 
 	reasoner_ask_hook(Reasoner,Axiom).
 
@@ -69,7 +82,18 @@ reasoner_ask(Reasoner,Axiom) :-
 
 ---+ Details
 
-See Reasoning-using-Thea.txt
+See Reasoning_using_Thea.txt
 
+  This module specifies which requests can be made of a reasoner. The actual implementation is in separate modules.
 
+---+ Writing wrapping code for a new reasoner
+
+You can provide a bridge module for your reasoner of choice. You should define the following:
+  
+* owl2_reasoner:initialize_reasoner_hook/3
+* owl2_reasoner:reasoner_tell_hook/2
+* owl2_reasoner:reasoner_tell_all_hook/1
+* owl2_reasoner:reasoner_ask_hook/2
+  
+  
 */
