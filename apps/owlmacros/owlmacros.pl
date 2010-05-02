@@ -28,6 +28,8 @@ parse_template(T,PT,[X,Y]) :-
 parse_template(T,_,_) :-
 	throw(error(no_parse(T))).
 
+%% collect_mapping(?Mapping) is nondet
+% Mapping = AxiomTemplate-ReplacementAxiom
 collect_mapping(annotationAssertion(P,X,Y)-PT) :-
 	annotation_property_template(P,T),
 	parse_template(T,PT,[X,Y]).
@@ -42,14 +44,18 @@ collect_mapping(hasValue(P,Y)-PT) :-
 	parse_template(T,PT,[_,Y]).
 
 collect_mappings(Maps) :-
+	debug(owlmacros,'collecting mappings...',[]),
 	findall(Mapping,collect_mapping(Mapping),Maps).
 
 %% expand_all/0
 %
 % expands all macros in the loaded ontology
 expand_all :-
+	!,
+	debug(owlmacros,'expand_all...',[]),
 	collect_mappings(Maps),
 	debug(owlmacros,'collected mappings: ~w',[Maps]),
+	debug(owlmacros,'expanding all axioms...',[]),
 	forall(axiom(A),
 	       expand_axiom(Maps,A)).
 
@@ -71,27 +77,64 @@ replace_axiom(A,A2) :-
 	retract_axiom(A),
 	assert_axiom(A2).
 
-%% deep_replace(Expr,Map:list,Expr2) is det
+%% deep_replace(+Expr, +Map:list, ?ExprReplaced) is det
 % Map=[In1-Out1,In2-Out2,...]
 % replaces all Ins with Outs in Expr
+
+% keep vars
 deep_replace(Expr,_,Expr) :- var(Expr),!.
+
+% lists:
 deep_replace([],_,[]) :- !.
 deep_replace([H|T],Map,[H2|T2]) :-
 	!,
 	deep_replace(H,Map,H2),
 	deep_replace(T,Map,T2).
-deep_replace(Expr,Map,Expr2) :-
-	member(Expr-Var,Map), % inefficient?
+
+% non-list expressions:
+% //there can be multiple replacements in a single expression;
+% //recursively replace all
+%deep_replace(Expr,[],Expr) :- !.  % Map exhausted
+deep_replace(Expr,Map,Expr3) :-
+	debug(owlmacros,'   map ~q ',[Map]),
+	% todo - better way - in some cases we
+	% want to preserve the vars, e.g. when collecting mappings...
+	(   Map=[_-V1|_],
+	    var(V1)
+	->  Map2=Map
+	;   copy_term(Map,Map2)),
+	debug(owlmacros,'   map2 ~q ',[Map2]),
+	member(Expr-Var,Map2),
+	%member(Expr-Var,Map),
 	!,
-	deep_replace(Var,Map,Expr2).
+	deep_replace(Var,Map,Expr2),
+	deep_replace(Expr2,Map,Expr3).
+/*
+deep_replace(Expr,Map,Expr3) :- % TODO
+	findall(Expr-Var,member(Expr-Var,Map),Replacements), 
+	%debug(owlmacros,'   pattern match ~q => ~q',[Expr,Var]),
+	debug(owlmacros,'   pattern match ~q ',[Replacements]),
+	replace_all(Expr,Replacements,Expr2),
+	Expr2\=Expr,
+	!,
+%deep_replace(Var,Map,Expr2),
+	deep_replace(Expr2,Map,Expr3).
+*/
+
+% replace arguments of complex term:
 deep_replace(Expr,Map,Expr2) :-
 	Expr=..[F|Args],
 	Args=[_|_],
 	!,
 	deep_replace(Args,Map,Args2),
 	Expr2=..[F|Args2].
-deep_replace(Expr,_,Expr) :- !.
+deep_replace(Expr,_,Expr) :- !. % atom
 
+replace_all(Expr,[],Expr).
+replace_all(Expr,[Expr-V|L],Expr2) :-
+	replace_all(V,L,Expr2).
+replace_all(Expr,[_|L],Expr2) :-
+	replace_all(Expr,L,Expr2).
 
 
 
