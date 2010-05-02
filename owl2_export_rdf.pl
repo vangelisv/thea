@@ -285,18 +285,21 @@ owl2_export_axiom(intersectionOf([E|Rest]),main_triple(BNode,'rdf:type',Type)) :
 	as2rdf_bnode(intersectionOf([E|Rest]),BNode),
 	owl2_export_list([E|Rest],LNode),
 	(   classExpression(E) -> Type = 'owl:Class'; Type = 'owl:Datatype'),
+	owl_rdf_assert(BNode,'rdf:type',Type),
 	owl_rdf_assert(BNode,'owl:intersectionOf', LNode),
         !.
 owl2_export_axiom(unionOf([E|Rest]),main_triple(BNode,'rdf:type',Type)) :-
 	as2rdf_bnode(unionOf([E|Rest]),BNode),
 	owl2_export_list([E|Rest],LNode),
 	(   classExpression(E) -> Type = 'owl:Class'; Type = 'owl:Datatype'),
+	owl_rdf_assert(BNode,'rdf:type',Type),
 	owl_rdf_assert(BNode,'owl:unionOf', LNode),!.	  
 
 owl2_export_axiom(oneOf([E|Rest]),main_triple(BNode,'rdf:type',Type)) :-
 	as2rdf_bnode(oneOf([E|Rest]),BNode),
 	owl2_export_list([E|Rest],LNode),
 	(   classExpression(E) -> Type = 'owl:Class'; Type = 'owl:Datatype'),
+	owl_rdf_assert(BNode,'rdf:type',Type),
 	owl_rdf_assert(BNode,'owl:oneOf', LNode),!.	  
 
 owl2_export_axiom(datatypeRestriction(DT,FVs),main_triple(BNode,'rdf:type','rdfs:Datatype')) :-
@@ -311,7 +314,7 @@ owl2_export_axiom(facetRestriction(F,V),main_triple(BNode,F2,V2)) :-
 	->  F2=F2
 	;   atom_concat('xsd:',F,F2)),
 	as2rdf_bnode(facetRestriction(F2,V2),BNode),
-	owl_rdf_assert(BNode,F,V).
+	owl_rdf_assert(BNode,F,V). % TODO -- check
 
 owl2_export_axiom(complementOf(E),main_triple(BNode,'rdf:type',Type)) :-
 	as2rdf_bnode(complementOf(E),BNode),
