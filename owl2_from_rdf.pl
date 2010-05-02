@@ -440,6 +440,7 @@ owl_parse_axiom(ontology(O),AnnMode,List) :-
 	valid_axiom_annotation_mode(AnnMode,O,'rdf:type','owl:Ontology',List),
         use_owl(O,'rdf:type','owl:Ontology',ontology),
         nb_setval(current_ontology,O),
+	debug(owl_parser,'current_ontology: ~w',[O]),
 	forall(use_owl(O,'owl:imports',IRI,ontology_import), assert_axiom(ontologyImport(O,IRI))),
 	forall(use_owl(O,'owl:versionInfo',IRI2,ontology_version_info), assert_axiom(ontologyVersionInfo(O,IRI2))),!. % Do Once
 
