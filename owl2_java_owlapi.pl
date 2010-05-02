@@ -694,9 +694,41 @@ expr_method(objectExactCardinality,getOWLObjectExactCardinalityRestriction,[N,P]
 expr_method(dataExactCardinality,getOWLDataExactCardinalityRestriction,[N,P,CE],[P,N,CE]).
 expr_method(dataExactCardinality,getOWLDataExactCardinalityRestriction,[N,P],[P,N]).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Hooks for owl2_reasoner.pl  %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+:- multifile owl2_reasoner:initialize_reasoner_hook/3.
+:- multifile owl2_reasoner:reasoner_tell_hook/2.
+:- multifile owl2_reasoner:reasoner_tell_all_hook/1.
+:- multifile owl2_reasoner:reasoner_ask_hook/2.
 
+wrapped_reasoner(pellet).
+wrapped_reasoner(factpp).
 
+initialize_reasoner_hook(Type,R,Opts) :-
+	wrapped_reasoner(Type),
+	initialize_reasoner_hook(owlapi(Type),R,Opts).
+initialize_reasoner_hook(owlapi(Type),owlapi(R-Man-Fac),_Opts) :-
+	!,
+	require_manager(Man),
+	create_factory(Man,Fac),
+	create_reasoner(Man,Type,R).
+
+%reasoner_tell_hook(R,Axiom) :- foo.
+
+reasoner_tell_all_hook(owlapi(OWLReasoner,Fac)) :-
+	build_ontology(Man,Fac,Ont),
+	reasoner_classify(OWLReasoner,Man,Ont).
+
+	
+reasoner_ask_hook(R,Axiom) :-
+	var(Axiom), % allow all?
+	!,
+	throw(error(reasoner(R,Axiom))).
+
+reasoner_ask_hook(R,subClassOf(A,B)) :-
+	reasoner_subClassOf(Reasoner,Fac,A,B),
         
 
 /** <module> bridge to java OWLAPI

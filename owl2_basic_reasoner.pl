@@ -112,6 +112,27 @@ propertyAssertion_chain([P|PL],A,B) :- propertyAssertion(P,A,C),propertyAssertio
 
 */
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Hooks for owl2_reasoner.pl  %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+:- multifile owl2_reasoner:initialize_reasoner_hook/3.
+:- multifile owl2_reasoner:reasoner_tell_hook/2.
+:- multifile owl2_reasoner:reasoner_tell_all_hook/1.
+:- multifile owl2_reasoner:reasoner_ask_hook/2.
+
+initialize_reasoner_hook(basic,basic([]),_) :- !.
+reasoner_ask_hook(basic(_),Axiom) :-
+	reasoner_told,
+	entailed(Axiom).
+reasoner_ask_hook(basic(_),_Axiom) :-
+	\+ reasoner_told,
+	throw(error(must_call(reasoner_tell_all))).
+
+reasoner_tell_all_hook(_Reasoner) :-
+	assert(reasoner_told).
+
+
 /** <module> simple scruffy backward chaining 
 
   ---+ Synopsis
