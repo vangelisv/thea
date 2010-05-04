@@ -96,14 +96,12 @@ deep_replace([H|T],Map,[H2|T2]) :-
 % //recursively replace all
 %deep_replace(Expr,[],Expr) :- !.  % Map exhausted
 deep_replace(Expr,Map,Expr3) :-
-	debug(owlmacros,'   map ~q ',[Map]),
 	% todo - better way - in some cases we
 	% want to preserve the vars, e.g. when collecting mappings...
 	(   Map=[_-V1|_],
 	    var(V1)
 	->  Map2=Map
 	;   copy_term(Map,Map2)),
-	debug(owlmacros,'   map2 ~q ',[Map2]),
 	member(Expr-Var,Map2),
 	%member(Expr-Var,Map),
 	!,
