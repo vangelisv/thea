@@ -7,6 +7,7 @@
            rdf_file_to_prolog/1,
            rdf_file_to_prolog/2,
 	   download_import_closure/1,
+	   download_import_closure/2,
            write_owl_as_prolog/0,
            expand_namespaces/0,
            remove_namespaces/0,
@@ -33,6 +34,7 @@
 :- use_module(owl2_metamodel).
 :- use_module(owl2_from_rdf).
 :- use_module(owl2_xml).
+:- use_module(owl2_catalog).
 :- use_module(owl2_basic_reasoner).
 
 
@@ -81,38 +83,45 @@ write_axioms(H):-
         forall(H,format('~q.~n',[H])).
 
 %% download_import_closure(+F)
+% see download_import_closure/2
+download_import_closure(F) :-
+	download_import_closure(F,[]).
+
+%% download_import_closure(+F,+Opts)
 % given a file or URL, calling this predicate will
 % download all imported files to the current directory.
 % the full closure is followed - downloaded files will
 % also have their imports chains downloaded.
 % TODO - create a catalog.xml file
-download_import_closure(F) :-
-	download_import_closure(F,[]).
-download_import_closure([],_) :- !.
-download_import_closure([F|Fs],IL) :-
+download_import_closure(F,Opts) :-
+	retractall(temp_catalog(_,_)),
+	download_import_closure(F,[],Opts),
+	save_catalog.
+download_import_closure([],_,_) :- !.
+download_import_closure([F|Fs],IL,Opts) :-
 	member(F,IL),
 	!,
-	download_import_closure(Fs,IL).
-download_import_closure([F|Fs],IL) :-
+	download_import_closure(Fs,IL,Opts).
+download_import_closure([F|Fs],IL,Opts) :-
 	!,
-	get_import_closure(F,Xs),
+	get_import_closure(F,Xs,Opts),
 	append(Fs,Xs,Fs2),
-	download_import_closure(Fs2,[F|IL]).
-download_import_closure(F,IL) :-
+	download_import_closure(Fs2,[F|IL],Opts).
+download_import_closure(F,IL,Opts) :-
 	\+ is_list(F), % allow non-lists
 	!,
-	download_import_closure([F],IL).
+	download_import_closure([F],IL,Opts).
 
-
-get_import_closure(F,Xs) :-
+get_import_closure(F,Xs,_Opts) :-
 	import_url_local(F,Local),
 	exists_file(Local),
 	!,
+	register_ontology_localpath(F,Local),
 	rdf_load(Local,[]),
 	findall(X,rdf_has(_,'http://www.w3.org/2002/07/owl#imports',X),Xs),
 	debug(download,'adding ~w',[Xs]),
 	rdf_retractall(_,_,_).
-get_import_closure(F,[]) :-
+get_import_closure(F,[],_Opts) :-
 	format(user_error,'Could not download: ~w~n',[F]).
 
 
