@@ -141,6 +141,7 @@ owl_parse_rdf(F,Opts):-
 % This implements the mapping defined here:
 % http://www.w3.org/TR/2008/WD-owl2-mapping-to-rdf-20081202/
 owl_parse(URL, RDF_Load_Mode, OWL_Parse_Mode,ImportFlag) :-
+        debug(owl_parser,'owl_parse  ~w / ~w',[RDF_Load_Mode,OWL_Parse_Mode]),
 	(   RDF_Load_Mode=complete
 	->  rdf_retractall(_,_,_), retractall(rdf_db:rdf_source(_,_,_,_))
         ;   true),
@@ -170,7 +171,7 @@ owl_canonical_parse_2([IRI|ToProcessRest],Parent,ImportFlag,ProcessedIn,Processe
 	(   nonvar(O)
         ->  Ont = O
         ;   Ont = Parent), % in the include case we may need to remove the import...
-        debug(owl_parser,'Commencing rdf_2_owl. Generating owl/4',[]),
+        debug(owl_parser,'Commencing rdf_2_owl. Generating owl/4. Imports=~w list= ~w',[ImportFlag,Imports]),
 	rdf_2_owl(BaseURI,Ont),  	% move the RDF triples into the owl-Ont/4 facts
 	(   ImportFlag = true
         ->  owl_canonical_parse_2(Imports,Ont,ImportFlag,[Ont|ProcessedIn],ProcessedIn1)
@@ -309,16 +310,19 @@ owl_parse_nonannotated_axioms(Pred/Arity) :-
 rdf_load_stream(URL,Ontology,BaseURI,Imports) :-
         owl_repository(URL,RURL),
         !,
+	debug(owl_parser,'  using cached version via owl_repository/2: ~w',[RURL]),
         % note: users responsibility to avoid infinite loops by avoid cycles in repository mappings!
         rdf_load_stream(RURL,Ontology,BaseURI,Imports).
 
 rdf_load_stream(URL,Ontology,BaseURI,Imports) :-
         owl_repository_hook(URL,RURL), % e.g. owl2_catalog
         !,
+	debug(owl_parser,'  using cached version: ~w',[RURL]),
         % note: users responsibility to avoid infinite loops by avoid cycles in repository mappings!
         rdf_load_stream(RURL,Ontology,BaseURI,Imports).
 
 rdf_load_stream(URL,Ontology,BaseURI,Imports) :-
+	debug(owl_parser,'  loading: ~w',[URL]),
 	(   var(BaseURI)	% TEMP CODE - testing - change with swipl5.10?
 	->  BaseURI=temp
 	;   true),
@@ -330,13 +334,18 @@ rdf_load_stream(URL,Ontology,BaseURI,Imports) :-
                    close(RDF_Stream)),
                   Message,
                   throw(io_error(URL,'rdf_load/2 failed',Message))) % re-throw with more information
-        ;   RDF_Stream = URL, rdf_load(RDF_Stream,[blank_nodes(noshare),if(true),base_uri(BaseURI),register_namespaces(true)])
+        ;   RDF_Stream = URL,
+	    rdf_load(RDF_Stream,[blank_nodes(noshare),if(true),base_uri(BaseURI),register_namespaces(true)])
 	),
         % collect all imports directives
+	debug(owl_parser,'  collecting import directives...',[]),
 	(   rdf(Ontology,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type','http://www.w3.org/2002/07/owl#Ontology',BaseURI:_)
         ->  findall(I,rdf(Ontology,'http://www.w3.org/2002/07/owl#imports',I,BaseURI:_),Imports)
 	;   Imports = []
-	).
+	),
+	debug(owl_parser,'  import directives = ~w',[Imports]).
+
+
 
 
 
