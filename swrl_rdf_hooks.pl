@@ -20,8 +20,6 @@ owl2_from_rdf:owl_parse_axiom_hook(X,AnnMode,List) :-
 
 use_owl(A,B,C) :-
         owl2_from_rdf:use_owl(A,B,C).
-test_use_owl(A,B,C) :-
-        owl2_from_rdf:test_use_owl(A,B,C).
 
 %owl_parse_axiom(swrl:implies(Body,Head),AnnMode,List) :-
 swrl_parse_axiom(implies(Body,Head),AnnMode,List) :-
