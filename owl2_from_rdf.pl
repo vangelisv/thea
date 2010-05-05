@@ -86,6 +86,7 @@ The file owl2_from_rdf.plt has some examples
 :- dynamic(axiom_r_node/4).
 :- dynamic(owl_repository/2). % implements a simple OWL repository: if URL not found, Ontology is read from a repository (local) RURL
 :- multifile(owl_repository/2).
+:- multifile(owl_repository_hook/2).
 
 % we make this discontiguous so that the code can follow the structure of the document as much as possible
 
@@ -349,6 +350,13 @@ rdf_2_owl(_,Ont) :-
 rdf_load_stream(URL,Ontology,BaseURI,Imports) :-
         owl_repository(URL,RURL),
         !,
+        % note: users responsibility to avoid infinite loops by avoid cycles in repository mappings!
+        rdf_load_stream(RURL,Ontology,BaseURI,Imports).
+
+rdf_load_stream(URL,Ontology,BaseURI,Imports) :-
+        owl_repository_hook(URL,RURL), % e.g. owl2_catalog
+        !,
+	debug(owl_parser,'  using cached version: ~w',[RURL]),
         % note: users responsibility to avoid infinite loops by avoid cycles in repository mappings!
         rdf_load_stream(RURL,Ontology,BaseURI,Imports).
 
