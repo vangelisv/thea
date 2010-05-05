@@ -48,8 +48,7 @@ See http://www.w3.org/TR/2008/WD-owl2-profiles-20081202/#Reasoning_in_OWL_2_RL_a
 
 %% entails(+RuleID,+Antecedents:list, +Consequents:list) is nondet
 %
-%  Database of entails facts representing the rule database
-%  it is used by the rule engine to infer new axioms based on existing
+%  Database of entails facts representing the rule database%  it is used by the rule engine to infer new axioms based on existing
 %  axioms
 %
 
@@ -191,7 +190,7 @@ fire_cycle :-
 	forall((entails(Rule,Antecedants,Consequents),
 		hold(Antecedants),
 		member(Consequent,Consequents)),
-	       assert_u(entailed(Consequent,Rule,Antecedants))
+	       assert_entailment(entailed(Consequent,Rule,Antecedants))
 	      ).
 
 %%	clear_entailments is det
@@ -208,7 +207,8 @@ clear_entailments :-
 %	entailed(Rule, Expl).
 holds(Axiom,axiom(Axiom)) :-
 	axiom(Axiom).
-holds(pl(Axiom),pl(Axiom)) :-
+holds(A,A) :-
+	nonvar(A),A = pl(Axiom),
 	call(Axiom).
 holds(Axiom,entailed(Rule,Expl)):-
 	entailed(Axiom,Rule,Expl).
@@ -232,8 +232,10 @@ hold([Antecedent|Rest]) :-
 %	has been entailed it is not tried again. This prevents endless
 %	loops.
 
-is_entailed(holds(Axiom),Expl) :-
-	holds(Axiom,Expl).
+is_entailed(A,axiom(Axiom)) :-
+	nonvar(A),
+	A = holds(Axiom),
+	axiom(Axiom),!.
 
 is_entailed(Axiom,Expl) :-
 	holds(Axiom,Expl).
@@ -242,11 +244,12 @@ is_entailed(Axiom,entailed(Rule,Expl)) :-
 	not(entailed(Axiom,_,_)),
 	% find rules to be executed.
 	entails(Rule,Antecedants,Consequents),	member(Axiom,Consequents),
+	debug(rl-rules,'rule matched ~w',Rule),
 	hold_augment(Axiom,Antecedants,HoldedAntecedants),
 	are_entailed(HoldedAntecedants,Expl), 	% resolve rules
 	% if resolution succeeds assert axiom if not already there
 	not( holds(Axiom,_)), % put this axiom once but generate all entailments for its children...
-	assert_u(entailed(Axiom,Rule,Expl)). % backtrack to next rule.
+	assert_entailment(entailed(Axiom,Rule,Expl)). % backtrack to next rule.
 
 
 %%	are_entailed(+Axiom:List,-Explanation:List) is nondet
@@ -271,24 +274,35 @@ hold_augment(Axiom,[Ant1|Rest],[holds(Ant1)|Rest]) :-
 hold_augment(_,Antecedants,Antecedants).
 
 
-assert_u(Fact) :- call(Fact),!.
-assert_u(Fact) :- assert(Fact).
-
+assert_entailment(entailed(Axiom,Rule,Explanation)) :-
+	entailed(Axiom,Rule,Explanation),!.
 
 /*
-Testbed
+assert_entailment(entailed(Axiom,Rule,Explanation)) :-
+	entailed(Axiom,RuleIn,ExplIn),!,
+	(   RuleIn = [_|_] -> RuleL=RuleIn; RuleL = [RuleIn]),
+	assert(entailed(Axiom,[Rule|RuleIn],[Explanation|ExplIn])).
+*/
+
+assert_entailment(Fact) :- assert(Fact).
+
+
+
+% Testbed
 
 %entails(r1,[e(X,Y)],[s(X,Y)]).
-entails(r2,[s(X,Z),s(Z,Y)],[s(X,Y)]).
 
-axiom1(s(a,b)).
-axiom1(s(b,c)).
-axiom1(s(c,b)).
+% entails(r2,[subClassOf(X,Z),subClassOf(Z,Y)],[subClassOf(X,Y)]).
+
+g :-
+	assert_axiom(subClassOf(a,b)),
+	assert_axiom(subClassOf(b,c)),
+	assert_axiom(subClassOf(c,b)).
 
 % usage:
-:- owl_parse_rdf('testfiles/wine.owl',[clear(complete)]).
+% :- owl_parse_rdf('testfiles/wine.owl',[clear(complete)]).
 
-*/
+
 
 
 
