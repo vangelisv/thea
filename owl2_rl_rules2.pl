@@ -34,7 +34,8 @@ See http://www.w3.org/TR/2008/WD-owl2-profiles-20081202/#Reasoning_in_OWL_2_RL_a
 :- use_module('owl2_model').
 
 :- dynamic entails/3.
-:- dynamic entailed/2.
+:- dynamic entailment/2.
+:- dynamic tbox/1.
 
 :- discontiguous is_entailed/2.
 :- discontiguous is_entailed/3.
@@ -80,11 +81,31 @@ wine :-
 	retract_all_axioms,
 	owl_parse('testfiles/wine.owl',complete,complete,false).
 
-t(Axiom,Count,Count1) :- time(aggregate_all(count,(is_entailed(Axiom,Expl),not(axiom(Axiom)),u_assert(entailed(Axiom,Expl))),Count)),
-	aggregate_all(count,entailed(Axiom,_),Count1).
+t(Axiom,Count) :- time(aggregate_all(count,(is_entailed(Axiom,_Expl)),Count)).
 
-t(Count,Count1) :- time(aggregate_all(count,(is_entailed(Axiom,Expl),not(axiom(Axiom)),u_assert(entailed(Axiom,Expl))),Count)),
-	aggregate_all(count,entailed(_,_),Count1).
+t(Count) :- time(aggregate_all(count,(is_entailed(_Axiom,_Expl)),Count)).
+
+tbox_axiom_pred(subClassOf/2).
+tbox_axiom_pred(equivalentClasses/1).
+tbox_axiom_pred(subPropertyOf/2).
+tbox_axiom_pred(equivalentProperties/1).
+tbox_axiom_pred(propertyDomain/2).
+tbox_axiom_pred(propertyRange/2).
+
+
+clear_entailments :-
+	retractall(entailment(_,_)).
+
+get_tbox_entailments :-
+	clear_entailments,
+	set_tbox(none),
+	forall((tbox_axiom_pred(F/A),functor(Pred,F,A),is_entailed(Pred,Expl)),
+	       u_assert(entailment(Pred,Expl))),
+	set_tbox(saved).
+
+set_tbox(X) :-
+	retractall(tbox(_)),
+	assert(tbox(X)).
 
 
 u_assert(X) :-
@@ -95,6 +116,12 @@ u_assert(X) :- assert(X).
 
 % -----------------------------
 %
+
+is_entailed(Axiom,Expl) :-
+	tbox(saved),
+	tbox_axiom_pred(F/A),
+	functor(Axiom,F,A),!,
+	entailment(Axiom,Expl).
 
 
 is_entailed(subClassOf(X,Y),Expl) :-
