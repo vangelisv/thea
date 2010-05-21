@@ -3,7 +3,11 @@
 
 :-module(owl2_rl_rules,
 	 [
-	  is_entailed/2
+	  is_entailed/2,
+
+	  get_tbox_entailments/0,
+	  set_tbox/1,
+	  clear_entailments/0
 	 ]).
 
 
