@@ -29,7 +29,8 @@ parse_template(T,_,_) :-
 	throw(error(no_parse(T))).
 
 %% collect_mapping(?Mapping) is nondet
-% Mapping = AxiomTemplate-ReplacementAxiom
+% Mapping = ExpressionTemplate-ReplacementExpression
+% e.g. someValuesFrom(lacks_part,X)-exactCardinality(has_part,X)
 collect_mapping(annotationAssertion(P,X,Y)-PT) :-
 	annotation_property_template(P,T),
 	parse_template(T,PT,[X,Y]).
@@ -46,6 +47,10 @@ collect_mapping(hasValue(P,Y)-PT) :-
 collect_mappings(Maps) :-
 	debug(owlmacros,'collecting mappings...',[]),
 	findall(Mapping,collect_mapping(Mapping),Maps).
+
+%collect_gci(Axiom,Mappings,GCI) :-
+%	copy_term(Mappings,M2),
+%	member(Axiom-Repl
 
 %% expand_all/0
 %
