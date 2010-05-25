@@ -5,6 +5,7 @@
                       write_owl_as_plsyn/1,
 
                       plsyn_owl/2,
+                      plsyn_owl/3,
                       
                       op(1200,xfy,(--)),
                       %op(1150,fx,class),
@@ -33,6 +34,7 @@
 
 
 :- use_module(owl2_model).
+:- use_module(owl2_util).
 :- use_module(swrl).
 :- use_module(library(readutil)).
 
@@ -83,20 +85,41 @@ owl_parse_plsyn(File,_Opts) :-
 write_owl_as_plsyn:-
         write_owl_as_plsyn([]).
 
-write_owl_as_plsyn(_Opts):-
-        forall(axiompred(PS),
-               write_axioms_as_plsyn(PS)).
+write_owl_as_plsyn(Opts):-
+	setof(Ont,member(ontology(Ont),Opts),Onts),
+	!,
+	% this clause optimized for ontology filtering
+        forall((member(Ont,Onts),
+		ontologyAxiom(Ont,A),
+		\+exclude_axiom(A,Opts)),
+	       (   plsyn_owl(Pl,A,Opts),
+		   format('~q.~n',[Pl]))).
+write_owl_as_plsyn(Opts):-
+        forall((axiom(A),\+exclude_axiom(A,Opts)),
+	       (   plsyn_owl(Pl,A,Opts),
+		   format('~q.~n',[Pl]))).
 
-write_axioms_as_plsyn(P/A):-
-        !,
-        functor(H,P,A),
-        forall(H,(plsyn_owl(Pl,H),format('~q.~n',[Pl]))).
+
+% TODO: move somewhere generic
+exclude_axiom(H,Opts) :-
+	setof(Ont,member(ontology(Ont),Opts),Onts),
+	\+ ((ontologyAxiom(Ont,H),
+	     member(Ont,Onts))).
 
 plsyn_owl(Pl,Owl) :-
+	plsyn_owl(Pl,Owl,[]).
+
+%% plsyn_owl(+Pl,?Owl,+Opts:list)
+plsyn_owl(Pl,Owl,Opts) :-
+	select(use_labels,Opts,Opts2),
+	!,
+	map_IRIs(owl2_util:use_label_as_IRI,[Owl],[Owl2]),
+	plsyn_owl(Pl,Owl2,Opts2).
+plsyn_owl(Pl,Owl,_) :-
         nonvar(Pl),
         plsyn2owl(Pl,Owl),
         !.
-plsyn_owl(Pl,Owl) :-
+plsyn_owl(Pl,Owl,_) :-
         nonvar(Owl),
         owl2plsyn(Owl,Pl),
         !.
