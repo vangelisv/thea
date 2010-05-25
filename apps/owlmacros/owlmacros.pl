@@ -11,9 +11,15 @@ literal_atom(literal(A),A).
 annotation_property_template(P,T) :-
 	annotationAssertion('http://www.geneontology.org/formats/oboInOwl#expandAssertionTo',P,V),
 	literal_atom(V,T).
+annotation_property_template(P,T) :- % new
+	annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000425',P,V),
+	literal_atom(V,T).
 
 object_property_template(P,T) :-
 	annotationAssertion('http://www.geneontology.org/formats/oboInOwl#expandExpressionTo',P,V),
+	literal_atom(V,T).
+object_property_template(P,T) :- % new
+	annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000424',P,V),
 	literal_atom(V,T).
 
 parse_template(T,PT,[X,Y]) :-
