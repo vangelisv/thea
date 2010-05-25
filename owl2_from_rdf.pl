@@ -722,6 +722,9 @@ triple_remove([owl(X,'rdf:type','owl:AnnotationProperty'),owl(X,'rdf:type','rdf:
 triple_remove([owl(X,'rdf:type','owl:OntologyProperty'),owl(X,'rdf:type','rdf:Property')],[owl(X,'rdf:type','rdf:Property')]).
 triple_remove([owl(X,'rdf:type','rdf:List'),owl(X,'rdf:first',_Y),owl(X,'rdf:rest',_Z)],[owl(X,'rdf:type','rdf:List')]).
 
+/*
+   triple_remove([owl(X,'rdf:type','owl:Thing')],[owl(X,'rdf:type','owl:Thing')]).
+*/
 % See table 6.
 % http://www.w3.org/TR/2008/WD-owl2-mapping-to-rdf-20081202/
 triple_replace([owl(X,'rdf:type','owl:OntologyProperty')],[owl(X,'rdf:type','owl:AnnotationProperty')]).
