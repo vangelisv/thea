@@ -105,8 +105,6 @@ The file owl2_from_rdf.plt has some examples
 
 :- multifile owl2_io:load_axioms_hook/3.
 
-
-
 owl2_io:load_axioms_hook(File,owl,Opts) :-
         owl_parse_rdf(File,Opts).
 
