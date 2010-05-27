@@ -1,4 +1,4 @@
-#!/usr/bin/swipl -L0 -G0 -A0 -T0 -q -g main -t halt -s
+#!/usr/bin/swipl -L0 -G0 -T0 -q -g main -t halt -s
 
 main :-
         current_prolog_flag(argv, Arguments),
@@ -8,6 +8,7 @@ main :-
         set_prolog_flag(verbose,normal),
         set_test_options([silent(false)]),
         debug(test),
+        debug(rl_rules),
         debug(owl_exporter),
         debug(basic_reasoner),
         load_test_files([]),
