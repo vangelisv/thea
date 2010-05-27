@@ -1021,12 +1021,32 @@ labelAnnotation_value(X,Val) :-
   META-PREDICATES
   ****************************************/
 
+
+%% axiom_directly_about(?Ax,?About)
+% true if Ax is an axiom whose first argument is equal to About.
+%
+% e.g. axiom_directly_about( subClassOf(X,_), X).
+%
+% also include property assertions whose second argument is equal to About.
+%
+% e.g. axiom_directly_about( propertyAssertion(P,X,_), X).
+%
 axiom_directly_about(Ax,About) :-
         axiom(Ax),
         Ax =.. [_,Arg1|_],
         (   is_list(Arg1)
         ->  member(About,Arg1)
         ;   About=Arg1).
+axiom_directly_about(Ax,About) :-
+	Ax=propertyAssertion(_,About,_),
+        axiom(Ax).
+axiom_directly_about(Ax,About) :-
+	Ax=annotationAssertion(_,About,_),
+        axiom(Ax).
+axiom_directly_about(Ax,About) :-
+	Ax=classAssertion(_,About),
+        axiom(Ax).
+
 
 %% axiom_directly_references(?Ax:axiom,?Ref)
 %

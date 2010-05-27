@@ -433,13 +433,12 @@ is_entailed(propertyDomain(P,C),Expl) :-
 
 
 is_entailed_pd1(propertyDomain(P,D2),scm-dom1(E1,E2)) :-
-	axiom(propertyDomain(P,D)),E1 = axiom(propertyRange(P,D)),
-	is_entailed(subClassOf(D,D2),E2).
+	axiom(propertyDomain(P,D)),E1 = axiom(propertyDomain(P,D)),
+	is_entailed(subClassOf(D2,D),E2).
 
 is_entailed_pd2(propertyDomain(P1,D),scm-dom2(E1,E2)) :-
-	axiom(propertyDomain(P,D)),E1 = axiom(propertyRange(P,D)),
+	axiom(propertyDomain(P,D)),E1 = axiom(propertyDomain(P,D)),
 	is_entailed(subPropertyOf(P1,P),E2).
-
 
 
 is_entailed(propertyRange(P,C),Expl) :-
@@ -448,7 +447,7 @@ is_entailed(propertyRange(P,C),Expl) :-
 
 is_entailed_pr1(propertyRange(P,C2),scm-rng1(E1,E2)) :-
 	axiom(propertyRange(P,C)),E1 = axiom(propertyRange(P,C)),
-	is_entailed(subClassOf(C,C2),E2).
+	is_entailed(subClassOf(C2,C),E2).
 
 
 is_entailed_pr2(propertyRange(P1,C),scm-rng2(E1,E2)) :-
