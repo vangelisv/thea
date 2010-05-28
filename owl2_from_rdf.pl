@@ -557,11 +557,14 @@ ann2(_,_,_,_).
 
 % 3.2.4 Parsing of Expressions
 
+is_bnode(C) :-
+	atom(C),
+	sub_string(C,0,2,_,'__').
 
 % Table 11. Parsing Object Property Expressions
 
 owl_property_expression(C,C) :-
-	not(sub_string(C,0,2,_,'__')), % better: IRI(C).
+	not(is_bnode(C)), % better: IRI(C).
         !.
 
 owl_property_expression(C,D) :-
@@ -580,7 +583,7 @@ owl_property_expression(P,inverseOf(Q)) :-
 % Table 12. Parsing of Data Ranges
 
 owl_datarange(D,D) :-
-	not(sub_string(D,0,2,_,'__')),!. % better: IRI(C).
+	not(is_bnode(D)),!.  % better: IRI(C).
 
 owl_datarange(C,D) :-
 	blanknode(C,D,Use),
@@ -648,7 +651,8 @@ owl_datarange(D,datatypeRestriction(DY,L)) :-
 %         is recorded for later structure sharing checks.
 
 owl_description(C,C) :-
-	not(sub_string(C,0,2,_,'__')),!.
+	not(is_bnode(C)),!. % better: IRI(C).
+				
 
 owl_description(C,D) :-
 	blanknode(C,D,Use),
@@ -698,7 +702,7 @@ owl_description(D,Restriction) :-
 % Table 15 - OWL DL compatibility class expressions
 %
 owl_description(D,Result) :-
-	not(sub_string(D,0,2,_,'__')),
+	not(is_bnode(D)), % better: IRI(C).
 	use_owl(D,'rdf:type','owl:Class',description(D)),
 	use_owl(D,'owl:unionOf',L,unionOf(L)),
 	owl_description_list(L,DL),
@@ -707,7 +711,7 @@ owl_description(D,Result) :-
 	owl_get_bnode(D,Result),!.
 
 owl_description(D,Result) :-
-	not(sub_string(D,0,2,_,'__')),
+	not(is_bnode(D)), % better: IRI(C).
 	use_owl(D,'rdf:type','owl:Class',dl_compatibility_descr(D)),
 	use_owl(D,'owl:intersectionOf',L,intersectionOf(D)),
 	owl_description_list(L,DL),
@@ -716,7 +720,7 @@ owl_description(D,Result) :-
 	owl_get_bnode(D,Result),!.
 
 owl_description(D,Result) :-
-	not(sub_string(D,0,2,_,'__')),!,
+	not(is_bnode(D)),!, % better: IRI(C).
 	use_owl(D,'rdf:type','owl:Class',dl_compatibility_descr(D)),
 	use_owl(D,'owl:oneOf',[],oneOf(D)),
 	Result = 'owl:Nothing',
