@@ -35,7 +35,10 @@ subClassOfX(A,B) :- subClassOf(A,B).
 % potential cycles?
 subClassOfX(A,B) :-
 	equivalent_to(A,intersectionOf(L)),
-	member(B,L).
+	member(B,L),
+	debug(reasoner,'i-elt: ~w',[B]).
+
+
 
 % auto-classification - requires tabling
 %subClassOfX(A,B) :-
