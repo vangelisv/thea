@@ -59,7 +59,9 @@ reasoner_tell_all(Reasoner) :-
 reasoner_ask(Reasoner,Axiom) :- 
 	reasoner_ask_hook(Reasoner,Axiom).
 
-%% reasoner_consistent(+Reasoner)
+%% reasoner_check_consistency(+Reasoner)
+reasoner_check_consistency(Reasoner) :- 
+	reasoner_check_consistency_hook(Reasoner).
 
 
 % --

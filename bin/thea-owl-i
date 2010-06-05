@@ -59,8 +59,17 @@ main :-
                (   forall(G,
                           writeln(result=T)))),
         (   member(prolog(true),Opts)
-        ->  prolog
+        ->  prolog_shell
         ;   true).
+
+prolog_shell:-
+        format(user_error,'% Starting thea shell~n',[]),
+        repeat,
+        catch(prolog,
+              E,
+              (format('ERROR:~n~w~n',[E]),fail)),
+        !,
+        format('Come back soon!~n').
 
 
 parse_args([],[]).

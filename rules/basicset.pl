@@ -71,15 +71,13 @@ entailed_5(subClassOf(X,Y),EL) :-
 % subclass over existential restrictions
 % X < P some Y :- X < P some YY, YY < Y
 % TODO - fix this - cause of non-termination
-xxxxxxxxentailed_5(subClassOf(X,someValuesFrom(P,Y)), EL) :-
-	class(X),
-	debug(reasoner,'testing for ~w',[subClassOf(X,someValuesFrom(P,Y))]),
-        subClassOf(X,someValuesFrom(P,YY)),
-	debug(reasoner,'  testing for ~w',[subClassOf(YY,Y)]),
-	class(YY),
-        entailed(subClassOf(YY,Y),[P-X-YY|EL]),
-	class(Y),
-        \+ member(X<someValuesFrom(P,Y),EL).
+xxxentailed_2(subClassOf(X,Restr), EL) :-
+	Restr=someValuesFrom(_,_),
+	entailed_5(subClassOf(X,Y),EL),
+	subClassOf(Y,Restr).
+xxxentailed_2(subClassOf( someValuesFrom(R,X), someValuesFrom(R,Y) ), EL) :-
+	\+ ((var(X),var(Y))),
+	entailed(subClassOf(X,Y),EL).
 
 
 % e.g. if X = A and B, then treat this like X subClassOf A, X subClassOf B

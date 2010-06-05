@@ -91,10 +91,10 @@ test(query) :-
                    writeln(results=RL),
                    RL=ExpectedL)).
 
-test(lca) :-
-        forall(property_assertion_least_common_ancestor(P,XI,YI,XC,YC),
-               writeln(lca(P,XI,YI,XC,YC))),
-        nl.
+%test(lca) :-
+%        forall(property_assertion_least_common_ancestor(P,XI,YI,XC,YC),
+%               writeln(lca(P,XI,YI,XC,YC))),
+%        nl.
 
 
 query(subClassOf(human,Y),

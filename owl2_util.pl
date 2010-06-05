@@ -36,6 +36,7 @@
 :- use_module(owl2_xml).
 :- use_module(owl2_catalog).
 :- use_module(owl2_basic_reasoner).
+:- use_module(owl2_reasoner).
 
 
 :-use_module(library('http/http_open')).
@@ -371,10 +372,17 @@ owlpredargs :-
         format('~q.~n',[owlpredicate_arguments(TP,L)]),
         fail.
 
+get_class(Q,C) :- annotationLabel_value(C,Q),!.
+get_class(C,C).
 
+show_superclasses(R,Q) :-
+	get_class(Q,C),
+	forall(reasoner_ask(R,subClassOf(C,P)),
+	       show_class(P)).
 
+show_class(C) :- writeln(C).
 
-
+% this could all be moved to a separate module..
 treeview(Class) :-
         forall(treeview(Class,X-Y-subClassOf(X,Y),_,[]),
                true).
