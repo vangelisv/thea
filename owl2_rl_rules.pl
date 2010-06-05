@@ -34,7 +34,6 @@ See http://www.w3.org/TR/2008/WD-owl2-profiles-20081202/#Reasoning_in_OWL_2_RL_a
 */
 
 
-:- use_module('owl2_from_rdf').
 :- use_module('owl2_model').
 
 :- dynamic entails/3.
@@ -43,47 +42,6 @@ See http://www.w3.org/TR/2008/WD-owl2-profiles-20081202/#Reasoning_in_OWL_2_RL_a
 
 :- discontiguous is_entailed/2.
 :- discontiguous is_entailed/3.
-
-
-g :-
-	retract_all_axioms,
-	assert_axiom(subClassOf(a,b)),
-
-	% assert_axiom(subClassOf(b,c)),
-	% assert_axiom(subClassOf(c,b)),
-	assert_axiom(equivalentClasses([c,b])),
-
-	assert_axiom(subClassOf(a,a)),
-	assert_axiom(subClassOf(b,b)),
-	assert_axiom(subClassOf(c,d)),
-	assert_axiom(subClassOf(d,e)),
-
-	assert_axiom(classAssertion(c,i)),
-
-	assert_axiom(sameIndividual([i2,i1])),
-	assert_axiom(sameIndividual([i1,i3])),
-	assert_axiom(propertyAssertion(p,i1,v)),
-
-	assert_axiom(symmetricProperty(p)),
-	assert_axiom(sameIndividual([b,a])),
-	assert_axiom(differentIndividuals([a,b])),
-
-	assert_axiom(transitiveProperty(tp)),
-	assert_axiom(propertyAssertion(tp,a1,b1)),
-	assert_axiom(propertyAssertion(tp,b1,c1)),
-
-	assert_axiom(subPropertyOf(tp,supertp)),
-	assert_axiom(equivalentProperties([tp,tp2])),
-
-	assert_axiom(classAssertion(c,x1)),
-	assert_axiom(equivalentClasses([c,intersectionOf([c1,c2])])),
-	assert_axiom(equivalentClasses([b,unionOf([b1,b2,b3])])).
-
-
-
-wine :-
-	retract_all_axioms,
-	owl_parse('testfiles/wine.owl',complete,complete,false).
 
 t(Axiom,Count) :- time(aggregate_all(count,(is_entailed(Axiom,_Expl)),Count)).
 
@@ -278,7 +236,7 @@ is_entailed(propertyAssertion(P,I1,V),eq-rep-s(Expl1,Expl2),Visited) :-
 	 is_entailed(propertyAssertion(P,I2,V),Expl2,[eq-rep-s(I1)|Visited]).
 
 is_entailed(propertyAssertion(P,X,V2),eq-rep-o(Expl1,Expl2),Visited) :-
-	 debug(rl-rules,'eq-rep-o ~w',[X-V1]),
+	 debug(rl_rules,'eq-rep-o ~w',[X-V1]),
 	 is_entailed(sameIndividual([V1,V2]),Expl1,Visited),
 	 not(member(eq-rep-o(V2),Visited)),
 	 is_entailed(propertyAssertion(P,X,V1),Expl2,[eq-rep-o(V1)|Visited]).
