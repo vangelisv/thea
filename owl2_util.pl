@@ -24,6 +24,7 @@
            class_label_synonym_axiom/2,
 	   any_axiom_template/1,
            write_ontology_summary/0,
+	   show_class/1,
            treeview/1,
            treeview/2,
 	   owl_statistics/2
@@ -380,7 +381,16 @@ show_superclasses(R,Q) :-
 	forall(reasoner_ask(R,subClassOf(C,P)),
 	       show_class(P)).
 
-show_class(C) :- writeln(C).
+class_pp(C) --> {labelAnnotation_value(C,L)},!,[L].
+class_pp(C) --> {atom(C)},!,[C].
+class_pp([]) --> !.
+class_pp([C]) --> !,class_pp(C).
+class_pp([C1,C2|L]) --> !,class_pp(C1),[' '],class_pp([C2|L]).
+class_pp(C) --> {C=..[P|Args]},!,[P,'( '],class_pp(Args),[' ) '].
+
+
+
+show_class(C) :- class_pp(C,Toks,[]),maplist(write,Toks),nl.
 
 % this could all be moved to a separate module..
 treeview(Class) :-
