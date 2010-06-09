@@ -30,6 +30,11 @@ expected(ontologyAxiom('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine',
                                          'http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#SelaksIceWine',
                                          'http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Medium'))).
 
+expected(axiom(equivalentClasses(['http://www.w3.org/TR/2003/PR-owl-guide-20031209/WhiteWine',
+				  intersectionOf(['http://www.w3.org/TR/2003/PR-owl-guide-20031209/WhiteWine',
+						  hasValue('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#hasColor',
+							   'http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#White')])
+				 ]))).
 
 :- end_tests(wine).
 
@@ -70,7 +75,7 @@ expected(ontologyAxiom('http://www.w3.org/TR/2003/PR-owl-guide-20031209/food',
                        subClassOf('http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PastaWithWhiteSauce', 'http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Pasta'))).
 
 %expected(ontologyAxiom('http://www.w3.org/TR/2003/PR-owl-guide-20031209/food',
-%		       subClassOf('http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PastaWithWhiteSauce', 
+%		       subClassOf('http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#PastaWithWhiteSauce',
 %				  'http://www.w3.org/TR/2003/PR-owl-guide-20031209/food#Pasta'))).
 
 
@@ -91,7 +96,7 @@ test(expected) :-        test_expected.
 test(clean) :-
         \+ ((classAssertion(_,BNode),
              sub_atom(BNode,_,_,_,'#__Description'))).
-        
+
 
 expected_count(class(_),186).
 expected_count(symmetricProperty(_),3). % isPartOf is declared symmetric - weird..
@@ -179,7 +184,7 @@ test_expected_count :-
         FailedGoals=[].
 
 :- module_transparent test_expected/0.
-test_expected :- 
+test_expected :-
         findall(Ax,
                 (   expected(Ax),
                     debug(test,'Testing for: ~w',[Ax]),
@@ -196,7 +201,7 @@ test_expected :-
 ---+ Synopsis
 
 Command line:
-  
+
 ==
 swipl
 ?- [owl2_from_rdf].
@@ -212,6 +217,6 @@ make test-owl2_from_rdf
 
 ---+ Details
 
-This is a test module for the module owl2_from_rdf.pl 
+This is a test module for the module owl2_from_rdf.pl
 
 */
