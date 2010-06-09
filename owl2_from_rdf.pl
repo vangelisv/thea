@@ -650,7 +650,7 @@ owl_datarange(D,datatypeRestriction(DY,L)) :-
 
 owl_description(C,C) :-
 	not(is_bnode(C)),!. % better: IRI(C).
-				
+
 
 owl_description(C,D) :-
 	blanknode(C,D,Use),
@@ -928,6 +928,29 @@ owl_parse_axiom(equivalentClasses(DL),AnnMode,List) :-
 %      </owl:Restriction>
 %    </owl:intersectionOf>
 %  </owl:Class>
+
+owl_parse_axiom(equivalentClasses([C,intersectionOf(D)]),AnnMode,List) :-
+	class(C),
+	test_use_owl(C,'owl:intersectionOf',D1),
+	debug(owl_parser,'equivalent collection; intersection for ~w',[C]),
+	valid_axiom_annotation_mode(AnnMode,C,'owl:intersectionOf',D1,List),
+	owl_description(C,intersectionOf(D)).
+
+owl_parse_axiom(equivalentClasses([C,unionOf(D)]),AnnMode,List) :-
+	class(C),
+	test_use_owl(C,'owl:unionOf',D1),
+	debug(owl_parser,'equivalent collection; union for ~w',[C]),
+	valid_axiom_annotation_mode(AnnMode,C,'owl:unionOf',D1,List),
+	owl_description(C,unionOf(D)).
+
+owl_parse_axiom(equivalentClasses([C,oneOf(D)]),AnnMode,List) :-
+	class(C),
+	test_use_owl(C,'owl:oneOf',D1),
+	debug(owl_parser,'equivalent collection; one of for ~w',[C]),
+	valid_axiom_annotation_mode(AnnMode,C,'owl:oneOf',D1,List),
+	owl_description(C,oneOf(D)).
+
+
 owl_parse_axiom(equivalentClasses([C,D])) :-
         % TODO: this could be made more efficient by enforcing order of building
         (   test_use_owl(C,'rdf:type','owl:Class',named)

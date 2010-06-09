@@ -30,8 +30,8 @@ expected(ontologyAxiom('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine',
                                          'http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#SelaksIceWine',
                                          'http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Medium'))).
 
-expected(axiom(equivalentClasses(['http://www.w3.org/TR/2003/PR-owl-guide-20031209/WhiteWine',
-				  intersectionOf(['http://www.w3.org/TR/2003/PR-owl-guide-20031209/WhiteWine',
+expected(axiom(equivalentClasses(['http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#WhiteWine',
+				  intersectionOf(['http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#Wine',
 						  hasValue('http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#hasColor',
 							   'http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#White')])
 				 ]))).
