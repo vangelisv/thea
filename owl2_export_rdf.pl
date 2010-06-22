@@ -37,7 +37,8 @@ owl2_io:save_axioms_hook(File,owl,Opts) :-
         ->  true
         ;   ontology(O)         % TODO: better soln; this arbitrarily chooses an ontology
         ->  true
-        ;   O='http://example.org#'),
+        ;   format(user_error,'No ontology declaration - using default~n',[]),
+	    O='http://example.org#'),
         owl_generate_rdf(O,File,RDF_Load_Mode),
         (   IsTemp
         ->  sformat(Cmd,'cat ~w',[File]),
@@ -67,6 +68,7 @@ owl_generate_rdf(FileName,RDF_Load_Mode) :-
 owl_generate_rdf(Ontology,FileName,RDF_Load_Mode) :- 
 	(   RDF_Load_Mode=complete -> rdf_retractall(_,_,_); true),
 	retractall(blanknode_gen(_,_)),retractall(blanknode(_,_,_)),
+	debug(owl_generate_rdf,'exporting ~w',[Ontology]),
 	owl2_export_axiom(ontology(Ontology),_),
 	forall(ontologyAxiom(Ontology,Axiom),
 	       (owl2_export_axiom(Axiom,main_triple(S,P,O)),
