@@ -3,8 +3,31 @@
 :- use_module(owl2_model).
 :- use_module(owl2_manchester_parser).
 
-%:- begin_tests(owl2_manchester_parser,[setup(load_msfile)]).
-:- begin_tests(owl2_manchester_parser,[]).
+:- begin_tests(expr,[]).
+
+t('foo and bar').
+t('foo and (r some bar)').
+t('
+ http://purl.obolibrary.org/obo/BFO_0000051 some (
+http://purl.org/obo/owl/GO#GO_0030425 and http://purl.obolibrary.org/obo/BFO_0000051 some (
+   http://purl.org/obo/owl/GO#GO_0042734 and http://purl.obolibrary.org/obo/BFO_0000050 some (
+      http://purl.org/obo/owl/GO#GO_0045202 and http://purl.obolibrary.org/obo/BFO_0000050 some ?Y)))
+ ').
+
+
+
+test(expr) :-
+	forall(t(X),
+	       (   owl_parse_manchester_expression(X,Y),
+		   writeln(Y))).
+
+
+
+
+:- end_tests(expr).
+
+
+:- begin_tests(owl2_manchester_parser,[setup(load_msfile)]).
 
 load_msfile :-
         owl_parse_manchester_syntax_file('testfiles/rnao.owlms').
