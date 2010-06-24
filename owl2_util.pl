@@ -317,8 +317,9 @@ uniqify([H|L],L2) :-
 uniqify([H|L],[H|L2]) :-
 	uniqify(L,L2).
 
-	
 
+
+        
 
 extract_axiom_template(A,_) :-
 	atom(A),
