@@ -81,7 +81,6 @@ owl_generate_rdf(Ontology,FileName,RDF_Load_Mode) :-
         forall(axiom(implies(A,C)),
                owl2_export_axiom(implies(A,C),_)),
 	rdf_db:rdf_save(FileName).
-	
 
 
 /*
@@ -575,6 +574,7 @@ owl_rdf_assert(S,P,O).
 */   
 owl_rdf_assert(S,P,O) :-
 	expand_ns(S,S1),expand_ns(P,P1),expand_ns(O,O1),
+        debug(rdf_assert,'assert: ~w ~w ~w.',[S,P,O]),
 	rdf_db:rdf_assert(S1,P1,O1), !.
 
 /*
@@ -584,10 +584,12 @@ as2rdf_bnode(+X,-Node).
 */   
 as2rdf_bnode(X,Node) :-
 	blanknode_gen(Node,X),
+        debug(bnode,'bnode REUSE ~w ==> ~w',[X,Node]),
         !.
 
 as2rdf_bnode(X,Node) :-
 	rdf_db:rdf_bnode(Node),
 	assert(blanknode_gen(Node,X)),
+        debug(bnode,'bnode NEW ~w ==> ~w',[X,Node]),
         !.
 
