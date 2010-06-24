@@ -5,14 +5,30 @@
 
 :- begin_tests(expr,[]).
 
+:- style_check(-atom).
+
+t('r some (
+   ( a and (r some (b and r some c))) or (z and (r some (y and r some z))))').
+t('z and x').
 t('foo and bar').
+t('foo or bar').
 t('foo and (r some bar)').
 t('
- http://purl.obolibrary.org/obo/BFO_0000051 some (
-http://purl.org/obo/owl/GO#GO_0030425 and http://purl.obolibrary.org/obo/BFO_0000051 some (
-   http://purl.org/obo/owl/GO#GO_0042734 and http://purl.obolibrary.org/obo/BFO_0000050 some (
-      http://purl.org/obo/owl/GO#GO_0045202 and http://purl.obolibrary.org/obo/BFO_0000050 some ?Y)))
+ BFO_0000051 some (
+GO_0030425 and BFO_0000051 some (
+   GO_0042734 and BFO_0000050 some (
+      GO_0045202 and BFO_0000050 some ?Y)))
  ').
+t('RO_0002132 some (
+   CARO_0001001 and (
+      BFO_0000051 some (
+         GO_0045211 and BFO_0000050 some (
+            GO_0045202 and BFO_0000050 some ?Y
+         ))) or (
+      BFO_0000051 some (
+         GO_0045211 and BFO_0000050 some (
+            GO_0045202 and BFO_0000050 some ?Y))))').
+
 
 
 
