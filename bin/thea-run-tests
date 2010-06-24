@@ -3,9 +3,10 @@
 main :-
         current_prolog_flag(argv, Arguments),
         append(_SytemArgs, [--|Args], Arguments), !,
-        writeln(args=Args),
-        maplist(use_module,Args),
         set_prolog_flag(verbose,normal),
+        parse_args(Args,Opts),
+        forall(member(rest(F),Opts),
+               use_module(F)),
         set_test_options([silent(false)]),
         debug(test),
         debug(rl_rules),
@@ -16,3 +17,12 @@ main :-
         ->  halt(0)
         ;   halt(1)).
 
+parse_args([],[]).
+parse_args(Args,[Opt|Opts]) :-
+        parse_arg(Args,Rest,Opt),
+        !,
+        parse_args(Rest,Opts).
+parse_args([A|Args],[rest(A)|Opts]) :-
+        parse_args(Args,Opts).
+
+parse_arg(['--debug',D|L],L,null) :- debug(D).
