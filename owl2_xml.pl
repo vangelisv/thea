@@ -72,7 +72,7 @@ elts_axioms(O,[E|Elts],Axioms2):-
         ->  append(A,Axioms,Axioms2)
         ;   Axioms2=[A|Axioms]).
 elts_axioms(O,[E|_],_) :-
-        throw(axiom(E,O)).
+        throw(error(cannot_translate_axiom(E,O))).
 
 
 %% xml_axiom(+O,+XML,?Axiom)
@@ -226,12 +226,16 @@ ontology_xml(O,Axioms,element('http://www.w3.org/2006/12/owl2-xml#':'Ontology',[
         axioms_elts(O,Axioms,Elts).
 
 axioms_elts(_,[],[]).
+%% cjm 2010-06-24 - assume processed elsewhere
+axioms_elts(O,[ontology(_)|Axioms],Elts):-
+        !,
+        axioms_elts(O,Axioms,Elts).
 axioms_elts(O,[A|Axioms],[E|Elts]):-
         axiom_xml(O,A,E),
         !,
         axioms_elts(O,Axioms,Elts).
 axioms_elts(O,[A|_],_) :-
-        throw(axiom(A,O)).
+        throw(error(axiom_elts(A,O))).
 
 % translate entity axiom to XML
 axiom_xml(_Ont,Axiom,XML) :-
@@ -246,7 +250,7 @@ axiom_xml(_Ont,Axiom,element('http://www.w3.org/2006/12/owl2-xml#':Name,[],Subs)
         debug(owl_exporter,'Axiom: ~w',[Axiom]),
         maplist(axiom_arg_xml(Name),Args,Subs).
 axiom_xml(_Ont,Axiom,_) :-
-        throw(axiom(Axiom)).
+        throw(error(xmle_axiom(Axiom))).
 
 % if axiom argument is a class expression then call the
 % desc_xml
@@ -265,6 +269,10 @@ axiom_arg_xml(_ParentAxiom,ap(IRI),element('http://www.w3.org/2006/12/owl2-xml#'
 axiom_arg_xml(_ParentAxiom,X,X) :- !.
 
 
+% property chains
+desc_xml(_Parent,propertyChain(PL),element('http://www.w3.org/2006/12/owl2-xml#':'ObjectPropertyChain',_,Elts)) :-
+        !,
+        maplist(desc_xml('ObjectPropertyChain'),PL,Elts).
 
 % eg unionOf
 desc_xml(_Parent,Desc,element('http://www.w3.org/2006/12/owl2-xml#':Name,_Atts,Elts)) :-
