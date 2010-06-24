@@ -23,6 +23,7 @@ object_property_template(P,T) :- % new
 	literal_atom(V,T).
 
 parse_template(T,PT,[X,Y]) :-
+	debug(owlmacros,'parsing: ~w',[T]),        
 	owl_parse_manchester_expression(T,PT_1),
 	!,
 	deep_replace(PT_1,['?X'-X,'?Y'-Y],PT).
