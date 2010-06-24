@@ -135,6 +135,7 @@ suffix_format(plsyn,plsyn).
 suffix_format(owl,owl).
 suffix_format(ttl,owl).
 suffix_format(owlx,owlx).
+suffix_format(owlxml,owlx).
 suffix_format(owlms,owlms).
 suffix_format(owlapi(F),owlapi(F)).
 suffix_format(owlapi,owlapi).
