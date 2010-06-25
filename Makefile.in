@@ -143,7 +143,7 @@ MANIFEST:
 
 dist:
 	mkdir -p $(archive) && \
-	( for i in `cat MANIFEST`; do $(INSTALL) -c $$i $(archive)/$$i; done) && \
+	( for i in `cat MANIFEST | grep -v .ppt`; do $(INSTALL) -c $$i $(archive)/$$i; done) && \
 	tar czf $(archive).tar.gz $(archive) && \
 	rm -Rf $(archive) && \
 	echo $(archive)

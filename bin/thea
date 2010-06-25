@@ -1,7 +1,7 @@
 #!/bin/sh
 PATH_TO_ME=`dirname $0`;
 if [ -z "$THEA_PATH" ]; then
-   THEA_PATH=$PATH_TO_ME;
+   THEA_PATH=$PATH_TO_ME/..;
 fi
 
 SWIPL=swipl
@@ -10,5 +10,5 @@ if [ -z `which swipl` ]; then
   SWIPL=/opt/local/bin/swipl;
 fi
 
-CMD="$SWIPL -L0 -G0 -T0 -q -p library=$THEA_PATH  -g main,halt -t halt -s $THEA_PATH/thea-owl-i $*"
+CMD="$SWIPL -L0 -G0 -T0 -q -p library=$THEA_PATH  -g main,halt -t halt -s $THEA_PATH/bin/thea-owl-i $*"
 $CMD
