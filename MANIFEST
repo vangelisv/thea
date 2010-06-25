@@ -168,7 +168,6 @@ swrl.pl
 swrl.plt
 swrl_rdf_hooks.pl
 t/example_rules.pl
-t/obi.owl
 t/wine.owl
 testfiles/Hydrology.owl
 testfiles/bfo2-relations.owl
