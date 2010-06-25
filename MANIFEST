@@ -65,11 +65,11 @@ bin/thea_owllink.pl
 configure
 configure.in
 doc/OWLlink-Tutorial09_Thea.ppt
-doc/Thea OWLED09.ppt
-doc/Thea OWLLInk Demo.ppt
-doc/Thea OWLLink examples.ppt
-doc/Thea Slideshare.pptx
+doc/THEA_OWLED09.ppt
+doc/Thea OWLLInk_Demo.ppt
+doc/Thea OWLLink_examples.ppt
 doc/Thea2vsOLWAPI.xls
+doc/Thea_Slideshare.pptx
 doc/index.html
 doc/owled-2009.tgz
 doc/thea-paper.pdf
