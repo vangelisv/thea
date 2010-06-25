@@ -1,6 +1,7 @@
 .gitignore
 Cookbook.txt
 INSTALL.txt
+MANIFEST
 Makefile.in
 README
 Reasoning_using_Thea.txt
@@ -36,6 +37,7 @@ bin/_thea_owllink_request.xml
 bin/_thea_owllink_response.xml
 bin/httpd.log
 bin/iswc-2009-complete.rdf
+bin/thea
 bin/thea-download-import-closure
 bin/thea-owl-i
 bin/thea-owl-to-dlp
@@ -196,6 +198,7 @@ testfiles/propertyChain.owl
 testfiles/rdfowl_test.owl
 testfiles/reflexivity_test.owlpl
 testfiles/rl_rules_test.pl
+testfiles/rnao.owlms
 testfiles/rnao.owlx
 testfiles/rtest.owlpl
 testfiles/teams.owl

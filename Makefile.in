@@ -136,7 +136,7 @@ $(TEX):		$(DOCTOTEX)
 ################################################################
 # Distribution
 ################################################################
-BRANCH=master
+BRANCH=`git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
 MANIFEST:
 	git ls-tree -r $(BRANCH) | cut -f2 > $@
 
