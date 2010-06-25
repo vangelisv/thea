@@ -187,7 +187,6 @@ testfiles/import_test.owl
 testfiles/inverseOftest.owl
 testfiles/location-mapping.ttl
 testfiles/music_ontology.owl
-testfiles/obi.owl
 testfiles/people.owl
 testfiles/pets.owl
 testfiles/pizza.owl
