@@ -1,4 +1,4 @@
-#!/usr/bin/swipl -L0 -G0 -T0 -q -g main -t halt -s
+#!/usr/bin/swipl -L0 -G0 -T0 -p library=. -q -g main -t halt -s
 
 :- use_module(library('thea2/owl2_model')).
 :- use_module(library('thea2/owl2_util')).
@@ -58,9 +58,20 @@ main :-
         forall(member(query(T,G),Opts),
                (   forall(G,
                           writeln(result=T)))),
+        (   member(qsave(QSF),Opts)
+        ->  ensure_loaded(library('thea2/owl2_export_rdf')),
+            ensure_loaded(library('thea2/owl2_from_rdf')),
+            qsave_program(QSF,
+                          [ goal(prolog_shell),
+                            emulator('/usr/bin/swipl'),
+                            stand_alone(true) ])
+        ;   true),
         (   member(prolog(true),Opts)
         ->  prolog_shell
         ;   true).
+
+
+
 
 prolog_shell:-
         format(user_error,'% Starting thea shell~n',[]),
@@ -99,4 +110,5 @@ parse_arg(['--use-safe-labels'|L],L,goal(use_safe_labels_for_IRIs)).
 parse_arg(['--goal',GA|L],L,goal(G)) :- atom_to_term(GA,G,_).
 parse_arg(['--query',GA|L],L,query(T,G)) :- atom_to_term(GA,G-T,_).
 parse_arg(['--load-catalog'|L],L,null) :- load_catalog.
+parse_arg(['--qsave',File|L],L,qsave(File)).
 
