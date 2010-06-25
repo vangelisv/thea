@@ -1,0 +1,9 @@
+#!/bin/sh
+PATH_TO_ME=`dirname $0`;
+if [ -z "$THEA_PATH" ]; then
+   THEA_PATH=$PATH_TO_ME;
+fi
+
+CMD="swipl -L0 -G0 -T0 -q -p library=$THEA_PATH  -g main,halt -t halt -s $THEA_PATH/thea-owl-i $*"
+echo $CMD
+$CMD
