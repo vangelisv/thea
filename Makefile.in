@@ -15,7 +15,7 @@ LIBDIR=$(PLBASE)/library/thea2
 #EXDIR=$(PKGDOC)/examples/plunit
 DESTDIR=
 
-archive  = thea2
+archive  = thea2-`date "+%Y-%m-%d"`
 
 DOCTOTEX=$(PCEHOME)/bin/doc2tex
 PLTOTEX=$(PCEHOME)/bin/pl2tex
@@ -145,8 +145,8 @@ dist:
 	mkdir -p $(archive) && \
 	( for i in `cat MANIFEST`; do $(INSTALL) -c $$i $(archive)/$$i; done) && \
 	tar czf $(archive).tar.gz $(archive) && \
-	cp $(archive).tar.gz doc/download/ && \
-	rm -Rf $(archive)
+	rm -Rf $(archive) && \
+	echo $(archive)
 
 ################################################################
 # Clean

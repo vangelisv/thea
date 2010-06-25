@@ -66,9 +66,9 @@ configure
 configure.in
 doc/OWLlink-Tutorial09_Thea.ppt
 doc/THEA_OWLED09.ppt
-doc/Thea OWLLInk_Demo.ppt
-doc/Thea OWLLink_examples.ppt
 doc/Thea2vsOLWAPI.xls
+doc/Thea_OWLLInk_Demo.ppt
+doc/Thea_OWLLink_examples.ppt
 doc/Thea_Slideshare.pptx
 doc/index.html
 doc/owled-2009.tgz
