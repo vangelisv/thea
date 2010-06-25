@@ -4,8 +4,8 @@
           [
            replace_matching_axioms/2,
            replace_matching_axioms/3,
-           replace_matching_axioms_where/2,
            replace_matching_axioms_where/3,
+           replace_matching_axioms_where/4,
            replace_expression_in_all_axioms/2,
            replace_expression_in_all_axioms/3
           ]).
@@ -32,7 +32,7 @@ replace_matching_axioms_where(Ax1a,Ax2a,Ga,Opts) :-
         plsyn_owl(Ax1a,Ax1),
         plsyn_owl(Ax2a,Ax2),
         plsyn_owl(Ga,G),
-        replace_matching_axioms_where(Ax1,Ax2,G,Opts).
+        replace_matching_axioms_where(Ax1,Ax2,G,Opts2).
 replace_matching_axioms_where(Ax1,Ax2,G,Opts) :-
         forall((G,Ax1),replace_axiom(Ax1,Ax2,Opts)).
 
@@ -54,12 +54,21 @@ replace_axiom(Ax1a,Ax2a,Opts) :-
         ensure_loaded(owl2_plsyn),
         plsyn_owl(Ax1a,Ax1),
         plsyn_owl(Ax2a,Ax2),
-        replace_axiom(Ax1,Ax2,Opts).
+        replace_axiom(Ax1,Ax2,Opts2).
 replace_axiom(Ax1,Ax2,Opts) :-
+        % do this prior to retraction;
+        % this predicate should be in the same place as retract axiom..
+        findall(ontologyAxiom(O,Ax2),
+                ontologyAxiom(O,Ax1),
+                NewOntAxioms),
         (   member(copy(true),Opts)
         ->  true
         ;   retract_axiom(Ax1)),
-        assert_axiom(Ax2).
+        debug(popl,'Replacing ~w ==> ~w',[Ax1,Ax2]),
+        assert_axiom(Ax2),
+        % TODO - make optional
+        maplist(assert_axiom,NewOntAxioms).
+
 
 %% replace_axiom(+AxOld,+AxNew) is det
 % as replace_axiom/3, default options
@@ -86,7 +95,6 @@ replace_expression_in_all_axioms(T1,T2,Opts) :-
 replace_expression_in_all_axioms(T1,T2) :-
         replace_expression_in_all_axioms(T1,T2,[]).
 
-
 replace_expression_in_axiom(T1,T2,Ax,Opts) :-
         replace_expression_in_axiom_term(T1,T2,Ax,Ax2),
         replace_axiom(Ax,Ax2,Opts).
@@ -96,16 +104,24 @@ replace_expression_in_axiom(T1,T2,Ax,Opts) :-
 % T1 is replaced no matter how deep it is placed.
 replace_expression_in_axiom_term(T1,T2,Ax1,Ax2) :-
         axiom(Ax1),
+        %debug(popl,'IN ~w ==> ~w :: ~w',[T1,T2,Ax1]),
         Ax1 =.. [P|Args1],
         maplist(replace_expression(T1,T2),Args1,Args2),
         Ax2 =.. [P|Args2].
+        %debug(popl,'OUT ~w ==> ~w :: ~w',[T1,T2,Ax2]).
+
+
 
 %% replace_expression(+T1,+T2,+Expr1,?Expr2)
 % Expr2 is the same as Expr1 with all instances of T1 replaced with T2.
 % T1 is replaced no matter how deep it is placed.
+%replace_expression(T1,T2,X1,_) :-
+%        debug(popl,'repl(~w ==> ~w) in ~w',[T1,T2,X1]),
+%        fail.
 replace_expression(_,_,X,X) :- var(X),!. % allow expressions with variables
 replace_expression(T1,T2,X1,X2) :-
         copy_term(T1-T2,X1-X2), % copy and match
+        debug(popl,'repl(~w ==> ~w)',[X1,X2]),
         !. % do not recurse below
 replace_expression(T1,T2,X1,X2) :-
         is_list(X1),
