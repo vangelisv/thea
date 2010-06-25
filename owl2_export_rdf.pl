@@ -117,7 +117,7 @@ owl_generate_rdf(Ontology,FileName,RDF_Load_Mode,Opts) :-
         (   member(merge(true),Opts)
         ->  true
         ;   SrcOntology=Ontology),
-	forall(ontologyAxiom(Ontology,Axiom),
+	forall(ontologyAxiom(SrcOntology,Axiom),
 	       (owl2_export_axiom(Axiom,main_triple(S,P,O)),
 		owl2_export_annotation(Axiom,'owl:Axiom',S,P,O))),
         % TODO - better way of doing this - stray axioms
