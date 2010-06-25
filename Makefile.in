@@ -15,6 +15,8 @@ LIBDIR=$(PLBASE)/library/thea2
 #EXDIR=$(PKGDOC)/examples/plunit
 DESTDIR=
 
+archive  = thea2
+
 DOCTOTEX=$(PCEHOME)/bin/doc2tex
 PLTOTEX=$(PCEHOME)/bin/pl2tex
 LATEX=latex
@@ -130,6 +132,20 @@ $(TEX):		$(DOCTOTEX)
 		$(DOCTOTEX) $*.doc > $*.tex
 .pl.tex:
 		$(PLTOTEX) $*.pl > $*.tex
+
+################################################################
+# Distribution
+################################################################
+BRANCH=master
+MANIFEST:
+	git ls-tree -r $(BRANCH) | cut -f2 > $@
+
+dist:
+	mkdir -p $(archive) && \
+	( for i in `cat MANIFEST`; do $(INSTALL) -c $$i $(archive)/$$i; done) && \
+	tar czf $(archive).tar.gz $(archive) && \
+	cp $(archive).tar.gz doc/download/ && \
+	rm -Rf $(archive)
 
 ################################################################
 # Clean
