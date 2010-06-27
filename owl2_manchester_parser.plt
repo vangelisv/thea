@@ -3,6 +3,27 @@
 :- use_module(owl2_model).
 :- use_module(owl2_manchester_parser).
 
+:- begin_tests(frame,[]).
+
+:- style_check(-atom).
+
+tf('Class: foo').
+tf('
+  Class: foo
+  SubClassOf: bar').
+
+
+
+test(frame) :-
+	forall(tf(A),
+	       (   owl_parse_manchester_frame(A,X),
+		   writeln(X))).
+
+
+
+
+:- end_tests(frame).
+
 :- begin_tests(expr,[]).
 
 :- style_check(-atom).

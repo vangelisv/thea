@@ -89,18 +89,20 @@ process_slot_value(S,V,IRI,T,O,Ax) :-
 process_slot_value(disjointWith,V,IRI,objectProperty,O,Ax) :-
 	!,
 	expand_curie(V,O,VX),
-	Ax =.. [disjointProperties,[IRI,VX]].
+	Ax = disjointProperties([IRI,VX]).
 process_slot_value(inverseOf,V,IRI,_,O,Ax) :-
 	!,
 	expand_curie(V,O,VX),
-	Ax =.. [inverseProperties,IRI,VX].
+	Ax = inverseProperties(IRI,VX).
 process_slot_value(S,V,IRI,T,O,Ax) :-
 	writeln(eh(S,T)),
 	expand_curie(V,O,VX),
 	Ax =.. [S,IRI,VX].
 
 expand_curie(Name,O-_NSL,IRI) :-
-	concat_atom([O,'#',Name],IRI). % TODO
+	concat_atom([O,'#',Name],IRI),
+        !.                      % TODO
+expand_curie(X,_,X).
 
 slot_predicate(S,P) :-
 	sub_atom(S,0,1,_,C1),
