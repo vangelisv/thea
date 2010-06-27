@@ -1,3 +1,5 @@
+/* -*- Mode: Prolog -*- */
+
 :- module(owlmacros,
 	  [expand_all/0]).
 
@@ -43,7 +45,7 @@ collect_mapping(annotationAssertion(P,X,Y)-PT) :-
 	annotation_property_template(P,T),
 	parse_template(T,PT,[X,Y]).
 collect_mapping(subClassOf(X,someValuesFrom(P,Y))-PT) :-
-	annotation_property_template(P,T),
+	annotation_property_template(P,T), % allow this as well as annotation assertions
 	parse_template(T,PT,[X,Y]).
 collect_mapping(someValuesFrom(P,Y)-PT) :-
 	object_property_template(P,T),
