@@ -49,6 +49,11 @@ process_frames([F|Fs],O,Axioms) :-
 	process_frames(Fs,O,Axioms2),
 	append(Axioms1,Axioms2,Axioms).
 
+%% process_frame(+FrameParseTree,Ont,?Axioms)
+%
+% translate the parse tree for a frame into axioms and declarations
+%
+% e.g. frame(class, foo, [subClassOf=[bar]]),
 process_frame(frame(Type,Name,Props),O,[Unary|Axioms]) :-
 	!,
 	expand_curie(Name,O,IRI),
@@ -69,6 +74,7 @@ process_property(characteristics=CL,IRI,Type,O,Axioms) :-
 		       process_characteristic(C,IRI,Type,O,Axiom)),
 		Axioms).
 
+% e.g. subClassOf=[Super1, ...]
 process_property(P=VL,IRI,Type,O,Axioms) :-
 	!,
 	findall(Axiom,(member(V,VL),
@@ -81,8 +87,8 @@ process_characteristic(C,IRI,_Type,_,Unary) :-
 	%writeln(u=Unary),
 	%assert_axiom(Unary).
 
-process_slot_value(S,V,IRI,T,O,Ax) :-
-	process_slot_value(S,V,IRI,T,O,Ax).
+%process_slot_value(S,V,IRI,T,O,Ax) :-
+%	process_slot_value(S,V,IRI,T,O,Ax).
 	%writeln(ax=Ax),
 	%assert_axiom(Ax).
 	
@@ -95,7 +101,8 @@ process_slot_value(inverseOf,V,IRI,_,O,Ax) :-
 	expand_curie(V,O,VX),
 	Ax = inverseProperties(IRI,VX).
 process_slot_value(S,V,IRI,T,O,Ax) :-
-	writeln(eh(S,T)),
+	%writeln(eh(S,T)),
+        format(user_error,'guessing for: ~w~n',[S-T]),
 	expand_curie(V,O,VX),
 	Ax =.. [S,IRI,VX].
 
