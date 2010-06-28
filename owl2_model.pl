@@ -249,6 +249,7 @@ axiom(A) :- propertyAxiom(A).
 axiom(hasKey(A,B)) :- hasKey(A,B).
 axiom(A) :- fact(A).
 axiom(A) :- declarationAxiom(A).
+%axiom(annotation(A,B,C)) :- annotation(A,B,C). % CJM - treat annotations as axioms
 axiom_arguments(axiom,[axiom]).
 valid_axiom(axiom(A)) :- subsumed_by([A],[axiom]).
 
