@@ -14,6 +14,7 @@
            contract_namespaces/0,
            remove_ns/2,
            replace_ns_prefix/4,
+           use_label_as_IRI/2,
            use_labels_for_IRIs/0,
            use_safe_labels_for_IRIs/0,
            use_numeric_IRIs_for_classes/2,

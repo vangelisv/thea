@@ -216,6 +216,12 @@ owl2plsyn(unionOf(Args),Pl) :-
 owl2plsyn(implies(A,C),(A2->C2)) :-
         swrlatoms2plsyn(A,A2),
         swrlatoms2plsyn(C,C2).
+owl2plsyn(Owl,Pl) :-
+        Owl=..[P|Args],
+        Args\=[],
+        !,
+        maplist(owl2plsyn,Args,Args2),
+        Pl=..[P|Args2].
 owl2plsyn(X,X) :- !.
 
 swrlatoms2plsyn(A,A2) :-
