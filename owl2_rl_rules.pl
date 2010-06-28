@@ -34,6 +34,7 @@ See http://www.w3.org/TR/2008/WD-owl2-profiles-20081202/#Reasoning_in_OWL_2_RL_a
 */
 
 
+:- use_module('owl2_from_rdf').
 :- use_module('owl2_model').
 
 :- dynamic entails/3.
@@ -180,9 +181,14 @@ is_entailed(equivalentClasses([X,Y]),eq-sym(axiom(equivalentClasses([X,Z])),Expl
 
 
 is_entailed(sameIndividual([X,Y]),Expl) :-
+	var(X),
+	is_entailed(sameIndividual([Y,X]),Expl,[Y]).
+
+is_entailed(sameIndividual([X,Y]),Expl) :-
+	nonvar(X),
 	is_entailed(sameIndividual([X,Y]),Expl,[X]).
 
-is_entailed(sameIndividual([X,X]),axiom(sameIndividual([X,X])),[X]) :- axiom(class(X)).
+
 is_entailed(sameIndividual([X,Y]),axiom(sameIndividual([X,Y])),Visited) :-
 	axiom(sameIndividual([X,Y])), not(member(Y,Visited)).
 
@@ -231,13 +237,14 @@ is_entailed(propertyAssertion(P,X,Y),prp-symp(propertyAssertion(P,Y,X)),Visited)
 	axiom(propertyAssertion(P,Y,X)), not(member(P-Y-X,Visited)).
 
 is_entailed(propertyAssertion(P,I1,V),eq-rep-s(Expl1,Expl2),Visited) :-
-	 is_entailed(sameIndividual([I1,I2]),Expl1,Visited),
+	 is_entailed(sameIndividual([I1,I2]),Expl1),
 	 not(member(eq-rep-s(I2),Visited)),
+	 debug(rl-rules,'pa(P,I1,V1) eq-rep-s I2 ~w ~w ~w ~w',[P,I1,V,I2]),
 	 is_entailed(propertyAssertion(P,I2,V),Expl2,[eq-rep-s(I1)|Visited]).
 
 is_entailed(propertyAssertion(P,X,V2),eq-rep-o(Expl1,Expl2),Visited) :-
-	 debug(rl_rules,'eq-rep-o ~w',[X-V1]),
-	 is_entailed(sameIndividual([V1,V2]),Expl1,Visited),
+	 nonvar(V2), % include this 2/6/10 for optimisation -- but not complete!
+	 is_entailed(sameIndividual([V1,V2]),Expl1),
 	 not(member(eq-rep-o(V2),Visited)),
 	 is_entailed(propertyAssertion(P,X,V1),Expl2,[eq-rep-o(V1)|Visited]).
 

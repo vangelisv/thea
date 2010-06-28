@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl 'http://www.w3.org/2002/07/owl#'>
+    <!ENTITY rdf 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+    <!ENTITY ex 'http://example.org#'>
+    <!ENTITY w3 "http://www.w3.org/">
+    <!ENTITY rdfs "&w3;2000/01/rdf-schema#">
+]>
+
+<rdf:RDF
+    xmlns:owl="&owl;"
+    xmlns:rdf="&rdf;"
+    xmlns:ex="http://example.org#"
+    xmlns:rdfs="&rdfs;"
+    xml:base="http://example.org">
+
+<owl:Ontology rdf:about="">
+  <rdfs:comment>This is a test ontology for undeclared classes and object properties. Load this into Protege4 and you will see that a is a class and p is an object property. It seems this can't be inferred from http://www.w3.org/TR/2008/WD-owl2-mapping-to-rdf-20081202/ alone</rdfs:comment>
+</owl:Ontology>
+
+<ex:a rdf:about="&ex;i">
+  <ex:p rdf:resource="&ex;b"/>
+</ex:a>
+
+</rdf:RDF>

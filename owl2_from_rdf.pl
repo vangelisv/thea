@@ -650,7 +650,7 @@ owl_datarange(D,datatypeRestriction(DY,L)) :-
 
 owl_description(C,C) :-
 	not(is_bnode(C)),!. % better: IRI(C).
-				
+
 
 owl_description(C,D) :-
 	blanknode(C,D,Use),
@@ -928,6 +928,29 @@ owl_parse_axiom(equivalentClasses(DL),AnnMode,List) :-
 %      </owl:Restriction>
 %    </owl:intersectionOf>
 %  </owl:Class>
+
+owl_parse_axiom(equivalentClasses([C,intersectionOf(D)]),AnnMode,List) :-
+	class(C),
+	test_use_owl(C,'owl:intersectionOf',D1),
+	debug(owl_parser,'equivalent collection; intersection for ~w',[C]),
+	valid_axiom_annotation_mode(AnnMode,C,'owl:intersectionOf',D1,List),
+	owl_description(C,intersectionOf(D)).
+
+owl_parse_axiom(equivalentClasses([C,unionOf(D)]),AnnMode,List) :-
+	class(C),
+	test_use_owl(C,'owl:unionOf',D1),
+	debug(owl_parser,'equivalent collection; union for ~w',[C]),
+	valid_axiom_annotation_mode(AnnMode,C,'owl:unionOf',D1,List),
+	owl_description(C,unionOf(D)).
+
+owl_parse_axiom(equivalentClasses([C,oneOf(D)]),AnnMode,List) :-
+	class(C),
+	test_use_owl(C,'owl:oneOf',D1),
+	debug(owl_parser,'equivalent collection; one of for ~w',[C]),
+	valid_axiom_annotation_mode(AnnMode,C,'owl:oneOf',D1,List),
+	owl_description(C,oneOf(D)).
+
+
 owl_parse_axiom(equivalentClasses([C,D])) :-
         % TODO: this could be made more efficient by enforcing order of building
         (   test_use_owl(C,'rdf:type','owl:Class',named)
@@ -1147,7 +1170,9 @@ dothislater(classAssertion/2).
 owl_parse_axiom(classAssertion(CX,X),AnnMode,List) :-
 	test_use_owl(X,'rdf:type',C),
         C\='http://www.w3.org/2002/07/owl#DeprecatedClass',
-	class(C),
+	% note: some ontologies may include a rdf:type with no
+	%  explicit class declaration. See testfiles/test_undeclared.owl
+	%class(C),
 	valid_axiom_annotation_mode(AnnMode,X,'rdf:type',C,List),
 	use_owl(X,'rdf:type',C,classAssertion(CX,X)),
         % I added this to avoid class assertions for bNodes. Perhaps a better
@@ -1162,8 +1187,10 @@ dothislater(propertyAssertion/3).
 owl_parse_axiom(propertyAssertion(PX,A,B),AnnMode,List) :-
         test_use_owl(A,P,B), % B can be literal or individual
         P\='http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
+	% note: some ontologies may include a triples with no
+	%  explicit property declaration. See testfiles/test_undeclared.owl
+	%property(P),
 	valid_axiom_annotation_mode(AnnMode,A,P,B,List),
-	property(P),
         \+ annotationProperty(P), % these triples should have been removed before, during ann parsing
         use_owl(A,P,B,propertyAssertion(PX,A,B)),
         owl_property_expression(P,PX). % can also be inverse
