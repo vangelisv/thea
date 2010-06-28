@@ -8,20 +8,15 @@
 :- use_module(library('thea2/owl2_popl')).
 :- use_module(library('thea2/owl2_manchester_parser')).
 
+literal_atom(literal(lang(_,A)),A) :- !.
 literal_atom(literal(A),A).
 
 
-annotation_property_template(P,T) :-
-	annotationAssertion('http://www.geneontology.org/formats/oboInOwl#expandAssertionTo',P,V),
-	literal_atom(V,T).
-annotation_property_template(P,T) :- % new
+expand_assertion_to(P,T) :- 
 	annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000425',P,V),
 	literal_atom(V,T).
 
-object_property_template(P,T) :-
-	annotationAssertion('http://www.geneontology.org/formats/oboInOwl#expandExpressionTo',P,V),
-	literal_atom(V,T).
-object_property_template(P,T) :- % new
+expand_expression_to(P,T) :- 
 	annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000424',P,V),
 	literal_atom(V,T).
 
@@ -33,8 +28,12 @@ parse_template(T,PT,[X,Y]) :-
 parse_template(T,PT,[X,Y]) :-
 	owl_parse_manchester_frame(T,Axioms),
 	!,
-	member(Axiom,Axioms),
+        % assume that the general form is a declaration followed
+        % by an axiom.
+        reverse(Axioms,AxiomsR),
+	member(Axiom,AxiomsR),
 	deep_replace(Axiom,['?X'-X,'?Y'-Y],PT).
+
 parse_template(T,_,_) :-
 	throw(error(no_parse(T))).
 
@@ -42,16 +41,16 @@ parse_template(T,_,_) :-
 % Mapping = ExpressionTemplate-ReplacementExpression
 % e.g. someValuesFrom(lacks_part,X)-exactCardinality(has_part,X)
 collect_mapping(annotationAssertion(P,X,Y)-PT) :-
-	annotation_property_template(P,T),
+	expand_assertion_to(P,T),
 	parse_template(T,PT,[X,Y]).
 collect_mapping(subClassOf(X,someValuesFrom(P,Y))-PT) :-
-	annotation_property_template(P,T), % allow this as well as annotation assertions
+	expand_assertion_to(P,T), % allow this as well as annotation assertions
 	parse_template(T,PT,[X,Y]).
 collect_mapping(someValuesFrom(P,Y)-PT) :-
-	object_property_template(P,T),
+	expand_expression_to(P,T),
 	parse_template(T,PT,[_,Y]).
 collect_mapping(hasValue(P,Y)-PT) :-
-	object_property_template(P,T),
+	expand_expression_to(P,T),
 	parse_template(T,PT,[_,Y]).
 
 %collect_gci(Axiom,Mappings,GCI) :-
