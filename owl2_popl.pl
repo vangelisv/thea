@@ -102,9 +102,14 @@ replace_expression_in_axiom(T1,T2,Ax,Opts) :-
 %% replace_expression_in_axiom_term(+T1,+T2,+Ax1,?Ax2)
 % Ax2 is the same as Ax1 with all instances of T1 replaced with T2.
 % T1 is replaced no matter how deep it is placed.
+
+replace_expression_in_axiom_term(T1,T2,Ax1,Ax2) :-
+        nonvar(Ax1),
+        Ax1=T1,
+        Ax2=T2. % top-level match
 replace_expression_in_axiom_term(T1,T2,Ax1,Ax2) :-
         axiom(Ax1),
-        %debug(popl,'IN ~w ==> ~w :: ~w',[T1,T2,Ax1]),
+        debug(popl_detail,'IN ~w ==> ~w :: ~w',[T1,T2,Ax1]),
         Ax1 =.. [P|Args1],
         maplist(replace_expression(T1,T2),Args1,Args2),
         Ax2 =.. [P|Args2].
