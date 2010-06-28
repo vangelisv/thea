@@ -728,7 +728,7 @@ reasoner_ask_hook(R,Axiom) :-
 	throw(error(reasoner(R,Axiom))).
 
 reasoner_ask_hook(R,subClassOf(A,B)) :-
-	reasoner_subClassOf(Reasoner,Fac,A,B),
+	reasoner_subClassOf(R,_,A,B). % TODO
         
 
 /** <module> bridge to java OWLAPI

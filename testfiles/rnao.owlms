@@ -1,0 +1,1186 @@
+Namespace: owl2xml <http://www.w3.org/2006/12/owl2-xml#>
+Namespace: rnao <http://www.semanticweb.org/ontologies/2008/8/rnao.owl#>
+Namespace: xsd <http://www.w3.org/2001/XMLSchema#>
+Namespace: rdfs <http://www.w3.org/2000/01/rdf-schema#>
+Namespace: rdf <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Namespace: owl <http://www.w3.org/2002/07/owl#>
+
+
+
+Ontology: <http://www.semanticweb.org/ontologies/2008/8/rnao.owl>
+
+ObjectProperty: isostericWith
+
+    Characteristics: 
+        Symmetric,
+        Reflexive
+    
+    DisjointWith: 
+        nearIsostericWith,
+        nonIsostericWith
+    
+    
+
+
+
+ObjectProperty: pairsWithTSW
+
+    Characteristics: 
+        Functional
+    
+    InverseOf: 
+        pairsWithTWS
+    
+    SubPropertyOf: 
+        pairsWithSW
+    
+    
+
+
+
+ObjectProperty: pairsWithCWS
+
+    Characteristics: 
+        Functional
+    
+    InverseOf: 
+        pairsWithCSW
+    
+    SubPropertyOf: 
+        pairsWithWS
+    
+    
+
+
+
+ObjectProperty: pairsWithHS
+
+    Characteristics: 
+        Functional
+    
+    SubPropertyOf: 
+        pairsWith
+    
+    
+
+
+
+ObjectProperty: pairsWithWH
+
+    Characteristics: 
+        Functional
+    
+    SubPropertyOf: 
+        pairsWith
+    
+    DisjointWith: 
+        pairsWithHW,
+        pairsWithWS,
+        pairsWithWW
+    
+    
+
+
+
+ObjectProperty: nearIsostericWith
+
+    Characteristics: 
+        Symmetric
+    
+    DisjointWith: 
+        isostericWith,
+        nonIsostericWith
+    
+    
+
+
+
+ObjectProperty: pairsWithTWH
+
+    Characteristics: 
+        Functional
+    
+    InverseOf: 
+        pairsWithTHW
+    
+    SubPropertyOf: 
+        pairsWithWH
+    
+    DisjointWith: 
+        pairsWithCWH
+    
+    
+
+
+
+ObjectProperty: ObjectProperty26877732340138
+
+    Annotations: 
+        rdfs:label "threePrimeToThreePrime"
+    
+    SubPropertyOf: 
+        ObjectProperty26001937855223
+    
+    
+
+
+
+ObjectProperty: hasPart
+
+    
+
+
+
+ObjectProperty: pairsWithCHH
+
+    Characteristics: 
+        Functional
+    
+    SubPropertyOf: 
+        pairsWithHH
+    
+    
+
+
+
+ObjectProperty: pairsWithCSW
+
+    Characteristics: 
+        Functional
+    
+    InverseOf: 
+        pairsWithCWS
+    
+    SubPropertyOf: 
+        pairsWithSW
+    
+    
+
+
+
+ObjectProperty: pairsWithCSH
+
+    Characteristics: 
+        Functional
+    
+    InverseOf: 
+        pairsWithCHS
+    
+    SubPropertyOf: 
+        pairsWithSH
+    
+    
+
+
+
+ObjectProperty: pairsWithTHH
+
+    Characteristics: 
+        Functional
+    
+    SubPropertyOf: 
+        pairsWithHH
+    
+    
+
+
+
+ObjectProperty: pairsWithHH
+
+    Characteristics: 
+        Functional
+    
+    SubPropertyOf: 
+        pairsWith
+    
+    
+
+
+
+ObjectProperty: pairsWithHW
+
+    Characteristics: 
+        Functional
+    
+    SubPropertyOf: 
+        pairsWith
+    
+    DisjointWith: 
+        pairsWithWH
+    
+    
+
+
+
+ObjectProperty: pairsWithTSS
+
+    Characteristics: 
+        Functional
+    
+    SubPropertyOf: 
+        pairsWithSS
+    
+    
+
+
+
+ObjectProperty: ObjectProperty26774603109999
+
+    Annotations: 
+        rdfs:label "fivePrimeToTwoPrime"
+    
+    SubPropertyOf: 
+        ObjectProperty26001937855223
+    
+    
+
+
+
+ObjectProperty: pairsWithWS
+
+    Characteristics: 
+        Functional
+    
+    SubPropertyOf: 
+        pairsWith
+    
+    DisjointWith: 
+        pairsWithWH,
+        pairsWithWW
+    
+    
+
+
+
+ObjectProperty: pairsWithCWW
+
+    Characteristics: 
+        Functional,
+        Symmetric
+    
+    SubPropertyOf: 
+        pairsWithWW
+    
+    DisjointWith: 
+        pairsWithTWW
+    
+    
+
+
+
+ObjectProperty: pairsWithCSS
+
+    Characteristics: 
+        Functional
+    
+    SubPropertyOf: 
+        pairsWithSS
+    
+    
+
+
+
+ObjectProperty: pairsWithTWW
+
+    Characteristics: 
+        Functional,
+        Symmetric
+    
+    SubPropertyOf: 
+        pairsWithWW
+    
+    DisjointWith: 
+        pairsWithCWW
+    
+    
+
+
+
+ObjectProperty: pairsWithTSH
+
+    Characteristics: 
+        Functional
+    
+    InverseOf: 
+        pairsWithTHS
+    
+    SubPropertyOf: 
+        pairsWithSH
+    
+    
+
+
+
+ObjectProperty: pairsWithSW
+
+    Characteristics: 
+        Functional
+    
+    SubPropertyOf: 
+        pairsWith
+    
+    
+
+
+
+ObjectProperty: pairsWith
+
+    Characteristics: 
+        Functional
+    
+    
+
+
+
+ObjectProperty: ObjectProperty26001937855223
+
+    Annotations: 
+        rdfs:label "backboneConnected"
+    
+    
+
+
+
+ObjectProperty: ObjectProperty26799853425480
+
+    Annotations: 
+        rdfs:label "threePrimeToTwoPrime"
+    
+    SubPropertyOf: 
+        ObjectProperty26001937855223
+    
+    
+
+
+
+ObjectProperty: ObjectProperty9299179373410
+
+    Annotations: 
+        rdfs:label "fivePrimeTo"
+    
+    Characteristics: 
+        Functional
+    
+    InverseOf: 
+        ObjectProperty9306429486247
+    
+    SubPropertyOf: 
+        ObjectProperty26001937855223
+    
+    
+
+
+
+ObjectProperty: pairsWithSS
+
+    Characteristics: 
+        Functional
+    
+    SubPropertyOf: 
+        pairsWith
+    
+    
+
+
+
+ObjectProperty: pairsWithCHW
+
+    Characteristics: 
+        Functional
+    
+    InverseOf: 
+        pairsWithCWH
+    
+    SubPropertyOf: 
+        pairsWithHW
+    
+    
+
+
+
+ObjectProperty: pairsWithTHS
+
+    Characteristics: 
+        Functional
+    
+    InverseOf: 
+        pairsWithTSH
+    
+    SubPropertyOf: 
+        pairsWithHS
+    
+    
+
+
+
+ObjectProperty: pairsWithSH
+
+    Characteristics: 
+        Functional
+    
+    SubPropertyOf: 
+        pairsWith
+    
+    
+
+
+
+ObjectProperty: ObjectProperty26786181877841
+
+    Annotations: 
+        rdfs:label "twoPrimeToFivePrime"
+    
+    SubPropertyOf: 
+        ObjectProperty26001937855223
+    
+    
+
+
+
+ObjectProperty: ObjectProperty26866620610608
+
+    Annotations: 
+        rdfs:label "fivePrimeToFivePrime"
+    
+    SubPropertyOf: 
+        ObjectProperty26001937855223
+    
+    
+
+
+
+ObjectProperty: pairsWithTWS
+
+    Characteristics: 
+        Functional
+    
+    InverseOf: 
+        pairsWithTSW
+    
+    SubPropertyOf: 
+        pairsWithWS
+    
+    
+
+
+
+ObjectProperty: pairsWithTHW
+
+    Characteristics: 
+        Functional
+    
+    InverseOf: 
+        pairsWithTWH
+    
+    SubPropertyOf: 
+        pairsWithHW
+    
+    
+
+
+
+ObjectProperty: pairsWithWW
+
+    Characteristics: 
+        Functional
+    
+    SubPropertyOf: 
+        pairsWith
+    
+    DisjointWith: 
+        pairsWithWH,
+        pairsWithWS
+    
+    
+
+
+
+ObjectProperty: ObjectProperty9306429486247
+
+    Annotations: 
+        rdfs:label "threePrimeTo"
+    
+    Characteristics: 
+        Functional
+    
+    InverseOf: 
+        ObjectProperty9299179373410
+    
+    SubPropertyOf: 
+        ObjectProperty26001937855223
+    
+    
+
+
+
+ObjectProperty: pairsWithCWH
+
+    Characteristics: 
+        Functional
+    
+    InverseOf: 
+        pairsWithCHW
+    
+    SubPropertyOf: 
+        pairsWithWH
+    
+    DisjointWith: 
+        pairsWithTWH
+    
+    
+
+
+
+ObjectProperty: nonIsostericWith
+
+    DisjointWith: 
+        isostericWith,
+        nearIsostericWith
+    
+    
+
+
+
+ObjectProperty: pairsWithCHS
+
+    Characteristics: 
+        Functional
+    
+    InverseOf: 
+        pairsWithCSH
+    
+    SubPropertyOf: 
+        pairsWithHS
+    
+    
+
+
+
+ObjectProperty: ObjectProperty26805901269315
+
+    Annotations: 
+        rdfs:label "twoPrimeToThreePrime"
+    
+    SubPropertyOf: 
+        ObjectProperty26001937855223
+    
+    
+
+
+
+Class: Class25822878084150
+
+    Annotations: 
+        rdfs:label "Suite"
+    
+    SubClassOf: 
+        Class25575095161140
+    
+    
+
+
+
+Class: owl:Thing
+
+    
+
+
+
+Class: Class8843700974418
+
+    Annotations: 
+        rdfs:label "PhosphateBackbone"
+    
+    SubClassOf: 
+        Class25575095161140
+    
+    
+
+
+
+Class: Family11BasePair
+
+    EquivalentTo: 
+        hasPart only (Nucleobase
+        and (pairsWithCSS some Nucleobase))
+    
+    SubClassOf: 
+        owl:Thing
+    
+    
+
+
+
+Class: CWWGUBasePair
+
+    EquivalentTo: 
+        hasPart only (G
+        and (pairsWithCWW some U))
+    
+    SubClassOf: 
+        owl:Thing
+    
+    
+
+
+
+Class: Family2BasePair
+
+    EquivalentTo: 
+        hasPart only (Nucleobase
+        and (pairsWithTWW some Nucleobase))
+    
+    SubClassOf: 
+        BasePair
+    
+    
+
+
+
+Class: Class25705860565734
+
+    Annotations: 
+        rdfs:label "Dinucleotide"
+    
+    EquivalentTo: 
+        Class25575095161140
+        and (hasPart some (Class9089210291375
+        and (ObjectProperty9299179373410 some Class9089210291375)))
+        and (hasPart exactly 2 Class9089210291375)
+    
+    SubClassOf: 
+        owl:Thing
+    
+    
+
+
+
+Class: Class18212787176522
+
+    Annotations: 
+        rdfs:label "TetraloopMotif"
+    
+    EquivalentTo: 
+        hasPart some (Nucleobase
+        and (ObjectProperty9299179373410 some (Nucleobase
+        and (ObjectProperty9299179373410 some (Nucleobase
+        and (ObjectProperty9299179373410 some (Nucleobase
+        and (ObjectProperty9299179373410 some (Nucleobase
+        and (ObjectProperty9299179373410 some (Nucleobase
+        and (pairsWithCWW some Nucleobase)))))))))))
+        and (pairsWithCWW some Nucleobase))
+    
+    SubClassOf: 
+        Motif
+    
+    
+
+
+
+Class: Class26337573668052
+
+    Annotations: 
+        rdfs:label "C2primeEndoPuckeredRiboseSite"
+    
+    SubClassOf: 
+        Class25640140432082
+    
+    
+
+
+
+Class: Class19911852355074
+
+    Annotations: 
+        rdfs:label "G1368"
+    
+    SubClassOf: 
+        G
+    
+    
+
+
+
+Class: CWWCGBasePair
+
+    EquivalentTo: 
+        hasPart only (C
+        and (pairsWithCWW some G))
+    
+    SubClassOf: 
+        owl:Thing
+    
+    
+
+
+
+Class: Class20003586947715
+
+    Annotations: 
+        rdfs:label "G187"
+    
+    SubClassOf: 
+        G
+    
+    
+
+
+
+Class: Class19902633327745
+
+    Annotations: 
+        rdfs:label "C1363"
+    
+    SubClassOf: 
+        C
+    
+    
+
+
+
+Class: CWWAUBasePair
+
+    EquivalentTo: 
+        hasPart only (A
+        and (pairsWithCWW some U))
+    
+    SubClassOf: 
+        owl:Thing
+    
+    
+
+
+
+Class: Family5BasePair
+
+    EquivalentTo: 
+        hasPart only (Nucleobase
+        and ((pairsWithCSW some Nucleobase)
+        or (pairsWithCWS some Nucleobase)))
+    
+    SubClassOf: 
+        owl:Thing
+    
+    
+
+
+
+Class: Motif
+
+    SubClassOf: 
+        Class25575095161140
+    
+    
+
+
+
+Class: Class19558195083964
+
+    Annotations: 
+        rdfs:label "GNRATetraloopMotif"
+    
+    EquivalentTo: 
+        hasPart some (Nucleobase
+        and (ObjectProperty9299179373410 some (G
+        and (ObjectProperty9299179373410 some (Nucleobase
+        and (ObjectProperty9299179373410 some (Nucleobase
+        and (ObjectProperty9299179373410 some (A
+        and (ObjectProperty9299179373410 some (Nucleobase
+        and (pairsWithCWW some Nucleobase)))
+        and (pairsWithTSH some G)))))))
+        and (pairsWithTHS some A)))
+        and (pairsWithCWW some Nucleobase))
+    
+    SubClassOf: 
+        Class18212787176522
+    
+    
+
+
+
+Class: Class25640140432082
+
+    Annotations: 
+        rdfs:label "Site"
+    
+    SubClassOf: 
+        owl:Thing
+    
+    
+
+
+
+Class: Class8813961964007
+
+    Annotations: 
+        rdfs:label "RiboseRing"
+    
+    SubClassOf: 
+        Class25575095161140
+    
+    
+
+
+
+Class: Class18704098945600
+
+    Annotations: 
+        rdfs:label "CAAAAC"
+    
+    EquivalentTo: 
+        hasPart some (C
+        and (ObjectProperty9299179373410 some (A
+        and (ObjectProperty9299179373410 some (A
+        and (ObjectProperty9299179373410 some (A
+        and (ObjectProperty9299179373410 some (A
+        and (ObjectProperty9299179373410 some (C
+        and (pairsWithCWW some C)))))))))))
+        and (pairsWithCWW some C))
+    
+    SubClassOf: 
+        Class25575095161140
+    
+    
+
+
+
+Class: C
+
+    SubClassOf: 
+        Nucleobase
+    
+    
+
+
+
+Class: Family3BasePair
+
+    EquivalentTo: 
+        hasPart only (Nucleobase
+        and ((pairsWithCHW some Nucleobase)
+        or (pairsWithCWH some Nucleobase)))
+    
+    SubClassOf: 
+        BasePair
+    
+    
+
+
+
+Class: U
+
+    SubClassOf: 
+        Nucleobase
+    
+    
+
+
+
+Class: Family7BasePair
+
+    EquivalentTo: 
+        hasPart only (Nucleobase
+        and (pairsWithCHH some Nucleobase))
+    
+    SubClassOf: 
+        owl:Thing
+    
+    
+
+
+
+Class: Class9089210291375
+
+    Annotations: 
+        rdfs:label "Nucleotide"
+    
+    EquivalentTo: 
+        owl:Thing
+        and (hasPart some Class8813961964007)
+        and (hasPart some Class8843700974418)
+        and (hasPart some Nucleobase)
+    
+    SubClassOf: 
+        Class25575095161140
+    
+    
+
+
+
+Class: Family8BasePair
+
+    EquivalentTo: 
+        hasPart only (Nucleobase
+        and (pairsWithTHH some Nucleobase))
+    
+    SubClassOf: 
+        owl:Thing
+    
+    
+
+
+
+Class: Class19853336222462
+
+    Annotations: 
+        rdfs:label "A1366"
+    
+    SubClassOf: 
+        A
+    
+    
+
+
+
+Class: Class19847648519678
+
+    Annotations: 
+        rdfs:label "A1365"
+    
+    SubClassOf: 
+        A
+    
+    
+
+
+
+Class: Class26329401747069
+
+    Annotations: 
+        rdfs:label "C3primeEndoPuckeredRiboseSite"
+    
+    SubClassOf: 
+        Class25640140432082
+    
+    
+
+
+
+Class: CanonicalBasePair
+
+    EquivalentTo: 
+        hasPart only ((A
+        and (pairsWithCWW some U))
+        or (C
+        and (pairsWithCWW some G))
+        or (G
+        and (pairsWithCWW some C))
+        or (U
+        and (pairsWithCWW some A)))
+    
+    SubClassOf: 
+        Class25575095161140
+    
+    
+
+
+
+Class: Class19861133207059
+
+    Annotations: 
+        rdfs:label "A1367"
+    
+    SubClassOf: 
+        A
+    
+    
+
+
+
+Class: G
+
+    SubClassOf: 
+        Nucleobase
+    
+    
+
+
+
+Class: Class19893133954816
+
+    Annotations: 
+        rdfs:label "G1364"
+    
+    SubClassOf: 
+        G
+    
+    
+
+
+
+Class: Family10BasePair
+
+    EquivalentTo: 
+        hasPart only (Nucleobase
+        and ((pairsWithTHS some Nucleobase)
+        or (pairsWithTSH some Nucleobase)))
+    
+    SubClassOf: 
+        owl:Thing
+    
+    
+
+
+
+Class: Family6BasePair
+
+    EquivalentTo: 
+        hasPart only (Nucleobase
+        and ((pairsWithTSW some Nucleobase)
+        or (pairsWithTWS some Nucleobase)))
+    
+    SubClassOf: 
+        owl:Thing
+    
+    
+
+
+
+Class: Family9BasePair
+
+    EquivalentTo: 
+        hasPart only (Nucleobase
+        and ((pairsWithCHS some Nucleobase)
+        or (pairsWithCSH some Nucleobase)))
+    
+    SubClassOf: 
+        owl:Thing
+    
+    
+
+
+
+Class: Nucleobase
+
+    SubClassOf: 
+        Class25575095161140
+    
+    
+
+
+
+Class: CWWGCBasePair
+
+    EquivalentTo: 
+        hasPart only (G
+        and (pairsWithCWW some C))
+    
+    SubClassOf: 
+        owl:Thing
+    
+    
+
+
+
+Class: Family4BasePair
+
+    EquivalentTo: 
+        hasPart only (Nucleobase
+        and ((pairsWithTHW some Nucleobase)
+        or (pairsWithTWH some Nucleobase)))
+    
+    SubClassOf: 
+        BasePair
+    
+    
+
+
+
+Class: Family1BasePair
+
+    EquivalentTo: 
+        hasPart only (Nucleobase
+        and (pairsWithCWW some Nucleobase))
+    
+    SubClassOf: 
+        BasePair
+    
+    
+
+
+
+Class: Family12BasePair
+
+    EquivalentTo: 
+        hasPart only (Nucleobase
+        and (pairsWithTSS some Nucleobase))
+    
+    SubClassOf: 
+        owl:Thing
+    
+    
+
+
+
+Class: Class19351975574242
+
+    Annotations: 
+        rdfs:label "GAAAATetraloopTthermophilus"
+    
+    EquivalentTo: 
+        hasPart some (Class19902633327745
+        and (ObjectProperty9299179373410 some (Class19893133954816
+        and (ObjectProperty9299179373410 some (Class19847648519678
+        and (ObjectProperty9299179373410 some (Class19853336222462
+        and (ObjectProperty9299179373410 some (Class19861133207059
+        and (ObjectProperty9299179373410 some (Class19911852355074
+        and (pairsWithCWW some Class19911852355074)))
+        and (pairsWithTSH some Class19893133954816)))))
+        and (pairsWithCSW some Class20003586947715)))
+        and (pairsWithTHS some Class19861133207059)))
+        and (pairsWithCWW some Class19902633327745))
+    
+    SubClassOf: 
+        Class25575095161140
+    
+    
+
+
+
+Class: A
+
+    SubClassOf: 
+        Nucleobase
+    
+    
+
+
+
+Class: CWWAGBasePair
+
+    EquivalentTo: 
+        hasPart only (A
+        and (pairsWithCWW some G))
+    
+    SubClassOf: 
+        owl:Thing
+    
+    
+
+
+
+Class: Class25575095161140
+
+    Annotations: 
+        rdfs:label "FiatObjectPart"
+    
+    SubClassOf: 
+        owl:Thing
+    
+    
+
+
+
+Class: BasePair
+
+    EquivalentTo: 
+        hasPart only (Nucleobase
+        and (pairsWith some Nucleobase))
+    
+    SubClassOf: 
+        Class25575095161140
+    
+    
+
+
+

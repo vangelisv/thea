@@ -16,6 +16,7 @@
 	  [ 	    	    
 	    owl_generate_rdf/2, % FileName, RDF_Load_Mode (complete/not)
 	    owl_generate_rdf/3, % Ontology,FileName, RDF_Load_Mode (complete/not)
+	    owl_generate_rdf/4, % Ontology,FileName, RDF_Load_Mode (complete/not), Opts
 	    owl_rdf2n3/0 		    
 	  ]).
 
@@ -33,13 +34,44 @@ owl2_io:save_axioms_hook(File,owl,Opts) :-
         ->  tmp_file(owl,File),
             IsTemp=true
         ;   IsTemp=false),
+
+        % ontology merging:
+        %  user can select this to indicate that
+        %  all axioms should be treated as belonging to the
+        %  same ontology.
+        % 
+        % bind Merge only if user selects this option
+        (   member(merge(Merge),Opts)
+        ->  true
+        ;   true),
+
+        % select which ontology is to be saved. If none is selected,
+        %  choose this automatically, but only if there is only one
+        %  ontology in memory
         (   member(ontology(O),Opts)
         ->  true
-        ;   ontology(O)         % TODO: better soln; this arbitrarily chooses an ontology
-        ->  true
-        ;   format(user_error,'No ontology declaration - using default~n',[]),
-	    O='http://example.org#'),
-        owl_generate_rdf(O,File,RDF_Load_Mode),
+        ;   setof(O,ontology(O),[O])
+        ->  debug(owl_generate_rdf,'auto-selecting ontology: ~w',[O])
+        ;   true),
+
+        % if the user did not select an ontology, and there is not
+        %  exactly 1 ontology in memory, then they are implicitly choosing
+        %  to ignore ontologyAxiom/2 and save all axioms in one file.
+        (   var(O)
+        ->  (   nonvar(Merge),Merge=false
+            ->  throw(error('cannot override merge(true) unless there is a single ontology'))
+            ;   Merge=true,
+                debug(owl_generate_rdf,'ignoring source of axiom, bundling all together',[]))
+        ;   true),
+
+        % add Merge to Opts
+        (   var(Merge)
+        ->  Opts2=Opts
+        ;   Opts2=[merge(Merge)|Opts]),
+        
+        owl_generate_rdf(O,File,RDF_Load_Mode,Opts),
+
+        % hack to allow 'saving' to standard output
         (   IsTemp
         ->  sformat(Cmd,'cat ~w',[File]),
             shell(Cmd)
@@ -50,12 +82,21 @@ owl2_io:save_axioms_hook(File,owl,Opts) :-
 %% owl_generate_rdf(+FileName,+RDF_Load_Mode) is det
 % see owl_generate_rdf/1 - derives ontology using ontology/1
 owl_generate_rdf(FileName,RDF_Load_Mode) :-
-        (   ontology(Ontology)
-        ->  true
-        ;   Ontology='http://example.org#'),
+        setof(Ontology,ontology(Ontology),[Ontology]),
+        !,
         owl_generate_rdf(Ontology,FileName,RDF_Load_Mode).
+owl_generate_rdf(FileName,RDF_Load_Mode) :-
+        % leave Ontology variable unbound - this will save all ontologies together
+        owl_generate_rdf(_,FileName,RDF_Load_Mode).
 
 %% owl_generate_rdf(+Ontology,+FileName,+RDF_Load_Mode) is det
+%
+% as owl_generate_rdf/4, default Opts
+owl_generate_rdf(Ontology,FileName,RDF_Load_Mode) :- 
+        owl_generate_rdf(Ontology,FileName,RDF_Load_Mode,[]).
+
+
+%% owl_generate_rdf(+Ontology,+FileName,+RDF_Load_Mode,+Opts:list) is det
 %
 %   writes in-memory ontology from owl2_model to an RDF-OWL file.
 %   You can also use save_axioms/2 with Format='owl'.
@@ -65,12 +106,18 @@ owl_generate_rdf(FileName,RDF_Load_Mode) :-
 % @param Ontology - IRI
 % @param FileName - path to save
 % @param RDF_Load_Mode (complete/not)
-owl_generate_rdf(Ontology,FileName,RDF_Load_Mode) :- 
+owl_generate_rdf(Ontology,FileName,RDF_Load_Mode,Opts) :- 
 	(   RDF_Load_Mode=complete -> rdf_retractall(_,_,_); true),
 	retractall(blanknode_gen(_,_)),retractall(blanknode(_,_,_)),
 	debug(owl_generate_rdf,'exporting ~w',[Ontology]),
-	owl2_export_axiom(ontology(Ontology),_),
-	forall(ontologyAxiom(Ontology,Axiom),
+        % export a fake ontology directive if none specified
+        (   var(Ontology)
+        ->  owl2_export_axiom(ontology('http://example.org'),_)
+	;   owl2_export_axiom(ontology(Ontology),_)),
+        (   member(merge(true),Opts)
+        ->  true
+        ;   SrcOntology=Ontology),
+	forall(ontologyAxiom(SrcOntology,Axiom),
 	       (owl2_export_axiom(Axiom,main_triple(S,P,O)),
 		owl2_export_annotation(Axiom,'owl:Axiom',S,P,O))),
         % TODO - better way of doing this - stray axioms

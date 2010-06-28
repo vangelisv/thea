@@ -15,6 +15,8 @@ LIBDIR=$(PLBASE)/library/thea2
 #EXDIR=$(PKGDOC)/examples/plunit
 DESTDIR=
 
+archive  = thea2-`date "+%Y-%m-%d"`
+
 DOCTOTEX=$(PCEHOME)/bin/doc2tex
 PLTOTEX=$(PCEHOME)/bin/pl2tex
 LATEX=latex
@@ -24,7 +26,8 @@ DVI=$(DOC).dvi
 PDF=$(DOC).pdf
 HTML=$(DOC).html
 
-INSTALL=@INSTALL@
+#INSTALL=@INSTALL@
+INSTALL=tools/install-sh
 INSTALL_PROGRAM=@INSTALL_PROGRAM@
 INSTALL_DATA=@INSTALL_DATA@
 
@@ -130,6 +133,20 @@ $(TEX):		$(DOCTOTEX)
 		$(DOCTOTEX) $*.doc > $*.tex
 .pl.tex:
 		$(PLTOTEX) $*.pl > $*.tex
+
+################################################################
+# Distribution
+################################################################
+BRANCH=`git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
+MANIFEST:
+	git ls-tree -r $(BRANCH) | cut -f2 > $@
+
+dist:
+	mkdir -p $(archive) && \
+	( for i in `cat MANIFEST | grep -v .ppt`; do $(INSTALL) -c $$i $(archive)/$$i; done) && \
+	tar czf $(archive).tar.gz $(archive) && \
+	rm -Rf $(archive) && \
+	echo $(archive)
 
 ################################################################
 # Clean

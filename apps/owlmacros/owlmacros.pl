@@ -1,37 +1,39 @@
+/* -*- Mode: Prolog -*- */
+
 :- module(owlmacros,
 	  [expand_all/0]).
 
 :- use_module(library('thea2/owl2_model')).
 :- use_module(library('thea2/owl2_io')).
+:- use_module(library('thea2/owl2_popl')).
 :- use_module(library('thea2/owl2_manchester_parser')).
 
+literal_atom(literal(lang(_,A)),A) :- !.
 literal_atom(literal(A),A).
 
 
-annotation_property_template(P,T) :-
-	annotationAssertion('http://www.geneontology.org/formats/oboInOwl#expandAssertionTo',P,V),
-	literal_atom(V,T).
-annotation_property_template(P,T) :- % new
+expand_assertion_to(P,T) :- 
 	annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000425',P,V),
 	literal_atom(V,T).
 
-object_property_template(P,T) :-
-	annotationAssertion('http://www.geneontology.org/formats/oboInOwl#expandExpressionTo',P,V),
-	literal_atom(V,T).
-object_property_template(P,T) :- % new
+expand_expression_to(P,T) :- 
 	annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000424',P,V),
 	literal_atom(V,T).
 
 parse_template(T,PT,[X,Y]) :-
-	debug(owlmacros,'parsing: ~w',[T]),        
+	debug(owlmacros_details,'parsing: ~w',[T]),        
 	owl_parse_manchester_expression(T,PT_1),
 	!,
 	deep_replace(PT_1,['?X'-X,'?Y'-Y],PT).
 parse_template(T,PT,[X,Y]) :-
 	owl_parse_manchester_frame(T,Axioms),
 	!,
-	member(Axiom,Axioms),
+        % assume that the general form is a declaration followed
+        % by an axiom.
+        reverse(Axioms,AxiomsR),
+	member(Axiom,AxiomsR),
 	deep_replace(Axiom,['?X'-X,'?Y'-Y],PT).
+
 parse_template(T,_,_) :-
 	throw(error(no_parse(T))).
 
@@ -39,21 +41,17 @@ parse_template(T,_,_) :-
 % Mapping = ExpressionTemplate-ReplacementExpression
 % e.g. someValuesFrom(lacks_part,X)-exactCardinality(has_part,X)
 collect_mapping(annotationAssertion(P,X,Y)-PT) :-
-	annotation_property_template(P,T),
+	expand_assertion_to(P,T),
 	parse_template(T,PT,[X,Y]).
 collect_mapping(subClassOf(X,someValuesFrom(P,Y))-PT) :-
-	annotation_property_template(P,T),
+	expand_assertion_to(P,T), % allow this as well as annotation assertions
 	parse_template(T,PT,[X,Y]).
 collect_mapping(someValuesFrom(P,Y)-PT) :-
-	object_property_template(P,T),
+	expand_expression_to(P,T),
 	parse_template(T,PT,[_,Y]).
 collect_mapping(hasValue(P,Y)-PT) :-
-	object_property_template(P,T),
+	expand_expression_to(P,T),
 	parse_template(T,PT,[_,Y]).
-
-collect_mappings(Maps) :-
-	debug(owlmacros,'collecting mappings...',[]),
-	findall(Mapping,collect_mapping(Mapping),Maps).
 
 %collect_gci(Axiom,Mappings,GCI) :-
 %	copy_term(Mappings,M2),
@@ -65,29 +63,10 @@ collect_mappings(Maps) :-
 expand_all :-
 	!,
 	debug(owlmacros,'expand_all...',[]),
-	collect_mappings(Maps),
-	debug(owlmacros,'collected mappings: ~w',[Maps]),
-	debug(owlmacros,'expanding all axioms...',[]),
-	forall(axiom(A),
-	       expand_axiom(Maps,A)).
+        forall(collect_mapping(T1-T2),
+               replace_expression_in_all_axioms(T1,T2)),
+        debug(owlmacros,'done',[]).
 
-%% expand_axiom(+Maps:list,+Axiom)
-% if Axiom matches any of the patterns in Maps, then it is replaced with the template.
-% Maps is list of Pattern-Replacement key-value pairs, where both Pattern and Replacement
-% are prolog terms corresponding to OWL axioms (see owl2_model), with variables in some of the
-% terminal argument positions. E.g.
-% ==
-%  annotationAssertion(X,no_overlaps,Y)-disjointFrom(someValuesFrom(partOf,X),someValuesFrom(partOf,Y))
-% ==
-expand_axiom(Maps,A) :-
-	deep_replace(A,Maps,A2),
-	replace_axiom(A,A2).
-
-replace_axiom(A,A) :- !.
-replace_axiom(A,A2) :-
-	debug(owlmacros,'replacing ~q ==> ~q',[A,A2]),
-	retract_axiom(A),
-	assert_axiom(A2).
 
 %% deep_replace(+Expr, +Map:list, ?ExprReplaced) is det
 % Map=[In1-Out1,In2-Out2,...]
@@ -119,17 +98,6 @@ deep_replace(Expr,Map,Expr3) :-
 	!,
 	deep_replace(Var,Map,Expr2),
 	deep_replace(Expr2,Map,Expr3).
-/*
-deep_replace(Expr,Map,Expr3) :- % TODO
-	findall(Expr-Var,member(Expr-Var,Map),Replacements), 
-	%debug(owlmacros,'   pattern match ~q => ~q',[Expr,Var]),
-	debug(owlmacros,'   pattern match ~q ',[Replacements]),
-	replace_all(Expr,Replacements,Expr2),
-	Expr2\=Expr,
-	!,
-%deep_replace(Var,Map,Expr2),
-	deep_replace(Expr2,Map,Expr3).
-*/
 
 % replace arguments of complex term:
 deep_replace(Expr,Map,Expr2) :-
@@ -140,11 +108,6 @@ deep_replace(Expr,Map,Expr2) :-
 	Expr2=..[F|Args2].
 deep_replace(Expr,_,Expr) :- !. % atom
 
-replace_all(Expr,[],Expr).
-replace_all(Expr,[Expr-V|L],Expr2) :-
-	replace_all(V,L,Expr2).
-replace_all(Expr,[_|L],Expr2) :-
-	replace_all(Expr,L,Expr2).
 
 
 
