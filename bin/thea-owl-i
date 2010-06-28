@@ -56,8 +56,7 @@ main :-
             ;   save_axioms(_,OutFmt,SaveOpts))
         ;   true),
         forall(member(query(T,G),Opts),
-               (   forall(G,
-                          writeln(result=T)))),
+               forall(G,show_term(T,Opts))),
         (   member(qsave(QSF),Opts)
         ->  ensure_loaded(library('thea2/owl2_export_rdf')),
             ensure_loaded(library('thea2/owl2_from_rdf')),
@@ -70,9 +69,6 @@ main :-
         ->  prolog_shell
         ;   true).
 
-
-
-
 prolog_shell:-
         format(user_error,'% Starting thea shell~n',[]),
         repeat,
@@ -81,6 +77,44 @@ prolog_shell:-
               (format('ERROR:~n~w~n',[E]),fail)),
         !,
         format('Come back soon!~n').
+
+% ----------------------------------------
+% DISPLAY
+% ----------------------------------------
+
+show_term(T,Opts) :-
+        member(saveopt(prolog),Opts),
+        !,
+        writeq(T),nl.
+show_term(T,Opts) :-
+        member(saveopt(plsyn),Opts),
+        member(saveopt(labels),Opts),
+        !,
+        ensure_loaded(library(thea2/owl2_plsyn)),
+        map_IRIs(use_label_as_IRI,T,T2),
+        plsyn_owl(X,T2),
+        format('~q.~n',[X]).
+show_term(T,Opts) :-
+        member(saveopt(plsyn),Opts),
+        !,
+        ensure_loaded(library(thea2/owl2_plsyn)),
+        plsyn_owl(X,T),
+        format('~q.~n',[X]).
+show_term(T,Opts) :-
+        member(saveopt(labels),Opts),
+        !,
+        map_IRIs(use_label_as_IRI,T,X),
+        writeln(X).
+show_term(T,_) :-
+        writeln(T).
+
+
+
+
+
+% ----------------------------------------
+% OPTION PROCESSING
+% ----------------------------------------
 
 
 parse_args([],[]).
@@ -91,25 +125,60 @@ parse_args(Args,[Opt|Opts]) :-
 parse_args([A|Args],[rest(A)|Opts]) :-
         parse_args(Args,Opts).
 
+:- discontiguous parse_arg/3.
+:- discontiguous arg_info/3.
+
 parse_arg(['--debug',D|L],L,null) :- debug(D).
+arg_info(debug,atom,'(developers) debug target').
+
 parse_arg(['--prolog'|L],L,prolog(true)).
+arg_info(prolog,-,'start prolog shell after loading owl files').
+
 parse_arg(['--no_uri_expansion'|L],L,settings(uri_translation(none))).
+
 parse_arg(['--uri_translation',X|L],L,settings(uri_translation(X))).
+
 parse_arg(['--contract',X|L],L,settings(uri_translation(contract(X)))).
+arg_info(contract,-,'perform URI contraction').
+
 parse_arg(['--statistics'|L],L,statistics(true)).
+arg_info(statistics,-,'show statistics').
+
 parse_arg(['--import'|L],L,loadopt(imports(true))).
+arg_info(import,-,'follow import closure (default is to only load the selected file)').
+
 parse_arg(['--save-opt',A|L],L,saveopt(O)) :- atom_to_term(A,O,_).
+arg_info(save-opt,term,'format dependent: prolog term that is passed to the Options argument for the relevant writer').
+
 parse_arg(['--save-ontology',X|L],L,saveopt(ontology(X))).
+arg_info(save-ontology,atom,'save selected ontology').
+
 parse_arg(['--format',A|L],L,loadopt(format(Fmt)))  :- atom_to_term(A,Fmt,_).
+arg_info(format,atom,'input format: one of {owl,owlpl,owlx,...}').
+
 parse_arg(['--ensure_loaded',MA|L],L,ensure_loaded(M)) :- atom_to_term(MA,M,_).
-%parse_arg(['--ensure_loaded',M|L],L,ensure_loaded(M)).
+
 parse_arg(['--convert',X|L],L,convert(X)).
+
 parse_arg(['--to',Fmt|L],L,output_format(Fmt)).
+arg_info(to,atom,'output format: one of {owl,owlpl,owlx,...}').
+
 parse_arg(['--out',File|L],L,output_file(File)).
+arg_info(out,filepath,'saves to file (default is standard_output)').
+
 parse_arg(['--use-labels'|L],L,goal(use_labels_for_IRIs)).
+arg_info(use-labels,-,'rewrite ontology to switch out all URIs and use labels instead').
+
 parse_arg(['--use-safe-labels'|L],L,goal(use_safe_labels_for_IRIs)).
+
 parse_arg(['--goal',GA|L],L,goal(G)) :- atom_to_term(GA,G,_).
+arg_info(goal,goal,'execute prolog goal after loading ontologies').
+
+parse_arg(['--query',select,TA,where,GA|L],L,query(T,G)) :- sformat(A,'q((~w),(~w))',[TA,GA]),atom_to_term(A,q(T,G),_).
 parse_arg(['--query',GA|L],L,query(T,G)) :- atom_to_term(GA,G-T,_).
+arg_info(query,goal,'execute prolog query').
+
 parse_arg(['--load-catalog'|L],L,null) :- load_catalog.
+
 parse_arg(['--qsave',File|L],L,qsave(File)).
 
