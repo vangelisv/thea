@@ -62,7 +62,7 @@ all:
 
 install:	$(LIBPL)
 		mkdir -p $(DESTDIR)$(LIBDIR)
-		$(INSTALL_DATA) $(LIBALL) $(DESTDIR)$(LIBDIR)
+		$(INSTALL_DATA) -c $(LIBALL) $(DESTDIR)$(LIBDIR)
 		$(PL) -f none -g make -t halt
 
 ln-install:	$(LIBPL)
