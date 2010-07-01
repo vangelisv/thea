@@ -615,7 +615,8 @@ decl_method(P,M) :-
 
 decl_method(class,getOWLClass,classExpression).
 decl_method(objectProperty,getOWLObjectProperty,propertyExpression).
-decl_method(annotationProperty,getOWLAnnotationProperty,iri).
+%decl_method(annotationProperty,getOWLAnnotationProperty,iri).
+decl_method(annotationProperty,getOWLObjectProperty,iri). % FIXME!!
 decl_method(dataType,getOWLDatatype,datatype).
 decl_method(dataProperty,getOWLDataProperty,_).
 decl_method(individual,getOWLIndividual,_). % anonymous individuals?
