@@ -24,4 +24,4 @@ done
 
 echo CP = $CLASSPATH
 #CLASSPATH="jars/owlapi-bin.jar:" swipl -g "[owl2_java_owlapi],create_manager(M)" $0
-swipl -g "['$DIRNAME/../owl2_java_owlapi']" $0
+CLASSPATH="jars/owlapi-bin.jar:" swipl -g "['$DIRNAME/../owl2_java_owlapi']" "$@"

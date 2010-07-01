@@ -7,8 +7,36 @@
            replace_matching_axioms_where/3,
            replace_matching_axioms_where/4,
            replace_expression_in_all_axioms/2,
-           replace_expression_in_all_axioms/3
+           replace_expression_in_all_axioms/3,
+
+           popl_translate/1,
+           popl_translate/2,
+           
+           op(700,xfy,===>),
+           op(800,xfy,where),
+           op(600,fx,add)
+
           ]).
+
+:- op(700,xfy,===>).
+:- op(800,xfy,where).
+:- op(600,fx,add).
+
+popl_translate(T) :-
+        popl_translate(T, []).
+
+popl_translate( X1 ===> X2, Opts) :-
+        replace_matching_axioms(X1,X2,Opts),
+        replace_expression_in_all_axioms(X1,X2,Opts).
+
+popl_translate( X1 ===> X2 where G, Opts) :-
+        replace_matching_axioms_where(X1,X2,G,Opts),
+        replace_expression_in_all_axioms_where(X1,X2,Opts).
+
+popl_translate( add X2 where G, Opts) :-
+        replace_matching_axioms_where(true,X2,G,Opts),
+        replace_expression_in_all_axioms_where(true,X2,Opts).
+
 
 %% replace_matching_axioms(+AxiomTemplateOld,+AxiomTemplateNew,+Opts:list) is det
 % replace all occurrences of AxiomTemplateOld with AxiomTemplateNew.
@@ -94,6 +122,12 @@ replace_expression_in_all_axioms(T1,T2,Opts) :-
 % as replace_expression_in_all_axioms/3, default options
 replace_expression_in_all_axioms(T1,T2) :-
         replace_expression_in_all_axioms(T1,T2,[]).
+
+%% replace_expression_in_all_axioms_where(+TemplateIn,+TemplateOut,+WhereGoal,Opts)
+replace_expression_in_all_axioms_where(T1,T2,G,Opts) :-
+        forall((axiom(Ax),G),
+               replace_expression_in_axiom(T1,T2,Ax,Opts)).
+
 
 replace_expression_in_axiom(T1,T2,Ax,Opts) :-
         replace_expression_in_axiom_term(T1,T2,Ax,Ax2),

@@ -37,6 +37,8 @@ main :-
         debug(bench,'load_time: ~w',[LoadTime]),
         forall(member(goal(G),Opts),
                G),
+        forall(member(popl(G),Opts),
+               popl_translate(G)),
         (   member(statistics(true),Opts)
         ->  statistics
         ;   true),
@@ -173,6 +175,12 @@ parse_arg(['--use-safe-labels'|L],L,goal(use_safe_labels_for_IRIs)).
 
 parse_arg(['--goal',GA|L],L,goal(G)) :- atom_to_term(GA,G,_).
 arg_info(goal,goal,'execute prolog goal after loading ontologies').
+
+parse_arg(['--popl',GA|L],L,popl(G)) :-
+        ensure_loaded(library(thea2/owl2_popl)),
+        ensure_loaded(library(thea2/owl2_plsyn)),
+        atom_to_term(GA,G,_).
+arg_info(popl,term,'process using POPL expression').
 
 parse_arg(['--query',select,TA,where,GA|L],L,query(T,G)) :- sformat(A,'q((~w),(~w))',[TA,GA]),atom_to_term(A,q(T,G),_).
 parse_arg(['--query',GA|L],L,query(T,G)) :- atom_to_term(GA,G-T,_).
