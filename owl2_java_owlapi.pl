@@ -354,6 +354,7 @@ reasoner_equivalent_to(R,Fac,C,P) :-
 %% add_axiom(+Manager,+Factory,+Ont,+Axiom,?Obj) is det
 % adds an axiom to Ont from the prolog databases
 add_axiom(Manager,Factory,Ont,Axiom,JAx) :-
+        debug(owl2,' converting axiom: ~w ',[Axiom]),
         owlterm_java(Factory,_,Axiom,JAx),
         debug(owl2,' axiom ~w = ~w',[Axiom,JAx]),
         (   owl2_model:declarationAxiom(Axiom)
@@ -364,6 +365,10 @@ add_axiom(Manager,Factory,Ont,Axiom,JAx) :-
 %% owlterm_java(+Factory,?Type,+OWLTerm,?Obj) is det
 % translate OWL Axiom or OWL Expression from prolog term to java object
 
+% --------
+% SPECIAL CASES
+% --------
+
 % special rules for ontology declarations - should have been handled previously
 owlterm_java(_,_,ontology(_),_) :- !.
 
@@ -371,11 +376,15 @@ owlterm_java(_,_,ontology(_),_) :- !.
 owlterm_java(Fac,_,annotationAssertion(AP,Sub,Val),Obj) :-
         !,
         translate_arg_to_java(Fac,Val,literal,JVal), % e.g. "fred"
-        translate_arg_to_java(Fac,Sub,entity,JEntity), % e.g. db:fred
-        atom_javaIRI(AP,JAP),                          % e.g. label
-        %jpl_call(Fac,getOWLLiteralAnnotation,[JAP,JVal],JAnno),
-        jpl_call(Fac,getOWLAnnotationAssertionAxiom,[JAP,JEntity,JEntity],Obj).
+        %translate_arg_to_java(Fac,Sub,entity,JEntity), % e.g. db:fred
+        atom_javaIRI(Sub,JEntity), % e.g. db:fred
+        atom_javaIRI(AP,AP_IRI), % e.g. label
+        jpl_call(Fac,getOWLAnnotationProperty,[AP_IRI],JAP),
+        jpl_call(Fac,getOWLAnnotationAssertionAxiom,[JAP,JEntity,JVal],Obj).
 
+% --------
+% DECLARATIONS
+% --------
 owlterm_java(Fac,_,OWLTerm,Obj) :-
         OWLTerm =.. [P,X],
         decl_method(P,M),       % declaration axiom
@@ -387,7 +396,9 @@ owlterm_java(Fac,_,OWLTerm,Obj) :-
         debug(owl2,'called: ~w . ~w( ~w ) = ~w',[Fac,M,U,Obj]).
 
 
-
+% --------
+% ATOMS
+% --------
 owlterm_java(Fac,_,OWLTerm,Obj) :-
         atom(OWLTerm),          % undeclared atom; TODO; numbers eg card
         !,
@@ -402,6 +413,9 @@ owlterm_java(Fac,_,OWLTerm,Obj) :-
         ;   throw(OWLTerm)),
         jpl_call(Fac,M,[U],Obj). % TODO
 
+% --------
+% UNTYPED AXIOMS
+% --------
 % some axioms such as subClassOf are effectively untyped
 owlterm_java(Fac,_Type,OWLTerm,Obj) :- % e.g subClassOf
         OWLTerm =.. [P|Args],
@@ -430,6 +444,10 @@ owlterm_java(Fac,_,subPropertyOf(propertyChain(PL),P),Obj) :- % e.g. subObjectPr
         debug(owl2,'  translated chain to: ~w',[Objs]),
         jpl_call(Fac,getOWLSubPropertyChainOfAxiom,Objs,Obj).
 
+% --------
+% TYPED AXIOMS
+% --------
+
 % axioms such as subPropertyOf have two typed variants.
 % we use type checking which may require the axiom declaration
 % to be asserted in the prolog owl2_model database
@@ -439,6 +457,9 @@ owlterm_java(Fac,_,UntypedAxiom,Obj) :- % e.g. subObjectPropertyOf
         owlpredicate_typed(UntypedPred,TypedPred),
         axiom_method(TypedPred,M),   % e.g. subObjectPropertyOf
         TypeCheckGoal =.. [TypedPred|Args],       
+        %(   UntypedPred=propertyAssertion
+        %->  trace
+        %;   true),
         TypeCheckGoal,
         !,
         debug(owl2,'typed axiom: if ~w is ~w',[UntypedAxiom,TypedPred]),
@@ -462,6 +483,7 @@ owlterm_java(Fac,_,UntypedAxiom,Obj) :-
         jpl_call(Fac,M,ObjsReordered,Obj).
 
 
+%% translate_arg_to_java(+Fac,+X,+Type,?Obj)
 translate_args_to_java(_Fac,[],[],[]).
 translate_args_to_java(Fac,[A|Args],[T|ArgTypes],[Obj|Objs]) :-
         debug(owl2,' translating: ~w  :: ~w',[A,T]),
@@ -619,14 +641,17 @@ decl_method(P,M) :-
 
 decl_method(class,getOWLClass,classExpression).
 decl_method(objectProperty,getOWLObjectProperty,propertyExpression).
-%decl_method(annotationProperty,getOWLAnnotationProperty,iri).
-decl_method(annotationProperty,getOWLObjectProperty,iri). % FIXME!!
+decl_method(annotationProperty,getOWLAnnotationProperty,iri).
 decl_method(dataType,getOWLDatatype,datatype).
 decl_method(dataProperty,getOWLDataProperty,_).
 decl_method(individual,getOWLNamedIndividual,_). % anonymous individuals?
 decl_method(entity,getOWLNamedIndividual,_). % anonymous individuals?
 
 :- discontiguous axiom_method/2,axiom_method/4.
+
+% ----------------------------------------
+% untyped axioms
+% ----------------------------------------
 
 axiom_method(subClassOf,getOWLSubClassOfAxiom).
 axiom_method(equivalentClasses,getOWLEquivalentClassesAxiom).
@@ -644,10 +669,15 @@ axiom_method(dataObjectProperty,getOWLFunctionalDataPropertyAxiom).
 
 
 
-%axiom_method(objectPropertyAssertion,getOWLObjectPropertyAssertionAxiom).
-%axiom_method(dataPropertyAssertion,getOWLDataPropertyAssertionAxiom).
-axiom_method(objectPropertyAssertion,getOWLObjectPropertyAssertionAxiom,[P,S,T],[S,P,T]).
-axiom_method(dataPropertyAssertion,getOWLDataPropertyAssertionAxiom,[P,S,V],[S,P,V]).
+
+axiom_method(objectPropertyAssertion,getOWLObjectPropertyAssertionAxiom).
+axiom_method(dataPropertyAssertion,getOWLDataPropertyAssertionAxiom).
+%axiom_method(objectPropertyAssertion,getOWLObjectPropertyAssertionAxiom,[P,S,T],[S,P,T]).
+%xiom_method(dataPropertyAssertion,getOWLDataPropertyAssertionAxiom,[P,S,V],[S,P,V]).
+
+% ----------------------------------------
+% typed axioms
+% ----------------------------------------
 
 
 %% axiom_method(?Pred,?JavaGetMethod)
