@@ -32,24 +32,24 @@
 :- multifile owlterm_java/4.
 
 
-prefix('org.semanticweb.owl.model').
+prefix('org.semanticweb.owlapi.model').
 
-atom_javaURI(X,U):-
+atom_javaIRI(X,U):-
         sub_atom(X,_,_,_,':'),
         !,
-        jpl_call('java.net.URI',create,[X],U).
-atom_javaURI(X,U):-
+        jpl_call('org.semanticweb.owlapi.model.IRI',create,[X],U).
+atom_javaIRI(X,U):-
         ontology(Ont),
         !,
         concat_atom([Ont,X],'#',X2),
-        jpl_call('java.net.URI',create,[X2],U).
-atom_javaURI(X,U):-
+        jpl_call('org.semanticweb.owlapi.model.IRI',create,[X2],U).
+atom_javaIRI(X,U):-
         concat_atom(['http://foo.org',X],'#',X2),
-        jpl_call('java.net.URI',create,[X2],U).
+        jpl_call('org.semanticweb.owlapi.model.IRI',create,[X2],U).
 
 %% create_manager(?Manager)
 create_manager(Manager) :-
-        jpl_call('org.semanticweb.owl.apibinding.OWLManager',createOWLOntologyManager,[],Manager).
+        jpl_call('org.semanticweb.owlapi.apibinding.OWLManager',createOWLOntologyManager,[],Manager).
 
 require_manager(Manager) :-
         var(Manager),
@@ -61,8 +61,8 @@ require_manager(_).
 % @param Manager - manager instance will be created unless this is ground
 create_ontology(Manager,Name,Ont) :-
         require_manager(Manager),
-        atom_javaURI(Name,URI),
-        jpl_call(Manager,createOntology,[URI],Ont).
+        atom_javaIRI(Name,IRI),
+        jpl_call(Manager,createOntology,[IRI],Ont).
 
 %% build_ontology(?Ont)
 % create an ontology from the current prolog db
@@ -79,8 +79,9 @@ build_ontology(Man,Fac,Ont) :-
         ;   OntName='http://example.org'),
         create_ontology(Man,OntName,Ont),
         forall(axiom(Ax),
-               (   debug(owl2,'Adding axiom: ~w',[Ax]),
-                   add_axiom(Man,Fac,Ont,Ax,_))).
+               (   debug(owl2,'[[Adding axiom: ~w',[Ax]),
+                   add_axiom(Man,Fac,Ont,Ax,_),
+                   debug(owl2,'  /Added axiom: ~w]]',[Ax]))).
 
 :- multifile owl2_io:load_axioms_hook/3.
 owl2_io:load_axioms_hook(File,owlapi,Opts) :-
@@ -100,8 +101,8 @@ owl2_io:save_axioms_hook(File,owlapi(_Fmt),_Opts) :-
 %% load_ontology(+Man,?Ont,+File) is det
 % TODO - need to maps java axioms to owlpl axioms
 load_ontology(Man,Ont,File) :-
-        atom_javaURI(File,URI),
-        jpl_call(Man,loadOntologyFromPhysicalURI,[URI],Ont).
+        atom_javaIRI(File,IRI),
+        jpl_call(Man,loadOntologyFromPhysicalIRI,[IRI],Ont).
 
 
 %% save_ontology(+Man,+Ont,+File) is det
@@ -110,8 +111,8 @@ save_ontology(Man,Ont,File) :-
         ->  tmp_file(owl,File),
             Tmp=true
         ;   Tmp=fail),
-        atom_javaURI(File,URI),
-        jpl_call(Man,saveOntology,[Ont,URI],_),
+        atom_javaIRI(File,IRI),
+        jpl_call(Man,saveOntology,[Ont,IRI],_),
         (   Tmp
         ->  sformat(Cmd,'cat ~w',[File]),
             shell(Cmd)
@@ -166,8 +167,8 @@ inconsistent_class(Reasoner,Class) :-
         java_namedentity(JOWLClass,Class).
 
 java_namedentity(J,C) :-
-        jpl_call(J,getURI,[],URI),
-        jpl_call(URI,toString,[],C).
+        jpl_call(J,getIRI,[],IRI),
+        jpl_call(IRI,toString,[],C).
 
 %% ecsets_class(+JPSetSet,?P) is nondet
 % Set<Set<OWLClass>> --> class expression
@@ -357,7 +358,7 @@ add_axiom(Manager,Factory,Ont,Axiom,JAx) :-
         debug(owl2,' axiom ~w = ~w',[Axiom,JAx]),
         (   owl2_model:declarationAxiom(Axiom)
         ->  true
-        ;   jpl_new('org.semanticweb.owl.model.AddAxiom',[Ont,JAx],AddAxiom),
+        ;   jpl_new('org.semanticweb.owlapi.model.AddAxiom',[Ont,JAx],AddAxiom),
             jpl_call(Manager,applyChange,[AddAxiom],_)).
 
 %% owlterm_java(+Factory,?Type,+OWLTerm,?Obj) is det
@@ -369,26 +370,29 @@ owlterm_java(_,_,ontology(_),_) :- !.
 % special rules for annotationAssertions
 owlterm_java(Fac,_,annotationAssertion(AP,Sub,Val),Obj) :-
         !,
-        translate_arg_to_java(Fac,Val,literal,JVal),
-        translate_arg_to_java(Fac,Sub,entity,JEntity),
-        atom_javaURI(AP,JAP),
-        jpl_call(Fac,getOWLLiteralAnnotation,[JAP,JVal],JAnno),
-        jpl_call(Fac,getOWLAnnotationAssertionAxiom,[JEntity,JAnno],Obj).
+        translate_arg_to_java(Fac,Val,literal,JVal), % e.g. "fred"
+        translate_arg_to_java(Fac,Sub,entity,JEntity), % e.g. db:fred
+        atom_javaIRI(AP,JAP),                          % e.g. label
+        %jpl_call(Fac,getOWLLiteralAnnotation,[JAP,JVal],JAnno),
+        jpl_call(Fac,getOWLAnnotationAssertionAxiom,[JAP,JEntity,JEntity],Obj).
 
 owlterm_java(Fac,_,OWLTerm,Obj) :-
         OWLTerm =.. [P,X],
         decl_method(P,M),       % declaration axiom
         !,
-        debug(owl2,'decl(~w,~w) -- converting to URI: ~w',[P,M,X]),
-        atom_javaURI(X,U),
+        debug(owl2,'decl(~w,~w) -- converting to IRI: ~w',[P,M,X]),
+        atom_javaIRI(X,U),
         debug(owl2,'calling: ~w . ~w( ~w )',[Fac,M,U]),
-        jpl_call(Fac,M,[U],Obj).
+        jpl_call(Fac,M,[U],Obj),
+        debug(owl2,'called: ~w . ~w( ~w ) = ~w',[Fac,M,U,Obj]).
+
+
 
 owlterm_java(Fac,_,OWLTerm,Obj) :-
         atom(OWLTerm),          % undeclared atom; TODO; numbers eg card
         !,
-        debug(owl2,'converting to URI: ~w',[OWLTerm]),
-        atom_javaURI(OWLTerm,U),
+        debug(owl2,'converting to IRI: ~w',[OWLTerm]),
+        atom_javaIRI(OWLTerm,U),
         (   class(OWLTerm)
         ->  M=getOWLClass
         ;   objectProperty(OWLTerm)
@@ -532,28 +536,28 @@ translate_arg_to_java(Fac,literal(Val),literal,Obj) :- % todo - typed constants
 translate_arg_to_java(_Fac,X,T,Obj) :- % TODO
         atom(X),
         !,
-        atom_javaURI(X,U),
+        atom_javaIRI(X,U),
         jpl_new(T,U,Obj).
 
 translate_arg_to_java(Fac,X,_T,Obj) :-
         atom(X),
         class(X),
         !,
-        debug(owl2,'converting to URI: ~w',[X]),
-        atom_javaURI(X,U),
+        debug(owl2,'converting to IRI: ~w',[X]),
+        atom_javaIRI(X,U),
         jpl_call(Fac,getOWLClass,U,Obj).
 translate_arg_to_java(Fac,X,_T,Obj) :-
         atom(X),
         \+ \+ classAssertion(_,X),
         !,
-        atom_javaURI(X,U),
+        atom_javaIRI(X,U),
         jpl_call(Fac,getOWLNamedIndividual,U,Obj).
 
 translate_arg_to_java(Fac,X,_T,Obj) :-
         atom(X),
         objectProperty(X),
         !,
-        atom_javaURI(X,U),
+        atom_javaIRI(X,U),
         jpl_call(Fac,getOWLObjectProperty,U,Obj).
 
 
@@ -647,8 +651,8 @@ axiom_method(dataPropertyAssertion,getOWLDataPropertyAssertionAxiom,[P,S,V],[S,P
 
 
 %% axiom_method(?Pred,?JavaGetMethod)
-axiom_method(subObjectPropertyOf,getOWLSubObjectPropertyAxiom).
-axiom_method(subDataPropertyOf,getOWLSubDataPropertyAxiom).
+axiom_method(subObjectPropertyOf,getOWLSubObjectPropertyOfAxiom).
+axiom_method(subDataPropertyOf,getOWLSubDataPropertyOfAxiom).
 axiom_method(disjointObjectProperties,getOWLDisjointObjectPropertiesAxiom).
 axiom_method(disjointDataProperties,getOWLDisjointDataPropertiesAxiom).
 axiom_method(equivalentObjectProperties,getOWLEquivalentObjectPropertiesAxiom).
@@ -681,19 +685,19 @@ expr_method(dataOneOf,getOWLDataOneOf).
 
 expr_method(inverseOf,getOWLObjectPropertyInverse).
 
-
-expr_method(objectMinCardinality,getOWLObjectMinCardinality,[N,P,CE],[P,N,CE]).
-expr_method(objectMinCardinality,getOWLObjectMinCardinality,[N,P],[P,N]).
-expr_method(dataMinCardinality,getOWLDataMinCardinality,[N,P,CE],[P,N,CE]).
-expr_method(dataMinCardinality,getOWLDataMinCardinality,[N,P],[P,N]).
-expr_method(objectMaxCardinality,getOWLObjectMaxCardinality,[N,P,CE],[P,N,CE]).
-expr_method(objectMaxCardinality,getOWLObjectMaxCardinality,[N,P],[P,N]).
-expr_method(dataMaxCardinality,getOWLDataMaxCardinality,[N,P,CE],[P,N,CE]).
-expr_method(dataMaxCardinality,getOWLDataMaxCardinality,[N,P],[P,N]).
-expr_method(objectExactCardinality,getOWLObjectExactCardinality,[N,P,CE],[P,N,CE]).
-expr_method(objectExactCardinality,getOWLObjectExactCardinality,[N,P],[P,N]).
-expr_method(dataExactCardinality,getOWLDataExactCardinality,[N,P,CE],[P,N,CE]).
-expr_method(dataExactCardinality,getOWLDataExactCardinality,[N,P],[P,N]).
+% TODO: is this still required? holdover from owlapi<3, when args were not in same order
+expr_method(objectMinCardinality,getOWLObjectMinCardinality,[N,P,CE],[N,P,CE]).
+expr_method(objectMinCardinality,getOWLObjectMinCardinality,[N,P],[N,P]).
+expr_method(dataMinCardinality,getOWLDataMinCardinality,[N,P,CE],[N,P,CE]).
+expr_method(dataMinCardinality,getOWLDataMinCardinality,[N,P],[N,P]).
+expr_method(objectMaxCardinality,getOWLObjectMaxCardinality,[N,P,CE],[N,P,CE]).
+expr_method(objectMaxCardinality,getOWLObjectMaxCardinality,[N,P],[N,P]).
+expr_method(dataMaxCardinality,getOWLDataMaxCardinality,[N,P,CE],[N,P,CE]).
+expr_method(dataMaxCardinality,getOWLDataMaxCardinality,[N,P],[N,P]).
+expr_method(objectExactCardinality,getOWLObjectExactCardinality,[N,P,CE],[N,P,CE]).
+expr_method(objectExactCardinality,getOWLObjectExactCardinality,[N,P],[N,P]).
+expr_method(dataExactCardinality,getOWLDataExactCardinality,[N,P,CE],[N,P,CE]).
+expr_method(dataExactCardinality,getOWLDataExactCardinality,[N,P],[N,P]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Hooks for owl2_reasoner.pl  %%%
