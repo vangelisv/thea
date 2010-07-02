@@ -33,9 +33,13 @@ INSTALL_DATA=@INSTALL_DATA@
 
 LIBPL=\
 owl2_basic_reasoner.pl\
+owl2_catalog.pl\
+owl2_classifier.pl\
 owl2_export_rdf.pl\
+owl2_fol.pl\
 owl2_from_rdf.pl\
 owl2_from_rdf_utils.pl\
+owl2_instance_util.pl\
 owl2_io.pl\
 owl2_java_owlapi.pl\
 owl2_manchester_parser.pl\
@@ -43,14 +47,23 @@ owl2_metamodel.pl\
 owl2_model.pl\
 owl2_owllink.pl\
 owl2_plsyn.pl\
+owl2_popl.pl\
+owl2_profiles.pl\
 owl2_reasoner.pl\
+owl2_reasoning_rules.pl\
+owl2_rl_rules.pl\
+owl2_tbox_reasoner.pl\
 owl2_thea1_compat.pl\
 owl2_to_progol.pl\
 owl2_to_prolog_dlp.pl\
 owl2_util.pl\
 owl2_xml.pl\
+owl_parser.pl\
 swrl.pl\
 swrl_rdf_hooks.pl\
+thea.pl
+
+LIBPLRULES=\
 rules/advancedset.pl\
 rules/basicset.pl
 
@@ -60,16 +73,23 @@ EXAMPLES=	README
 all:		
 		@echo "Nothing to do for this package"
 
-install:	$(LIBPL)
+install:	$(LIBPL) $(LIBPLRULES)
 		mkdir -p $(DESTDIR)$(LIBDIR)
-		$(INSTALL_DATA) -c $(LIBALL) $(DESTDIR)$(LIBDIR)
+		$(INSTALL_DATA) $(LIBALL) $(DESTDIR)$(LIBDIR)
+		mkdir -p $(DESTDIR)$(LIBDIR)/rules
+		$(INSTALL_DATA) $(LIBPLRULES) $(DESTDIR)$(LIBDIR)/rules
 		$(PL) -f none -g make -t halt
 
-ln-install:	$(LIBPL)
+ln-install:	$(LIBPL) $(LIBPLRULES)
 		mkdir -p $(DESTDIR)$(LIBDIR)
 		for f in $(LIBALL); do \
 		    rm -f $(DESTDIR)$(LIBDIR)/$$f; \
 		    ln -s `pwd`/$$f $(DESTDIR)$(LIBDIR); \
+		done
+		mkdir -p $(DESTDIR)$(LIBDIR)/rules
+		for f in $(LIBPLRULES); do \
+		    rm -f $(DESTDIR)$(LIBDIR)/$$f; \
+		    ln -s `pwd`/$$f $(DESTDIR)$(LIBDIR)/rules; \
 		done
 		$(PL) -f none -g make -t halt
 
