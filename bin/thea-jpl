@@ -5,11 +5,8 @@ DIRNAME=`dirname $0`
 # These will be resolved into absolute pathnames
 # Wildcards are allowed
 CLASSPATH_RELATIVE=$DIRNAME/../jars/*.jar
-echo $CLASSPATH_RELATIVE
 
-for ARG in "$CLASSPATH_RELATIVE"
-do
-	DEREFERENCED_CLASSPATH=`ls -1 -L $ARG`
+	DEREFERENCED_CLASSPATH=`ls -1 -L $CLASSPATH_RELATIVE`
         echo A = $DEREFERENCED_CLASSPATH
 	for CP_ENTRY in $DEREFERENCED_CLASSPATH
 	do
@@ -20,8 +17,7 @@ do
 			CLASSPATH="$CLASSPATH:$CP_ENTRY"
 		fi
 	done
-done
 
-#echo CP = $CLASSPATH
+echo CP = $CLASSPATH
 #CLASSPATH="jars/owlapi-bin.jar:" thea --ensure_loaded "library(thea2/owl2_java_owlapi)" "$@"
 thea --ensure_loaded "library(thea2/owl2_java_owlapi)" "$@"

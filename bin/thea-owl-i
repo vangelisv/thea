@@ -35,6 +35,11 @@ main :-
         get_time(T2),
         LoadTime is T2-T1,
         debug(bench,'load_time: ~w',[LoadTime]),
+        (   member(reasonername(RN),Opts)
+        ->  ensure_loaded(library(thea2/owl2_reasoner)),
+            initialize_reasoner(RN,Reasoner),
+            nb_setval(reasoner,Reasoner)
+        ;   true),
         forall(member(goal(G),Opts),
                G),
         forall(member(popl(G),Opts),
@@ -57,6 +62,9 @@ main :-
             ->  save_axioms(OutFile,OutFmt,SaveOpts)
             ;   save_axioms(_,OutFmt,SaveOpts))
         ;   true),
+        forall(member(reasonerquery(T,G),Opts),
+               forall(reasoner_ask(Reasoner,G),
+                      show_term(T,Opts))),
         forall(member(query(T,G),Opts),
                forall(G,show_term(T,Opts))),
         (   member(qsave(QSF),Opts)
@@ -185,6 +193,13 @@ arg_info(popl,term,'process using POPL expression').
 parse_arg(['--query',select,TA,where,GA|L],L,query(T,G)) :- sformat(A,'q((~w),(~w))',[TA,GA]),atom_to_term(A,q(T,G),_).
 parse_arg(['--query',GA|L],L,query(T,G)) :- atom_to_term(GA,G-T,_).
 arg_info(query,goal,'execute prolog query').
+
+parse_arg(['--reasoner',A|L],L,reasonername(RN)) :-
+        atom_to_term(A,RN,_).
+
+parse_arg(['--reasoner-ask-all'|L],L,reasonerquery( A, A)).
+
+
 
 parse_arg(['--load-catalog'|L],L,null) :- load_catalog.
 

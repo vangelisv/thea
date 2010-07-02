@@ -141,8 +141,8 @@ create_reasoner(Ont,RN,Reasoner) :-
         jpl_call(RFac,createReasoner,[Ont],Reasoner).
 
 reasoner_factory(pellet,'com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory').
-reasoner_factory(hermit,'org.semanticweb.HermiT.Reasoner').
-reasoner_factory(factpp,'uk.ac.manchester.cs.factplusplus.owlapiv3.Reasoner').
+reasoner_factory(hermit,'org.semanticweb.HermiT.Reasoner$ReasonerFactory').
+reasoner_factory(factpp,'uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory').
 
 % DEPRECATED
 reasoner_classify(Reasoner) :-
@@ -262,6 +262,7 @@ inferred_axiom(R,Fac,propertyAssertion(P,I,I2)) :-
         
 % reasoner_nr_subClassOf(+R,+Fac,?C,?P)
 reasoner_nr_subClassOf(R,Fac,C,P) :-
+        throw(not_implemented),
         var(C),
         var(P),
         !,
@@ -270,6 +271,7 @@ reasoner_nr_subClassOf(R,Fac,C,P) :-
 
 % reasoner_nr_subClassOf(+R,+Fac,+C,?P) 
 reasoner_nr_subClassOf(R,Fac,C,P) :-
+        throw(not_implemented),
         nonvar(C),
         !,
         pl2javaref(Fac,C,JC),
@@ -278,10 +280,11 @@ reasoner_nr_subClassOf(R,Fac,C,P) :-
 
 % reasoner_nr_subClassOf(+R,+Fac,?C,+P) 
 reasoner_nr_subClassOf(R,Fac,C,P) :-
+        throw(not_implemented),
         nonvar(P),
         !,
         pl2javaref(Fac,P,JP),
-        jpl_call(R,getSubClasses,[JP,(@false)],JCSetSet),
+        jpl_call(R,getSubClasses,[JP,(@true)],JCSetSet),
         nodeset_entity(JCSetSet,C).
 
 %% reasoner_subClassOf(+R,+Fac,?C,?P)
@@ -340,9 +343,8 @@ reasoner_individualOf(R,Fac,I,C,IsDirect) :-
         (   IsDirect
         ->  Bool='@'(true)
         ;   Bool='@'(false)),
-        jpl_call(R,getIndividuals,[JC,Bool],ISet),
-        jset_member(ISet,JI),
-        java_namedentity(JI,I).
+        jpl_call(R,getInstances,[JC,Bool],ISet),
+        nodeset_entity(ISet,I).
 
 reasoner_individualOf(R,Fac,I,C,IsDirect) :-
         nonvar(I),
@@ -354,11 +356,14 @@ reasoner_individualOf(R,Fac,I,C,IsDirect) :-
         jpl_call(R,getTypes,[JI,Bool],JCSetSet),
         ecsets_class(JCSetSet,C).
 
-reasoner_objectPropertyAssertion(R,Fac,I,P,I2) :-
+reasoner_objectPropertyAssertion(R,Fac,P,I,I2) :-
         (   var(I)
         ->  classAssertion(_,I), % TODO - better way to get enumerate individuals?
             \+ objectProperty(I), % see issue 16 - hack for now
             \+ class(I)
+        ;   true),
+        (   var(P)
+        ->  objectProperty(P)
         ;   true),
         debug(reasoner,'I=~w',[I]),
         pl2javaref(Fac,I,JI),
@@ -770,32 +775,40 @@ expr_method(dataExactCardinality,getOWLDataExactCardinality,[N,P],[N,P]).
 :- multifile owl2_reasoner:reasoner_ask_hook/2.
 
 wrapped_reasoner(pellet).
+wrapped_reasoner(hermit).
 wrapped_reasoner(factpp).
 
-initialize_reasoner_hook(Type,R,Opts) :-
-	wrapped_reasoner(Type),
-	initialize_reasoner_hook(owlapi(Type),R,Opts).
-initialize_reasoner_hook(owlapi(Type),owlapi(R-Man-Fac),_Opts) :-
+owl2_reasoner:initialize_reasoner_hook(Type,R,Opts) :-
+	wrapped_reasoner(Type), % choose arbitrary if not defined
+        !,
+	owl2_reasoner:initialize_reasoner_hook(owlapi(Type),R,Opts).
+owl2_reasoner:initialize_reasoner_hook(owlapi(Type),owlapi_reasoner(R,Fac,Opts),Opts) :-
 	!,
 	require_manager(Man),
 	create_factory(Man,Fac),
-	create_reasoner(Man,Type,R).
+        build_ontology(Man,Fac,Ont),
+	create_reasoner(Ont,Type,R).
 
 %reasoner_tell_hook(R,Axiom) :- foo.
 
-reasoner_tell_all_hook(owlapi(OWLReasoner,Fac)) :-
+owl2_reasoner:reasoner_tell_all_hook(owlapi_reasoner(OWLReasoner,Fac,_Opts)) :-
 	build_ontology(Man,Fac,Ont),
 	reasoner_classify(OWLReasoner,Man,Ont).
 
 	
-reasoner_ask_hook(R,Axiom) :-
-	var(Axiom), % allow all?
-	!,
-	throw(error(reasoner(R,Axiom))).
+%owl2_reasoner:reasoner_ask_hook(R,Axiom) :-
+%	var(Axiom), % allow all?
+%	!,
+%	throw(error(reasoner(R,Axiom))).
 
-reasoner_ask_hook(R,subClassOf(A,B)) :-
-	reasoner_subClassOf(R,_,A,B). % TODO
-        
+owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),subClassOf(A,B)) :-
+	reasoner_subClassOf(R,Fac,A,B).
+
+owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),classAssertion(C,I)) :-
+	reasoner_individualOf(R,Fac,I,C).
+
+owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),propertyAssertion(P,A,B)) :-
+	reasoner_objectPropertyAssertion(R,Fac,P,A,B).
 
 /** <module> bridge to java OWLAPI
 
