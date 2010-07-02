@@ -31,6 +31,9 @@ fail.
 
 See http://www.cs.man.ac.uk/~iannonel/oppl/documentation.html
 
+This examples requires JPL as the OWLAPI is used (it may be possible
+to plug in owllink or prolog reasoners in future).
+
 ==
 % setup boilerplate
 [owl2_io].
