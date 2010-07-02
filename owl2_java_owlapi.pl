@@ -2,6 +2,7 @@
 
 :- module(owl2_java_owlapi,
           [
+           version_info/1,
            create_manager/1,
            create_factory/2,
            create_ontology/3,
@@ -33,6 +34,10 @@
 
 
 prefix('org.semanticweb.owlapi.model').
+
+version_info(Info) :-
+        jpl_call('org.semanticweb.owlapi.util.VersionInfo',getVersionInfo,[],VI),
+        jpl_call(VI,getVersion,[],Info).
 
 atom_javaIRI(X,U):-
         sub_atom(X,_,_,_,':'),
@@ -126,35 +131,39 @@ create_factory(Manager,Fac) :-
         require_manager(Manager),
         jpl_call(Manager,getOWLDataFactory,[],Fac).
 
-%% create_reasoner(?Manager,?Type,?Reasoner) is nondet
+%% create_reasoner(?Ont,?Type,?Reasoner) is nondet
 % if Type is ground then this predicate is deterministic
 % @param Type - factpp or pellet
-create_reasoner(Manager,RN,Reasoner) :-
-        require_manager(Manager),
+create_reasoner(Ont,RN,Reasoner) :-
         reasoner_factory(RN,RFacClass),
         jpl_new(RFacClass,[],RFac),
         debug(owl2,'got reasoner factory: ~w',[RFac]),
-        jpl_call(RFac,createReasoner,[Manager],Reasoner).
+        jpl_call(RFac,createReasoner,[Ont],Reasoner).
 
-reasoner_factory(pellet,'org.mindswap.pellet.owlapi.PelletReasonerFactory').
-reasoner_factory(factpp,'org.semanticweb.reasonerfactory.factpp.FaCTPlusPlusReasonerFactory').
+reasoner_factory(pellet,'com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory').
+reasoner_factory(hermit,'org.semanticweb.HermiT.Reasoner').
+reasoner_factory(factpp,'uk.ac.manchester.cs.factplusplus.owlapiv3.Reasoner').
 
+% DEPRECATED
 reasoner_classify(Reasoner) :-
         debug(owl2,'classifying...',[]),
         jpl_call(Reasoner,classify,[],_).
 
+% DEPRECATED
 reasoner_classify(Reasoner,Ont) :-
         reasoner_classify(Reasoner,_Man,Ont).
 
-reasoner_classify(Reasoner,Man,Ont) :-
+% DEPRECATED
+reasoner_classify(Reasoner,Man,_Ont) :-
         require_manager(Man),
-        jpl_call(Man,getImportsClosure,[Ont],IC),
-        jpl_call(Reasoner,loadOntologies,[IC],_),
+        %jpl_call(Man,getImportsClosure,[Ont],IC),
+        %jpl_call(Reasoner,loadOntologies,[IC],_),
         reasoner_classify(Reasoner).
 
+% DEPRECATED
 reasoner_classify_using(Reasoner,Ont,RN) :-
         require_manager(Man),
-        create_reasoner(Man,RN,Reasoner),
+        create_reasoner(Ont,RN,Reasoner),
         reasoner_classify(Reasoner,Man,Ont).
 
 
@@ -169,6 +178,23 @@ inconsistent_class(Reasoner,Class) :-
 java_namedentity(J,C) :-
         jpl_call(J,getIRI,[],IRI),
         jpl_call(IRI,toString,[],C).
+
+%% nodeset_entity(+NodeSet,?E) is nondet
+nodeset_entity(NodeSet,E) :-
+        jpl_call(NodeSet,'getNodes',[],NodeSetG),
+        jpl_call(NodeSetG,'toArray',[],NodeArr),
+        jpl_array_to_list(NodeArr,Nodes),
+        member(Node,Nodes),
+        jpl_call(Node,getEntities,[],ESet),
+        jpl_call(ESet,toArray,[],EArr),
+        jpl_array_to_list(EArr,Es),
+        (   Es=[JE],
+            java_namedentity(JE,E)
+        ->  true
+        ;   Es=[]
+        ->  fail
+        ;   maplist(java_namedentity,Es,PEs),
+            E=equivalentClasses(PEs)).
 
 %% ecsets_class(+JPSetSet,?P) is nondet
 % Set<Set<OWLClass>> --> class expression
@@ -205,7 +231,7 @@ pimap_property_individual(PIMap,P,I) :-
         java_namedentity(JI,I).
 
 % converts prolog reference to java
-cxj(Fac,C,JC) :-
+pl2javaref(Fac,C,JC) :-
         (   atom(C)
         ->  owlterm_java(Fac,_,C,JC)
         ;   translate_arg_to_java(Fac,C,_,JC)).
@@ -242,7 +268,7 @@ reasoner_nr_subClassOf(R,Fac,C,P) :-
 reasoner_nr_subClassOf(R,Fac,C,P) :-
         nonvar(C),
         !,
-        cxj(Fac,C,JC),
+        pl2javaref(Fac,C,JC),
         jpl_call(R,getSuperClasses,[JC],JPSetSet),
         ecsets_class(JPSetSet,P).
 
@@ -250,7 +276,7 @@ reasoner_nr_subClassOf(R,Fac,C,P) :-
 reasoner_nr_subClassOf(R,Fac,C,P) :-
         nonvar(P),
         !,
-        cxj(Fac,P,JP),
+        pl2javaref(Fac,P,JP),
         jpl_call(R,getSubClasses,[JP],JCSetSet),
         ecsets_class(JCSetSet,C).
 
@@ -272,7 +298,7 @@ reasoner_subClassOf(R,Fac,C,P) :-
 reasoner_subClassOf(R,Fac,C,P) :-
         nonvar(C),
         !,
-        cxj(Fac,C,JC),
+        pl2javaref(Fac,C,JC),
         jpl_call(R,getAncestorClasses,[JC],JPSetSet),
         ecsets_class(JPSetSet,P).
 
@@ -280,7 +306,7 @@ reasoner_subClassOf(R,Fac,C,P) :-
 reasoner_subClassOf(R,Fac,C,P) :-
         nonvar(P),
         !,
-        cxj(Fac,P,JP),
+        pl2javaref(Fac,P,JP),
         jpl_call(R,getDescendantClasses,[JP],JCSetSet),
         ecsets_class(JCSetSet,C).
 
@@ -307,7 +333,7 @@ reasoner_individualOf(R,Fac,I,C,IsDirect) :-
 reasoner_individualOf(R,Fac,I,C,IsDirect) :-
         nonvar(C),
         !,
-        cxj(Fac,C,JC),
+        pl2javaref(Fac,C,JC),
         (   IsDirect
         ->  Bool='@'(true)
         ;   Bool='@'(false)),
@@ -318,7 +344,7 @@ reasoner_individualOf(R,Fac,I,C,IsDirect) :-
 reasoner_individualOf(R,Fac,I,C,IsDirect) :-
         nonvar(I),
         !,
-        cxj(Fac,I,JI),
+        pl2javaref(Fac,I,JI),
         (   IsDirect
         ->  Bool='@'(true)
         ;   Bool='@'(false)),
@@ -327,11 +353,15 @@ reasoner_individualOf(R,Fac,I,C,IsDirect) :-
 
 reasoner_objectPropertyAssertion(R,Fac,I,P,I2) :-
         (   var(I)
-        ->  classAssertion(_,I)
+        ->  classAssertion(_,I), % TODO - better way to get enumerate individuals?
+            \+ objectProperty(I), % see issue 16 - hack for now
+            \+ class(I)
         ;   true),
-        cxj(Fac,I,JI),
-        jpl_call(R,getObjectPropertyRelationships,[JI],PropIndivsMap),
-        pimap_property_individual(PropIndivsMap,P,I2).
+        debug(reasoner,'I=~w',[I]),
+        pl2javaref(Fac,I,JI),
+        pl2javaref(Fac,P,JP),
+        jpl_call(R,getObjectPropertyValues,[JI,JP],NodeSet),
+        nodeset_entity(NodeSet,I2).
 
 
 
@@ -411,6 +441,7 @@ owlterm_java(Fac,_,OWLTerm,Obj) :-
         ;   \+ \+ classAssertion(_,M)
         ->  M=getOWLNamedIndividual
         ;   throw(OWLTerm)),
+        debug(owl2,'  using: ~w',[M]),
         jpl_call(Fac,M,[U],Obj). % TODO
 
 % --------
