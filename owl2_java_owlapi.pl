@@ -655,7 +655,6 @@ decl_method(entity,getOWLNamedIndividual,_). % anonymous individuals?
 
 axiom_method(subClassOf,getOWLSubClassOfAxiom).
 axiom_method(equivalentClasses,getOWLEquivalentClassesAxiom).
-%axiom_method(subPropertyOf,getOWLSubObjectPropertyAxiom).
 axiom_method(disjointClasses,getOWLDisjointClassesAxiom).
 axiom_method(inverseProperties,getOWLInverseObjectPropertiesAxiom).
 
@@ -672,8 +671,6 @@ axiom_method(dataObjectProperty,getOWLFunctionalDataPropertyAxiom).
 
 axiom_method(objectPropertyAssertion,getOWLObjectPropertyAssertionAxiom).
 axiom_method(dataPropertyAssertion,getOWLDataPropertyAssertionAxiom).
-%axiom_method(objectPropertyAssertion,getOWLObjectPropertyAssertionAxiom,[P,S,T],[S,P,T]).
-%xiom_method(dataPropertyAssertion,getOWLDataPropertyAssertionAxiom,[P,S,V],[S,P,V]).
 
 % ----------------------------------------
 % typed axioms
@@ -696,7 +693,7 @@ axiom_method(objectPropertyDomain,getOWLObjectPropertyDomainAxiom).
 axiom_method(dataPropertyRange,getOWLDataPropertyRangeAxiom).
 axiom_method(objectPropertyRange,getOWLObjectPropertyRangeAxiom).
 
-axiom_method(classAssertion,getOWLClassAssertionAxiom,[D,I],[I,D]).
+axiom_method(classAssertion,getOWLClassAssertionAxiom).
 
 expr_method(objectIntersectionOf,getOWLObjectIntersectionOf).
 expr_method(dataIntersectionOf,getOWLObjectIntersectionOf).
