@@ -189,7 +189,7 @@ ecsets_class(JPSetSet,P) :-
             P=equivalentClasses(Ps)).
 
 %% pimap_property_individual(PIMap,P,I) is nondet
-%  Map<OWLObjectProperty, Set<OWLIndividual>> --> ?Property ?Individual
+%  Map<OWLObjectProperty, Set<OWLNamedIndividual>> --> ?Property ?Individual
 % (currently object properties only?)
 pimap_property_individual(PIMap,P,I) :-
         jpl_call(PIMap,keySet,[],JPSet),
@@ -372,8 +372,8 @@ owlterm_java(Fac,_,annotationAssertion(AP,Sub,Val),Obj) :-
         translate_arg_to_java(Fac,Val,literal,JVal),
         translate_arg_to_java(Fac,Sub,entity,JEntity),
         atom_javaURI(AP,JAP),
-        jpl_call(Fac,getOWLConstantAnnotation,[JAP,JVal],JAnno),
-        jpl_call(Fac,getOWLEntityAnnotationAxiom,[JEntity,JAnno],Obj).
+        jpl_call(Fac,getOWLLiteralAnnotation,[JAP,JVal],JAnno),
+        jpl_call(Fac,getOWLAnnotationAssertionAxiom,[JEntity,JAnno],Obj).
 
 owlterm_java(Fac,_,OWLTerm,Obj) :-
         OWLTerm =.. [P,X],
@@ -394,7 +394,7 @@ owlterm_java(Fac,_,OWLTerm,Obj) :-
         ;   objectProperty(OWLTerm)
         ->  M=getOWLObjectProperty
         ;   \+ \+ classAssertion(_,M)
-        ->  M=getOWLIndividual
+        ->  M=getOWLNamedIndividual
         ;   throw(OWLTerm)),
         jpl_call(Fac,M,[U],Obj). % TODO
 
@@ -424,7 +424,7 @@ owlterm_java(Fac,_,subPropertyOf(propertyChain(PL),P),Obj) :- % e.g. subObjectPr
         debug(owl2,'  translating chain ~w',[PL]),
         translate_args_to_java(Fac,[PL,P],[list(objectPropertyExpression),objectPropertyExpression],Objs),
         debug(owl2,'  translated chain to: ~w',[Objs]),
-        jpl_call(Fac,getOWLObjectPropertyChainSubPropertyAxiom,Objs,Obj).
+        jpl_call(Fac,getOWLSubPropertyChainOfAxiom,Objs,Obj).
 
 % axioms such as subPropertyOf have two typed variants.
 % we use type checking which may require the axiom declaration
@@ -524,10 +524,10 @@ translate_arg_to_java(Fac,Val,literal,Obj) :- % todo - caused by bug in rdf pars
         translate_arg_to_java(Fac,literal(''),literal,Obj).
 translate_arg_to_java(Fac,literal(type(_,Val)),literal,Obj) :- % todo - typed constants
         !,
-        jpl_call(Fac,getOWLUntypedConstant,[Val],Obj).
+        jpl_call(Fac,getOWLStringLiteral,[Val],Obj).
 translate_arg_to_java(Fac,literal(Val),literal,Obj) :- % todo - typed constants
         !,
-        jpl_call(Fac,getOWLUntypedConstant,[Val],Obj).
+        jpl_call(Fac,getOWLStringLiteral,[Val],Obj).
 
 translate_arg_to_java(_Fac,X,T,Obj) :- % TODO
         atom(X),
@@ -547,7 +547,7 @@ translate_arg_to_java(Fac,X,_T,Obj) :-
         \+ \+ classAssertion(_,X),
         !,
         atom_javaURI(X,U),
-        jpl_call(Fac,getOWLIndividual,U,Obj).
+        jpl_call(Fac,getOWLNamedIndividual,U,Obj).
 
 translate_arg_to_java(Fac,X,_T,Obj) :-
         atom(X),
@@ -619,12 +619,12 @@ decl_method(objectProperty,getOWLObjectProperty,propertyExpression).
 decl_method(annotationProperty,getOWLObjectProperty,iri). % FIXME!!
 decl_method(dataType,getOWLDatatype,datatype).
 decl_method(dataProperty,getOWLDataProperty,_).
-decl_method(individual,getOWLIndividual,_). % anonymous individuals?
-decl_method(entity,getOWLIndividual,_). % anonymous individuals?
+decl_method(individual,getOWLNamedIndividual,_). % anonymous individuals?
+decl_method(entity,getOWLNamedIndividual,_). % anonymous individuals?
 
 :- discontiguous axiom_method/2,axiom_method/4.
 
-axiom_method(subClassOf,getOWLSubClassAxiom).
+axiom_method(subClassOf,getOWLSubClassOfAxiom).
 axiom_method(equivalentClasses,getOWLEquivalentClassesAxiom).
 %axiom_method(subPropertyOf,getOWLSubObjectPropertyAxiom).
 axiom_method(disjointClasses,getOWLDisjointClassesAxiom).
@@ -666,12 +666,12 @@ axiom_method(classAssertion,getOWLClassAssertionAxiom,[D,I],[I,D]).
 
 expr_method(objectIntersectionOf,getOWLObjectIntersectionOf).
 expr_method(dataIntersectionOf,getOWLObjectIntersectionOf).
-expr_method(objectSomeValuesFrom,getOWLObjectSomeRestriction).
-expr_method(dataSomeValuesFrom,getOWLDataSomeRestriction).
-expr_method(objectHasValue,getOWLObjectValueRestriction).
-expr_method(dataHasValue,getOWLDataValueRestriction).
-expr_method(objectAllValuesFrom,getOWLObjectAllRestriction).
-expr_method(dataAllValuesFrom,getOWLDataAllRestriction).
+expr_method(objectSomeValuesFrom,getOWLObjectSomeValuesFrom).
+expr_method(dataSomeValuesFrom,getOWLDataSomeValiesFrom).
+expr_method(objectHasValue,getOWLObjectHasValue).
+expr_method(dataHasValue,getOWLDataHasValue).
+expr_method(objectAllValuesFrom,getOWLObjectAllValuesFrom).
+expr_method(dataAllValuesFrom,getOWLDataAllValuesFrom).
 expr_method(objectComplementOf,getOWLObjectComplementOf).
 expr_method(dataComplementOf,getOWLDataComplementOf).
 expr_method(objectUnionOf,getOWLObjectUnionOf).
@@ -682,18 +682,18 @@ expr_method(dataOneOf,getOWLDataOneOf).
 expr_method(inverseOf,getOWLObjectPropertyInverse).
 
 
-expr_method(objectMinCardinality,getOWLObjectMinCardinalityRestriction,[N,P,CE],[P,N,CE]).
-expr_method(objectMinCardinality,getOWLObjectMinCardinalityRestriction,[N,P],[P,N]).
-expr_method(dataMinCardinality,getOWLDataMinCardinalityRestriction,[N,P,CE],[P,N,CE]).
-expr_method(dataMinCardinality,getOWLDataMinCardinalityRestriction,[N,P],[P,N]).
-expr_method(objectMaxCardinality,getOWLObjectMaxCardinalityRestriction,[N,P,CE],[P,N,CE]).
-expr_method(objectMaxCardinality,getOWLObjectMaxCardinalityRestriction,[N,P],[P,N]).
-expr_method(dataMaxCardinality,getOWLDataMaxCardinalityRestriction,[N,P,CE],[P,N,CE]).
-expr_method(dataMaxCardinality,getOWLDataMaxCardinalityRestriction,[N,P],[P,N]).
-expr_method(objectExactCardinality,getOWLObjectExactCardinalityRestriction,[N,P,CE],[P,N,CE]).
-expr_method(objectExactCardinality,getOWLObjectExactCardinalityRestriction,[N,P],[P,N]).
-expr_method(dataExactCardinality,getOWLDataExactCardinalityRestriction,[N,P,CE],[P,N,CE]).
-expr_method(dataExactCardinality,getOWLDataExactCardinalityRestriction,[N,P],[P,N]).
+expr_method(objectMinCardinality,getOWLObjectMinCardinality,[N,P,CE],[P,N,CE]).
+expr_method(objectMinCardinality,getOWLObjectMinCardinality,[N,P],[P,N]).
+expr_method(dataMinCardinality,getOWLDataMinCardinality,[N,P,CE],[P,N,CE]).
+expr_method(dataMinCardinality,getOWLDataMinCardinality,[N,P],[P,N]).
+expr_method(objectMaxCardinality,getOWLObjectMaxCardinality,[N,P,CE],[P,N,CE]).
+expr_method(objectMaxCardinality,getOWLObjectMaxCardinality,[N,P],[P,N]).
+expr_method(dataMaxCardinality,getOWLDataMaxCardinality,[N,P,CE],[P,N,CE]).
+expr_method(dataMaxCardinality,getOWLDataMaxCardinality,[N,P],[P,N]).
+expr_method(objectExactCardinality,getOWLObjectExactCardinality,[N,P,CE],[P,N,CE]).
+expr_method(objectExactCardinality,getOWLObjectExactCardinality,[N,P],[P,N]).
+expr_method(dataExactCardinality,getOWLDataExactCardinality,[N,P,CE],[P,N,CE]).
+expr_method(dataExactCardinality,getOWLDataExactCardinality,[N,P],[P,N]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Hooks for owl2_reasoner.pl  %%%
