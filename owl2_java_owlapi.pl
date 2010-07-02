@@ -146,15 +146,18 @@ reasoner_factory(factpp,'uk.ac.manchester.cs.factplusplus.owlapiv3.Reasoner').
 
 % DEPRECATED
 reasoner_classify(Reasoner) :-
+        throw(deprecated('no need to call classify with owlapi v3')),
         debug(owl2,'classifying...',[]),
         jpl_call(Reasoner,classify,[],_).
 
 % DEPRECATED
 reasoner_classify(Reasoner,Ont) :-
+        throw(deprecated('no need to call classify with owlapi v3')),
         reasoner_classify(Reasoner,_Man,Ont).
 
 % DEPRECATED
 reasoner_classify(Reasoner,Man,_Ont) :-
+        throw(deprecated('no need to call classify with owlapi v3')),
         require_manager(Man),
         %jpl_call(Man,getImportsClosure,[Ont],IC),
         %jpl_call(Reasoner,loadOntologies,[IC],_),
@@ -162,6 +165,7 @@ reasoner_classify(Reasoner,Man,_Ont) :-
 
 % DEPRECATED
 reasoner_classify_using(Reasoner,Ont,RN) :-
+        throw(deprecated('no need to call classify with owlapi v3')),
         require_manager(Man),
         create_reasoner(Ont,RN,Reasoner),
         reasoner_classify(Reasoner,Man,Ont).
@@ -277,9 +281,8 @@ reasoner_nr_subClassOf(R,Fac,C,P) :-
         nonvar(P),
         !,
         pl2javaref(Fac,P,JP),
-        jpl_call(R,getSubClasses,[JP],JCSetSet),
-        ecsets_class(JCSetSet,C).
-
+        jpl_call(R,getSubClasses,[JP,(@false)],JCSetSet),
+        nodeset_entity(JCSetSet,C).
 
 %% reasoner_subClassOf(+R,+Fac,?C,?P)
 % ?C ?P - find superclasses for all named classes C
@@ -299,16 +302,16 @@ reasoner_subClassOf(R,Fac,C,P) :-
         nonvar(C),
         !,
         pl2javaref(Fac,C,JC),
-        jpl_call(R,getAncestorClasses,[JC],JPSetSet),
-        ecsets_class(JPSetSet,P).
+        jpl_call(R,getSuperClasses,[JC,@(false)],JPSetSet),
+        nodeset_entity(JPSetSet,P).
 
 % reasoner_subClassOf(+R,+Fac,?C,+P) 
 reasoner_subClassOf(R,Fac,C,P) :-
         nonvar(P),
         !,
         pl2javaref(Fac,P,JP),
-        jpl_call(R,getDescendantClasses,[JP],JCSetSet),
-        ecsets_class(JCSetSet,C).
+        jpl_call(R,getSubClasses,[JP,@(false)],JCSetSet),
+        nodeset_entity(JCSetSet,C).
 
 %% reasoner_nr_individualOf(+R,+Fac,?I,?C)
 % ?I ?C - find classes for all named individuals I
