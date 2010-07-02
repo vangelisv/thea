@@ -311,6 +311,7 @@ any_axiom_template(T) :-
 	uniqify(Ts,Ts2),
 	member(T,Ts2).
 
+% remove dupes from list (why not use sort? vars? ...)
 uniqify([],[]).
 uniqify([H|L],L2) :-
 	\+ \+ member(H,L),
@@ -322,6 +323,8 @@ uniqify([H|L],[H|L2]) :-
 
         
 
+%% extract_axiom_template(+Ax,?Template)
+% replaces atoms with variables
 extract_axiom_template(A,_) :-
 	atom(A),
 	!.

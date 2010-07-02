@@ -46,6 +46,9 @@ collect_mapping(annotationAssertion(P,X,Y)-PT) :-
 collect_mapping(subClassOf(X,someValuesFrom(P,Y))-PT) :-
 	expand_assertion_to(P,T), % allow this as well as annotation assertions
 	parse_template(T,PT,[X,Y]).
+collect_mapping(subClassOf(X,hasValue(P,Y))-PT) :-
+	expand_assertion_to(P,T), % allow this as well as annotation assertions
+	parse_template(T,PT,[X,Y]).
 collect_mapping(someValuesFrom(P,Y)-PT) :-
 	expand_expression_to(P,T),
 	parse_template(T,PT,[_,Y]).
