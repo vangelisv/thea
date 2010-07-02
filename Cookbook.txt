@@ -37,18 +37,14 @@ See http://www.cs.man.ac.uk/~iannonel/oppl/documentation.html
 [owl2_java_owlapi].
 load_axioms('testfiles/country.owl').
 
-% owlapi boilerplate
-create_reasoner(Man,pellet,Reasoner),
-create_factory(Man,Fac),
-build_ontology(Man,Fac,Ont),
-reasoner_classify(Reasoner,Man,Ont),
-
-reasoner_objectPropertyAssertion(Reasoner,Fac,C1,'http://www.co-ode.org/roberts/country.owl#adjacentTo',C2),
-retract_axiom(propertyAssertion(C1,'c:adjacentTo',C2),
-Desc = someValuesFrom('c:hasLandBoundry',intersectionOf('c:LandBoundryFragment',
- hasValue('c:boundaryOf',C2))),
-assert_axiom(classAssertion(Desc,C2)),
-fail.
+% find all (inferred) adjacent countries and make a classAssertion
+initialize_reasoner(pellet,Reasoner),
+   reasoner_ask(Reasoner,Fac,propertyAssertion('http://www.co-ode.org/roberts/country.owl#adjacentTo',C1,C2)),
+   retract_axiom(propertyAssertion(C1,'c:adjacentTo',C2),
+   Desc = someValuesFrom('c:hasLandBoundry',intersectionOf('c:LandBoundryFragment',
+            hasValue('c:boundaryOf',C2))),
+   assert_axiom(classAssertion(Desc,C2)),
+   fail.
 
 % then save:
 save_axioms('countries2.owl',owl).
