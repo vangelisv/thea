@@ -2,7 +2,23 @@
 
 Here are some recipes for doing common tasks in Thea2
 
+---++ Querying Ontologies
+
+==
+thea testfiles/Hydrology.owl --query select "s(C,D)" where "labelAnnotation_value(Ob,'Topographic Object'),subClassOf(C,Ob),subClassOf(C,D)" --use-labels
+==
+
+---+++ Querying plus reasoning
+
+==
+thea-jpl testfiles/pets.owl --reasoner pellet --query select "s(C,D)" where "reasoner_ask(subClassOf(C,D))" --use-labels
+==
+
+
 ---++ Manipulating Ontologies
+
+(many of these examples can now be achieved even more easily with the
+owl2_popl.pl module)
 
 In most of these examples, there are 3 steps:
 
@@ -34,10 +50,17 @@ See http://www.cs.man.ac.uk/~iannonel/oppl/documentation.html
 This examples requires JPL as the OWLAPI is used (it may be possible
 to plug in owllink or prolog reasoners in future).
 
+Prolog has to be started with the correct classpath. The easiest way
+to do this is via the thea-jpl wrapper script:
+
 ==
-% setup boilerplate
-[owl2_io].
-[owl2_java_owlapi].
+thea-jpl --prolog
+==
+
+This starts thea with a prolog shell, from which further prolog goals
+can be executed:
+
+==
 load_axioms('testfiles/country.owl').
 
 % find all (inferred) adjacent countries and make a classAssertion
