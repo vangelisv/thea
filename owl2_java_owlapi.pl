@@ -1,4 +1,4 @@
-/* -*- Mode: Prolog -*- */
+s/* -*- Mode: Prolog -*- */
 
 :- module(owl2_java_owlapi,
           [
@@ -312,8 +312,10 @@ reasoner_subClassOf(R,Fac,C,P) :-
 reasoner_subClassOf(R,Fac,C,P) :-
         nonvar(P),
         !,
+        debug(reasoner,'getSubClasses( ~w )',[P]),
         pl2javaref(Fac,P,JP),
         jpl_call(R,getSubClasses,[JP,@(false)],JCSetSet),
+        debug(reasoner,'getSubClasses( ~w ) = ~w',[P,JCSetSet]),
         nodeset_entity(JCSetSet,C).
 
 %% reasoner_nr_individualOf(+R,+Fac,?I,?C)
@@ -397,6 +399,8 @@ add_axiom(Manager,Factory,Ont,Axiom,JAx) :-
         debug(owl2,' axiom ~w = ~w',[Axiom,JAx]),
         (   owl2_model:declarationAxiom(Axiom)
         ->  true
+        ;   JAx=ignore
+        ->  true
         ;   jpl_new('org.semanticweb.owlapi.model.AddAxiom',[Ont,JAx],AddAxiom),
             jpl_call(Manager,applyChange,[AddAxiom],_)).
 
@@ -410,14 +414,49 @@ add_axiom(Manager,Factory,Ont,Axiom,JAx) :-
 % special rules for ontology declarations - should have been handled previously
 owlterm_java(_,_,ontology(_),_) :- !.
 
+% special rules for ontologyAnnotations
+% TODO: this can go when we have sorted out ontologyAnnotation/2. See issue#17.
+% also - not currently clear to me how to make an axiom for ontologyAnnotation/2 in the owlapi
+owlterm_java(_,_,propertyAssertion(_,Sub,_),ignore) :-
+        ontology(Sub),
+        !.
+owlterm_java(_,_,propertyAssertion(P,S,V),ignore) :-
+        print_message(warning,no_translation(propertyAssertion(P,S,V),'property is of unknown type')),
+        !.
+owlterm_java(_,_,annotationAssertion(_,Sub,_),ignore) :-
+        ontology(Sub),
+        !.
+
+% disable this for now whilst we figure out owlapi3
+% (not required for reasoning anyway)
+owlterm_java(_,_,annotationAssertion(_,_,_),ignore) :-
+        !.
+
 % special rules for annotationAssertions
 owlterm_java(Fac,_,annotationAssertion(AP,Sub,Val),Obj) :-
         !,
-        translate_arg_to_java(Fac,Val,literal,JVal), % e.g. "fred"
+        %(   atom(Val)
+        %->  trace
+        %;   true),
+        %(   Sub='http://www.obofoundry.org/ro/ro.owl#part_of'
+        %->  trace
+        %;   true),
+        %owlterm_java(Fac,_,Sub,JEntity), % e.g. "fred"
+        (   translate_arg_to_java(Fac,Val,literal,JVal)
+        ->  true,
+            debug(owl2,'~w is liter => ~w',[Val,JVal])
+        ;   atom_javaIRI(Val,JVal),
+            debug(owl2,'treating ~w as IRI ~w',[Val,JVal])),
+        %translate_arg_to_java(Fac,Val,literal,JVal), % e.g. "fred"
         %translate_arg_to_java(Fac,Sub,entity,JEntity), % e.g. db:fred
-        atom_javaIRI(Sub,JEntity), % e.g. db:fred
+        %atom_javaIRI(Sub,JEntity), % e.g. db:fred
+        % force argument to be an annotation property
+        atom_javaIRI(Sub,JEntity), % e.g. label
         atom_javaIRI(AP,AP_IRI), % e.g. label
         jpl_call(Fac,getOWLAnnotationProperty,[AP_IRI],JAP),
+        debug(owl2,'ap(~w) => ~w',[AP,JAP]),
+        %owlterm_java(Fac,_,AP,JAP),
+        debug(owl2,'annot assertion(~w ~w ~w)',[JAP,JEntity,JVal]),
         jpl_call(Fac,getOWLAnnotationAssertionAxiom,[JAP,JEntity,JVal],Obj).
 
 % --------
@@ -587,6 +626,9 @@ translate_arg_to_java(Fac,Val,literal,Obj) :- % todo - caused by bug in rdf pars
         sub_atom(Val,0,_,_,'__'),
         !,
         translate_arg_to_java(Fac,literal(''),literal,Obj).
+translate_arg_to_java(Fac,literal(lang(_,Val)),literal,Obj) :- % todo - LANG
+        !,
+        jpl_call(Fac,getOWLStringLiteral,[Val],Obj).
 translate_arg_to_java(Fac,literal(type(_,Val)),literal,Obj) :- % todo - typed constants
         !,
         jpl_call(Fac,getOWLStringLiteral,[Val],Obj).
@@ -705,11 +747,10 @@ axiom_method(irreflexiveProperty,getOWLIrreflexiveObjectPropertyAxiom).
 axiom_method(functionalObjectProperty,getOWLFunctionalObjectPropertyAxiom).
 axiom_method(dataObjectProperty,getOWLFunctionalDataPropertyAxiom).
 
-
-
-
 axiom_method(objectPropertyAssertion,getOWLObjectPropertyAssertionAxiom).
 axiom_method(dataPropertyAssertion,getOWLDataPropertyAssertionAxiom).
+
+axiom_method(differentIndividuals,getOWLDifferentIndividualsAxiom).
 
 % ----------------------------------------
 % typed axioms
@@ -773,6 +814,7 @@ expr_method(dataExactCardinality,getOWLDataExactCardinality,[N,P],[N,P]).
 :- multifile owl2_reasoner:reasoner_tell_hook/2.
 :- multifile owl2_reasoner:reasoner_tell_all_hook/1.
 :- multifile owl2_reasoner:reasoner_ask_hook/2.
+:- multifile owl2_reasoner:reasoner_check_consistency_hook/1.
 
 wrapped_reasoner(pellet).
 wrapped_reasoner(hermit).
@@ -786,8 +828,13 @@ owl2_reasoner:initialize_reasoner_hook(owlapi(Type),owlapi_reasoner(R,Fac,Opts),
 	!,
 	require_manager(Man),
 	create_factory(Man,Fac),
+        statistics(cputime,T1),
+        print_message(informational,bench(reasoner,T1)),
         build_ontology(Man,Fac,Ont),
-	create_reasoner(Ont,Type,R).
+	create_reasoner(Ont,Type,R),
+        statistics(cputime,T2),
+        print_message(informational,bench(reasoner,T1,T2)).
+
 
 %reasoner_tell_hook(R,Axiom) :- foo.
 
@@ -809,6 +856,21 @@ owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),classAssertion(C,I)
 
 owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),propertyAssertion(P,A,B)) :-
 	reasoner_objectPropertyAssertion(R,Fac,P,A,B).
+
+owl2_reasoner:reasoner_check_consistency_hook(owlapi_reasoner(R,_Fac,_Opts)) :-
+        debug(reasoner,'checking consistency',[]),
+        is_consistent(R).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% messages                    %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+prolog:message(bench(M,T1)) -->
+        ['initializing: ',M,' ',T1].
+prolog:message(bench(M,T1,T2)) -->
+        {TD is T2-T1},
+        ['completed: ',M,' ',T2,' time: ',TD].
+
 
 /** <module> bridge to java OWLAPI
 

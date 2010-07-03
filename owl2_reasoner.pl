@@ -7,6 +7,7 @@
 	   reasoner_tell/2,
 	   reasoner_tell_all/1,
 	   reasoner_ask/2,
+           reasoner_ask/1,
 	   reasoner_check_consistency/1
           ]).
 
@@ -64,6 +65,11 @@ reasoner_tell_all(Reasoner) :-
 reasoner_ask(Reasoner,Axiom) :- 
         debug(reasoner,'Reasoner query: ~w',[Axiom]),
 	reasoner_ask_hook(Reasoner,Axiom).
+
+reasoner_ask(Axiom) :- 
+        nb_getval(reasoner,Reasoner),
+        reasoner_ask(Reasoner,Axiom).
+
 
 %% reasoner_check_consistency(+Reasoner)
 reasoner_check_consistency(Reasoner) :- 

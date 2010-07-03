@@ -38,7 +38,12 @@ main :-
         (   member(reasonername(RN),Opts)
         ->  ensure_loaded(library(thea2/owl2_reasoner)),
             initialize_reasoner(RN,Reasoner),
-            nb_setval(reasoner,Reasoner)
+            nb_setval(reasoner,Reasoner),
+            (   member(check_consistency,Opts)
+            ->  (   reasoner_check_consistency(Reasoner)
+                ->  print_message(informational,reasoner(consistent))
+                ;   print_message(error,reasoner(inconsistent)))
+            ;   true)
         ;   true),
         forall(member(goal(G),Opts),
                G),
@@ -176,8 +181,12 @@ arg_info(to,atom,'output format: one of {owl,owlpl,owlx,...}').
 parse_arg(['--out',File|L],L,output_file(File)).
 arg_info(out,filepath,'saves to file (default is standard_output)').
 
-parse_arg(['--use-labels'|L],L,goal(use_labels_for_IRIs)).
-arg_info(use-labels,-,'rewrite ontology to switch out all URIs and use labels instead').
+%parse_arg(['--use-labels'|L],L,goal(use_labels_for_IRIs)).
+%arg_info(use-labels,-,'rewrite ontology to switch out all URIs and use labels instead').
+parse_arg(['--use-labels'|L],L,saveopt(labels)).
+arg_info(use-labels,-,'use labels when writing axioms in reporting').
+parse_arg(['--use-labels-and-IRIs'|L],L,saveopt(labels_and_IRIs)).
+arg_info(use-labels,-,'use labels and IRIs when writing axioms in reporting').
 
 parse_arg(['--use-safe-labels'|L],L,goal(use_safe_labels_for_IRIs)).
 
@@ -192,11 +201,17 @@ arg_info(popl,term,'process using POPL expression').
 
 parse_arg(['--query',select,TA,where,GA|L],L,query(T,G)) :- sformat(A,'q((~w),(~w))',[TA,GA]),atom_to_term(A,q(T,G),_).
 parse_arg(['--query',GA|L],L,query(T,G)) :- atom_to_term(GA,G-T,_).
+parse_arg(['--query',GA|L],L,query(G,G)) :- atom_to_term(GA,G,_).
 arg_info(query,goal,'execute prolog query').
 
 parse_arg(['--reasoner',A|L],L,reasonername(RN)) :-
         atom_to_term(A,RN,_).
 
+parse_arg(['--check-consistency'|L],L,check_consistency).
+
+parse_arg(['--reasoner-query',select,TA,where,GA|L],L,reasonerquery( T, G)) :- sformat(A,'q((~w),(~w))',[TA,GA]),atom_to_term(A,q(T,G),_).
+parse_arg(['--reasoner-ask',GA|L],L,reasonerquery( T, G)) :- atom_to_term(GA,G-T,_).
+parse_arg(['--reasoner-ask',GA|L],L,reasonerquery( A, A)) :- atom_to_term(GA,A,_).
 parse_arg(['--reasoner-ask-all'|L],L,reasonerquery( A, A)).
 
 

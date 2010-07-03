@@ -7,7 +7,7 @@ DIRNAME=`dirname $0`
 CLASSPATH_RELATIVE=$DIRNAME/../jars/*.jar
 
 	DEREFERENCED_CLASSPATH=`ls -1 -L $CLASSPATH_RELATIVE`
-        echo A = $DEREFERENCED_CLASSPATH
+        #echo A = $DEREFERENCED_CLASSPATH
 	for CP_ENTRY in $DEREFERENCED_CLASSPATH
 	do
 		if [ -z "$CLASSPATH" ]
@@ -18,6 +18,6 @@ CLASSPATH_RELATIVE=$DIRNAME/../jars/*.jar
 		fi
 	done
 
-echo CP = $CLASSPATH
+#echo CP = $CLASSPATH
 #CLASSPATH="jars/owlapi-bin.jar:" thea --ensure_loaded "library(thea2/owl2_java_owlapi)" "$@"
 thea --ensure_loaded "library(thea2/owl2_java_owlapi)" "$@"
