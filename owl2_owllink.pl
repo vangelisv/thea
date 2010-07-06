@@ -479,6 +479,10 @@ response_elements(element(_:'DataPropertySubDataPropertiesPair',_,[element(_:'Da
 	maplist(response_elements,SynsetsE,Synsets),
 	!.
 
+% added VV 6/7/2010
+response_elements(element(_:'SetOfClassSynsets',_,SynsetsE),Synsets) :-
+	 maplist(response_elements,SynsetsE,Synsets),!.
+
 
 response_elements(element(_:'ClassSynsets',_,SynsetsE),Synsets) :-
 	 maplist(response_elements,SynsetsE,Synsets),!.
