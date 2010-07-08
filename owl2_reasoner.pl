@@ -2,10 +2,12 @@
 
 :- module(owl2_reasoner,
           [
+	   initialize_reasoner/2,
 	   initialize_reasoner/3,
 	   reasoner_tell/2,
 	   reasoner_tell_all/1,
 	   reasoner_ask/2,
+           reasoner_ask/1,
 	   reasoner_check_consistency/1
           ]).
 
@@ -30,9 +32,13 @@ initialize_reasoner(Type,Reasoner) :-
 % ==
 % initialize_reasoner(pellet,R,[])
 % ==
-initialize_reasoner(Type,Reasoner,Opts) :- 
+initialize_reasoner(Type,Reasoner,Opts) :-
         load_handler(Type,Opts),
-	initialize_reasoner_hook(Type,Reasoner,Opts).
+	initialize_reasoner_hook(Type,Reasoner,Opts),
+        debug(reasoner,'Initialized reasoner: ~w',[Reasoner]),
+        !.
+initialize_reasoner(Type,_,Opts) :- 
+        throw(error(initialize_reasoner(Type,Opts))).
 	
 %% reasoner_tell(+Reasoner,+Axiom)
 % feed an axiom to the reasoner
@@ -57,7 +63,13 @@ reasoner_tell_all(Reasoner) :-
 % that contain variables.
 % TODO - isConsistent
 reasoner_ask(Reasoner,Axiom) :- 
+        debug(reasoner,'Reasoner query: ~w',[Axiom]),
 	reasoner_ask_hook(Reasoner,Axiom).
+
+reasoner_ask(Axiom) :- 
+        nb_getval(reasoner,Reasoner),
+        reasoner_ask(Reasoner,Axiom).
+
 
 %% reasoner_check_consistency(+Reasoner)
 reasoner_check_consistency(Reasoner) :- 
@@ -66,6 +78,14 @@ reasoner_check_consistency(Reasoner) :-
 
 % --
 
+load_handler(Type,_Opts) :-
+        forall(reasoner_module(Type,Mod),
+	       ensure_loaded(library(thea2/Mod))).
+
+reasoner_module(pellet,owl2_java_owlapi).
+reasoner_module(factpp,owl2_java_owlapi).
+reasoner_module(hermit,owl2_java_owlapi).
+reasoner_module(owlapi(_),owl2_java_owlapi).
 
 
 /** <module> reasoner API - NOT YET IN USE

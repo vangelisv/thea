@@ -53,6 +53,8 @@ The following should be in the core:
 
 The following are optionally in core:
 
+* owl2_catalogs - for registering local paths for owl:imports
+ * make this something more generic in SWI?
 * owl2_plsyn - mature. provides infix syntax. not essential, but nice
 * owl2_xml - not yet well tested?
 * owl2_owllink - mature?

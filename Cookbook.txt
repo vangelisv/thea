@@ -2,7 +2,23 @@
 
 Here are some recipes for doing common tasks in Thea2
 
+---++ Querying Ontologies
+
+==
+thea testfiles/Hydrology.owl --query select "s(C,D)" where "labelAnnotation_value(Ob,'Topographic Object'),subClassOf(C,Ob),subClassOf(C,D)" --use-labels
+==
+
+---+++ Querying plus reasoning
+
+==
+thea-jpl testfiles/pets.owl --reasoner pellet --query select "s(C,D)" where "reasoner_ask(subClassOf(C,D))" --use-labels
+==
+
+
 ---++ Manipulating Ontologies
+
+(many of these examples can now be achieved even more easily with the
+owl2_popl.pl module)
 
 In most of these examples, there are 3 steps:
 
@@ -23,37 +39,43 @@ One advantage of prolog over OPPL is its expressivity
 subClassOf(X,gender),
 subClassOf(Y,gender),
 X\=Y,
-assert_axiom(disjointProperties[X,Y]),
+assert_axiom(disjointClasses([X,Y])),
 fail.
 ==
+
+
 
 ---+++ Replacing simple assertions with complex descriptions 
 
 See http://www.cs.man.ac.uk/~iannonel/oppl/documentation.html
 
+This examples requires JPL as the OWLAPI is used (it may be possible
+to plug in owllink or prolog reasoners in future).
+
+Prolog has to be started with the correct classpath. The easiest way
+to do this is via the thea-jpl wrapper script:
+
 ==
-        % setup boilerplate
-        [owl2_io],
-        [owl2_java_owlapi],
-        [library('semweb/rdf_db'),
-        rdf_register_ns(c,'http://www.co-ode.org/roberts/country.owl#'),
-        load_axioms('testfiles/country.owl'),
+thea-jpl --prolog
+==
 
-        % owlapi boilerplate
-        create_reasoner(Man,pellet,Reasoner),
-        create_factory(Man,Fac),
-        build_ontology(Man,Fac,Ont),
-        reasoner_classify(Reasoner,Man,Ont),
+This starts thea with a prolog shell, from which further prolog goals
+can be executed:
 
-        reasoner_objectPropertyAssertion(Reasoner,Fac,C1,'c:adjacentTo',C2),
-        retract_axiom(propertyAssertion(C1,'c:adjacentTo',C2),
-        Desc = someValuesFrom('c:hasLandBoundry',intersectionOf('c:LandBoundryFragment',
-                                                                 hasValue('c:boundaryOf',C2))),
-        assert_axiom(classAssertion(Desc,C2)),
-        fail.
+==
+load_axioms('testfiles/country.owl').
 
-        % then save:
-        save_axioms('countries2.owl',owl).
+% find all (inferred) adjacent countries and make a classAssertion
+initialize_reasoner(pellet,Reasoner),
+   reasoner_ask(Reasoner,Fac,propertyAssertion('http://www.co-ode.org/roberts/country.owl#adjacentTo',C1,C2)),
+   retract_axiom(propertyAssertion(C1,'c:adjacentTo',C2),
+   Desc = someValuesFrom('c:hasLandBoundry',intersectionOf('c:LandBoundryFragment',
+            hasValue('c:boundaryOf',C2))),
+   assert_axiom(classAssertion(Desc,C2)),
+   fail.
+
+% then save:
+save_axioms('countries2.owl',owl).
 ==
 
 ---++ Working with other LP systems

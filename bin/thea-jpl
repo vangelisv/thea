@@ -1,0 +1,23 @@
+#!/bin/sh
+
+DIRNAME=`dirname $0`
+# Give a space-separated list of classpath items RELATIVE TO THE CURRENT SCRIPT
+# These will be resolved into absolute pathnames
+# Wildcards are allowed
+CLASSPATH_RELATIVE=$DIRNAME/../jars/*.jar
+
+	DEREFERENCED_CLASSPATH=`ls -1 -L $CLASSPATH_RELATIVE`
+        #echo A = $DEREFERENCED_CLASSPATH
+	for CP_ENTRY in $DEREFERENCED_CLASSPATH
+	do
+		if [ -z "$CLASSPATH" ]
+		then
+			CLASSPATH="$CP_ENTRY"
+		else
+			CLASSPATH="$CLASSPATH:$CP_ENTRY"
+		fi
+	done
+
+#echo CP = $CLASSPATH
+#CLASSPATH="jars/owlapi-bin.jar:" thea --ensure_loaded "library(thea2/owl2_java_owlapi)" "$@"
+thea --ensure_loaded "library(thea2/owl2_java_owlapi)" "$@"

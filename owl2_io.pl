@@ -45,6 +45,7 @@ load_axioms(File,Fmt,_Opts) :-
 load_axioms(File,Fmt,Opts) :-
         load_handler(read,Fmt),
         load_axioms_hook(File,Fmt,Opts),
+        debug(load,'no hook for: ~w',[Fmt]),
         !.
 load_axioms(File,Fmt,Opts) :-
         throw(owl2_io('cannot parse fmt for',File,Fmt,Opts)).
@@ -133,6 +134,7 @@ suffix_format(pl,prolog).
 suffix_format(owlpl,prolog).
 suffix_format(plsyn,plsyn).
 suffix_format(owl,owl).
+suffix_format(owl2,owl).
 suffix_format(ttl,owl).
 suffix_format(owlx,owlx).
 suffix_format(owlxml,owlx).
@@ -143,6 +145,7 @@ suffix_format(owlapi,owlapi).
 :- multifile format_module/3.
 format_module(read,rdf,owl2_from_rdf).
 format_module(read,owl,owl2_from_rdf).
+format_module(read,owl2,owl2_from_rdf).
 format_module(read,ttl,owl2_from_rdf).
 format_module(read,xml,owl2_xml).
 format_module(read,owlx,owl2_xml).

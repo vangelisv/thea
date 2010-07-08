@@ -35,7 +35,7 @@ popl_translate( X1 ===> X2 where G, Opts) :-
 
 popl_translate( add X2 where G, Opts) :-
         replace_matching_axioms_where(true,X2,G,Opts),
-        replace_expression_in_all_axioms_where(true,X2,Opts).
+        replace_expression_in_all_axioms_where(true,X2,G,Opts).
 
 
 %% replace_matching_axioms(+AxiomTemplateOld,+AxiomTemplateNew,+Opts:list) is det
@@ -62,6 +62,14 @@ replace_matching_axioms_where(Ax1a,Ax2a,Ga,Opts) :-
         plsyn_owl(Ga,G),
         replace_matching_axioms_where(Ax1,Ax2,G,Opts2).
 replace_matching_axioms_where(Ax1,Ax2,G,Opts) :-
+        member(reasoner(R),Opts),
+        !,
+        ensure_loaded(owl2_reasoner),
+        forall((reasoner_ask(R,G),
+                Ax1),
+               replace_axiom(Ax1,Ax2,Opts)),
+        forall((G,Ax1),replace_axiom(Ax1,Ax2,Opts)).
+replace_matching_axioms_where(Ax1,Ax2,G,Opts) :-
         forall((G,Ax1),replace_axiom(Ax1,Ax2,Opts)).
 
 %% replace_matching_axioms_where(+AxiomTemplateOld,+AxiomTemplateNew,+WhereGoal) is det
@@ -83,6 +91,9 @@ replace_axiom(Ax1a,Ax2a,Opts) :-
         plsyn_owl(Ax1a,Ax1),
         plsyn_owl(Ax2a,Ax2),
         replace_axiom(Ax1,Ax2,Opts2).
+replace_axiom(null,Ax2,_Opts) :-
+        !,
+        assert_axiom(Ax2).
 replace_axiom(Ax1,Ax2,Opts) :-
         % do this prior to retraction;
         % this predicate should be in the same place as retract axiom..
@@ -265,6 +276,12 @@ replace_matching_axioms_where(
 Prolog is more expressive than OPPL2, as arbitrary prolog code and
 builtins can be used. This includes arithmetic, string processing,
 etc. It's not clear if OPPL2 supplies any of these features.
+
+---++ Command Line examples  
+
+==  
+thea --popl "add disjointClasses(X,Y) where (subClassOf(X,A),subClassOf(Y,A),X\=Y)" testfiles/caro.owl --to owl  
+==  
   
 ---+ TODO
 
