@@ -1,0 +1,3 @@
+#!/bin/sh
+
+thea --ensure_loaded "library(thea2/apps/owlmacros/owlmacros)" --goal expand_all $*
