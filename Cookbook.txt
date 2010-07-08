@@ -39,9 +39,11 @@ One advantage of prolog over OPPL is its expressivity
 subClassOf(X,gender),
 subClassOf(Y,gender),
 X\=Y,
-assert_axiom(disjointProperties[X,Y]),
+assert_axiom(disjointClasses([X,Y])),
 fail.
 ==
+
+
 
 ---+++ Replacing simple assertions with complex descriptions 
 

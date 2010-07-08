@@ -34,8 +34,8 @@ popl_translate( X1 ===> X2 where G, Opts) :-
         replace_expression_in_all_axioms_where(X1,X2,Opts).
 
 popl_translate( add X2 where G, Opts) :-
-        replace_matching_axioms_where(null,X2,G,Opts),
-        replace_expression_in_all_axioms_where(null,X2,Opts).
+        replace_matching_axioms_where(true,X2,G,Opts),
+        replace_expression_in_all_axioms_where(true,X2,G,Opts).
 
 
 %% replace_matching_axioms(+AxiomTemplateOld,+AxiomTemplateNew,+Opts:list) is det
@@ -276,6 +276,12 @@ replace_matching_axioms_where(
 Prolog is more expressive than OPPL2, as arbitrary prolog code and
 builtins can be used. This includes arithmetic, string processing,
 etc. It's not clear if OPPL2 supplies any of these features.
+
+---++ Command Line examples  
+
+==  
+thea --popl "add disjointClasses(X,Y) where (subClassOf(X,A),subClassOf(Y,A),X\=Y)" testfiles/caro.owl --to owl  
+==  
   
 ---+ TODO
 
