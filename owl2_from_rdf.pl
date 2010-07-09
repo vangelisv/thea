@@ -443,7 +443,7 @@ triple_remove([owl(X,'rdf:type','rdfs:Datatype'),owl(X,'rdf:type','rdfs:Class')]
 triple_remove([owl(X,'rdf:type','owl:DataRange'),owl(X,'rdf:type','rdfs:Class')],[owl(X,'rdf:type','rdfs:Class')]).
 triple_remove([owl(X,'rdf:type','owl:Restriction'),owl(X,'rdf:type','rdfs:Class')],[owl(X,'rdf:type','rdfs:Class')]).
 triple_remove([owl(X,'rdf:type','owl:Restriction'),owl(X,'rdf:type','owl:Class')],[owl(X,'rdf:type','owl:Class')]).
-triple_remove([owl(X,'rdf:type','owl:annotatedTargetProperty'),owl(X,'rdf:type','rdf:Property')],[owl(X,'rdf:type','rdf:Property')]).
+%triple_remove([owl(X,'rdf:type','owl:annotatedTargetProperty'),owl(X,'rdf:type','rdf:Property')],[owl(X,'rdf:type','rdf:Property')]).
 triple_remove([owl(X,'rdf:type','owl:FunctionalProperty'),owl(X,'rdf:type','rdf:Property')],[owl(X,'rdf:type','rdf:Property')]).
 triple_remove([owl(X,'rdf:type','owl:InverseFunctionalProperty'),owl(X,'rdf:type','rdf:Property')],[owl(X,'rdf:type','rdf:Property')]).
 triple_remove([owl(X,'rdf:type','owl:TransitiveProperty'),owl(X,'rdf:type','rdf:Property')],[owl(X,'rdf:type','rdf:Property')]).
@@ -457,9 +457,9 @@ triple_remove([owl(X,'rdf:type','rdf:List'),owl(X,'rdf:first',_Y),owl(X,'rdf:res
 % See table 6.
 % http://www.w3.org/TR/2008/WD-owl2-mapping-to-rdf-20081202/
 triple_replace([owl(X,'rdf:type','owl:OntologyProperty')],[owl(X,'rdf:type','owl:AnnotationProperty')]).
-triple_replace([owl(X,'rdf:type','owl:InverseFunctionalProperty')],[owl(X,'rdf:type','owl:annotatedTargetProperty'),owl(X,'rdf:type','owl:InverseFunctionalProperty')]).
-triple_replace([owl(X,'rdf:type','owl:TransitiveProperty')],[owl(X,'rdf:type','owl:annotatedTargetProperty'),owl(X,'rdf:type','owl:TransitiveProperty')]).
-triple_replace([owl(X,'rdf:type','owl:SymmetricProperty')],[owl(X,'rdf:type','owl:annotatedTargetProperty'),owl(X,'rdf:type','owl:SymmetricProperty')]).
+%triple_replace([owl(X,'rdf:type','owl:InverseFunctionalProperty')],[owl(X,'rdf:type','owl:annotatedTargetProperty'),owl(X,'rdf:type','owl:InverseFunctionalProperty')]).
+%triple_replace([owl(X,'rdf:type','owl:TransitiveProperty')],[owl(X,'rdf:type','owl:annotatedTargetProperty'),owl(X,'rdf:type','owl:TransitiveProperty')]).
+%triple_replace([owl(X,'rdf:type','owl:SymmetricProperty')],[owl(X,'rdf:type','owl:annotatedTargetProperty'),owl(X,'rdf:type','owl:SymmetricProperty')]).
 
 % NOTE: this is not specified in table 6. However, we treat rdfs:Classes as equivalent to owl:Classes
 triple_replace([owl(X,'rdf:type','rdfs:Class')],[owl(X,'rdf:type','owl:Class')]).
