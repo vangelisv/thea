@@ -120,6 +120,7 @@ get_import_closure(F,Xs,_Opts) :-
 	exists_file(Local),
 	!,
 	register_ontology_localpath(F,Local),
+        ensure_loaded(library(semweb/rdf_db)),
 	rdf_load(Local,[]),
 	findall(X,rdf_has(_,'http://www.w3.org/2002/07/owl#imports',X),Xs),
 	debug(download,'adding ~w',[Xs]),
