@@ -1,4 +1,4 @@
-#!/usr/bin/swipl -L0 -G0 -T0 -p library=. -q -g main -t halt -s
+/* -*- Mode: Prolog -*- */
 
 :- use_module(library('thea2/owl2_model')).
 :- use_module(library('thea2/owl2_util')).
@@ -9,7 +9,8 @@
 
 main :-
         current_prolog_flag(argv, Arguments),
-        append(_SytemArgs, [--|Args], Arguments), !,
+        append(_SytemArgs, [--|Args], Arguments),
+        !,
         set_prolog_flag(verbose,normal),
         parse_args(Args,Opts),
         findall(X,
