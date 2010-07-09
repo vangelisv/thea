@@ -594,7 +594,7 @@ owl_datarange(C,D) :-
 owl_datarange(D,intersectionOf(L)) :-
 	use_owl(D,'rdf:type','rdfs:Datatype',datarange(D)),
 	use_owl(D,'owl:intersectionOf',Y,datarange(D)),
-	print(D-inter-Y),nl,
+	%print(D-inter-Y),nl,
         owl_datarange_list(Y,L),
 	owl_get_bnode(D,intersectionOf(L)).
 
