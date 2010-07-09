@@ -421,6 +421,7 @@ owlterm_java(_,_,propertyAssertion(_,Sub,_),ignore) :-
         ontology(Sub),
         !.
 owlterm_java(_,_,propertyAssertion(P,S,V),ignore) :-
+        \+ property(P),
         print_message(warning,no_translation(propertyAssertion(P,S,V),'property is of unknown type')),
         !.
 owlterm_java(_,_,annotationAssertion(_,Sub,_),ignore) :-
