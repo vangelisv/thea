@@ -11,20 +11,34 @@
 
            popl_translate/1,
            popl_translate/2,
+           execute_popl_file/1,
+           execute_popl_file/2,
            
-           op(700,xfy,===>),
-           op(800,xfy,where),
-           op(600,fx,add)
+           op(1100,xfy,===>),
+           op(1000,xfy,where),
+           op(950,fx,add)
 
           ]).
 
-:- op(700,xfy,===>).
-:- op(800,xfy,where).
-:- op(600,fx,add).
+:- op(1100,xfy,===>).
+:- op(1000,xfy,where).
+:- op(950,fx,add).
 
+%% popl_translate(+Directive) is det
+% see popl_translate/2
 popl_translate(T) :-
         popl_translate(T, []).
 
+%% popl_translate(+Directive,+Opts:list) is det
+%
+% Directive can be one of:
+%  * InExpression ===> OutExpression
+%  * InExpression ===> OutExpression where Goal
+%  * add Expression where Goal
+%
+% Opts can be:
+%  * syntax(Syntax)
+%     currently only val allowed is plsyn
 popl_translate( X1 ===> X2, Opts) :-
         replace_matching_axioms(X1,X2,Opts),
         replace_expression_in_all_axioms(X1,X2,Opts).
@@ -37,6 +51,17 @@ popl_translate( add X2 where G, Opts) :-
         replace_matching_axioms_where(true,X2,G,Opts),
         replace_expression_in_all_axioms_where(true,X2,G,Opts).
 
+%% execute_popl_file(+File)
+% see execute_popl_file/2,
+execute_popl_file(F) :-
+        execute_popl_file(F, []).
+
+
+%% execute_popl_file(+File, +Opts:list)
+execute_popl_file(F, Opts) :-
+        read_file_to_terms(F,Directives,[]),
+        forall(member(Directive,Directives),
+               popl_translate(Directive, Opts)).
 
 %% replace_matching_axioms(+AxiomTemplateOld,+AxiomTemplateNew,+Opts:list) is det
 % replace all occurrences of AxiomTemplateOld with AxiomTemplateNew.
@@ -91,7 +116,7 @@ replace_axiom(Ax1a,Ax2a,Opts) :-
         plsyn_owl(Ax1a,Ax1),
         plsyn_owl(Ax2a,Ax2),
         replace_axiom(Ax1,Ax2,Opts2).
-replace_axiom(null,Ax2,_Opts) :-
+replace_axiom(true,Ax2,_Opts) :-
         !,
         assert_axiom(Ax2).
 replace_axiom(Ax1,Ax2,Opts) :-
@@ -279,9 +304,32 @@ etc. It's not clear if OPPL2 supplies any of these features.
 
 ---++ Command Line examples  
 
+Make every sibling pair disjoint:  
 ==  
 thea --popl "add disjointClasses(X,Y) where (subClassOf(X,A),subClassOf(Y,A),X\=Y)" testfiles/caro.owl --to owl  
 ==  
+
+What if we want to restrict this to a certain set of classes - for
+example, all asserted sibling pairs anywhere under "epithelium". We
+can use a reasoner to find all subclasses of epithelium.
+  
+The following invokes pellet via the OWL API:
+  
+==  
+thea-jpl --reasoner pellet --popl "add disjointClasses([X,Y]) where (labelAnnotation_value(E,epithelium),reasoner_ask(reflexiveSubClassOf(A,E)),subClassOf(X,A),subClassOf(Y,A),X\=Y)" testfiles/caro.owl --to owlpl
+==
+
+The above makes pairwise disjointness axioms - with OWL2 we can state this as a list. This is even easier:  
+  
+==  
+thea-jpl --reasoner pellet --popl "add disjointClasses(L) where labelAnnotation_value(E,epithelium),reasoner_ask(reflexiveSubClassOf(A,E)),setof(X,subClassOf(X,A),L)" testfiles/caro.owl --to owlpl   
+==  
+
+You can also load all directives into a file:
+  
+==  
+thea-jpl --reasoner pellet --popl-file testfiles/epithelium.popl testfiles/caro.owl --to owlpl
+==
   
 ---+ TODO
 

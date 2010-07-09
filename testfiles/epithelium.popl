@@ -1,0 +1,1 @@
+add disjointClasses(L) where labelAnnotation_value(E,epithelium),reasoner_ask(reflexiveSubClassOf(A,E)),setof(X,subClassOf(X,A),L).

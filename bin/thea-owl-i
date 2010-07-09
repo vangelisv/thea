@@ -47,8 +47,10 @@ main :-
         ;   true),
         forall(member(goal(G),Opts),
                G),
+        forall(member(popl_file(F),Opts),
+               execute_popl_file(F,[syntax(plsyn)])),
         forall(member(popl(G),Opts),
-               popl_translate(G)),
+               popl_translate(G,[syntax(plsyn)])),
         (   member(statistics(true),Opts)
         ->  statistics
         ;   true),
@@ -197,7 +199,12 @@ parse_arg(['--popl',GA|L],L,popl(G)) :-
         ensure_loaded(library(thea2/owl2_popl)),
         ensure_loaded(library(thea2/owl2_plsyn)),
         atom_to_term(GA,G,_).
-arg_info(popl,term,'process using POPL expression').
+arg_info(popl,term,'process using POPL directive').
+
+parse_arg(['--popl-file',F|L],L,popl_file(F)) :-
+        ensure_loaded(library(thea2/owl2_popl)),
+        ensure_loaded(library(thea2/owl2_plsyn)).
+arg_info(popl-file,file,'file containing POPL directives').
 
 parse_arg(['--query',select,TA,where,GA|L],L,query(T,G)) :- sformat(A,'q((~w),(~w))',[TA,GA]),atom_to_term(A,q(T,G),_).
 parse_arg(['--query',GA|L],L,query(T,G)) :- atom_to_term(GA,G-T,_).

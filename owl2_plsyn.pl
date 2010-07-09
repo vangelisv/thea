@@ -8,6 +8,7 @@
                       plsyn_owl/3,
                       
                       op(1200,xfy,(--)),
+                      op(1150,xfy,\^), % disjoint classes
                       %op(1150,fx,class),
                       op(1150,fx,individual),
                       op(1150,xfy,disjointUnion),
@@ -42,6 +43,8 @@
 :- op(1150,fx,individual).
 
 :- op(1150,xfy,disjointUnion).
+
+:- op(1150,xfy,\^). % disjoint classes
 
 :- op(1150,fx,functional).
 :- op(1150,fx,transitive).
@@ -166,6 +169,9 @@ plsyn2owl(A=@=B,equivalentProperties(ECs)) :-
 plsyn2owl(A and B,intersectionOf(ECs)) :-
         !,
         plsyn2owl_ec(A and B,and,ECs).
+plsyn2owl(A \^ B,disjointClasses(ECs)) :-
+        !,
+        plsyn2owl_ec(A \^ B,\^,ECs).
 plsyn2owl(A or B,unionOf(ECs)) :-
         !,
         plsyn2owl_ec(A or B,or,ECs).
@@ -210,6 +216,9 @@ owl2plsyn(sameIndividuals(Args),Pl) :-
 owl2plsyn(intersectionOf(Args),Pl) :-
         maplist(owl2plsyn,Args,Args2),
         list_to_chain(Args2,and,Pl).
+owl2plsyn(disjointClasses(Args),Pl) :-
+        maplist(owl2plsyn,Args,Args2),
+        list_to_chain(Args2,\^,Pl).
 owl2plsyn(unionOf(Args),Pl) :-
         maplist(owl2plsyn,Args,Args2),
         list_to_chain(Args2,or,Pl).
@@ -283,7 +292,7 @@ plpred2owlpred(<,subClassOf).
 plpred2owlpred(@<,subPropertyOf).
 
 plpred2owlpred_list(\=,differentIndividuals). 
-plpred2owlpred_list(\=,disjointClasses). 
+%plpred2owlpred_list(\=,disjointClasses). 
 
 
 

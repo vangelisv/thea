@@ -55,19 +55,25 @@ reasoner_tell_all(Reasoner) :-
 
 %% reasoner_ask(+Reasoner,?Axiom)
 % in general Axiom should be one of
-% * subClassOf
-% * classAssertion
+% * subClassOf/2
+% * classAssertion/2
+% * propertyAssertion/3
 % with arguments that are either ground atoms or
 % variables.
 % some reasoners may be able to give results for class expressions
 % that contain variables.
 % TODO - isConsistent
+reasoner_ask(Reasoner,reflexiveSubClassOf(X,Y)) :-
+        reasoner_ask(Reasoner,subClassOf(X,Y)).
+reasoner_ask(_,reflexiveSubClassOf(X,X)) :-
+        class(X).
+        
 reasoner_ask(Reasoner,Axiom) :- 
         debug(reasoner,'Reasoner query: ~w',[Axiom]),
 	reasoner_ask_hook(Reasoner,Axiom).
 
-reasoner_ask(Axiom) :- 
-        nb_getval(reasoner,Reasoner),
+reasoner_ask(Axiom) :-
+        nb_current(reasoner,Reasoner),
         reasoner_ask(Reasoner,Axiom).
 
 

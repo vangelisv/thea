@@ -1015,8 +1015,6 @@ labelAnnotation_value(X,Val) :-
         anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(lang(_,Val))),atom(Val).
 labelAnnotation_value(X,Val) :-
         anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(Val)),atom(Val).
-labelAnnotation_value(X,Val) :-
-        anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(lang(_,Val))),atom(Val).
 
 /****************************************
   META-PREDICATES
@@ -1097,7 +1095,9 @@ assert_axiom(Axiom) :-
         !.
 assert_axiom(Axiom) :-
         assert(Axiom),
-	(   nb_current(current_ontology,O) -> assert(ontologyAxiom(O,Axiom)) ; true),
+	(   nb_current(current_ontology,O)
+        ->  assert(ontologyAxiom(O,Axiom))
+        ;   true),
         !.
 
 %% assert_axiom(+Axiom:axiom,+Ontology:ontology) is det
