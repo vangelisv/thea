@@ -1055,7 +1055,11 @@ axiom_directly_about(Ax,About) :-
 %  - an expression
 axiom_directly_references(Ax,Ref) :-
         axiom(Ax),
-        Ax =.. [_|Args],
+        axiom_or_expression_references(Ax,Ref).
+
+axiom_or_expression_references(X,Ref) :-
+        X =.. [P|Args],
+        P\=literal,
         member(Arg,Args),
         (   is_list(Arg)
         ->  member(Ref,Arg)
@@ -1071,7 +1075,7 @@ axiom_references(Ax,Ref) :-
         axiom_directly_references(Ax,Ref).
 axiom_references(Ax,Ref) :-
         axiom_directly_references(Ax,X),
-        axiom_references(X,Ref).
+        axiom_or_expression_references(X,Ref).
 
 
 
