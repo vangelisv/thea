@@ -103,7 +103,7 @@ prolog_shell:-
 show_term(T,Opts) :-
         member(saveopt(prolog),Opts),
         !,
-        writeq(T),nl.
+        format('~q.~n',[T]).
 show_term(T,Opts) :-
         member(saveopt(plsyn),Opts),
         member(saveopt(labels),Opts),
