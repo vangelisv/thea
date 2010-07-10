@@ -1,0 +1,530 @@
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000003','http://purl.obolibrary.org/obo/CARO_0000006').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000004','http://purl.obolibrary.org/obo/CARO_0000006').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000005','http://purl.obolibrary.org/obo/CARO_0000007').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000006','http://purl.obolibrary.org/obo/CARO_0000000').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000007','http://purl.obolibrary.org/obo/CARO_0000000').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000008','http://purl.obolibrary.org/obo/CARO_0000007').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000009','http://purl.obolibrary.org/obo/CARO_0000007').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000010','http://purl.obolibrary.org/obo/CARO_0000007').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000011','http://purl.obolibrary.org/obo/CARO_0000054').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000012','http://purl.obolibrary.org/obo/CARO_0000003').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000013','http://purl.obolibrary.org/obo/CARO_0000003').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000014',someValuesFrom('http://purl.obolibrary.org/obo/OBO_REL_part_of','http://purl.obolibrary.org/obo/CARO_0000013')).
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000014','http://purl.obolibrary.org/obo/CARO_0000003').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000019',someValuesFrom('http://purl.obolibrary.org/obo/OBO_REL_part_of','http://purl.obolibrary.org/obo/CARO_0000024')).
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000019','http://purl.obolibrary.org/obo/CARO_0000055').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000021','http://purl.obolibrary.org/obo/CARO_0000055').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000024','http://purl.obolibrary.org/obo/CARO_0000003').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000027','http://purl.obolibrary.org/obo/CARO_0000048').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000028','http://purl.obolibrary.org/obo/CARO_0000048').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000029','http://purl.obolibrary.org/obo/CARO_0000012').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000030','http://purl.obolibrary.org/obo/CARO_0000012').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000032','http://purl.obolibrary.org/obo/CARO_0000003').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000040','http://purl.obolibrary.org/obo/CARO_0000003').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000041','http://purl.obolibrary.org/obo/CARO_0000054').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000042','http://purl.obolibrary.org/obo/CARO_0000003').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000043','http://purl.obolibrary.org/obo/CARO_0000003').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000045','http://purl.obolibrary.org/obo/CARO_0000029').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000046','http://purl.obolibrary.org/obo/CARO_0000029').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000048','http://purl.obolibrary.org/obo/CARO_0000012').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000049','http://purl.obolibrary.org/obo/CARO_0000045').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000050','http://purl.obolibrary.org/obo/CARO_0000045').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000054','http://purl.obolibrary.org/obo/CARO_0000003').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000055','http://purl.obolibrary.org/obo/CARO_0000003').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000062','http://purl.obolibrary.org/obo/CARO_0000005').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000063','http://purl.obolibrary.org/obo/CARO_0000004').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000064','http://purl.obolibrary.org/obo/CARO_0000013').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000065','http://purl.obolibrary.org/obo/CARO_0000040').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000066','http://purl.obolibrary.org/obo/CARO_0000043').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000067','http://purl.obolibrary.org/obo/CARO_0000073').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000068','http://purl.obolibrary.org/obo/CARO_0000073').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000069','http://purl.obolibrary.org/obo/CARO_0000066').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000070','http://purl.obolibrary.org/obo/CARO_0000073').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000071','http://purl.obolibrary.org/obo/CARO_0000066').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000072','http://purl.obolibrary.org/obo/CARO_0000024').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000073','http://purl.obolibrary.org/obo/CARO_0000066').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000074','http://purl.obolibrary.org/obo/CARO_0000024').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0000077','http://purl.obolibrary.org/obo/CARO_0000013').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0001000','http://purl.obolibrary.org/obo/CARO_0000003').
+subClassOf('http://purl.obolibrary.org/obo/CARO_0001001','http://purl.obolibrary.org/obo/CARO_0001000').
+subClassOf('http://purl.obolibrary.org/obo/TEST_1','http://purl.obolibrary.org/obo/CARO_0000014').
+transitiveProperty('http://purl.obolibrary.org/obo/OBO_REL_part_of').
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000003',literal(lang(en,'anatomical structure'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000004',literal(lang(en,'portion of organism substance'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000005',literal(lang(en,'anatomical space'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000006',literal(lang(en,'material anatomical entity'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000007',literal(lang(en,'immaterial anatomical entity'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000008',literal(lang(en,'anatomical line'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000009',literal(lang(en,'anatomical point'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000010',literal(lang(en,'anatomical surface'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000011',literal(lang(en,'anatomical system'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000012',literal(lang(en,'multi-cellular organism'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000013',literal(lang(en,cell))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000014',literal(lang(en,'cell component'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000019',literal(lang(en,'compound organ component'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000021',literal(lang(en,'simple organ'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000024',literal(lang(en,'compound organ'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000027',literal(lang(en,'male organism'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000028',literal(lang(en,'female organism'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000029',literal(lang(en,'hermaphroditic organism'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000030',literal(lang(en,'asexual organism'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000032',literal(lang(en,'organism subdivision'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000040',literal(lang(en,'acellular anatomical structure'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000041',literal(lang(en,'anatomical cluster'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000042',literal(lang(en,'extraembryonic structure'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000043',literal(lang(en,'portion of tissue'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000045',literal(lang(en,'sequential hermaphroditic organism'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000046',literal(lang(en,'synchronous hermaphroditic organism'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000048',literal(lang(en,'gonochoristic organism'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000049',literal(lang(en,'protandrous hermaphroditic organism'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000050',literal(lang(en,'protogynous hermaphroditic organism'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000054',literal(lang(en,'anatomical group'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000055',literal(lang(en,'multi-tissue structure'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000062',literal(lang(en,'cell space'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000063',literal(lang(en,'portion of cell substance'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000064',literal(lang(en,'single cell organism'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000065',literal(lang(en,'basal lamina'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000066',literal(lang(en,epithelium))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000067',literal(lang(en,'simple cuboidal epithelium'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000068',literal(lang(en,'simple columnar epithlium'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000069',literal(lang(en,'multilaminar epithelium'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000070',literal(lang(en,'simple squamous epithelium'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000071',literal(lang(en,'atypical epithelium'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000072',literal(lang(en,'cavitated compound organ'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000073',literal(lang(en,'unilaminar epithelium'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000074',literal(lang(en,'solid compound organ'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000077',literal(lang(en,'epithelial cell'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0001000',literal(lang(en,'multi-cell-component structure'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0001001',literal(lang(en,'neuron projection bundle'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000000',literal(lang(en,'anatomical entity'))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/OBO_REL_part_of',literal(lang(en,part_of))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/has_quality',literal(lang(en,has_quality))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/overlaps',literal(lang(en,overlaps))).
+annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/TEST_1',literal(lang(en,neuron))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000003',literal(lang(en,'Material anatomical entity that has inherent 3D shape and is generated by coordinated expression of the organism\'s own genome.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000004',literal(lang(en,'Material anatomical entity in a gaseous, liquid, semisolid or solid state; produced by anatomical structures or derived from inhaled and ingested substances that have been modified by anatomical structures as they pass through the body.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000005',literal(lang(en,'Non-material anatomical entity of three dimensions, that is generated by morphogenetic or other physiologic processes; is surrounded by one or more anatomical structures; contains one or more organism substances or anatomical structures.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000006',literal(lang(en,'Anatomical entity that has mass.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000007',literal(lang(en,'Anatomical entity that has no mass.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000008',literal(lang(en,'Non-material anatomical entity of one dimension, which forms a boundary of an anatomical surface or is a modulation of an anatomical surface.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000009',literal(lang(en,'Non-material anatomical entity of zero dimension, which forms a boundary of an anatomical line or surface.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000010',literal(lang(en,'Non-material anatomical entity of two dimensions, that is demarcated by anatomical lines or points on the external or internal surfaces of anatomical structures.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000011',literal(lang(en,'Anatomical group that is has as its parts distinct anatomical structures interconnected by anatomical structures at a lower level of granularity.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000012',literal(lang(en,'Anatomical structure that is an individual member of a species and consists of more than one cell.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000013',literal(lang(en,'Anatomical structure that has as its parts a maximally connected cell compartment surrounded by a plasma membrane.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000014',literal(lang(en,'Anatomical structure that is a direct part of the cell.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000019',literal(lang(en,'Multi-tissue structure that is part of a compound organ.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000021',literal(lang(en,'Multi-tissue structure that is not part of a compound organ.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000024',literal(lang(en,'Anatomical structure that has as its parts two or more multi-tissue structures of at least two different types and which through specific morphogenetic processes forms a single distinct structural unit demarcated by bona fide boundaries from other distinct anatomical structures of different types.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000027',literal(lang(en,'Gonochoristic organism that can produce male gametes.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000028',literal(lang(en,'Gonochoristic organism that can produce female gametes.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000029',literal(lang(en,'Multi-cellular organism that can produce both male and female gametes.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000030',literal(lang(en,'Multi-cellular organism that does not produce gametes.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000032',literal(lang(en,'Anatomical structure which is a primary subdivision of whole organism. The mereological sum of these is the whole organism.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000040',literal(lang(en,'Anatomical structure that consists of cell parts and cell substances and together does not constitute a cell or a tissue.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000041',literal(lang(en,'Anatomical group that has its parts adjacent to one another.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000042',literal(lang(en,'Anatomical structure that is contiguous with the embryo and is comprised of portions of tissue or cells that will not contribute to the embryo.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000043',literal(lang(en,'Anatomical structure, that consists of similar cells and intercellular matrix, aggregated according to genetically determined spatial relationships.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000045',literal(lang(en,'Hermaphroditic organism that produces gametes first of one sex, and then later of the other sex.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000046',literal(lang(en,'Hermaphroditic organism that produces both male and female gametes at the same time.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000048',literal(lang(en,'Multi-cellular organism that has male and female sexes.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000049',literal(lang(en,'Sequential hermaphroditic organism that producesngametes first of the male sex, and then later of thenfemale sex.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000050',literal(lang(en,'Sequential hermaphroditic organism that producesngametes first of the female sex, and then later of thenmale sex.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000054',literal(lang(en,'Anatomical structure consisting of at least two non-overlapping organs, multi-tissue aggregates or portion of tissues or cells of different types that does not constitute an organism, organ, multi-tissue aggregate, or portion of tissue.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000055',literal(lang(en,'Anatomical structure that has as its parts two or more portions of tissue of at least two different types and which through specific morphogenetic processes forms a single distinct structural unit demarcated by bona-fide boundaries from other distinct structural units of different types.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000062',literal(lang(en,'Anatomical space that is part of a cell.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000063',literal(lang(en,'Portion of organism substance located within a cell.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000064',literal(lang(en,'Cell that is an individual member of a species.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000065',literal(lang(en,'Acellular anatomical structure that consists of a thin sheet of fibrous proteins that underlie and support the cells of an epithelium. It separates the cells of an epithelium from any underlying tissue.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000066',literal(lang(en,'Portion of tissue, that consists of one or more layers of epithelial cells connected to each other by cell junctions and which is underlain by a basal lamina.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000067',literal(lang(en,'Unilaminar epithelium that consists of a single layer of cuboidal cells.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000068',literal(lang(en,'Unilaminar epithelium that consists of a single layer of columnar cells.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000069',literal(lang(en,'Epithelium that consists of more than one layer of epithelial cells.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000070',literal(lang(en,'Unilaminar epithelium that consists of a single layer of squamous cells.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000071',literal(lang(en,'Epithelium that consists of epithelial cells not arranged in one ore more layers.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000072',literal(lang(en,'Compound organ that contains one or more macroscopic anatomical spaces.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000073',literal(lang(en,'Epithelium that consists of a single layer of epithelial cells.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000074',literal(lang(en,'Compound organ that does not contain macroscopic anatomical spaces.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000077',literal(lang(en,'Cell which has as its part a cytoskeleton that allows for tight cell to cell contact and which has apical-basal cell polarity.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0001000',literal(lang(en,'A structure consisting of multiple cell components but which is not itself a cell and does not have (complete) cells as a part.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0001001',literal(lang(en,'A fasciculated bundle of neuron projections (GO:0043005), largely or completely lacking synapses.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000000',literal(lang(en,'Biological entity that is either an individual member of a biological species or constitutes the structural organization of an individual member of a biological species.'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000118','http://purl.obolibrary.org/obo/CARO_0000029',literal(lang(en,'dioecious organism'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000118','http://purl.obolibrary.org/obo/CARO_0000045',literal(lang(en,'consecutive hermaphroditic organism'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000118','http://purl.obolibrary.org/obo/CARO_0000046',literal(lang(en,'serially hermaphroditic organism'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000118','http://purl.obolibrary.org/obo/CARO_0000048',literal(lang(en,'monoecious organism'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000118','http://purl.obolibrary.org/obo/CARO_0001001',literal(lang(en,'nerve fiber bundle'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000003',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000004',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000005',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000006',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000007',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000008',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000009',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000010',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000011',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000012',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000013',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000014',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000019',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000021',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000024',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000027',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000028',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000029',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000030',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000032',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000040',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000041',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000042',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000043',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000045',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000046',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000048',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000049',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000050',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000054',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000055',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000062',literal(lang(en,'CARO:mah'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000063',literal(lang(en,'CARO:mah'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000064',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000065',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000066',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000067',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000068',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000069',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000070',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000071',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000072',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000073',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000074',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000077',literal(lang(en,'CARO:MAH'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0001000',literal(lang(en,'FBC:DOS'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0001001',literal(lang(en,'FBC:DOS'))).
+annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000000',literal(lang(en,'CARO:MAH'))).
+classAssertion('http://purl.obolibrary.org/obo/TEST_1','http://purl.obolibrary.org/obo/INST_x').
+objectProperty('http://purl.obolibrary.org/obo/OBO_REL_part_of').
+objectProperty('http://purl.obolibrary.org/obo/has_quality').
+objectProperty('http://purl.obolibrary.org/obo/overlaps').
+annotationProperty('http://www.w3.org/2000/01/rdf-schema#label').
+annotationProperty('http://www.w3.org/2000/01/rdf-schema#comment').
+annotationProperty('http://purl.obolibrary.org/obo/IAO_0000115').
+annotationProperty('http://purl.obolibrary.org/obo/IAO_0000118').
+annotationProperty('http://purl.obolibrary.org/obo/IAO_0000119').
+annotationProperty('http://purl.org/dc/elements/1.1/source').
+annotationProperty('http://www.w3.org/2000/01/rdf-schema#label').
+annotationProperty('http://www.w3.org/2000/01/rdf-schema#comment').
+class('http://purl.obolibrary.org/obo/CARO_0000003').
+class('http://purl.obolibrary.org/obo/CARO_0000004').
+class('http://purl.obolibrary.org/obo/CARO_0000005').
+class('http://purl.obolibrary.org/obo/CARO_0000006').
+class('http://purl.obolibrary.org/obo/CARO_0000007').
+class('http://purl.obolibrary.org/obo/CARO_0000008').
+class('http://purl.obolibrary.org/obo/CARO_0000009').
+class('http://purl.obolibrary.org/obo/CARO_0000010').
+class('http://purl.obolibrary.org/obo/CARO_0000011').
+class('http://purl.obolibrary.org/obo/CARO_0000012').
+class('http://purl.obolibrary.org/obo/CARO_0000013').
+class('http://purl.obolibrary.org/obo/CARO_0000014').
+class('http://purl.obolibrary.org/obo/CARO_0000019').
+class('http://purl.obolibrary.org/obo/CARO_0000021').
+class('http://purl.obolibrary.org/obo/CARO_0000024').
+class('http://purl.obolibrary.org/obo/CARO_0000027').
+class('http://purl.obolibrary.org/obo/CARO_0000028').
+class('http://purl.obolibrary.org/obo/CARO_0000029').
+class('http://purl.obolibrary.org/obo/CARO_0000030').
+class('http://purl.obolibrary.org/obo/CARO_0000032').
+class('http://purl.obolibrary.org/obo/CARO_0000040').
+class('http://purl.obolibrary.org/obo/CARO_0000041').
+class('http://purl.obolibrary.org/obo/CARO_0000042').
+class('http://purl.obolibrary.org/obo/CARO_0000043').
+class('http://purl.obolibrary.org/obo/CARO_0000045').
+class('http://purl.obolibrary.org/obo/CARO_0000046').
+class('http://purl.obolibrary.org/obo/CARO_0000048').
+class('http://purl.obolibrary.org/obo/CARO_0000049').
+class('http://purl.obolibrary.org/obo/CARO_0000050').
+class('http://purl.obolibrary.org/obo/CARO_0000054').
+class('http://purl.obolibrary.org/obo/CARO_0000055').
+class('http://purl.obolibrary.org/obo/CARO_0000062').
+class('http://purl.obolibrary.org/obo/CARO_0000063').
+class('http://purl.obolibrary.org/obo/CARO_0000064').
+class('http://purl.obolibrary.org/obo/CARO_0000065').
+class('http://purl.obolibrary.org/obo/CARO_0000066').
+class('http://purl.obolibrary.org/obo/CARO_0000067').
+class('http://purl.obolibrary.org/obo/CARO_0000068').
+class('http://purl.obolibrary.org/obo/CARO_0000069').
+class('http://purl.obolibrary.org/obo/CARO_0000070').
+class('http://purl.obolibrary.org/obo/CARO_0000071').
+class('http://purl.obolibrary.org/obo/CARO_0000072').
+class('http://purl.obolibrary.org/obo/CARO_0000073').
+class('http://purl.obolibrary.org/obo/CARO_0000074').
+class('http://purl.obolibrary.org/obo/CARO_0000077').
+class('http://purl.obolibrary.org/obo/CARO_0001000').
+class('http://purl.obolibrary.org/obo/CARO_0001001').
+class('http://purl.obolibrary.org/obo/CARO_0000000').
+class('http://purl.obolibrary.org/obo/TEST_1').
+ontology('http://purl.obolibrary.org/obo/caro.owl').
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',ontology('http://purl.obolibrary.org/obo/caro.owl')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationProperty('http://purl.obolibrary.org/obo/IAO_0000115')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationProperty('http://purl.obolibrary.org/obo/IAO_0000118')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationProperty('http://purl.obolibrary.org/obo/IAO_0000119')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationProperty('http://purl.org/dc/elements/1.1/source')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationProperty('http://www.w3.org/2000/01/rdf-schema#label')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationProperty('http://www.w3.org/2000/01/rdf-schema#comment')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000003')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000004')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000005')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000006')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000007')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000008')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000009')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000010')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000011')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000012')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000013')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000014')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000019')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000021')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000024')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000027')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000028')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000029')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000030')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000032')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000040')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000041')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000042')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000043')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000045')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000046')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000048')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000049')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000050')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000054')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000055')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000062')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000063')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000064')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000065')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000066')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000067')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000068')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000069')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000070')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000071')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000072')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000073')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000074')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000077')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0001000')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0001001')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',class('http://purl.obolibrary.org/obo/CARO_0000000')).
+ontologyAxiom('http://purl.obolibrary.org/obo/SRCTEST',class('http://purl.obolibrary.org/obo/TEST_1')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',objectProperty('http://purl.obolibrary.org/obo/OBO_REL_part_of')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',objectProperty('http://purl.obolibrary.org/obo/has_quality')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',objectProperty('http://purl.obolibrary.org/obo/overlaps')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000003','http://purl.obolibrary.org/obo/CARO_0000006')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000004','http://purl.obolibrary.org/obo/CARO_0000006')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000005','http://purl.obolibrary.org/obo/CARO_0000007')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000006','http://purl.obolibrary.org/obo/CARO_0000000')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000007','http://purl.obolibrary.org/obo/CARO_0000000')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000008','http://purl.obolibrary.org/obo/CARO_0000007')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000009','http://purl.obolibrary.org/obo/CARO_0000007')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000010','http://purl.obolibrary.org/obo/CARO_0000007')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000011','http://purl.obolibrary.org/obo/CARO_0000054')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000012','http://purl.obolibrary.org/obo/CARO_0000003')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000013','http://purl.obolibrary.org/obo/CARO_0000003')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000014',someValuesFrom('http://purl.obolibrary.org/obo/OBO_REL_part_of','http://purl.obolibrary.org/obo/CARO_0000013'))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000014','http://purl.obolibrary.org/obo/CARO_0000003')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000019',someValuesFrom('http://purl.obolibrary.org/obo/OBO_REL_part_of','http://purl.obolibrary.org/obo/CARO_0000024'))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000019','http://purl.obolibrary.org/obo/CARO_0000055')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000021','http://purl.obolibrary.org/obo/CARO_0000055')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000024','http://purl.obolibrary.org/obo/CARO_0000003')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000027','http://purl.obolibrary.org/obo/CARO_0000048')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000028','http://purl.obolibrary.org/obo/CARO_0000048')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000029','http://purl.obolibrary.org/obo/CARO_0000012')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000030','http://purl.obolibrary.org/obo/CARO_0000012')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000032','http://purl.obolibrary.org/obo/CARO_0000003')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000040','http://purl.obolibrary.org/obo/CARO_0000003')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000041','http://purl.obolibrary.org/obo/CARO_0000054')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000042','http://purl.obolibrary.org/obo/CARO_0000003')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000043','http://purl.obolibrary.org/obo/CARO_0000003')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000045','http://purl.obolibrary.org/obo/CARO_0000029')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000046','http://purl.obolibrary.org/obo/CARO_0000029')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000048','http://purl.obolibrary.org/obo/CARO_0000012')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000049','http://purl.obolibrary.org/obo/CARO_0000045')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000050','http://purl.obolibrary.org/obo/CARO_0000045')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000054','http://purl.obolibrary.org/obo/CARO_0000003')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000055','http://purl.obolibrary.org/obo/CARO_0000003')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000062','http://purl.obolibrary.org/obo/CARO_0000005')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000063','http://purl.obolibrary.org/obo/CARO_0000004')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000064','http://purl.obolibrary.org/obo/CARO_0000013')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000065','http://purl.obolibrary.org/obo/CARO_0000040')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000066','http://purl.obolibrary.org/obo/CARO_0000043')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000067','http://purl.obolibrary.org/obo/CARO_0000073')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000068','http://purl.obolibrary.org/obo/CARO_0000073')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000069','http://purl.obolibrary.org/obo/CARO_0000066')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000070','http://purl.obolibrary.org/obo/CARO_0000073')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000071','http://purl.obolibrary.org/obo/CARO_0000066')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000072','http://purl.obolibrary.org/obo/CARO_0000024')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000073','http://purl.obolibrary.org/obo/CARO_0000066')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000074','http://purl.obolibrary.org/obo/CARO_0000024')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0000077','http://purl.obolibrary.org/obo/CARO_0000013')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0001000','http://purl.obolibrary.org/obo/CARO_0000003')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',subClassOf('http://purl.obolibrary.org/obo/CARO_0001001','http://purl.obolibrary.org/obo/CARO_0001000')).
+ontologyAxiom('http://purl.obolibrary.org/obo/SRCTEST',subClassOf('http://purl.obolibrary.org/obo/TEST_1','http://purl.obolibrary.org/obo/CARO_0000014')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',transitiveProperty('http://purl.obolibrary.org/obo/OBO_REL_part_of')).
+ontologyAxiom('http://purl.obolibrary.org/obo/SRCTEST',classAssertion('http://purl.obolibrary.org/obo/TEST_1','http://purl.obolibrary.org/obo/INST_x')).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000003',literal(lang(en,'anatomical structure')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000004',literal(lang(en,'portion of organism substance')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000005',literal(lang(en,'anatomical space')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000006',literal(lang(en,'material anatomical entity')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000007',literal(lang(en,'immaterial anatomical entity')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000008',literal(lang(en,'anatomical line')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000009',literal(lang(en,'anatomical point')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000010',literal(lang(en,'anatomical surface')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000011',literal(lang(en,'anatomical system')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000012',literal(lang(en,'multi-cellular organism')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000013',literal(lang(en,cell)))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000014',literal(lang(en,'cell component')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000019',literal(lang(en,'compound organ component')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000021',literal(lang(en,'simple organ')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000024',literal(lang(en,'compound organ')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000027',literal(lang(en,'male organism')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000028',literal(lang(en,'female organism')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000029',literal(lang(en,'hermaphroditic organism')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000030',literal(lang(en,'asexual organism')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000032',literal(lang(en,'organism subdivision')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000040',literal(lang(en,'acellular anatomical structure')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000041',literal(lang(en,'anatomical cluster')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000042',literal(lang(en,'extraembryonic structure')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000043',literal(lang(en,'portion of tissue')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000045',literal(lang(en,'sequential hermaphroditic organism')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000046',literal(lang(en,'synchronous hermaphroditic organism')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000048',literal(lang(en,'gonochoristic organism')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000049',literal(lang(en,'protandrous hermaphroditic organism')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000050',literal(lang(en,'protogynous hermaphroditic organism')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000054',literal(lang(en,'anatomical group')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000055',literal(lang(en,'multi-tissue structure')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000062',literal(lang(en,'cell space')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000063',literal(lang(en,'portion of cell substance')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000064',literal(lang(en,'single cell organism')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000065',literal(lang(en,'basal lamina')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000066',literal(lang(en,epithelium)))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000067',literal(lang(en,'simple cuboidal epithelium')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000068',literal(lang(en,'simple columnar epithlium')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000069',literal(lang(en,'multilaminar epithelium')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000070',literal(lang(en,'simple squamous epithelium')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000071',literal(lang(en,'atypical epithelium')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000072',literal(lang(en,'cavitated compound organ')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000073',literal(lang(en,'unilaminar epithelium')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000074',literal(lang(en,'solid compound organ')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000077',literal(lang(en,'epithelial cell')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0001000',literal(lang(en,'multi-cell-component structure')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0001001',literal(lang(en,'neuron projection bundle')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/CARO_0000000',literal(lang(en,'anatomical entity')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/OBO_REL_part_of',literal(lang(en,part_of)))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/has_quality',literal(lang(en,has_quality)))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/overlaps',literal(lang(en,overlaps)))).
+ontologyAxiom('http://purl.obolibrary.org/obo/SRCTEST',annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label','http://purl.obolibrary.org/obo/TEST_1',literal(lang(en,neuron)))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000003',literal(lang(en,'Material anatomical entity that has inherent 3D shape and is generated by coordinated expression of the organism\'s own genome.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000004',literal(lang(en,'Material anatomical entity in a gaseous, liquid, semisolid or solid state; produced by anatomical structures or derived from inhaled and ingested substances that have been modified by anatomical structures as they pass through the body.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000005',literal(lang(en,'Non-material anatomical entity of three dimensions, that is generated by morphogenetic or other physiologic processes; is surrounded by one or more anatomical structures; contains one or more organism substances or anatomical structures.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000006',literal(lang(en,'Anatomical entity that has mass.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000007',literal(lang(en,'Anatomical entity that has no mass.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000008',literal(lang(en,'Non-material anatomical entity of one dimension, which forms a boundary of an anatomical surface or is a modulation of an anatomical surface.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000009',literal(lang(en,'Non-material anatomical entity of zero dimension, which forms a boundary of an anatomical line or surface.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000010',literal(lang(en,'Non-material anatomical entity of two dimensions, that is demarcated by anatomical lines or points on the external or internal surfaces of anatomical structures.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000011',literal(lang(en,'Anatomical group that is has as its parts distinct anatomical structures interconnected by anatomical structures at a lower level of granularity.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000012',literal(lang(en,'Anatomical structure that is an individual member of a species and consists of more than one cell.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000013',literal(lang(en,'Anatomical structure that has as its parts a maximally connected cell compartment surrounded by a plasma membrane.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000014',literal(lang(en,'Anatomical structure that is a direct part of the cell.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000019',literal(lang(en,'Multi-tissue structure that is part of a compound organ.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000021',literal(lang(en,'Multi-tissue structure that is not part of a compound organ.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000024',literal(lang(en,'Anatomical structure that has as its parts two or more multi-tissue structures of at least two different types and which through specific morphogenetic processes forms a single distinct structural unit demarcated by bona fide boundaries from other distinct anatomical structures of different types.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000027',literal(lang(en,'Gonochoristic organism that can produce male gametes.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000028',literal(lang(en,'Gonochoristic organism that can produce female gametes.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000029',literal(lang(en,'Multi-cellular organism that can produce both male and female gametes.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000030',literal(lang(en,'Multi-cellular organism that does not produce gametes.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000032',literal(lang(en,'Anatomical structure which is a primary subdivision of whole organism. The mereological sum of these is the whole organism.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000040',literal(lang(en,'Anatomical structure that consists of cell parts and cell substances and together does not constitute a cell or a tissue.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000041',literal(lang(en,'Anatomical group that has its parts adjacent to one another.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000042',literal(lang(en,'Anatomical structure that is contiguous with the embryo and is comprised of portions of tissue or cells that will not contribute to the embryo.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000043',literal(lang(en,'Anatomical structure, that consists of similar cells and intercellular matrix, aggregated according to genetically determined spatial relationships.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000045',literal(lang(en,'Hermaphroditic organism that produces gametes first of one sex, and then later of the other sex.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000046',literal(lang(en,'Hermaphroditic organism that produces both male and female gametes at the same time.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000048',literal(lang(en,'Multi-cellular organism that has male and female sexes.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000049',literal(lang(en,'Sequential hermaphroditic organism that producesngametes first of the male sex, and then later of thenfemale sex.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000050',literal(lang(en,'Sequential hermaphroditic organism that producesngametes first of the female sex, and then later of thenmale sex.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000054',literal(lang(en,'Anatomical structure consisting of at least two non-overlapping organs, multi-tissue aggregates or portion of tissues or cells of different types that does not constitute an organism, organ, multi-tissue aggregate, or portion of tissue.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000055',literal(lang(en,'Anatomical structure that has as its parts two or more portions of tissue of at least two different types and which through specific morphogenetic processes forms a single distinct structural unit demarcated by bona-fide boundaries from other distinct structural units of different types.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000062',literal(lang(en,'Anatomical space that is part of a cell.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000063',literal(lang(en,'Portion of organism substance located within a cell.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000064',literal(lang(en,'Cell that is an individual member of a species.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000065',literal(lang(en,'Acellular anatomical structure that consists of a thin sheet of fibrous proteins that underlie and support the cells of an epithelium. It separates the cells of an epithelium from any underlying tissue.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000066',literal(lang(en,'Portion of tissue, that consists of one or more layers of epithelial cells connected to each other by cell junctions and which is underlain by a basal lamina.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000067',literal(lang(en,'Unilaminar epithelium that consists of a single layer of cuboidal cells.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000068',literal(lang(en,'Unilaminar epithelium that consists of a single layer of columnar cells.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000069',literal(lang(en,'Epithelium that consists of more than one layer of epithelial cells.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000070',literal(lang(en,'Unilaminar epithelium that consists of a single layer of squamous cells.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000071',literal(lang(en,'Epithelium that consists of epithelial cells not arranged in one ore more layers.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000072',literal(lang(en,'Compound organ that contains one or more macroscopic anatomical spaces.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000073',literal(lang(en,'Epithelium that consists of a single layer of epithelial cells.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000074',literal(lang(en,'Compound organ that does not contain macroscopic anatomical spaces.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000077',literal(lang(en,'Cell which has as its part a cytoskeleton that allows for tight cell to cell contact and which has apical-basal cell polarity.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0001000',literal(lang(en,'A structure consisting of multiple cell components but which is not itself a cell and does not have (complete) cells as a part.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0001001',literal(lang(en,'A fasciculated bundle of neuron projections (GO:0043005), largely or completely lacking synapses.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000115','http://purl.obolibrary.org/obo/CARO_0000000',literal(lang(en,'Biological entity that is either an individual member of a biological species or constitutes the structural organization of an individual member of a biological species.')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000118','http://purl.obolibrary.org/obo/CARO_0000029',literal(lang(en,'dioecious organism')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000118','http://purl.obolibrary.org/obo/CARO_0000045',literal(lang(en,'consecutive hermaphroditic organism')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000118','http://purl.obolibrary.org/obo/CARO_0000046',literal(lang(en,'serially hermaphroditic organism')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000118','http://purl.obolibrary.org/obo/CARO_0000048',literal(lang(en,'monoecious organism')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000118','http://purl.obolibrary.org/obo/CARO_0001001',literal(lang(en,'nerve fiber bundle')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000003',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000004',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000005',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000006',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000007',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000008',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000009',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000010',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000011',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000012',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000013',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000014',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000019',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000021',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000024',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000027',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000028',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000029',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000030',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000032',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000040',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000041',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000042',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000043',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000045',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000046',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000048',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000049',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000050',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000054',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000055',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000062',literal(lang(en,'CARO:mah')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000063',literal(lang(en,'CARO:mah')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000064',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000065',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000066',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000067',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000068',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000069',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000070',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000071',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000072',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000073',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000074',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000077',literal(lang(en,'CARO:MAH')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0001000',literal(lang(en,'FBC:DOS')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0001001',literal(lang(en,'FBC:DOS')))).
+ontologyAxiom('http://purl.obolibrary.org/obo/caro.owl',annotationAssertion('http://purl.obolibrary.org/obo/IAO_0000119','http://purl.obolibrary.org/obo/CARO_0000000',literal(lang(en,'CARO:MAH')))).
