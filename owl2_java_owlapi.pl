@@ -284,7 +284,7 @@ reasoner_nr_subClassOf(R,Fac,C,P) :-
         nonvar(P),
         !,
         pl2javaref(Fac,P,JP),
-        jpl_call(R,getSubClasses,[JP,(@true)],JCSetSet),
+        jpl_call(R,getSubClasses,[JP,@(true)],JCSetSet),
         nodeset_entity(JCSetSet,C).
 
 %% reasoner_subClassOf(+R,+Fac,?C,?P)
