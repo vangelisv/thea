@@ -36,6 +36,7 @@ initialize_reasoner(Type,Reasoner,Opts) :-
         load_handler(Type,Opts),
 	initialize_reasoner_hook(Type,Reasoner,Opts),
         debug(reasoner,'Initialized reasoner: ~w',[Reasoner]),
+        nb_setval(reasoner,Reasoner),
         !.
 initialize_reasoner(Type,_,Opts) :- 
         throw(error(initialize_reasoner(Type,Opts))).
@@ -74,7 +75,11 @@ reasoner_ask(Reasoner,Axiom) :-
 
 reasoner_ask(Axiom) :-
         nb_current(reasoner,Reasoner),
+        !,
         reasoner_ask(Reasoner,Axiom).
+reasoner_ask(_) :-
+        throw(error(reasoner_not_initialized)).
+
 
 
 %% reasoner_check_consistency(+Reasoner)
