@@ -101,6 +101,12 @@ prolog_shell:-
 % ----------------------------------------
 
 show_term(T,Opts) :-
+        member(saveopt(tabular),Opts),
+        !,
+        T=..L,
+        show_subterms(L,'\t',Opts),
+        nl.
+show_term(T,Opts) :-
         member(saveopt(prolog),Opts),
         !,
         format('~q.~n',[T]).
@@ -111,7 +117,9 @@ show_term(T,Opts) :-
         ensure_loaded(library(thea2/owl2_plsyn)),
         map_IRIs(use_label_as_IRI,T,T2),
         plsyn_owl(X,T2),
-        format('~q.~n',[X]).
+        (   member(saveopt(no_plquote),Opts)
+        ->  format('~w~n',[X])
+        ;   format('~q.~n',[X])).
 show_term(T,Opts) :-
         member(saveopt(plsyn),Opts),
         !,
@@ -126,7 +134,27 @@ show_term(T,Opts) :-
 show_term(T,_) :-
         writeln(T).
 
+show_subterms([],_,_).
+show_subterms([T|L],Sep,Opts) :-
+        !,
+        show_subterm(T,Sep,Opts),
+        (   L=[]
+        ->  true
+        ;   format(Sep,[]),
+            show_subterms(L,Sep,Opts)).
 
+show_subterm(T,Sep,Opts) :-
+        member(saveopt(labels),Opts),
+        !,
+        write(T),
+        format(Sep),
+        (   labelAnnotation_value(T,N)
+        ->  write(N)
+        ;   true).
+show_subterm(T,_,_) :-
+        write(T).
+
+        
 
 
 
@@ -184,8 +212,9 @@ arg_info(to,atom,'output format: one of {owl,owlpl,owlx,...}').
 parse_arg(['--out',File|L],L,output_file(File)).
 arg_info(out,filepath,'saves to file (default is standard_output)').
 
-%parse_arg(['--use-labels'|L],L,goal(use_labels_for_IRIs)).
-%arg_info(use-labels,-,'rewrite ontology to switch out all URIs and use labels instead').
+parse_arg(['--rewrite-with-labels'|L],L,goal(use_labels_for_IRIs)).
+arg_info(use-labels,-,'rewrite ontology to switch out all URIs and use labels instead').
+
 parse_arg(['--use-labels'|L],L,saveopt(labels)).
 arg_info(use-labels,-,'use labels when writing axioms in reporting').
 parse_arg(['--use-labels-and-IRIs'|L],L,saveopt(labels_and_IRIs)).
