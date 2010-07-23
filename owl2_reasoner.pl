@@ -38,6 +38,7 @@ initialize_reasoner(Type,Reasoner,Opts) :-
         debug(reasoner,'Initialized reasoner: ~w',[Reasoner]),
         nb_setval(reasoner,Reasoner),
         !.
+initialize_reasoner(null,null,_).
 initialize_reasoner(Type,_,Opts) :- 
         throw(error(initialize_reasoner(Type,Opts))).
 	
@@ -72,6 +73,8 @@ reasoner_ask(_,reflexiveSubClassOf(X,X)) :-
 reasoner_ask(Reasoner,Axiom) :- 
         debug(reasoner,'Reasoner query: ~w',[Axiom]),
 	reasoner_ask_hook(Reasoner,Axiom).
+reasoner_ask(null,Axiom) :-
+        Axiom.
 
 reasoner_ask(Axiom) :-
         nb_current(reasoner,Reasoner),
