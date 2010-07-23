@@ -24,6 +24,10 @@
 :- op(1000,xfy,where).
 :- op(950,fx,add).
 
+:- use_module(owl2_model).
+:- use_module(owl2_plsyn).
+
+
 %% popl_translate(+Directive) is det
 % see popl_translate/2
 popl_translate(T) :-
@@ -81,7 +85,6 @@ replace_matching_axioms(Ax1,Ax2) :-
 replace_matching_axioms_where(Ax1a,Ax2a,Ga,Opts) :-
         select(syntax(plsyn),Opts,Opts2),
         !,
-        ensure_loaded(owl2_plsyn),
         plsyn_owl(Ax1a,Ax1),
         plsyn_owl(Ax2a,Ax2),
         plsyn_owl(Ga,G),
@@ -112,7 +115,6 @@ replace_axiom(Ax,Ax,[]) :- !.
 replace_axiom(Ax1a,Ax2a,Opts) :-
         select(syntax(plsyn),Opts,Opts2),
         !,
-        ensure_loaded(owl2_plsyn),
         plsyn_owl(Ax1a,Ax1),
         plsyn_owl(Ax2a,Ax2),
         replace_axiom(Ax1,Ax2,Opts2).
