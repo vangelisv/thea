@@ -7,7 +7,7 @@
                       plsyn_owl/2,
                       plsyn_owl/3,
                       
-                      op(1200,xfy,(--)),
+                      op(1180,xfy,(--)),
                       op(1150,xfy,\^), % disjoint classes
                       %op(1150,fx,class),
                       op(1150,fx,individual),
@@ -39,7 +39,7 @@
 :- use_module(swrl).
 :- use_module(library(readutil)).
 
-:- op(1200,xfy,(--)).
+:- op(1180,xfy,(--)).
 :- op(1150,fx,individual).
 
 :- op(1150,xfy,disjointUnion).
@@ -204,6 +204,12 @@ owl2plsyn(Owl,Pl) :-
         !,
         maplist(owl2plsyn,Args,Args2),
         Pl=..[PlPred,[Args2]].
+owl2plsyn(propertyAssertion(P,S,O),Pl) :-
+        atom(P),
+        op(999,xfy,P),
+        owl2plsyn(S,SX),
+        owl2plsyn(O,OX),
+        Pl=..[P,SX,OX].
 owl2plsyn(equivalentProperties(Args),Pl) :-
         maplist(owl2plsyn,Args,Args2),
         list_to_chain(Args2,(=@=),Pl).
@@ -225,6 +231,8 @@ owl2plsyn(unionOf(Args),Pl) :-
 owl2plsyn(implies(A,C),(A2->C2)) :-
         swrlatoms2plsyn(A,A2),
         swrlatoms2plsyn(C,C2).
+owl2plsyn(literal(type(_,X)),X) :- !.
+owl2plsyn(literal(X),X) :- atom(X),!.
 owl2plsyn(Owl,Pl) :-
         Owl=..[P|Args],
         Args\=[],
