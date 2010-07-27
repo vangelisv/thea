@@ -201,6 +201,7 @@ parse_arg(['--format',A|L],L,loadopt(format(Fmt)))  :- atom_to_term(A,Fmt,_).
 arg_info(format,atom,'input format: one of {owl,owlpl,owlx,...}').
 
 parse_arg(['--ensure_loaded',MA|L],L,ensure_loaded(M)) :- atom_to_term(MA,M,_).
+parse_arg(['--load-app',MA|L],L,ensure_loaded(library(thea2/apps/M))) :- atom_to_term(MA,M,_).
 
 parse_arg(['--convert',X|L],L,convert(X)).
 
