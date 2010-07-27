@@ -69,6 +69,14 @@ entailed_10(X,_) :-
         entailed_cached(X).
 
 
+% e.g. if X = A and B, then treat this like X subClassOf A, X subClassOf B
+% this is v. slow when X is nonvar
+entailed_pre(subClassOf(X,Y)) :-
+        pairwise_equivalent_class(X,intersectionOf(DL)),
+        atom(X),
+        member(Y,DL).
+
+
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 % UTIL
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

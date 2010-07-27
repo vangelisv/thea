@@ -79,10 +79,3 @@ xxxentailed_2(subClassOf( someValuesFrom(R,X), someValuesFrom(R,Y) ), EL) :-
 	\+ ((var(X),var(Y))),
 	entailed(subClassOf(X,Y),EL).
 
-
-% e.g. if X = A and B, then treat this like X subClassOf A, X subClassOf B
-% this is v. slow when X is nonvar
-entailed_pre(subClassOf(X,Y)) :-
-        pairwise_equivalent_class(X,intersectionOf(DL)),
-        atom(X),
-        member(Y,DL).
