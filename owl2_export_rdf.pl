@@ -158,6 +158,10 @@ owl2_export_axiom(objectProperty(C1),main_triple(C,'rdf:type','owl:ObjectPropert
         translate_iri(C1,C),
 	owl_rdf_assert(C,'rdf:type','owl:ObjectProperty'),!.
 
+owl2_export_axiom(dataProperty(C1),main_triple(C,'rdf:type','owl:DatatypeProperty')) :-
+        translate_iri(C1,C),
+	owl_rdf_assert(C,'rdf:type','owl:DatatypeProperty'),!.
+
 owl2_export_axiom(annotationProperty(C1),main_triple(C,'rdf:type','owl:AnnotationProperty')) :-
         translate_iri(C1,C),
 	owl_rdf_assert(C,'rdf:type','owl:AnnotationProperty'),!.
@@ -183,7 +187,7 @@ owl2_export_axiom(disjointClasses(List),main_triple(BNode,'rdf:type','owl:Alldis
 	owl_rdf_assert(BNode,'rdf:type','owl:AlldisjointClasses'),
 	owl_rdf_assert(BNode,'owl:members',LNode),!.
 
-owl2_export_axiom(disjointUnion([C|Rest]),main_triple(Tc,'owl:disjointUnionOf',LNode)) :-
+owl2_export_axiom(disjointUnion(C,Rest),main_triple(Tc,'owl:disjointUnionOf',LNode)) :-
 	owl2_export_axiom(C,main_triple(Tc,_,_)),
 	owl2_export_list(Rest,LNode),
 	owl_rdf_assert(Tc,'owl:disjointUnionOf',LNode),!.
