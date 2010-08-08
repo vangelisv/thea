@@ -135,7 +135,7 @@ suffix_format(owlpl,prolog).
 suffix_format(plsyn,plsyn).
 suffix_format(owl,owl).
 suffix_format(owl2,owl).
-suffix_format(ttl,owl).
+suffix_format(ttl,ttl).
 suffix_format(owlx,owlx).
 suffix_format(owlxml,owlx).
 suffix_format(owlms,owlms).
@@ -158,6 +158,7 @@ format_module(read,owlapi(_),owl2_java_owlapi).
 
 format_module(write,owl,owl2_export_rdf).
 format_module(write,owlx,owl2_xml).
+format_module(write,ttl,owl2_export_rdf).
 format_module(write,plsyn,owl2_plsyn).
 format_module(write,dl_syntax,owl2_dl_syntax).
 format_module(write,dlp,owl2_to_prolog_dlp).
