@@ -108,6 +108,10 @@ The file owl2_from_rdf.plt has some examples
 owl2_io:load_axioms_hook(File,owl,Opts) :-
         owl_parse_rdf(File,Opts).
 
+owl2_io:load_axioms_hook(File,ttl,Opts) :-
+        ensure_loaded(library('semweb/rdf_turtle')),
+        owl_parse_rdf(File,Opts).
+
 %% owl_parse_rdf(+File)
 % as owl_parse_rdf/1 with empty Opts
 owl_parse_rdf(F):-
