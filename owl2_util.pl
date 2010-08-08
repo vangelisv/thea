@@ -341,7 +341,22 @@ extract_axiom_template(A,T) :-
 	maplist(extract_axiom_template,L,L2),
 	T=..[P|L2].
 
-	
+
+write_dllearner_conf(Query,Var) :-
+        setof(C,Var^(Query,classAssertion(C,Var)),Classes),
+        forall(member(Class,Classes),
+               write_dllearner_conf(Query,Var,Class)).
+
+write_dllearner_conf(Query,Var,Class) :-
+        labelAnnotation_value(Class,N),
+        format('// Target: ~w "~w"~n',[Class,N]),
+        nl,
+        forall((Query,classAssertion(Class,Var)),
+               format('+"~w"~n',[Var])),
+        forall((Query,\+classAssertion(Class,Var)),
+               format('-"~w"~n',[Var])),
+        nl.
+
 
 write_ontology_summary:-
         forall(axiompred(PS),
@@ -464,7 +479,7 @@ isalpha(X) :- X @>= 'A',X @=< 'Z'.
 isalpha(X) :- X @>= '0',X @=< '9'.
 
 
-
+               
 
 stats(File) :- owl_statistics(all,XML), open(File,write,S), xml_write(S,XML,[header(true)]),close(S).
 
