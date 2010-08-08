@@ -26,6 +26,11 @@
 :- use_module(library('semweb/rdf_db')).
 
 :- multifile owl2_io:save_axioms_hook/3.
+
+owl2_io:save_axioms_hook(File,ttl,Opts) :-
+        ensure_loaded(library('semweb/rdf_turtle_write')),
+        owl2_io:save_axioms_hook(File,owl,[rdf_syntax(ttl)|Opts]).
+
 owl2_io:save_axioms_hook(File,owl,Opts) :-
         (   member(rdf_load_mode(RDF_Load_Mode),Opts)
         ->  true
@@ -117,9 +122,11 @@ owl_generate_rdf(Ontology,FileName,RDF_Load_Mode,Opts) :-
         (   member(merge(true),Opts)
         ->  true
         ;   SrcOntology=Ontology),
+	debug(owl_generate_rdf,'  ontologyAxiom/2',[]),
 	forall(ontologyAxiom(SrcOntology,Axiom),
 	       (owl2_export_axiom(Axiom,main_triple(S,P,O)),
 		owl2_export_annotation(Axiom,'owl:Axiom',S,P,O))),
+	debug(owl_generate_rdf,'  stray axioms',[]),
         % TODO - better way of doing this - stray axioms
 	forall((axiom(Axiom),\+ontologyAxiom(_,Axiom)),
 	       (owl2_export_axiom(Axiom,main_triple(S,P,O)),
@@ -127,7 +134,10 @@ owl_generate_rdf(Ontology,FileName,RDF_Load_Mode,Opts) :-
         % TODO - make this a hook?
         forall(axiom(implies(A,C)),
                owl2_export_axiom(implies(A,C),_)),
-	rdf_db:rdf_save(FileName).
+        (   member(rdf_syntax(ttl),Opts)
+        ->  rdf_save_turtle(FileName,Opts)
+	;   rdf_db:rdf_save(FileName)).
+
 
 
 /*
@@ -350,7 +360,9 @@ owl2_export_axiom(unionOf([E|Rest]),main_triple(BNode,'rdf:type',Type)) :-
 owl2_export_axiom(oneOf([E|Rest]),main_triple(BNode,'rdf:type',Type)) :-
 	as2rdf_bnode(oneOf([E|Rest]),BNode),
 	owl2_export_list([E|Rest],LNode),
-	(   classExpression(E) -> Type = 'owl:Class'; Type = 'owl:Datatype'),
+	(   classExpression(E)
+        ->  Type = 'owl:Class'
+        ;   Type = 'owl:Datatype'),
 	owl_rdf_assert(BNode,'rdf:type',Type),
 	owl_rdf_assert(BNode,'owl:oneOf', LNode),!.	  
 
@@ -511,7 +523,10 @@ owl2_export_list([],'rdf:nil').
 owl2_export_list([S|Rest],Node) :-
 	as2rdf_bnode([S|Rest],Node),
 	owl2_export_axiom(S,main_triple(Ts,_,_)),
-	owl_rdf_assert(Node,'rdf:type', 'rdf:List'),	
+        % this is to circumvent a bug in list writing:
+        (   S=literal(_)
+        ->  true
+        ;   owl_rdf_assert(Node,'rdf:type', 'rdf:List')),	
 	owl_rdf_assert(Node,'rdf:first', Ts),	
 	owl2_export_list(Rest,Node2),
 	owl_rdf_assert(Node,'rdf:rest',Node2).
