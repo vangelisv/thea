@@ -38,6 +38,7 @@
             owl_parse_rdf/1,
             owl_parse_rdf/2,
 	    owl_parse/4,
+           rdf_db_to_owl/0,
             convert/3,
 	    expand_ns/2,                  %  ?NS_URL, ?Full_URL
 	    collapse_ns/4,
@@ -156,7 +157,6 @@ owl_parse(URL, RDF_Load_Mode, OWL_Parse_Mode,ImportFlag) :-
 	owl2_model_init,
 	owl_canonical_parse_3(ProcessedIRIs).
 
-
 %% owl_canonical_parse_2(+IRIs:list,+ParentIRI,+ImportFlag:boolean,+ProcessedURIsIn:list,?ProcessedURIsOut:list) is det
 % recursively parses all ontologies in IRIs into rdf_db, ensuring none are processed twice.
 owl_canonical_parse_2([],_,_,Processed,Processed) :- !.
@@ -266,6 +266,17 @@ owl_canonical_parse_3([IRI|Rest]) :-
 	parse_annotation_assertions,
 	forall(owl_parse_compatibility_DL(Axiom),assert_axiom(Axiom)),
 	owl_canonical_parse_3(Rest).
+
+rdf_db_to_owl :-
+	owl2_model_init,
+        findall(BaseURI,
+                (   rdf(Ont,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type','http://www.w3.org/2002/07/owl#Ontology',BaseURI:_),
+                    rdf_2_owl(BaseURI,Ont),
+                    owl_canonical_parse_3(IRIs)),
+                IRIs),
+                %owl_canonical_parse_3(IRIs).
+                true.
+
 
 omitthis(ontology/1).
 
