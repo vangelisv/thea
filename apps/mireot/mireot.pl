@@ -2,7 +2,10 @@
 :- use_module(library('thea2/owl2_io')).
 :- use_module(library('thea2/owl2_basic_reasoner')).
 
-% classes only for now...
+%% ontology_references_class_in(?O,?C,?O2)
+% true of O contains an axiom that references C, and C is declared in O2
+% (classes only for now, no individuals)
+% e.g. ontology_references_class_in(obi,lung,fma)
 ontology_references_class_in(O,C,O2) :-
         ontologyAxiom(O,Ax),
         axiom_references(Ax,C),
@@ -10,25 +13,34 @@ ontology_references_class_in(O,C,O2) :-
         ontologyAxiom(O2,class(C)),
         O2\=O.
 
-mireot(O,O2) :-
-        setof(O-C-O2,
+%% mireot(LocalOnt,ExtOnt,Strategy)
+% bring in all referenced classes from O2 into O
+mireot(O,O2,Strategy) :-
+        setof(ref(O,C,O2),
               ontology_references_class_in(O,C,O2),
               Refs),
         % we do not exclude self-pairs from the LCA which ensures we also
         % capture leaf nodes too
-        findall(O-CA-O2,
-                (   member(O-C1-O2,Refs),
-                    member(O-C2-O2,Refs),
-                    least_common_ancestor(C1,C2,CA)),
-                RefsLCA),
-        forall(member(O-C-O2,RefsLCA),
+        findall(ref(O,CA,O2),
+                mireot_extend_refs(O,O2,Refs,CA,Strategy),
+                ExtRefs),
+        setof(Ref,member(Ref,ExtRefs),ExtRefsU),
+        forall(member(ref(O,C,O2),ExtRefsU),
                mireot_class(O,C,O2)).
+
+
+mireot_extend_refs(O,O2,Refs,CA,lca) :-
+        member(O-C1-O2,Refs),
+        member(O-C2-O2,Refs),
+        least_common_ancestor(C1,C2,CA).
+mireot_extend_refs(O,O2,Refs,CA,ancestor) :-
+        member(O-C-O2,Refs),
+        entailed(subClassOf(X,A)).
 
 mireot_class(O,C,O2) :-
         assert_axiom(class(C),O),
         assert_axiom(annotationAssertion('http://purl.obolibrary.org/obo/OBI_0000283',C,O2),O), % imported_from
         format(user_error,'  Mireoted ~w~n',[C]).
-
 
 mireot_files(InFile,OutFile,O) :-
         load_axioms(InFile,owl,[imports(true)]),
