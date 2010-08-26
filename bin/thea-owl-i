@@ -273,7 +273,7 @@ parse_arg(['--reasoner-ask',GA|L],L,reasonerquery( T, G)) :- atom_to_term(GA,G-T
 parse_arg(['--reasoner-ask',GA|L],L,reasonerquery( A, A)) :- atom_to_term(GA,A,_).
 parse_arg(['--reasoner-ask-all'|L],L,reasonerquery( A, A)).
 parse_arg(['--reasoner-cache-query-to',GA,F|L],L,reasonercache( A, F)) :- atom_to_term(GA,A,_).
-
+parse_arg(['--reasoner-cache-subclass-to',F|L],L,reasonercache( subClassOf(_,_), F)).
 
 
 parse_arg(['--load-catalog'|L],L,null) :- load_catalog.
