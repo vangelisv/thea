@@ -176,6 +176,10 @@ owl2_export_axiom(annotationProperty(C1),main_triple(C,'rdf:type','owl:Annotatio
         translate_iri(C1,C),
 	owl_rdf_assert(C,'rdf:type','owl:AnnotationProperty'),!.
 
+owl2_export_axiom(namedIndividual(C1),main_triple(C,'rdf:type','owl:NamedIndividual')) :-
+        translate_iri(C1,C),
+	owl_rdf_assert(C,'rdf:type','owl:NamedIndividual'),!.
+
 owl2_export_axiom(subClassOf(C1,C2),main_triple(TC1,'rdfs:subClassOf',TC2)) :-
 	owl2_export_axiom(C1,main_triple(TC1,_,_)),
 	owl2_export_axiom(C2,main_triple(TC2,_,_)),
