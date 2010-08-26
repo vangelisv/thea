@@ -239,19 +239,23 @@ owl_canonical_parse_3([IRI|Rest]) :-
         debug(owl_parser,'Anon individuals in reification [see table 8]',[]),
 
 	% Table 8, get the set of RIND - anonymous individuals in reification
-	findall(X, (member(Y,['owl:Axiom','owl:Annotation',
+	findall(X, (test_use_owl(X,'rdf:type',Y),
+                    member(Y,['owl:Axiom','owl:Annotation',
 			      'owl:AllDisjointClasses','owl:AllDisljointProperties',
-			      'owl:AllDifferent','owl:NegativePropertyAssertion']),
-		    test_use_owl(X,'rdf:type',Y)), RIND),
+			      'owl:AllDifferent','owl:NegativePropertyAssertion'])),
+		    RIND),
 	nb_setval(rind,RIND),
 
 	% VV 10/3/2010 get the annotation properties before collecting the annotations.
+        debug(owl_parser,'asserting annotationProperty/1 for all APs',[]),
 	forall( test_use_owl(D,'rdf:type','owl:AnnotationProperty'),
 		assert_axiom(annotationProperty(D))),
 
+        % TODO - make this faster
+        debug(owl_parser,'Implements function ANN(x) 3.2.2 Table 10.',[]),
 	findall(_,ann(_,_),_), % find all annotations, assert annotation(X,AP,AV) axioms.
-        debug(owl_parser,'Commencing parse of annotated axioms',[]),
 
+        debug(owl_parser,'Commencing parse of annotated axioms',[]),
         forall((axiompred(PredSpec),\+dothislater(PredSpec),\+omitthis(PredSpec)),
                owl_parse_annotated_axioms(PredSpec)),
         forall((axiompred(PredSpec),dothislater(PredSpec),\+omitthis(PredSpec)),

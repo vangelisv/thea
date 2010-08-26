@@ -114,9 +114,6 @@ use_owl(X1,Y1,Z1) :-
 	expand_ns(X1,X),
 	expand_ns(Y1,Y),
 	expand_ns(Z1,Z),
-	(    X = 'http://www.w3.org/TR/2003/PR-owl-guide-20031209/wine#RedWine', Y = 'http://www.w3.org/2002/07/owl#intersectionOf' ->
-         print(1),nl ;
-	true),
 	owl(X,Y,Z, not_used),
 	debug(owl_parser_detail,'using ~w ~w ~w',[X,Y,Z]),
 	retract(owl(X,Y,Z, not_used)),

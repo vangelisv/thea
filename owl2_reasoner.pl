@@ -8,7 +8,8 @@
 	   reasoner_tell_all/1,
 	   reasoner_ask/2,
            reasoner_ask/1,
-	   reasoner_check_consistency/1
+	   reasoner_check_consistency/1,
+           reasoner_cache_to_file/3
           ]).
 
 :- use_module(owl2_model).
@@ -88,6 +89,24 @@ reasoner_ask(_) :-
 %% reasoner_check_consistency(+Reasoner)
 reasoner_check_consistency(Reasoner) :- 
 	reasoner_check_consistency_hook(Reasoner).
+
+%% reasoner_cache_to_file(+Reasoner,+AxiomTemplate,+File)
+% caches the results of the AxiomTemplate query
+reasoner_cache_to_file(Reasoner,AxiomTemplate,File) :-
+        open(File,write,Out,[]),
+        reasoner_cache_to_stream(Reasoner,AxiomTemplate,Out),
+        close(Out).
+
+reasoner_cache_to_stream(Reasoner,AxiomTemplate,Out) :-
+        AxiomTemplate =.. [P|Args],
+        atom_concat('cached_',P,P2),
+        StoreTemplate =.. [P2|Args],
+        forall(reasoner_ask(Reasoner,AxiomTemplate),
+               write_precomputed_axiom(StoreTemplate,Out)).
+
+write_precomputed_axiom(Ax,Out) :-
+        format(Out,'~q.~n',[Ax]).
+
 
 
 % --

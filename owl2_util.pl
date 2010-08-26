@@ -21,6 +21,7 @@
            prefix_IRIs/1,
            translate_IRIs/1,
            map_IRIs/3,
+           assume_entity_declarations/0,
            use_class_labels_as_synonyms/1,
            class_label_synonym_axiom/2,
 	   any_axiom_template/1,
@@ -158,6 +159,8 @@ remove_namespaces:-
 expand_namespaces:-
         translate_IRIs(expand_ns).
 
+%% remove_namespaces
+% calls translate_IRIs/1 with contract_ns/2 as argument
 contract_namespaces:-
         translate_IRIs(contract_ns).
 
@@ -323,7 +326,19 @@ uniqify([H|L],[H|L2]) :-
 	uniqify(L,L2).
 
 
+inferred_declaration(class(C)) :- classAssertion(C,_),atom(C).
+inferred_declaration(class(C)) :- subClassOf(C,_),atom(C).
+inferred_declaration(class(C)) :- equivalentClasses(L),member(C,L),atom(C).
+inferred_declaration(namedIndividual(I)) :- classAssertion(_,I).
+inferred_declaration(namedIndividual(I)) :- propertyAssertion(_,I,_).
+inferred_declaration(namedIndividual(I)) :- propertyAssertion(_,_,I).
 
+assume_entity_declarations :-
+        forall(inferred_declaration(A),
+               assert_axiom(A)).
+
+
+               
         
 
 %% extract_axiom_template(+Ax,?Template)

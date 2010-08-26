@@ -83,6 +83,8 @@ main :-
         forall(member(reasonerquery(T,G),Opts),
                forall(reasoner_ask(Reasoner,G),
                       show_term(T,Opts))),
+        forall(member(reasonercache(G,F),Opts),
+               reasoner_cache_to_file(Reasoner,G,F)),
         forall(member(query(T,G),Opts),
                forall(G,show_term(T,Opts))),
         (   member(qsave(QSF),Opts)
@@ -270,6 +272,7 @@ parse_arg(['--reasoner-query',select,TA,where,GA|L],L,reasonerquery( T, G)) :- s
 parse_arg(['--reasoner-ask',GA|L],L,reasonerquery( T, G)) :- atom_to_term(GA,G-T,_).
 parse_arg(['--reasoner-ask',GA|L],L,reasonerquery( A, A)) :- atom_to_term(GA,A,_).
 parse_arg(['--reasoner-ask-all'|L],L,reasonerquery( A, A)).
+parse_arg(['--reasoner-cache-query-to',GA,F|L],L,reasonercache( A, F)) :- atom_to_term(GA,A,_).
 
 
 
