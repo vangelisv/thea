@@ -100,6 +100,7 @@ reasoner_module(pellet,owl2_java_owlapi).
 reasoner_module(factpp,owl2_java_owlapi).
 reasoner_module(hermit,owl2_java_owlapi).
 reasoner_module(owlapi(_),owl2_java_owlapi).
+reasoner_module(graph_reasoner,owl2_graph_reasoner).
 
 
 /** <module> reasoner API - NOT YET IN USE
