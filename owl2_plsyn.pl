@@ -126,6 +126,9 @@ plsyn_owl(Pl,Owl,_) :-
         nonvar(Owl),
         owl2plsyn(Owl,Pl),
         !.
+plsyn_owl(Pl,Pl,_) :-
+        var(Pl).
+
 
 
 % allow translation of vars, for example for queries or templates

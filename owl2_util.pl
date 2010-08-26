@@ -265,6 +265,7 @@ translate_IRIs(Goal):-
         maplist(retract_axiom,Axioms),
         maplist(assert_axiom,Axioms2).
 
+%% map_IRIs(+MapGoal,+AxiomIn,?AxiomOut)
 :- module_transparent map_IRIs/3.
 map_IRIs(_,[],[]) :- !.
 map_IRIs(G,[X|Xs],[X2|X2s]) :-
@@ -280,7 +281,8 @@ map_IRIs(G,X,X2) :-
         Args\=[],
         !,
         maplist(map_IRIs(G),Args,Args2),
-        call(G,F,F2),           % swrl axioms use IRIs as functors
+        %call(G,F,F2),           % swrl axioms use IRIs as functors
+        F2=F,
         X2=..[F2|Args2].
 map_IRIs(G,X,X2) :-
         call(G,X,X2),
