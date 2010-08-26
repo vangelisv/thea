@@ -98,6 +98,7 @@ save_axioms(File,Fmt,Opts) :-
         (   nonvar(File)
         ->  tell(File)
         ;   true),
+        % TODO - respect ontology(O) argument
         forall(axiom(A),
                (   A=implies(_,_)
                ->  format('swrl:~q.~n',[A]) % ugly hack - assume owl2_model module for everything except this
@@ -128,6 +129,7 @@ guess_format(File,Fmt,_Opts) :-
         reverse(Toks,[Suffix,_|_]),
         suffix_format(Suffix,Fmt).
 
+:- multifile suffix_format/2.
 suffix_format(pro,prolog).
 suffix_format(prolog,prolog).
 suffix_format(pl,prolog).
@@ -141,6 +143,7 @@ suffix_format(owlxml,owlx).
 suffix_format(owlms,owlms).
 suffix_format(owlapi(F),owlapi(F)).
 suffix_format(owlapi,owlapi).
+suffix_format(obo,obo).
 
 :- multifile format_module/3.
 format_module(read,rdf,owl2_from_rdf).
@@ -155,6 +158,7 @@ format_module(read,pl_swrl_owl,swrl).
 format_module(read,plsyn,owl2_plsyn).
 format_module(read,owlapi,owl2_java_owlapi).
 format_module(read,owlapi(_),owl2_java_owlapi).
+format_module(read,obo,owl2_obo_parser).
 
 format_module(write,owl,owl2_export_rdf).
 format_module(write,owlx,owl2_xml).
