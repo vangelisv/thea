@@ -43,13 +43,16 @@ popl_translate(T) :-
 % Opts can be:
 %  * syntax(Syntax)
 %     currently only val allowed is plsyn
+popl_translate( X1 ===> X2 where G, Opts) :-
+        debug(popl,'Replacing axioms',[]),
+        %replace_matching_axioms_where(X1,X2,G,Opts),
+        debug(popl,'Replacing expressions',[]),
+        replace_expression_in_all_axioms_where(X1,X2,G,Opts).
+
 popl_translate( X1 ===> X2, Opts) :-
         replace_matching_axioms(X1,X2,Opts),
         replace_expression_in_all_axioms(X1,X2,Opts).
 
-popl_translate( X1 ===> X2 where G, Opts) :-
-        replace_matching_axioms_where(X1,X2,G,Opts),
-        replace_expression_in_all_axioms_where(X1,X2,Opts).
 
 popl_translate( add X2 where G, Opts) :-
         replace_matching_axioms_where(true,X2,G,Opts),
@@ -111,7 +114,7 @@ replace_matching_axioms_where(Ax1,Ax2,G) :-
 % if Opts contains copy(true) then a copy of the old
 % one is retained.
 % if Opts contains syntax(plsyn) then plsyn may be used.
-replace_axiom(Ax,Ax,[]) :- !.
+replace_axiom(Ax,Ax,[]) :- !. % null replacement - do nothing
 replace_axiom(Ax1a,Ax2a,Opts) :-
         select(syntax(plsyn),Opts,Opts2),
         !,
@@ -122,6 +125,7 @@ replace_axiom(true,Ax2,_Opts) :-
         !,
         assert_axiom(Ax2).
 replace_axiom(Ax1,Ax2,Opts) :-
+        !,
         % do this prior to retraction;
         % this predicate should be in the same place as retract axiom..
         findall(ontologyAxiom(O,Ax2),
@@ -133,7 +137,10 @@ replace_axiom(Ax1,Ax2,Opts) :-
         debug(popl,'Replacing ~w ==> ~w',[Ax1,Ax2]),
         assert_axiom(Ax2),
         % TODO - make optional
-        maplist(assert_axiom,NewOntAxioms).
+        maplist(assert_axiom,NewOntAxioms),
+        debug(popl,'  Done',[]).
+
+
 
 
 %% replace_axiom(+AxOld,+AxNew) is det
@@ -163,22 +170,46 @@ replace_expression_in_all_axioms(T1,T2) :-
 
 %% replace_expression_in_all_axioms_where(+TemplateIn,+TemplateOut,+WhereGoal,Opts)
 replace_expression_in_all_axioms_where(T1,T2,G,Opts) :-
-        forall((axiom(Ax),G),
-               replace_expression_in_axiom(T1,T2,Ax,Opts)).
+        member(ontology(Ont),Opts),
+        !,
+        findall(Ax-Ax2,
+                (   ontologyAxiom(Ont,Ax),
+                    debug(popl,'texting: ~w ',[Ax]),
+                    G,
+                    replace_expression_in_axiom_term(T1,T2,Ax,Ax2),
+                    Ax2\=Ax,
+                    debug(popl,'  scheduling: ~w ==> ~w',[Ax,Ax2])),
+                Replacements),
+        forall(member(Ax-Ax2,Replacements),
+               replace_axiom(Ax,Ax2,Opts)).
+replace_expression_in_all_axioms_where(T1,T2,G,Opts) :-
+        findall(Ax-Ax2,
+                (   axiom(Ax),
+                    G,
+                    replace_expression_in_axiom_term(T1,T2,Ax,Ax2),
+                    Ax2\=Ax,
+                    debug(popl,'scheduling: ~w ==> ~w',[Ax,Ax2])),
+                Replacements),
+        forall(member(Ax-Ax2,Replacements),
+               replace_axiom(Ax,Ax2,Opts)).
 
 
+% DEPRECATED
 replace_expression_in_axiom(T1,T2,Ax,Opts) :-
+        %debug(popl,'TEST Replacing ~w ==> ~w for ~w',[T1,T2,Ax]),
         replace_expression_in_axiom_term(T1,T2,Ax,Ax2),
-        replace_axiom(Ax,Ax2,Opts).
+        replace_axiom(Ax,Ax2,Opts),
+        debug(popl,'DONE Replaced ~w ==> ~w for macro ~w ==> ~w',[Ax,Ax2,T1,T2]).
+
 
 %% replace_expression_in_axiom_term(+T1,+T2,+Ax1,?Ax2)
 % Ax2 is the same as Ax1 with all instances of T1 replaced with T2.
-% T1 is replaced no matter how deep it is placed.
-
+% T1 is replaced no matter how deep it is within the expression
 replace_expression_in_axiom_term(T1,T2,Ax1,Ax2) :-
         nonvar(Ax1),
         Ax1=T1,
-        Ax2=T2. % top-level match
+        Ax2=T2, % top-level match
+        !.
 replace_expression_in_axiom_term(T1,T2,Ax1,Ax2) :-
         axiom(Ax1),
         debug(popl_detail,'IN ~w ==> ~w :: ~w',[T1,T2,Ax1]),
@@ -335,7 +366,6 @@ thea-jpl --reasoner pellet --popl-file testfiles/epithelium.popl testfiles/caro.
   
 ---+ TODO
 
-* Add the ability to select over the reasoned database, as in OPPL2
 * Add a grammar for OPPL2
   
 */
