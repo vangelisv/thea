@@ -4,6 +4,7 @@
 :- use_module(library('thea2/owl2_util')).
 :- use_module(library('thea2/swrl_rdf_hooks')).
 :- use_module(library('thea2/swrl')).
+:- use_module(library('thea2/owl2_reasoner')).
 :- use_module(library('thea2/owl2_io')).
 :- use_module(library('thea2/owl2_catalog')).
 
@@ -48,10 +49,13 @@ main :-
         ;   true),
         forall(member(goal(G),Opts),
                G),
+        findall(PoplOpt,
+                member(popl_opt(PoplOpt),Opts),
+                PoplOpts),
         forall(member(popl_file(F),Opts),
-               execute_popl_file(F,[syntax(plsyn)])),
+               execute_popl_file(F,[syntax(plsyn)|PoplOpts])),
         forall(member(popl(G),Opts),
-               popl_translate(G,[syntax(plsyn)])),
+               popl_translate(G,[syntax(plsyn)|PoplOpts])),
         (   member(statistics(true),Opts)
         ->  statistics
         ;   true),
@@ -59,6 +63,12 @@ main :-
         GoalTime is T3-T2,
         debug(bench,'goal_time: ~w',[GoalTime]),
 
+        /*
+        forall(diff(F1,F2),
+               (   owl2_diff_files(F1,F2,Diffs),
+                   maplist(writeln(Diffs)))),
+          */
+        
         findall(X,
                 (   member(saveopt(X),Opts)
 		;   member(Ont,ConvertOnts),
@@ -201,7 +211,9 @@ parse_arg(['--format',A|L],L,loadopt(format(Fmt)))  :- atom_to_term(A,Fmt,_).
 arg_info(format,atom,'input format: one of {owl,owlpl,owlx,...}').
 
 parse_arg(['--ensure_loaded',MA|L],L,ensure_loaded(M)) :- atom_to_term(MA,M,_).
+parse_arg(['--ensure-loaded',MA|L],L,ensure_loaded(M)) :- atom_to_term(MA,M,_).
 parse_arg(['--load-app',MA|L],L,ensure_loaded(library(thea2/apps/M))) :- atom_to_term(MA,M,_).
+parse_arg(['--load-mod',MA|L],L,ensure_loaded(library(thea2/M))) :- atom_to_term(MA,M,_).
 
 parse_arg(['--convert',X|L],L,convert(X)).
 
@@ -224,16 +236,25 @@ parse_arg(['--use-safe-labels'|L],L,goal(use_safe_labels_for_IRIs)).
 parse_arg(['--goal',GA|L],L,goal(G)) :- atom_to_term(GA,G,_).
 arg_info(goal,goal,'execute prolog goal after loading ontologies').
 
+parse_arg(['--diff',F1,F2|L],L,diff(F1,F2)) :- ensure_loaded(library(thea2/owl2_diff)).
+arg_info(diff,files,'diff two owl files').
+
 parse_arg(['--popl',GA|L],L,popl(G)) :-
         ensure_loaded(library(thea2/owl2_popl)),
         ensure_loaded(library(thea2/owl2_plsyn)),
         atom_to_term(GA,G,_).
-arg_info(popl,term,'process using POPL directive').
+arg_info(popl,term,'process using POPL directive. Example: --popl EXPR ').
+
+parse_arg(['--popl-opt',GA|L],L,popl_opt(G)) :-
+        atom_to_term(GA,G,_).
 
 parse_arg(['--popl-file',F|L],L,popl_file(F)) :-
         ensure_loaded(library(thea2/owl2_popl)),
         ensure_loaded(library(thea2/owl2_plsyn)).
 arg_info(popl-file,file,'file containing POPL directives').
+
+parse_arg(['--mireot',Ext,into,Local|L],L,mireot(Local,Ext)) :-
+        ensure_loaded(library(thea2/apps/mireot)).
 
 parse_arg(['--query',select,TA,where,GA|L],L,query(T,G)) :- sformat(A,'q((~w),(~w))',[TA,GA]),atom_to_term(A,q(T,G),_).
 parse_arg(['--query',GA|L],L,query(T,G)) :- atom_to_term(GA,G-T,_).
