@@ -1,0 +1,17 @@
+classAssertion(org,o1).
+classAssertion(ph,o1p1).
+classAssertion(ph,o1p2).
+classAssertion(ph,o1p3).
+classAssertion(org,o2).
+classAssertion(ph,o2p1).
+classAssertion(ph,o2p2).
+classAssertion(ph,o2p3).
+
+propertyAssertion(has,o1,o1p1).
+propertyAssertion(has,o1,o1p2).
+propertyAssertion(has,o1,o1p3).
+propertyAssertion(has,o2,o2p1).
+propertyAssertion(has,o2,o2p2).
+propertyAssertion(has,o2,o2p3).
+
+equivalentClasses(

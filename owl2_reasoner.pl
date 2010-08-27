@@ -19,6 +19,10 @@
 :- multifile owl2_reasoner:reasoner_tell_all_hook/1.
 :- multifile owl2_reasoner:reasoner_ask_hook/2.
 
+:- multifile owl2_reasoner:cached_subClassOf/2.
+:- multifile owl2_reasoner:cached_classAssertion/2.
+:- multifile owl2_reasoner:cached_propertyAssertion/3.
+
 %% initialize_reasoner(+Type,?Reasoner)
 % see initialize_reasoner/2
 initialize_reasoner(Type,Reasoner) :- 
@@ -39,7 +43,10 @@ initialize_reasoner(Type,Reasoner,Opts) :-
         debug(reasoner,'Initialized reasoner: ~w',[Reasoner]),
         nb_setval(reasoner,Reasoner),
         !.
-initialize_reasoner(null,null,_).
+initialize_reasoner(null,null,_) :- !.
+initialize_reasoner(cached(File),cached(File),_) :-
+        !,
+        load_files([File],[qcompile(large)]).
 initialize_reasoner(Type,_,Opts) :- 
         throw(error(initialize_reasoner(Type,Opts))).
 	
@@ -76,6 +83,9 @@ reasoner_ask(Reasoner,Axiom) :-
 	reasoner_ask_hook(Reasoner,Axiom).
 reasoner_ask(null,Axiom) :-
         Axiom.
+reasoner_ask(cached(_),subClassOf(A,B)) :- cached_subClassOf(A,B).
+reasoner_ask(cached(_),classAssertion(A,B)) :- cached_classAssertion(A,B).
+reasoner_ask(cached(_),propertyAssertion(A,B,C)) :- cached_propertyAssertion(A,B,C).
 
 reasoner_ask(Axiom) :-
         nb_current(reasoner,Reasoner),
@@ -120,6 +130,7 @@ reasoner_module(factpp,owl2_java_owlapi).
 reasoner_module(hermit,owl2_java_owlapi).
 reasoner_module(owlapi(_),owl2_java_owlapi).
 reasoner_module(graph_reasoner,owl2_graph_reasoner).
+
 
 
 /** <module> reasoner API - NOT YET IN USE

@@ -1,0 +1,86 @@
+classAssertion(small_green_left_eye,o3p1).
+classAssertion(deformed_blue_right_eye,o4p1).
+
+classAssertion(org,o1).
+classAssertion(big_left_ear,o1p1).
+classAssertion(retina_degenerates,o1p2).
+classAssertion(axon_terminals_degenerated_in_ca2,o1p3).
+classAssertion(deformed_ca2,o1p4).
+classAssertion(thin_mm_in_axon_of_dn_of_sn,o1p5).
+classAssertion(lewy_bodies_in_sn,o1p6).
+propertyAssertion(has,o1,o1p1).
+propertyAssertion(has,o1,o1p2).
+propertyAssertion(has,o1,o1p3).
+
+classAssertion(org,o2).
+classAssertion(deformed_right_ear,o2p1).
+classAssertion(axon_terminals_degenerated_in_ca3,o2p2).
+classAssertion(atrophied_hippocampus,o2p3).
+classAssertion(deformed_hippocampus,o2p4).
+classAssertion(axon_terminals_degenerated_in_sn,o2p5).
+classAssertion(lewy_bodies_in_sn2,o2p6).
+propertyAssertion(has,o2,o2p1).
+propertyAssertion(has,o2,o2p2).
+propertyAssertion(has,o2,o2p3).
+
+
+
+small_green_left_eye == left_eye and has_quality some green and has_quality some small.
+deformed_blue_right_eye == right_eye and has_quality some blue and has_quality some deformed.
+big_left_ear == left_ear and has_quality some big.
+deformed_right_ear == right_ear and has_quality some deformed.
+
+retina_degenerates == retina and has_quality some degenerated.
+axon_terminals_degenerated_in_ca2 == ca2 and has_part some (axon_terminal and has_quality some degenerated).
+axon_terminals_degenerated_in_ca3 == ca3 and has_part some (axon_terminal and has_quality some degenerated).
+axon_terminals_degenerated_in_sn == sn and has_part some (axon_terminal and has_quality some degenerated).
+atrophied_hippocampus == hippocampus and has_quality some atrophied.
+atrophied_ca2 == ca2 and has_quality some atrophied.
+deformed_hippocampus == hippocampus and has_quality some deformed.
+deformed_ca2 == ca2 and has_quality some deformed.
+thin_mm_in_axon_of_dn_of_sn == (((mitochondrion_membrane and part_of some axon) and part_of some dopaminergic_neuron) and part_of some sn) and has_quality some thin. 
+lewy_bodies_in_sn == sn and has_part some lewy_body.
+lewy_bodies_in_sn2 == lewy_body and part_of some sn.
+
+ca2 < part_of some hippocampus.
+ca3 < part_of some hippocampus.
+axon < part_of some neuron.
+neuron < cell.
+hippocampus < part_of some brain.
+retina < part_of some brain.
+neuron < part_of some nervous_system.
+brain < part_of some nervous_system.
+nerveous_system < system.
+axon_terminal < part_of some axon.
+mitochondrial_membrane == membrane and part_of some mitochondrion.
+mitochondrion < part_of some cell.
+dopmainergic_neuron == neuron and outputs some dopamine.
+dopamine < neurotransmitter.
+lewy_body < inclusion.
+
+left_ear == ear and left.
+right_ear == ear and right.
+left_eye == eye and left.
+right_eye == eye and right.
+ear < organ.
+ear < part_of some head.
+retina < part_of some eye.
+eye < part_of some head.
+
+big == size and increased.
+small == size and decreased.
+size < morphology.
+deformed < morphology.
+morphology < quality.
+degenerated < morphology.
+atrophied < degenerated.
+atrophied < small.
+thin < morphology and decreased.
+blue < color.
+green < color.
+red < color.
+color < quality.
+
+transitiveProperty(part_of).
+transitiveProperty(has_part).
+inverseProperties(part_of,has_part).

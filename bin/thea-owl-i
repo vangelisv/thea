@@ -7,6 +7,7 @@
 :- use_module(library('thea2/owl2_reasoner')).
 :- use_module(library('thea2/owl2_io')).
 :- use_module(library('thea2/owl2_catalog')).
+:- use_module(library('thea2/owl2_plsyn')).
 
 main :-
         current_prolog_flag(argv, Arguments),
@@ -126,7 +127,6 @@ show_term(T,Opts) :-
         member(saveopt(plsyn),Opts),
         member(saveopt(labels),Opts),
         !,
-        ensure_loaded(library(thea2/owl2_plsyn)),
         map_IRIs(use_label_as_IRI,T,T2),
         plsyn_owl(X,T2),
         (   member(saveopt(no_plquote),Opts)
@@ -135,7 +135,6 @@ show_term(T,Opts) :-
 show_term(T,Opts) :-
         member(saveopt(plsyn),Opts),
         !,
-        ensure_loaded(library(thea2/owl2_plsyn)),
         plsyn_owl(X,T),
         format('~q.~n',[X]).
 show_term(T,Opts) :-
@@ -155,6 +154,15 @@ show_subterms([T|L],Sep,Opts) :-
         ;   format(Sep,[]),
             show_subterms(L,Sep,Opts)).
 
+show_subterm(T,Sep,Opts) :-
+        member(saveopt(labels),Opts),
+        member(saveopt(plsyn),Opts),
+        !,
+        map_IRIs(use_label_as_IRI,T,T2),
+        plsyn_owl(X,T2),
+        write(T),
+        format(Sep),
+        write(X).
 show_subterm(T,Sep,Opts) :-
         member(saveopt(labels),Opts),
         !,
@@ -266,6 +274,8 @@ arg_info(query,goal,'execute prolog query').
 parse_arg(['--reasoner',A|L],L,reasonername(RN)) :-
         atom_to_term(A,RN,_).
 
+parse_arg(['--consult',F|L],L,null) :- consult(F).
+
 parse_arg(['--check-consistency'|L],L,check_consistency).
 
 parse_arg(['--reasoner-query',select,TA,where,GA|L],L,reasonerquery( T, G)) :- sformat(A,'q((~w),(~w))',[TA,GA]),atom_to_term(A,q(T,G),_).
@@ -274,6 +284,24 @@ parse_arg(['--reasoner-ask',GA|L],L,reasonerquery( A, A)) :- atom_to_term(GA,A,_
 parse_arg(['--reasoner-ask-all'|L],L,reasonerquery( A, A)).
 parse_arg(['--reasoner-cache-query-to',GA,F|L],L,reasonercache( A, F)) :- atom_to_term(GA,A,_).
 parse_arg(['--reasoner-cache-subclass-to',F|L],L,reasonercache( subClassOf(_,_), F)).
+
+parse_arg(['--sim',A|L],L,
+          query(sim(X,Y,LCS),
+                (   setof(X,T1,Xs),
+                    setof(Y,T2,Ys),
+                    member(X,Xs),
+                    member(Y,Ys),
+                    X@<Y,
+                    class_pair_least_common_subsumer_ext(_,X,Y,LCS)) )
+         ) :-
+        atom_to_term(A,V-T,_),
+        copy_term(V-T,X-T1),
+        copy_term(V-T,Y-T2).
+
+parse_arg(['--sim-pair',X,Y|L],L,
+          query(sim(X,Y,LCS),
+                class_pair_least_common_subsumer_ext(_,X,Y,LCS))).
+
 
 
 parse_arg(['--load-catalog'|L],L,null) :- load_catalog.
