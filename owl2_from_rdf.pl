@@ -196,16 +196,20 @@ owl_canonical_parse_3([IRI|Rest]) :-
 	% Copy the owl facts of the IRI document to the 'not_used'
 	forall(owl(S,P,O,IRI),assert(owl(S,P,O,not_used))),
 
+        debug(owl_parser,'Anon individuals in reification [see table 8]',[]),
+
+
 	collect_r_nodes,
 
 	% First parse the Ontology axiom
         owl_parse_annotated_axioms(ontology/1),
-
+        
         debug(owl_parser,'Replacing patterns [see table 5]',[]),
 	% remove triples based on pattern match (Table 5)
 	forall((triple_remove(Pattern,Remove), test_use_owl(Pattern)),
 	        forall(member(owl(S,P,O),Remove),use_owl(S,P,O,removed))),
 
+        
         % temporary fix to make up for bug in rdf parsing
         % see email to JanW July-1-2009
         forall((test_use_owl(S,P,BNode),
@@ -234,16 +238,15 @@ owl_canonical_parse_3([IRI|Rest]) :-
                              (   expand_and_assert(S,P,O),
                                  debug(owl_parser,'Replacing ~w ==> ~w [see table 6]',[Pattern,owl(S,P,O)]))))),
         */
-
+                    
 	% continue with parsing using the rules...
-        debug(owl_parser,'Anon individuals in reification [see table 8]',[]),
-
 	% Table 8, get the set of RIND - anonymous individuals in reification
-	findall(X, (test_use_owl(X,'rdf:type',Y),
-                    member(Y,['owl:Axiom','owl:Annotation',
+	findall(X, (member(Y,['owl:Axiom','owl:Annotation',
 			      'owl:AllDisjointClasses','owl:AllDisljointProperties',
-			      'owl:AllDifferent','owl:NegativePropertyAssertion'])),
-		    RIND),
+			      'owl:AllDifferent','owl:NegativePropertyAssertion']),
+                    test_use_owl(X,'rdf:type',Y)
+                   ),
+                RIND),
 	nb_setval(rind,RIND),
 
         % Table 9, row 5
@@ -904,6 +907,7 @@ collect_r_nodes :-
 		 test_use_owl(Node,'owl:annotatedProperty',P),
 		 test_use_owl(Node,'owl:annotatedTarget',O)),
 	       (assert(axiom_r_node(S,P,O,Node)),
+                debug(owl_parser_detail,'~w',[axiom_r_node(S,P,O,Node)]),
 		use_owl([owl(Node,'rdf:type','owl:Axiom'),
 			 owl(Node,'owl:annotatedSource',S),
 			 owl(Node,'owl:annotatedProperty',P),
@@ -915,6 +919,7 @@ collect_r_nodes :-
 		 test_use_owl(W,'owl:annotatedProperty',P),
 		 test_use_owl(W,'owl:annotatedTarget',O)),
 	       (assert(annotation_r_node(S,P,O,Node)),
+                debug(owl_parser_detail,'~w',[annotation_r_node(S,P,O,Node)]),
 		use_owl([owl(W,'rdf:type','owl:Annotation'),
 			 owl(W,'owl:annotatedSource',S),
 			 owl(W,'owl:annotatedProperty',P),
