@@ -246,6 +246,7 @@ owl_canonical_parse_3([IRI|Rest]) :-
 		    RIND),
 	nb_setval(rind,RIND),
 
+        % Table 9, row 5
 	% VV 10/3/2010 get the annotation properties before collecting the annotations.
         debug(owl_parser,'asserting annotationProperty/1 for all APs',[]),
 	forall( test_use_owl(D,'rdf:type','owl:AnnotationProperty'),
@@ -548,25 +549,40 @@ owl_parse_axiom(namedIndividual(D), AnnMode, List) :-
 %       ann(?X, -Extension List)
 %
 %       Implements function ANN(x) 3.2.2 Table 10
-
+%
+%     The annotations in G are parsed next. The function ANN assigns a
+%     set of annotations ANN(x) to each IRI or blank node x. This
+%     function is initialized by setting ANN(x) = ∅ for each each IRI
+%     or blank node x. Next, the triple patterns from Table 10 are
+%     matched in G and, for each matched pattern, ANN(x) is extended
+%     with an annotation from the right column. Each time one of these
+%     triple patterns is matched, the matched triples are removed from
+%     G. This process is repeated until no further matches are
+%     possible
 
 ann(X,Y) :-
 	ann(X,X,Y).
 
 
+
 ann(X,X1, annotation(X1,Y,Z)) :-
-	annotationProperty(Y),use_owl(X,Y,Z,annotationProperty(Y)),
+	annotationProperty(Y),
+        debug(owl_parser_detail,'annotation property: ~w',[Y]),
+        owl(X,Y,Z,not_used),
+        use_owl(X,Y,Z,annotationProperty(Y)),
 	u_assert(aNN(X1,Y,Z)),
 	ann2(X,Y,Z,X1).
 
 
 ann2(X,Y,Z,X1) :-
 	annotation_r_node(W,X,Y,Z),
-	ann(W,annotation(X1,Y,Z),Term),u_assert(Term).
+	ann(W,annotation(X1,Y,Z),Term),
+        u_assert(Term).
 
 ann2(X,Y,Z,X1) :-
 	axiom_r_node(W,X,Y,Z),
-	ann(W,annotation(X1,Y,Z),Term),u_assert(Term).
+	ann(W,annotation(X1,Y,Z),Term),
+        u_assert(Term).
 
 
 ann2(_,_,_,_).
@@ -881,11 +897,6 @@ owl_restriction_type(E, P, maxCardinality(N,PX,DX)) :-
 % CLASS AXIOMS
 % valid_axiom_annotation_mode: add clauses for the disjoint etc ....
 
-%% valid_axiom_annotation_mode(+AnnMode,+S,+P,+O,?AnnotationNodes:list) is det
-% if AnnMode is true and annotation triples can be found then
-% unify AnnotationNodes with the Nodes that annotate the triple,
-% otherwise []
-
 collect_r_nodes :-
 	retractall(axiom_r_node(_,_,_,_)),
 	forall(( test_use_owl(Node,'rdf:type','owl:Axiom'),
@@ -909,6 +920,10 @@ collect_r_nodes :-
 			 owl(W,'owl:annotatedProperty',P),
 			 owl(W,'owl:annotatedTarget',O)]))).
 
+%% valid_axiom_annotation_mode(+AnnMode,+S,+P,+O,?AnnotationNodes:list) is det
+% if AnnMode is true and annotation triples can be found then
+% unify AnnotationNodes with the Nodes that annotate the triple,
+% otherwise []
 
 valid_axiom_annotation_mode(_Mode,S,P,O,List) :-
 	findall(Node,axiom_r_node(Node,S,P,O),List).
