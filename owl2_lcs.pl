@@ -7,7 +7,8 @@
            class_pair_least_common_subsumer/4,
            class_pair_common_subsumer_with_union/4,
            class_pair_common_subsumer_ext/4,
-           class_pair_least_common_subsumer_ext/4
+           class_pair_least_common_subsumer_ext/4,
+           class_pair_least_common_subsumer_ext_combined/4
           ]).
 
 :- use_module(owl2_model).
@@ -108,7 +109,7 @@ class_pair_common_subsumer_ext(R,A,B,CS_Out) :-
         %class_pair_common_subsumer_ext_chain(R,A,B,CSs,[C1,C2],CS,CS_Out).
 
 % 3-way; not very generic
-class_pair_common_subsumer_ext(R,A,B,CS_Out) :-
+xxxclass_pair_common_subsumer_ext(R,A,B,CS_Out) :-
         class_pair_common_subsumers_with_union(R,A,B,CSs),
         select(C1,CSs,CSs_r1),         % eg r1 some (r2 some a)
         select(C2,CSs_r1,CSs_r2),      % eg r1 some (r2 some b)
@@ -131,9 +132,14 @@ class_pair_common_subsumer_ext(R,A,B,CS_Out) :-
 
 % DOES NOT WORK YET
 class_pair_common_subsumer_ext_chain(R,A,B,CSs,Used,CS_In,CS_Out) :-
+        length(Used,NumUsed),
+        NumUsed < 4,
         member(C3,CSs),
         \+ member(C3,Used),
         \+ subsumes_or_subsumed_by(R,C3,CS_In),
+        (   NumUsed=3
+        ->  trace
+        ;   true),
         combine_expr_pair(C3,CS_In,CS_Next),
         is_subsumed_by_chk(R,A,CS_Next),
         is_subsumed_by_chk(R,B,CS_Next),
@@ -151,6 +157,30 @@ class_pair_least_common_subsumer_ext(R,A,B,CS) :-
              \+ is_equivalent(R,X,CS),
              is_subsumed_by_chk(R,X,CS),
              debug(foo,'  fail: is_subsumed_by_chk(~w,~q,~q).',[R,X,CS]))).
+
+class_pair_least_common_subsumer_ext_combined(R,A,B,CS_Combined) :-
+        setof(CS,class_pair_least_common_subsumer_ext(R,A,B,CS),CS_Set),
+        normalize_expr(intersectionOf(CS_Set),CS_Combined).
+
+normalize_expr(intersectionOf([X]),Y) :-
+        !,
+        normalize_expr(X,Y).
+normalize_expr(intersectionOf(OuterL),Y) :-
+        setof(X,intersection_member(X,OuterL),Xs),
+        Xs\=OuterL,
+        !,
+        normalize_expr(intersectionOf(Xs),Y).
+normalize_expr(X,X).
+
+intersection_member(X,L) :-
+        member(E,L),
+        E=intersectionOf(IL),
+        member(X,IL).
+intersection_member(E,L) :-
+        member(E,L),
+        E\=intersectionOf(_).
+
+        
 
 
 

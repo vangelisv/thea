@@ -116,10 +116,16 @@ translate_conn_to_class_expression(all-Prop,Parent,allValuesFrom(Prop,Parent)) :
 
 
 class_ancestor_over(ID,PID,Over) :-
-	class(ID),
+	class_or_expr(ID),
 	debug(graph_reasoner,'class_ancestor_over(~w)',[ID]),
 	entities_ancestors([ID-[]],[],[],L),
 	member(PID-Over,L).
+
+class_or_expr(ID) :-
+        var(ID),
+        !,
+        class(ID).
+class_or_expr(_).
 
 %% entities_ancestors(+ScheduledCCPairs,+Visited,+AccumulatedResults,?FinalResults)
 entities_ancestors([Class-Conns|ScheduledCCPairs],Visisted,ResultCCPairs,FinalCCPairs) :-
