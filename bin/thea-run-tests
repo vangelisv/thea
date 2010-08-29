@@ -7,15 +7,22 @@ main :-
         parse_args(Args,Opts),
         forall(member(rest(F),Opts),
                use_module(F)),
+        forall(member(rest(F),Opts),
+               load_specific_test_file(F)),
         set_test_options([silent(false)]),
         debug(test),
         debug(rl_rules),
         debug(owl_exporter),
         debug(basic_reasoner),
-        load_test_files([]),
+        %load_test_files([]),
         (   run_tests
         ->  halt(0)
         ;   halt(1)).
+
+load_specific_test_file(F) :-
+        atom_concat(F,'.plt',F2),
+        consult(F2).
+
 
 parse_args([],[]).
 parse_args(Args,[Opt|Opts]) :-

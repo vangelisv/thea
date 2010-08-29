@@ -275,6 +275,8 @@ parse_arg(['--reasoner',A|L],L,reasonername(RN)) :-
         atom_to_term(A,RN,_).
 
 parse_arg(['--consult',F|L],L,null) :- consult(F).
+parse_arg(['--prefix-with',X|L],L,goal(prefix_IRIs(X))).
+
 
 parse_arg(['--check-consistency'|L],L,check_consistency).
 
@@ -292,7 +294,7 @@ parse_arg(['--sim',A|L],L,
                     member(X,Xs),
                     member(Y,Ys),
                     X@<Y,
-                    class_pair_least_common_subsumer_ext(_,X,Y,LCS)) )
+                    class_pair_least_common_subsumer_ext_combined(_,X,Y,LCS)) )
          ) :-
         atom_to_term(A,V-T,_),
         copy_term(V-T,X-T1),
@@ -300,7 +302,7 @@ parse_arg(['--sim',A|L],L,
 
 parse_arg(['--sim-pair',X,Y|L],L,
           query(sim(X,Y,LCS),
-                class_pair_least_common_subsumer_ext(_,X,Y,LCS))).
+                class_pair_least_common_subsumer_ext_combined(_,X,Y,LCS))).
 
 
 
