@@ -85,8 +85,8 @@ The file owl2_from_rdf.plt has some examples
 :- dynamic(outstream/1).
 
 :- dynamic(aNN/3). % implements the ANN(X) function.
-:- dynamic(annotation_r_node/4).
-:- dynamic(axiom_r_node/4).
+:- dynamic(annotation_r_node/4).  % annotation_r_node(S,P,O,Node)
+:- dynamic(axiom_r_node/4).       % axiom_r_node(S,P,O,Node)
 :- dynamic(owl_repository/2). % implements a simple OWL repository: if URL not found, Ontology is read from a repository (local) RURL
 :- multifile(owl_repository/2).
 
@@ -575,12 +575,12 @@ ann(X,X1, annotation(X1,Y,Z)) :-
 
 
 ann2(X,Y,Z,X1) :-
-	annotation_r_node(W,X,Y,Z),
+	annotation_r_node(X,Y,Z,W),
 	ann(W,annotation(X1,Y,Z),Term),
         u_assert(Term).
 
 ann2(X,Y,Z,X1) :-
-	axiom_r_node(W,X,Y,Z),
+	axiom_r_node(X,Y,Z,W),
 	ann(W,annotation(X1,Y,Z),Term),
         u_assert(Term).
 
@@ -903,7 +903,7 @@ collect_r_nodes :-
 		 test_use_owl(Node,'owl:annotatedSource',S),
 		 test_use_owl(Node,'owl:annotatedProperty',P),
 		 test_use_owl(Node,'owl:annotatedTarget',O)),
-	       (assert(axiom_r_node(Node,S,P,O)),
+	       (assert(axiom_r_node(S,P,O,Node)),
 		use_owl([owl(Node,'rdf:type','owl:Axiom'),
 			 owl(Node,'owl:annotatedSource',S),
 			 owl(Node,'owl:annotatedProperty',P),
@@ -914,7 +914,7 @@ collect_r_nodes :-
 		 test_use_owl(W,'owl:annotatedSource',S),
 		 test_use_owl(W,'owl:annotatedProperty',P),
 		 test_use_owl(W,'owl:annotatedTarget',O)),
-	       (assert(annotation_r_node(Node,S,P,O)),
+	       (assert(annotation_r_node(S,P,O,Node)),
 		use_owl([owl(W,'rdf:type','owl:Annotation'),
 			 owl(W,'owl:annotatedSource',S),
 			 owl(W,'owl:annotatedProperty',P),
@@ -926,7 +926,7 @@ collect_r_nodes :-
 % otherwise []
 
 valid_axiom_annotation_mode(_Mode,S,P,O,List) :-
-	findall(Node,axiom_r_node(Node,S,P,O),List).
+	findall(Node,axiom_r_node(S,P,O,Node),List).
 
 
 owl_parse_axiom(subClassOf(DX,DY),AnnMode,List) :-
