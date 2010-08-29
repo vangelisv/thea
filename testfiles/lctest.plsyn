@@ -1,7 +1,7 @@
 classAssertion(small_green_left_eye,o3p1).
 classAssertion(deformed_blue_right_eye,o4p1).
 
-classAssertion(org,o1).
+classAssertion(organism,o1).
 classAssertion(big_left_ear,o1p1).
 classAssertion(retina_degenerates,o1p2).
 classAssertion(axon_terminals_degenerated_in_ca2,o1p3).
@@ -12,7 +12,7 @@ propertyAssertion(has,o1,o1p1).
 propertyAssertion(has,o1,o1p2).
 propertyAssertion(has,o1,o1p3).
 
-classAssertion(org,o2).
+classAssertion(organism,o2).
 classAssertion(deformed_right_ear,o2p1).
 classAssertion(axon_terminals_degenerated_in_ca3,o2p2).
 classAssertion(atrophied_hippocampus,o2p3).
@@ -23,6 +23,16 @@ propertyAssertion(has,o2,o2p1).
 propertyAssertion(has,o2,o2p2).
 propertyAssertion(has,o2,o2p3).
 
+o1_x < organism and has_part some thin_mm_in_axon_of_dn_of_sn.
+o2_x < organism and has_part some axon_terminals_degenerated_in_ca3.
+o3_x < organism and has_part some axon_degenerated_in_hippocampus.
+o4_x < organism and has_part some (axon_terminal and has_quality some degenerated).
+
+
+probe_2 == organism and has_part some (hippocampus and has_part some (ca3 and has_part some (axon and has_part some (axon_terminal and has_quality some degenerated)))).
+probe_3 == organism and has_part some ((axon and part_of some hippocampus) and has_quality some degenerated).
+
+probe_4 == organism and has_part some (axon and has_part some (axon_terminal and has_quality some degenerated)).
 
 
 small_green_left_eye == left_eye and has_quality some green and has_quality some small.
@@ -34,6 +44,7 @@ retina_degenerates == retina and has_quality some degenerated.
 axon_terminals_degenerated_in_ca2 == ca2 and has_part some (axon_terminal and has_quality some degenerated).
 axon_terminals_degenerated_in_ca3 == ca3 and has_part some (axon_terminal and has_quality some degenerated).
 axon_terminals_degenerated_in_sn == sn and has_part some (axon_terminal and has_quality some degenerated).
+axon_degenerated_in_hippocampus == hippocampus and has_part some (axon and has_quality some degenerated).
 atrophied_hippocampus == hippocampus and has_quality some atrophied.
 atrophied_ca2 == ca2 and has_quality some atrophied.
 deformed_hippocampus == hippocampus and has_quality some deformed.
@@ -46,11 +57,15 @@ ca2 < part_of some hippocampus.
 ca3 < part_of some hippocampus.
 axon < part_of some neuron.
 neuron < cell.
+cell < part_of some organism.
 hippocampus < part_of some brain.
 retina < part_of some brain.
 neuron < part_of some nervous_system.
+brain < organ.
+organism < part_of some organism.
 brain < part_of some nervous_system.
-nerveous_system < system.
+nervous_system < system.
+system < part_of some organism.
 axon_terminal < part_of some axon.
 mitochondrial_membrane == membrane and part_of some mitochondrion.
 mitochondrion < part_of some cell.
@@ -81,6 +96,9 @@ green < color.
 red < color.
 color < quality.
 
+objectProperty(overlaps).
 transitiveProperty(part_of).
 transitiveProperty(has_part).
 inverseProperties(part_of,has_part).
+
+overlaps @< has_part * part_of.
