@@ -136,6 +136,11 @@ plsyn2owl(V,V) :-
         var(V),
         !.
 
+% e.g. r < r1 * r2 *r3 ...
+plsyn2owl(R @< R1*R2,subPropertyOf(propertyChain(Chain),R)) :-
+        plsyn2owl_ec(R1*R2,(*),Chain),
+        !.
+
 plsyn2owl(Pl,Owl) :-
         Pl=..[PlPred|Args],
         plpred2owlpred(PlPred,OwlPred),
@@ -154,9 +159,6 @@ plsyn2owl(Ax--Comments,[PlAx,axiomAnnotation('rdfs:comment',literal(Comments))])
         !,
         plsyn2owl(Ax,PlAx).
 
-% e.g. r < r1 * r2 *r3 ...
-plsyn2owl(R < R1*R2,subPropertyOf(propertyChain(Chain),R)) :-
-        plsyn2owl_ec(R1*R2,(*),Chain).
 
 % we can chain over a=b=c=d as equivalent/sameAs is transitive
 % (note we cannot do this for different/disjoint)
