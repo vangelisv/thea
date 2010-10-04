@@ -290,7 +290,11 @@ subgoal_to_description(description(D,V),V,D).
 
 prolog_clause_to_swrl_rule(Term,SWRL):-
         numbervars(Term,1,_,[functor_name(v)]),
-        prolog_clause_to_swrl_rule2(Term,SWRL).
+        prolog_clause_to_swrl_rule2(Term,SWRL),
+        debug(swrl,'translated: ~w ==> ~w',[Term,SWRL]),
+        !.
+prolog_clause_to_swrl_rule(Term,_):-
+        throw(error(prolog_clause_to_swrl_rule(Term))).
 
 % implications
 prolog_clause_to_swrl_rule2( (C:-A), implies(Ax,Cx) ):-
@@ -424,6 +428,13 @@ owl2_io:load_axioms_hook(File,pl_swrl,Opts) :-
                (   prolog_clause_to_swrl_rule(Term,SWRL_Rule),
                    assert_axiom(SWRL_Rule))).
 
+% Format: pl_swrl_owl
+%  first translates a prolog clause such as
+%  ==
+%  a(X) :- b(X).
+%  ==
+% to a swrl rule, embedded using implies/2.
+% then translate this to an owl subClassOf/2 axiom.
 owl2_io:load_axioms_hook(File,pl_swrl_owl,Opts) :-
         read_file_to_terms(File,Terms,Opts),
         forall(member(Term,Terms),
