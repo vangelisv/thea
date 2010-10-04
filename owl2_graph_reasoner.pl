@@ -3,11 +3,17 @@
 :- module(owl2_graph_reasoner,
           [
            class_ancestor/2,
-           class_ancestor_over/3
+           class_descendant/2,
+           class_ancestor_over/3,
+           graph_reasoner_memoize/0
            ]).
 
 :- use_module(owl2_model).
 :- use_module(owl2_reasoner).
+
+% ----------------------------------------
+% Hooks into owl2_reasoner
+% ----------------------------------------
 
 :- multifile owl2_reasoner:reasoner_ask_hook/2.
 :- multifile owl2_reasoner:initialize_reasoner_hook/3.
@@ -15,12 +21,55 @@
 owl2_reasoner:initialize_reasoner_hook(graph_reasoner,graph_reasoner,_).
 
 owl2_reasoner:reasoner_ask_hook(graph_reasoner,subClassOf(A,B)) :-
+        nonvar(B),
+        var(A),
+	class_descendant(B,A).
+owl2_reasoner:reasoner_ask_hook(graph_reasoner,subClassOf(A,B)) :-
+        \+((nonvar(B),
+            var(A))),
 	class_ancestor(A,B).
 owl2_reasoner:reasoner_ask_hook(graph_reasoner,classAssertion(C,I)) :-
-	individual_ancestor(I,C).
+        nonvar(C),
+        var(I),
+	class_descendant_over(C,I,[inst]).
+owl2_reasoner:reasoner_ask_hook(graph_reasoner,classAssertion(C,I)) :-
+        \+ ((nonvar(C),
+             var(I))),
+        individual_ancestor(I,C).
 owl2_reasoner:reasoner_ask_hook(graph_reasoner,individual_cs(I,J,CS)) :-
 	individual_pair_common_subsumer(I,J,CS).
 
+graph_reasoner_memoize :-
+        %ensure_loaded(library(thea2/tabling)),
+        ensure_loaded(bio(tabling)),
+        table_pred(class_descendant/2),
+        table_pred(class_ancestor/2),
+        table_pred(class_ancestor_over/3),
+        !.
+
+% ----------------------------------------
+% SubProperties
+% ----------------------------------------
+% use standard backward chaining
+% assumes no cycles
+
+subPropertyOfT(A,B) :- subPropertyOf(A,B).
+subPropertyOfT(A,B) :- subPropertyOf(A,Z),subPropertyOfT(Z,B).
+
+subPropertyOfRT(A,A) :- objectProperty(A).
+subPropertyOfRT(A,B) :- subPropertyOfT(A,B).
+
+property_composition(A,B,P) :-
+        transitiveProperty(P),
+        subPropertyOfRT(A,P),
+        subPropertyOfRT(B,P).
+property_composition(A,B,P) :-
+        subPropertyOf(propertyChain([A1,B1]),P),
+        subPropertyOfRT(A,A1),
+        subPropertyOfRT(B,B1).
+calc_property_compositions :-
+        findall(property_composition(A,B,C),
+                assert(cached_property_composition(A,B,C))).
 
 
 % ----------------------------------------
@@ -33,12 +82,16 @@ entity_parent_over(Class,Parent,sub) :-
         equivalent_to(Class,Parent).
 entity_parent_over(someValuesFrom(Prop,Parent),Parent,some-Prop).
 entity_parent_over(allValuesFrom(Prop,Parent),Parent,all-Prop).
+entity_parent_over(hasValue(Prop,Parent),Parent,value-Prop).
 entity_parent_over(intersectionOf(CL),Parent,sub) :-
+        ground(CL),
         member(Parent,CL).
-entity_parent_over(Class,Parent,inst) :-
-        classAssertion(Parent,Class).
+entity_parent_over(I,C,inst) :-
+        classAssertion(C,I).
 entity_parent_over(Class,Parent,irel-Prop) :-
-        propertyAssertion(Prop,Class,Parent).
+        propertyAssertion(Prop,Class,Parent),
+        \+ annotationProperty(Prop),
+        Parent \= literal(_).
 
 /*
 % EXPERIMENTAL:
@@ -76,16 +129,33 @@ combine_prop_pair(irel-Prop,inst,some-Prop).
 
 % we can collapse certain chains of connections
 
+% UP
 entity_parent_chain(Class,Parent,InConns,NewConns) :-
         entity_parent_over(Class,Parent,ConnNext),
         combine_props(InConns,ConnNext,NewConns).
 
-% note that connection list maintained in reverse order
+% DOWN
+entity_child_chain(Class,Child,InConns,NewConns) :-
+        %debug(foo,'testing ~w',[Class]),
+        entity_parent_over(Child,Class,ConnNext),
+        ground(Child),          %  TODO - e.g. x = y and b, b ---> x
+        %debug(foo,'  ~w < ~w',[Child,Class]),
+        % TODO - inverse
+        combine_props_rev(InConns,ConnNext,NewConns).
+
+% use combine_prop_pair/2 to collapse an edge list
+% (note that connection list maintained in reverse order)
 combine_props([ConnPrev|InConns],ConnNext,NewConns) :-
         combine_prop_pair(ConnPrev,ConnNext,NewConn),
         !,
         combine_props(InConns,NewConn,NewConns).
 combine_props(InConns,ConnNext,[ConnNext|InConns]).
+
+combine_props_rev([ConnPrev|InConns],ConnNext,NewConns) :-
+        combine_prop_pair(ConnNext,ConnPrev,NewConn),
+        !,
+        combine_props(InConns,NewConn,NewConns).
+combine_props_rev(InConns,ConnNext,[ConnNext|InConns]).
 
 
 % ----------------------------------------
@@ -94,7 +164,11 @@ combine_props(InConns,ConnNext,[ConnNext|InConns]).
 
 not_excluded(Parent) :- atom(Parent).
 not_excluded(intersectionOf(_)).
+not_excluded(unionOf(_)).
 
+%% class_ancestor(+Class,?ParentExpr)
+% true if ParentExpr is an inferred superclass of Class.
+% ParentExpr can be a named class or a linear class expression.
 class_ancestor(Class,ParentExpr) :-
         class_ancestor_over(Class,Parent,Conns),
         % we exclude class expressions here; there will be an alternate path to the named class
@@ -103,6 +177,21 @@ class_ancestor(Class,ParentExpr) :-
         % build the class expression from the connections
         translate_conns_to_class_expression(Conns,Parent,ParentExpr).
 
+%% class_ancestor_over(+Class,?ParentClass,?Path)
+% true if Path is a path between Class and ParentClass.
+% Path is a list of Quantifier-Property pairs.
+% Path is reduced to the most compact form using OWL semantics.
+class_ancestor_over(ID,PID,Over) :-
+	class_or_expr(ID),
+	debug(graph_reasoner,'class_ancestor_over(~w)',[ID]),
+	entities_ancestors([ID-[]],[],[],L),
+	member(PID-Over,L).
+class_ancestor_over(ID,ID,[]). % Reflexive
+
+
+
+% an edge list can be trabslated to a "linear" class expression.
+% e.g. [some-part_of,some-develops_from] X ==> part_of some develops_from some X
 % remembers, the head of the connection list will refer to the parent
 translate_conns_to_class_expression([Conn|Conns],Parent,ParentExpr) :-
         translate_conn_to_class_expression(Conn,Parent,ParentExpr_1),
@@ -113,21 +202,13 @@ translate_conn_to_class_expression(inst,Parent,Parent) :- !.
 translate_conn_to_class_expression(sub,Parent,Parent) :- !.
 translate_conn_to_class_expression(some-Prop,Parent,someValuesFrom(Prop,Parent)) :- !.
 translate_conn_to_class_expression(all-Prop,Parent,allValuesFrom(Prop,Parent)) :- !.
+translate_conn_to_class_expression(value-Prop,Parent,hasValue(Prop,Parent)) :- !.
 
-
-class_ancestor_over(ID,PID,Over) :-
-	class_or_expr(ID),
-	debug(graph_reasoner,'class_ancestor_over(~w)',[ID]),
-	entities_ancestors([ID-[]],[],[],L),
-	member(PID-Over,L).
-
-class_or_expr(ID) :-
-        var(ID),
-        !,
-        class(ID).
-class_or_expr(_).
-
-%% entities_ancestors(+ScheduledCCPairs,+Visited,+AccumulatedResults,?FinalResults)
+%% entities_ancestors(+ScheduledCCPairs:list, +Visited:list, +AccumulatedResults:list ,?FinalResults:list)
+%
+% internal. traverses up graph, maintaining a list of scheduled nodes. this list is processed one at
+% a time, finding the parents of this node, and putting the resulting edge in the list of accumulated results,
+% and adding the parents to the list of scheduled nodes.
 entities_ancestors([Class-Conns|ScheduledCCPairs],Visisted,ResultCCPairs,FinalCCPairs) :-
 	setof(Parent-NewConns,
               (   entity_parent_chain(Class,Parent,Conns,NewConns),
@@ -141,14 +222,61 @@ entities_ancestors([Class-Conns|ScheduledCCPairs],Visisted,ResultCCPairs,FinalCC
 	!,
         % Class has no parents
 	entities_ancestors(ScheduledCCPairs,[Class-Conns|Visisted],ResultCCPairs,FinalCCPairs).
-entities_ancestors([],_,ResultCCPairs,ResultCCPairs).
+entities_ancestors([],_,ResultCCPairs,ResultCCPairs). % iterature until all scheduled nodes processed
+
+%% class_descendant(+Class,?ChildExpr)
+% true if ChildExpr is an inferred subclass of Class.
+% currently both arguments must be named classes.
+class_descendant(Class,ChildExpr) :-
+        class_descendant_over(Class,ChildExpr,[sub]).
+
+%% class_descendant_over(+Class,?ChildClass,?Path)
+% true if Path is a path between ChildClass and Class
+class_descendant_over(ID,CID,Over) :-
+        class_or_expr(ID),
+	debug(graph_reasoner,'class_descendant_over(~w)',[ID]),
+	entities_descendants([ID-[]],[],[],L),
+	member(CID-Over,L).
+class_descendant_over(ID,ID,[]). % Reflexive
+
+
+%% entities_descendants(+ScheduledCCPairs,+Visited,+AccumulatedResults,?FinalResults)
+%
+% internal. See entities_ancestors/4 for oppsite predicate.
+entities_descendants([Class-Conns|ScheduledCCPairs],Visisted,ResultCCPairs,FinalCCPairs) :-
+	setof(Child-NewConns,
+              (   entity_child_chain(Class,Child,Conns,NewConns),
+                  \+ord_memberchk(Child,Visisted)),
+              NextCCPairs),
+	!,
+	ord_union(ResultCCPairs,NextCCPairs,ResultCCPairsNew),
+        ord_union(ScheduledCCPairs,NextCCPairs,NewScheduledCCPairs),
+	entities_descendants(NewScheduledCCPairs,[Class|Visisted],ResultCCPairsNew,FinalCCPairs).
+entities_descendants([Class-Conns|ScheduledCCPairs],Visisted,ResultCCPairs,FinalCCPairs) :-
+	!,
+        % Class has no parents
+	entities_descendants(ScheduledCCPairs,[Class-Conns|Visisted],ResultCCPairs,FinalCCPairs).
+entities_descendants([],_,ResultCCPairs,ResultCCPairs).
+
+% arg must be either ground class expr or class; if var then
+% enumerate named classes. todo: insts?
+class_or_expr(ID) :-
+        var(ID),
+        !,
+        class(ID).
+class_or_expr(_).
 
 % ----------------------------------------
 % INDIVIDUALS
 % ----------------------------------------
 
+is_individual(ID) :-  namedIndividual(ID).
+is_individual(ID) :-  classAssertion(_,ID).
+
+
 individual_ancestor_over(ID,PID,Over) :-
-        namedIndividual(ID),
+        setof(ID,is_individual(ID),IDs),
+        member(ID,IDs),
 	debug(graph_reasoner,'individual_ancestor_over(~w)',[ID]),
 	entities_ancestors([ID-[]],[],[],L),
 	member(PID-Over,L).
