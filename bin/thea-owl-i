@@ -129,6 +129,9 @@ show_term(T,Opts) :-
         !,
         map_IRIs(use_label_as_IRI,T,T2),
         plsyn_owl(X,T2),
+        (   member(saveopt(show_orig),Opts)
+        ->  format('~q.~n',[T])
+        ;   true),
         (   member(saveopt(no_plquote),Opts)
         ->  format('~w~n',[X])
         ;   format('~q.~n',[X])).
@@ -294,7 +297,7 @@ parse_arg(['--sim',A|L],L,
                     member(X,Xs),
                     member(Y,Ys),
                     X@<Y,
-                    class_pair_least_common_subsumer_ext_combined(_,X,Y,LCS)) )
+                    class_pair_least_common_subsumer_ext_combined(graph_reasoner,X,Y,LCS)) )
          ) :-
         atom_to_term(A,V-T,_),
         copy_term(V-T,X-T1),
@@ -302,9 +305,9 @@ parse_arg(['--sim',A|L],L,
 
 parse_arg(['--sim-pair',X,Y|L],L,
           query(sim(X,Y,LCS),
-                class_pair_least_common_subsumer_ext_combined(_,X,Y,LCS))).
-
-
+                class_pair_least_common_subsumer_ext_combined(graph_reasoner,X,Y,LCS))) :-
+        ensure_loaded(library(thea2/owl2_lcs)),
+        prepare_optimizations(_).
 
 parse_arg(['--load-catalog'|L],L,null) :- load_catalog.
 
