@@ -38,7 +38,6 @@
 :- use_module(owl2_from_rdf).
 :- use_module(owl2_xml).
 :- use_module(owl2_catalog).
-:- use_module(owl2_basic_reasoner).
 :- use_module(owl2_reasoner).
 
 

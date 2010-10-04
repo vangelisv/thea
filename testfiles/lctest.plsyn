@@ -44,6 +44,7 @@ retina_degenerates == retina and has_quality some degenerated.
 axon_terminals_degenerated_in_ca2 == ca2 and has_part some (axon_terminal and has_quality some degenerated).
 axon_terminals_degenerated_in_ca3 == ca3 and has_part some (axon_terminal and has_quality some degenerated).
 axon_terminals_degenerated_in_sn == sn and has_part some (axon_terminal and has_quality some degenerated).
+axon_terminals_degenerated == axon_terminal and has_quality some degenerated.
 axon_degenerated_in_hippocampus == hippocampus and has_part some (axon and has_quality some degenerated).
 atrophied_hippocampus == hippocampus and has_quality some atrophied.
 atrophied_ca2 == ca2 and has_quality some atrophied.
