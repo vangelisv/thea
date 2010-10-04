@@ -63,6 +63,7 @@ reasoner_tell_all(Reasoner) :-
 	forall(axiom(A),
 	       reasoner_tell(Reasoner,A)).
 
+
 %% reasoner_ask(+Reasoner,?Axiom)
 % in general Axiom should be one of
 % * subClassOf/2
@@ -81,7 +82,9 @@ reasoner_ask(_,reflexiveSubClassOf(X,X)) :-
 reasoner_ask(Reasoner,Axiom) :- 
         debug(reasoner,'Reasoner query: ~w',[Axiom]),
 	reasoner_ask_hook(Reasoner,Axiom).
-reasoner_ask(null,Axiom) :-
+reasoner_ask(Reasoner,Axiom) :-
+        nonvar(Reasoner),
+        Reasoner=null,
         Axiom.
 reasoner_ask(cached(_),subClassOf(A,B)) :- cached_subClassOf(A,B).
 reasoner_ask(cached(_),classAssertion(A,B)) :- cached_classAssertion(A,B).
@@ -91,8 +94,10 @@ reasoner_ask(Axiom) :-
         nb_current(reasoner,Reasoner),
         !,
         reasoner_ask(Reasoner,Axiom).
-reasoner_ask(_) :-
-        throw(error(reasoner_not_initialized)).
+reasoner_ask(Axiom) :-
+        reasoner_ask(_,Axiom).
+%reasoner_ask(_) :-
+%        throw(error(reasoner_not_initialized)).
 
 
 
