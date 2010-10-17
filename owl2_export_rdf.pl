@@ -332,6 +332,7 @@ owl2_export_axiom(negativePropertyAssertion(P,A1,A2),main_triple(BNode,'rdf:type
 %
 
 owl2_export_axiom(annotationAssertion(AP,As,Av),main_triple(TAs,AP,TAv)) :- 
+        atom(As), % TODO: see issue#8. axiom annotations result is As=annotation(_,_,_)
 	owl2_export_axiom(As,main_triple(TAs,_,_)),
 	owl2_export_axiom(Av,main_triple(TAv,_,_)),
 	owl_rdf_assert(TAs,AP,TAv),!.
@@ -509,9 +510,9 @@ owl2_export_annotation(Parent,ParentType,S,ParentP,ParentO) :-
 
 reify(SNode,PTerm,OTerm,S,P,O) :-
 	owl_rdf_assert(SNode,PTerm,OTerm),
-	owl_rdf_assert(SNode,'owl:subject',S),
-	owl_rdf_assert(SNode,'owl:predicate',P),
-	owl_rdf_assert(SNode,'owl:object',O).
+	owl_rdf_assert(SNode,'owl:annotatedSource',S),
+	owl_rdf_assert(SNode,'owl:annotatedProperty',P),
+	owl_rdf_assert(SNode,'owl:annotatedTarget',O).
 
 
 
