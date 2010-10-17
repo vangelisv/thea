@@ -615,7 +615,7 @@ axiom_arguments(negativeDataPropertyAssertion,[dataPropertyExpression, individua
 valid_axiom(negativeDataPropertyAssertion(A, B, C)) :- subsumed_by([A, B, C],[dataPropertyExpression, individual, literal]).
 
 %% annotationAssertion(?AnnotationProperty, ?AnnotationSubject, ?AnnotationValue)
-% An annotation assertion AnnotationAssertion( AP as at ) states that the annotation subject as - an IRI or an anonymous individual - is annotated with the annotation property AP and the annotation value av
+% An annotation assertion AnnotationAssertion( AP as av ) states that the annotation subject as - an IRI or an anonymous individual - is annotated with the annotation property AP and the annotation value av
 :- dynamic(annotationAssertion/3).
 :- multifile(annotationAssertion/3).
 axiompred(annotationAssertion/3).
