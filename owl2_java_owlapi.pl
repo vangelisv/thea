@@ -19,6 +19,7 @@ s/* -*- Mode: Prolog -*- */
            inferred_axiom/3,
            reasoner_nr_subClassOf/4,
            reasoner_subClassOf/4,
+           reasoner_subClassOf/5,
            reasoner_equivalent_to/4,
            reasoner_individualOf/4,
            reasoner_nr_individualOf/4,
@@ -259,7 +260,9 @@ inferred_axiom(R,Fac,propertyAssertion(P,I,I2)) :-
 %
 % an unbound variable may be bound to a named class
 % or to a class expression using equivalentClasses/1 -- TODO - this is an axiom not expression        
-        
+%
+% DEPRECATED - use reasoner_nr_subClassOf/5 with final argument 'true'
+
 % reasoner_nr_subClassOf(+R,+Fac,?C,?P)
 reasoner_nr_subClassOf(R,Fac,C,P) :-
         throw(not_implemented),
@@ -291,30 +294,38 @@ reasoner_nr_subClassOf(R,Fac,C,P) :-
 % ?C ?P - find superclasses for all named classes C
 % +C ?P - find superclasses
 % ?C +P - find subclasses
-
-% reasoner_subClassOf(+R,+Fac,?C,?P)
 reasoner_subClassOf(R,Fac,C,P) :-
+        reasoner_subClassOf(R,Fac,C,P,false).
+
+%% reasoner_subClassOf(+R,+Fac,?C,?P,+IsDirect)
+% ?C ?P - find superclasses for all named classes C
+% +C ?P - find superclasses
+% ?C +P - find subclasses
+% IsDirect - true or false
+
+% reasoner_subClassOf(+R,+Fac,?C,?P,+IsDirect)
+reasoner_subClassOf(R,Fac,C,P,IsDirect) :-
         var(C),
         var(P),
         !,
         class(C),
-        reasoner_subClassOf(R,Fac,C,P).
+        reasoner_subClassOf(R,Fac,C,P,IsDirect).
 
-% reasoner_subClassOf(+R,+Fac,+C,?P) 
-reasoner_subClassOf(R,Fac,C,P) :-
+% reasoner_subClassOf(+R,+Fac,+C,?P,+IsDirect) 
+reasoner_subClassOf(R,Fac,C,P,IsDirect) :-
         nonvar(C),
         !,
         pl2javaref(Fac,C,JC),
-        jpl_call(R,getSuperClasses,[JC,@(false)],JPSetSet),
+        jpl_call(R,getSuperClasses,[JC,@(IsDirect)],JPSetSet),
         nodeset_entity(JPSetSet,P).
 
-% reasoner_subClassOf(+R,+Fac,?C,+P) 
-reasoner_subClassOf(R,Fac,C,P) :-
+% reasoner_subClassOf(+R,+Fac,?C,+P,+IsDirect) 
+reasoner_subClassOf(R,Fac,C,P,IsDirect) :-
         nonvar(P),
         !,
         debug(reasoner,'getSubClasses( ~w )',[P]),
         pl2javaref(Fac,P,JP),
-        jpl_call(R,getSubClasses,[JP,@(false)],JCSetSet),
+        jpl_call(R,getSubClasses,[JP,@(IsDirect)],JCSetSet),
         debug(reasoner,'getSubClasses( ~w ) = ~w',[P,JCSetSet]),
         nodeset_entity(JCSetSet,C).
 
@@ -851,6 +862,9 @@ owl2_reasoner:reasoner_tell_all_hook(owlapi_reasoner(OWLReasoner,Fac,_Opts)) :-
 
 owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),subClassOf(A,B)) :-
 	reasoner_subClassOf(R,Fac,A,B).
+
+owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),directSubClassOf(A,B)) :-
+	reasoner_subClassOf(R,Fac,A,B,true).
 
 owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),classAssertion(C,I)) :-
 	reasoner_individualOf(R,Fac,I,C).
