@@ -297,7 +297,7 @@ parse_arg(['--sim',A|L],L,
                     member(X,Xs),
                     member(Y,Ys),
                     X@<Y,
-                    class_pair_least_common_subsumer_ext_combined(X,Y,LCS,[])) )
+                    class_pair_least_common_subsumer(X,Y,LCS,[])) )
          ) :-
         atom_to_term(A,V-T,_),
         copy_term(V-T,X-T1),
@@ -305,7 +305,7 @@ parse_arg(['--sim',A|L],L,
 
 parse_arg(['--sim-pair',X,Y|L],L,
           query(sim(X,Y,LCS),
-                class_pair_least_common_subsumer_ext_combined(X,Y,LCS,[]))) :-
+                class_pair_least_common_subsumer(X,Y,LCS,[]))) :-
         ensure_loaded(library(thea2/owl2_lcs)),
         prepare_optimizations(_).
 

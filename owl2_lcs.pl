@@ -82,9 +82,22 @@ class_pair_common_subsumer(A,B,CS,Opts) :-
         class_pair_common_subsumers(A,B,CSs,Opts),
         member(CS,CSs).
 
+%% class_pair_least_common_subsumer(+ClassA,+ClassB,?LeastCommonSubsumer) is nondet
+% see class_pair_least_common_subsumer/4
+class_pair_least_common_subsumer(A,B,LCS) :-
+        class_pair_least_common_subsumer(A,B,LCS,[]).
+
 %% class_pair_least_common_subsumer(+ClassA,+ClassB,?LeastCommonSubsumer,+Opts:list) is nondet
 % true if LCS subsumes A and B, and there is no more specific class X that also subsumes A and B
 class_pair_least_common_subsumer(A,B,LCS,Opts) :-
+        member(basic(true),Opts),
+        !,
+        class_pair_least_common_subsumer_basic(A,B,LCS,Opts).
+class_pair_least_common_subsumer(A,B,LCS,Opts) :-
+        % default - use ext_combined algorithm
+        class_pair_least_common_subsumer_ext_combined(A,B,LCS,Opts).
+
+class_pair_least_common_subsumer_basic(A,B,LCS,Opts) :-
         class_pair_common_subsumers(A,B,CSs,Opts),
         member(LCS,CSs),
         opts_reasoner(Opts,R),
