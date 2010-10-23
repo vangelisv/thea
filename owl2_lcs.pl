@@ -4,11 +4,7 @@
           [
            prepare_optimizations/1,
            class_pair_common_subsumer/4,
-           class_pair_least_common_subsumer/4,
-           class_pair_common_subsumer_with_union/4,
-           class_pair_common_subsumer_ext/4,
-           class_pair_least_common_subsumer_ext/4,
-           class_pair_least_common_subsumer_ext_combined/4
+           class_pair_least_common_subsumer/4
           ]).
 
 :- use_module(owl2_model).
@@ -19,10 +15,10 @@
 % uses blip tabling module to cache reasoner calls
 % (replace with reasoner caching?)
 prepare_optimizations(_) :-
-        ensure_loaded(library(thea2/tabling)),
-        table_pred(is_subsumed_by/3),
-        table_pred(is_equivalent/3),
-        table_pred(reasoner_get_subsumer/2),
+        ensure_loaded(library(thea2/util/memoization)),
+        %table_pred(is_subsumed_by/3),
+        %table_pred(is_equivalent/3),
+        %table_pred(reasoner_get_subsumer/2),
         graph_reasoner_memoize.
 
 % HARCODE ALERT!!
