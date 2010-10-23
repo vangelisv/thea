@@ -301,7 +301,9 @@ parse_arg(['--sim',A|L],L,
          ) :-
         atom_to_term(A,V-T,_),
         copy_term(V-T,X-T1),
-        copy_term(V-T,Y-T2).
+        copy_term(V-T,Y-T2),
+        ensure_loaded(library(thea2/owl2_lcs)),
+        prepare_optimizations(_). % note - do not prepare a second time!
 
 parse_arg(['--sim-pair',X,Y|L],L,
           query(sim(X,Y,LCS),

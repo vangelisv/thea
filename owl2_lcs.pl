@@ -223,7 +223,7 @@ class_pair_common_subsumer_ext_chain(_,_,_,_,_,CS,CS,Opts).
 
 %% class_pair_least_common_subsumer_ext(+ClassA,+ClassB,?CommonSubsumerExpression,Opts)
 class_pair_least_common_subsumer_ext(A,B,CS_Simple,Opts) :-
-        setof(CS,class_pair_common_subsumer_ext(A,B,CS,Opts),CS_Set),
+        setof(CS,class_pair_common_subsumer_ext(A,B,CS,Opts),CS_Set), % CONSIDER MEMOIZING THIS?
         debug(owlsim_detail,'   calculated set of extended subsumers.',[]),
         member(CS,CS_Set),
         debug(owlsim_detail,'   candidate LCS: ~w',[CS]),
