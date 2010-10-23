@@ -47,35 +47,47 @@ exclude_tr(allValuesFrom(_,X)) :- exclude_tr(X).
 exclude_tr(X) :- exclude(X).
 
 %% reasoner_get_subsumer(+Class,?SuperClass)
-% wrapper for reasoner_ask/2
+% wrapper for reasoner_ask/2 over subClassOf/2 
 reasoner_get_subsumer(C,P) :- 
-        reasoner_ask(_,subClassOf(C,P)),
+        reasoner_get_subsumer(C,P,[]).
+reasoner_get_subsumer(C,P,Opts) :-
+        opts_reasoner(Opts,R),
+        reasoner_ask(R,subClassOf(C,P)),
         \+ exclude_tr(P).
+
+opts_reasoner(Opts,R) :- memberchk(reasoner(R),Opts),!.
+opts_reasoner(_,graph_reasoner).
 
 % TODO - consider renaming all preds class_pair ==> entity_pair (also works for individuals)
 
-%% class_pair_common_subsumers(+Reasoner,+ClassA,+ClassB,?CommonSubsumers:set) is det
+%% class_pair_common_subsumers(+ClassA,+ClassB,?CommonSubsumers:set,+Opts:list) is det
 % CommonSubsumers is the set of classes and class expressions that subsume A and B
-class_pair_common_subsumers(R,A,B,CSs) :-
-        class_pair_common_subsumers(R,A,B,_,_,CSs).
-class_pair_common_subsumers(R,A,B,APs,BPs,CSs) :-
-        debug(owlsim,'finding cs(~w,~w) via ~w',[A,B,R]),
-        setof(X,reasoner_get_subsumer(A,X),APs),
-        setof(X,reasoner_get_subsumer(B,X),BPs),
+class_pair_common_subsumers(A,B,CSs,Opts) :-
+        class_pair_common_subsumers(A,B,_,_,CSs,Opts).
+class_pair_common_subsumers(A,B,APs,BPs,CSs,Opts) :-
+        debug(owlsim,'finding cs(~w,~w) via ~w',[A,B,Opts]),
+        setof(X,reasoner_get_subsumer(A,X,Opts),APs),
+        setof(X,reasoner_get_subsumer(B,X,Opts),BPs),
         debug(owlsim_detail,'   finding intersection',[]),
         ord_intersection(APs,BPs,CSs).
 
-%% class_pair_common_subsumer(+Reasoner,+ClassA,+ClassB,?CommonSubsumer) is nondet
-% see class_pair_common_subsumer/4
-class_pair_common_subsumer(R,A,B,CS) :-
-        class_pair_common_subsumers(R,A,B,CSs),
+%% class_pair_common_subsumer(+ClassA,+ClassB,?CommonSubsumer) is nondet
+% see class_pair_common_subsumers/4
+class_pair_common_subsumer(A,B,CS) :-
+        class_pair_common_subsumer(A,B,CS,[]).
+
+%% class_pair_common_subsumer(+ClassA,+ClassB,?CommonSubsumer,+Opts:list) is nondet
+% see class_pair_common_subsumers/4
+class_pair_common_subsumer(A,B,CS,Opts) :-
+        class_pair_common_subsumers(A,B,CSs,Opts),
         member(CS,CSs).
 
-%% class_pair_least_common_subsumer(+Reasoner,+ClassA,+ClassB,?LeastCommonSubsumer) is nondet
+%% class_pair_least_common_subsumer(+ClassA,+ClassB,?LeastCommonSubsumer,+Opts:list) is nondet
 % true if LCS subsumes A and B, and there is no more specific class X that also subsumes A and B
-class_pair_least_common_subsumer(R,A,B,LCS) :-
-        class_pair_common_subsumers(R,A,B,CSs),
+class_pair_least_common_subsumer(A,B,LCS,Opts) :-
+        class_pair_common_subsumers(A,B,CSs,Opts),
         member(LCS,CSs),
+        opts_reasoner(Opts,R),
         % TODO - equivalence
         \+ ((member(X,CSs),
              X\=LCS,
@@ -85,7 +97,7 @@ class_pair_least_common_subsumer(R,A,B,LCS) :-
 % UNION
 % ----------------------------------------
 
-%% class_pair_common_subsumers_with_union(+Reasoner,+ClassA,+ClassB,?CommonSubsumers:set) is det
+%% class_pair_common_subsumers_with_union(+ClassA,+ClassB,?CommonSubsumers:set,+Opts:list) is det
 %
 % generally not called directly - instead use class_pair_common_subsumer_ext/3, which uses this
 %
@@ -107,17 +119,17 @@ class_pair_least_common_subsumer(R,A,B,LCS) :-
 % these people like in common.
 % (another way to handle this particular example is with a property chain, but we may not
 %  have property chains defined in all situations)
-class_pair_common_subsumers_with_union(R,A,B,CSs) :-
-        setof(CS,class_pair_common_subsumer_with_union(R,A,B,CS),CSs).
+class_pair_common_subsumers_with_union(A,B,CSs,Opts) :-
+        setof(CS,class_pair_common_subsumer_with_union(A,B,CS,Opts),CSs).
 
-class_pair_common_subsumer_with_union(R,A,B,CS) :-
+class_pair_common_subsumer_with_union(A,B,CS,Opts) :-
         debug(owlsim_detail,'finding cs+u(~w,~w)',[A,B]),
-        class_pair_common_subsumers(R,A,B,APs,BPs,_),
+        class_pair_common_subsumers(A,B,APs,BPs,_,Opts),
         member(AP,APs),
         member(BP,BPs),
         mk_union(AP,BP,CS).
-class_pair_common_subsumer_with_union(R,A,B,CS) :-
-        class_pair_common_subsumer(R,A,B,CS).
+class_pair_common_subsumer_with_union(A,B,CS,Opts) :-
+        class_pair_common_subsumer(A,B,CS,Opts).
 
 mk_union(X,someValuesFrom(R,X),unionOf([X,someValuesFrom(R,X)])).
 mk_union(someValuesFrom(R,X),X,unionOf([X,someValuesFrom(R,X)])).
@@ -128,16 +140,16 @@ mk_union(someValuesFrom(R,X),someValuesFrom(R,Y),someValuesFrom(R,U)) :- mk_unio
 % ----------------------------------------
 % finds class expressions
 
-%% class_pair_common_subsumer_ext(+Reasoner,+ClassA,+ClassB,?CommonSubsumerExpression)
+%% class_pair_common_subsumer_ext(+ClassA,+ClassB,?CommonSubsumerExpression,Opts)
 %
 % expression is either intersectionOf(...) | someValuesFrom(Prop,Expr) | unionOf(...)
 %
 % if both C1 and C2 are in the set of common subsumers for A and B,
 % then C1^C2 is also a common subsumer. There may be other common subsumers
 % that can be obtained by "threading" the class expressions together.
-class_pair_common_subsumer_ext(R,A,B,CS_Out) :-
+class_pair_common_subsumer_ext(A,B,CS_Out,Opts) :-
         % first enumerate standard common subsumers
-        class_pair_common_subsumers_with_union(R,A,B,CSs),
+        class_pair_common_subsumers_with_union(A,B,CSs,Opts),
         debug(owlsim_detail,'   union cs(~w, ~w) = ~w',[A,B,CSs]),
 
         % choose candidate pair of classes
@@ -146,101 +158,101 @@ class_pair_common_subsumer_ext(R,A,B,CS_Out) :-
         C1 @< C2, % arbitrary direction
         debug(owlsim_detail,'   candidate intersection: ~w ^ ~w',[C1,C2]),
 
-        \+ subsumes_or_subsumed_by(R,C1,C2),
+        \+ subsumes_or_subsumed_by(C1,C2,Opts),
 
         debug(owlsim_detail,'     NR - now try combining',[]),
         % now make r1 some (r2 some a and b)
-        combine_expr_pair(C1,C2,CS),
+        combine_expr_pair(C1,C2,CS,Opts),
         debug(owlsim_detail,'   candidate combined CS: ~w',[CS]),
 
-        is_subsumed_by_chk(R,A,CS),
-        is_subsumed_by_chk(R,B,CS),
+        is_subsumed_by_chk(A,CS,Opts),
+        is_subsumed_by_chk(B,CS,Opts),
         CS_Out=CS.
-        %class_pair_common_subsumer_ext_chain(R,A,B,CSs,[C1,C2],CS,CS_Out).
+        %class_pair_common_subsumer_ext_chain(A,B,CSs,[C1,C2],CS,CS_Out,Opts).
 
 /*
 % 3-way; not very generic
-xxxclass_pair_common_subsumer_ext(R,A,B,CS_Out) :-
-        class_pair_common_subsumers_with_union(R,A,B,CSs),
+xxxclass_pair_common_subsumer_ext(A,B,CS_Out,Opts) :-
+        class_pair_common_subsumers_with_union(A,B,CSs,Opts),
         select(C1,CSs,CSs_r1),         % eg r1 some (r2 some a)
         select(C2,CSs_r1,CSs_r2),      % eg r1 some (r2 some b)
         member(C3,CSs_r2),                % eg r1 some (r2 some b)
         C1 @< C2, % arbitrary direction
         C2 @< C3,
         debug(owlsim_detail,'   candidate 3-way intersection: ~w ^ ~w ^ ~w',[C1,C2,C3]),
-        \+ subsumes_or_subsumed_by(R,C1,C2),
-        \+ subsumes_or_subsumed_by(R,C1,C3),
-        \+ subsumes_or_subsumed_by(R,C2,C3),
+        \+ subsumes_or_subsumed_by(C1,C2,Opts),
+        \+ subsumes_or_subsumed_by(C1,C3,Opts),
+        \+ subsumes_or_subsumed_by(C2,C3,Opts),
         % now make r1 some (r2 some a and b)
-        combine_expr_pair(C1,C2,CS_x),
-        combine_expr_pair(CS_x,C3,CS),
+        combine_expr_pair(C1,C2,CS_x,Opts),
+        combine_expr_pair(CS_x,C3,CS,Opts),
         debug(owlsim_detail,'   candidate 3-way CS: ~w',[CS]),
-        is_subsumed_by_chk(R,A,CS),
-        is_subsumed_by_chk(R,B,CS),
+        is_subsumed_by_chk(A,CS,Opts),
+        is_subsumed_by_chk(B,CS,Opts),
         CS_Out=CS.
-        %class_pair_common_subsumer_ext_chain(R,A,B,CSs,[C1,C2],CS,CS_Out).
+        %class_pair_common_subsumer_ext_chain(A,B,CSs,[C1,C2],CS,CS_Out,Opts).
 
 
 % DOES NOT WORK YET
-class_pair_common_subsumer_ext_chain(R,A,B,CSs,Used,CS_In,CS_Out) :-
+class_pair_common_subsumer_ext_chain(A,B,CSs,Used,CS_In,CS_Out,Opts) :-
         length(Used,NumUsed),
         NumUsed < 4,
         member(C3,CSs),
         \+ member(C3,Used),
-        \+ subsumes_or_subsumed_by(R,C3,CS_In),
+        \+ subsumes_or_subsumed_by(C3,CS_In),
         (   NumUsed=3
         ->  trace
         ;   true),
-        combine_expr_pair(C3,CS_In,CS_Next),
-        is_subsumed_by_chk(R,A,CS_Next),
-        is_subsumed_by_chk(R,B,CS_Next),
-        class_pair_common_subsumer_ext_chain(R,A,B,CSs,[C3|Used],CS_Next,CS_Out).
-class_pair_common_subsumer_ext_chain(_,_,_,_,_,CS,CS).
+        combine_expr_pair(C3,CS_In,CS_Next,Opts),
+        is_subsumed_by_chk(A,CS_Next,Opts),
+        is_subsumed_by_chk(B,CS_Next,Opts),
+        class_pair_common_subsumer_ext_chain(A,B,CSs,[C3|Used],CS_Next,CS_Out,Opts).
+class_pair_common_subsumer_ext_chain(_,_,_,_,_,CS,CS,Opts).
 */
 
-%% class_pair_least_common_subsumer_ext(+Reasoner,+ClassA,+ClassB,?CommonSubsumerExpression)
-class_pair_least_common_subsumer_ext(R,A,B,CS_Simple) :-
-        setof(CS,class_pair_common_subsumer_ext(R,A,B,CS),CS_Set),
+%% class_pair_least_common_subsumer_ext(+ClassA,+ClassB,?CommonSubsumerExpression,Opts)
+class_pair_least_common_subsumer_ext(A,B,CS_Simple,Opts) :-
+        setof(CS,class_pair_common_subsumer_ext(A,B,CS,Opts),CS_Set),
         debug(owlsim_detail,'   calculated set of extended subsumers.',[]),
         member(CS,CS_Set),
         debug(owlsim_detail,'   candidate LCS: ~w',[CS]),
         % todo - include equivsets? just exclude structurally identical?
         \+ ((member(X,CS_Set),
-             \+ is_equivalent(R,X,CS),
-             is_subsumed_by_chk(R,X,CS),
-             debug(foo,'  fail: is_subsumed_by_chk(~w,~q,~q).',[R,X,CS]))),
+             \+ is_equivalent(X,CS,Opts),
+             is_subsumed_by_chk(X,CS,Opts),
+             debug(foo,'  fail: is_subsumed_by_chk(~q,~q).',[X,CS]))),
         simplify_expr(CS,CS_Simple).
 
 
-%% class_pair_least_common_subsumer_ext_combined(+Reasoner,+ClassA,+ClassB,?CommonSubsumerExpression)
+%% class_pair_least_common_subsumer_ext_combined(+ClassA,+ClassB,?CommonSubsumerExpression,Opts)
 %
 % as class_pair_common_subsumer_ext/4, but combines all subsumers into a single
 % intersectionOf expression
-class_pair_least_common_subsumer_ext_combined(R,A,B,CS_Combined) :-
-        setof(CS,class_pair_least_common_subsumer_ext(R,A,B,CS),CS_Set),
-        normalize_expr(intersectionOf(CS_Set),CS_Combined).
+class_pair_least_common_subsumer_ext_combined(A,B,CS_Combined,Opts) :-
+        setof(CS,class_pair_least_common_subsumer_ext(A,B,CS,Opts),CS_Set),
+        normalize_expr(intersectionOf(CS_Set),CS_Combined,Opts).
 
-%% normalize_expr(+CE,?CE_Norm)
+%% normalize_expr(+CE,?CE_Norm,Opts)
 %
 % generated CEs may have redundant or inconsistent structure
 % TODO: full CNF?
-normalize_expr(intersectionOf([X]),Y) :-
+normalize_expr(intersectionOf([X]),Y,Opts) :-
         !,
-        normalize_expr(X,Y).
-normalize_expr(intersectionOf(L1),Y) :-
+        normalize_expr(X,Y,Opts).
+normalize_expr(intersectionOf(L1),Y,Opts) :-
         % example: (R some (A and B)) and (R some A)
         %  ==> (R some (A and B))
         select(X1,L1,L2),
         select(X2,L2,L3),
-        reasoner_get_subsumer(X1,X2),
+        reasoner_get_subsumer(X1,X2,Opts),
         !,
-        normalize_expr(intersectionOf([X1|L3]),Y).
-normalize_expr(intersectionOf(OuterL),Y) :-
+        normalize_expr(intersectionOf([X1|L3]),Y,Opts).
+normalize_expr(intersectionOf(OuterL),Y,Opts) :-
         setof(X,intersection_member(X,OuterL),Xs),
         Xs\=OuterL,
         !,
-        normalize_expr(intersectionOf(Xs),Y).
-normalize_expr(X,X).
+        normalize_expr(intersectionOf(Xs),Y,Opts).
+normalize_expr(X,X,_Opts).
 
 % e.g. X=car L=[..., (.. and X and ..), ...]
 intersection_member(X,L) :-
@@ -262,7 +274,7 @@ simplify_expr(CE,CE2) :-
 simplify_expr(C,C).
 
 
-%% combine_expr_pair(+CE1,+CE2,?CE_Subsumer)
+%% combine_expr_pair(+CE1,+CE2,?CE_Subsumer,Opts)
 %
 % takes two linear chain expressions C1, C2 and generates class expressions
 % that are the superclass of both C1 and C2.
@@ -287,19 +299,19 @@ simplify_expr(C,C).
 %
 % note this only works for input expressions that are "linear chains" - these can be obtained
 % by following any class up the hierarchy (see the owl2_graph_reasoner algorithm)
-combine_expr_pair(C1,C2,intersectionOf([C1,C2])).
-combine_expr_pair(C1x,C2x,someValuesFrom(R,CE) ) :-
+combine_expr_pair(C1,C2,intersectionOf([C1,C2]),_).
+combine_expr_pair(C1x,C2x,someValuesFrom(R,CE) ,Opts) :-
         C1x=someValuesFrom(R,C1),
         C2x=someValuesFrom(R,C2),
-        \+ subsumes_or_subsumed_by(R,C1,C2),
-        combine_expr_pair(C1,C2,CE).
+        \+ subsumes_or_subsumed_by(C1,C2,Opts),
+        combine_expr_pair(C1,C2,CE,Opts).
 
 /*
-combine_expr_pair(C1x,C2x,CE) :- combine_as_union(C1x,C2x,CE).
-combine_expr_pair(C1x,C2x,CE) :- combine_as_union(C2x,C1x,CE).
+combine_expr_pair(C1x,C2x,CE,Opts) :- combine_as_union(C1x,C2x,CE,Opts).
+combine_expr_pair(C1x,C2x,CE,Opts) :- combine_as_union(C2x,C1x,CE,Opts).
 
 
-combine_as_union(C1x,C2,unionOf(C1x,C2)) :-
+combine_as_union(C1x,C2,unionOf(C1x,C2),Opts) :-
         C1x = someValuesFrom(R,C2).
 */
 
@@ -316,45 +328,46 @@ combine_as_union(C1x,C2,unionOf(C1x,C2)) :-
 % restrictions - these are not implemented in the owl2_graph_reasoner
 % TODO: stratify these
 
-is_equivalent(_,C,C) :- !.
-is_equivalent(Rsnr,C1,C2) :-
-        is_subsumed_by_chk(Rsnr,C1,C2),
-        is_subsumed_by_chk(Rsnr,C2,C1).
+is_equivalent(C,C,_) :- !.
+is_equivalent(C1,C2,Opts) :-
+        is_subsumed_by_chk(C1,C2,Opts),
+        is_subsumed_by_chk(C2,C1,Opts).
 
-subsumes_or_subsumed_by(Rsnr,C1,C2) :-       is_subsumed_by_chk(Rsnr,C1,C2).
-subsumes_or_subsumed_by(Rsnr,C1,C2) :-       is_subsumed_by_chk(Rsnr,C2,C1).
+subsumes_or_subsumed_by(C1,C2,Opts) :-       is_subsumed_by_chk(C1,C2,Opts).
+subsumes_or_subsumed_by(C1,C2,Opts) :-       is_subsumed_by_chk(C2,C1,Opts).
 
-%% is_subsumed_by_chk(+Reasoner,+ClassX,+ClassY) :- is semidet
+%% is_subsumed_by_chk(+ClassX,+ClassY,Opts) :- is semidet
 % semideterministic version of is_subsumed_by/3
-is_subsumed_by_chk(Rsnr,X,Y) :-
+is_subsumed_by_chk(X,Y,Opts) :-
         !,
-        is_subsumed_by(Rsnr,X,Y).
+        is_subsumed_by(X,Y,Opts).
 
-is_subsumed_by(_,X,X).
-is_subsumed_by(Rsnr,X,Y) :-
+is_subsumed_by(X,X,_).
+is_subsumed_by(X,Y,Opts) :-
         atom(X),
         equivalent_to(X,Expr),
         \+ atom(Expr), % avoid cycles - rewrite named classes as expressions only
-        is_subsumed_by(Rsnr,Expr,Y).
-is_subsumed_by(Rsnr,A,unionOf(L)) :-
+        is_subsumed_by(Expr,Y,Opts).
+is_subsumed_by(A,unionOf(L),Opts) :-
         member(X,L),
-        is_subsumed_by(Rsnr,A,X).
-is_subsumed_by(Rsnr,unionOf(L),B) :- % todo (A or B) < (A or B or C)
+        is_subsumed_by(A,X,Opts).
+is_subsumed_by(unionOf(L),B,Opts) :- % todo (A or B) < (A or B or C)
         forall(member(X,L),
-               is_subsumed_by(Rsnr,X,B)).
-is_subsumed_by(Rsnr,A,intersectionOf(L)) :-
+               is_subsumed_by(X,B,Opts)).
+is_subsumed_by(A,intersectionOf(L),Opts) :-
         forall(member(X,L),
-               is_subsumed_by(Rsnr,A,X)).
-is_subsumed_by(Rsnr,intersectionOf(L),B) :-
+               is_subsumed_by(A,X,Opts)).
+is_subsumed_by(intersectionOf(L),B,Opts) :-
         member(X,L),
-        is_subsumed_by(Rsnr,X,B).
-is_subsumed_by(Rsnr,someValuesFrom(P,X),someValuesFrom(P,Y)) :-
-        is_subsumed_by(Rsnr,X,Y).
-is_subsumed_by(Rsnr,someValuesFrom(P,X),someValuesFrom(P,Y)) :-
+        is_subsumed_by(X,B,Opts).
+is_subsumed_by(someValuesFrom(P,X),someValuesFrom(P,Y),Opts) :-
+        is_subsumed_by(X,Y,Opts).
+is_subsumed_by(someValuesFrom(P,X),someValuesFrom(P,Y),Opts) :-
         transitiveProperty(P),
-        is_subsumed_by(Rsnr,X,someValuesFrom(P,Y)).
-is_subsumed_by(Rsnr,A,X) :-
-        reasoner_ask(Rsnr,subClassOf(A,X1)),
+        is_subsumed_by(X,someValuesFrom(P,Y),Opts).
+is_subsumed_by(A,X,Opts) :-
+        opts_reasoner(Opts,R),
+        reasoner_ask(R,subClassOf(A,X1)),
         X1\=A, % non-reflexive
         X=X1.
 
