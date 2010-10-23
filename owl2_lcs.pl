@@ -136,17 +136,23 @@ mk_union(someValuesFrom(R,X),someValuesFrom(R,Y),someValuesFrom(R,U)) :- mk_unio
 % then C1^C2 is also a common subsumer. There may be other common subsumers
 % that can be obtained by "threading" the class expressions together.
 class_pair_common_subsumer_ext(R,A,B,CS_Out) :-
+        % first enumerate standard common subsumers
         class_pair_common_subsumers_with_union(R,A,B,CSs),
         debug(owlsim_detail,'   union cs(~w, ~w) = ~w',[A,B,CSs]),
+
+        % choose candidate pair of classes
         member(C1,CSs),         % eg r1 some (r2 some a)
         member(C2,CSs), % eg r1 some (r2 some b)
         C1 @< C2, % arbitrary direction
         debug(owlsim_detail,'   candidate intersection: ~w ^ ~w',[C1,C2]),
+
         \+ subsumes_or_subsumed_by(R,C1,C2),
+
         debug(owlsim_detail,'     NR - now try combining',[]),
         % now make r1 some (r2 some a and b)
         combine_expr_pair(C1,C2,CS),
         debug(owlsim_detail,'   candidate combined CS: ~w',[CS]),
+
         is_subsumed_by_chk(R,A,CS),
         is_subsumed_by_chk(R,B,CS),
         CS_Out=CS.
@@ -221,6 +227,14 @@ class_pair_least_common_subsumer_ext_combined(R,A,B,CS_Combined) :-
 normalize_expr(intersectionOf([X]),Y) :-
         !,
         normalize_expr(X,Y).
+normalize_expr(intersectionOf(L1),Y) :-
+        % example: (R some (A and B)) and (R some A)
+        %  ==> (R some (A and B))
+        select(X1,L1,L2),
+        select(X2,L2,L3),
+        reasoner_get_subsumer(X1,X2),
+        !,
+        normalize_expr(intersectionOf([X1|L3]),Y).
 normalize_expr(intersectionOf(OuterL),Y) :-
         setof(X,intersection_member(X,OuterL),Xs),
         Xs\=OuterL,

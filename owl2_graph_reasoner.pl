@@ -40,8 +40,8 @@ owl2_reasoner:reasoner_ask_hook(graph_reasoner,individual_cs(I,J,CS)) :-
 	individual_pair_common_subsumer(I,J,CS).
 
 graph_reasoner_memoize :-
-        %ensure_loaded(library(thea2/tabling)),
-        ensure_loaded(bio(tabling)),
+        ensure_loaded(library(thea2/util/memoization)),
+        %ensure_loaded(bio(tabling)),
         table_pred(class_descendant/2),
         table_pred(class_ancestor/2),
         table_pred(class_ancestor_over/3),
