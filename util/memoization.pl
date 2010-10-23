@@ -20,7 +20,7 @@
 
 %% table_preds
 % call table_pred/1 for all predicates for which
-% tabling:memoize_hook/1 is defined
+% memoization:memoize_hook/1 is defined
 table_preds :-
 	forall(memoize_hook(H),
 	       table_pred(H)).

@@ -3,7 +3,9 @@
 :- module(owl2_lcs,
           [
            prepare_optimizations/1,
+           class_pair_common_subsumer/3,
            class_pair_common_subsumer/4,
+           class_pair_least_common_subsumer/3,
            class_pair_least_common_subsumer/4
           ]).
 
@@ -16,9 +18,9 @@
 % (replace with reasoner caching?)
 prepare_optimizations(_) :-
         ensure_loaded(library(thea2/util/memoization)),
-        %table_pred(is_subsumed_by/3),
-        %table_pred(is_equivalent/3),
-        %table_pred(reasoner_get_subsumer/2),
+        table_pred(is_subsumed_by/3),
+        table_pred(is_equivalent/3),
+        table_pred(reasoner_get_subsumer/3),
         graph_reasoner_memoize.
 
 % HARCODE ALERT!!
