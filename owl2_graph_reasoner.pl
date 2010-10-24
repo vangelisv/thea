@@ -205,7 +205,7 @@ class_ancestor_over(ID,PID,Over) :-
 	debug(graph_reasoner,'class_ancestor_over(~w)',[ID]),
 	entities_ancestors([ID-[]],[],[],L),
 	member(PID-Over,L).
-class_ancestor_over(ID,ID,[]). % Reflexive
+class_ancestor_over(ID,ID,[]) :- ground(ID). % Reflexive
 
 
 
@@ -281,10 +281,11 @@ entities_descendants([],_,ResultCCPairs,ResultCCPairs).
 % arg must be either ground class expr or class; if var then
 % enumerate named classes. todo: insts?
 class_or_expr(ID) :-
-        var(ID),
+        \+ ground(ID),
         !,
-        class(ID).
-class_or_expr(_).
+        setof(ID,referenced_description(ID),IDs),
+        member(ID,IDs).
+class_or_expr(ID) :- ground(ID).
 
 % ----------------------------------------
 % INDIVIDUALS

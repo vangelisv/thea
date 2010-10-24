@@ -99,7 +99,8 @@
            axiom_directly_references/2,
            axiom_about/2,
            axiom_references/2,
-
+           referenced_description/1,
+           
            assert_axiom/1,
            assert_axiom/2,
            retract_axiom/1,
@@ -1077,6 +1078,36 @@ axiom_references(Ax,Ref) :-
         axiom_directly_references(Ax,X),
         axiom_or_expression_references(X,Ref).
 
+%% referenced_description(?Desc) is nondet
+% true if Desc is either a class or a class expression using the set of ontologies loaded.
+% Example: if the ontology contains
+% ==
+% subClassOf(a,intersectionOf([b,someValuesFrom(p,c)]))
+% ==
+% then Desc will be a member of [a, b, c, b and p some c, p some c]
+referenced_description(C) :-
+        setof(C,referenced_description_1(C),Cs),
+        member(C,Cs).
+
+referenced_description_1(C) :- class(C).
+referenced_description_1(C) :-
+        subClassOf(A,B),
+        (   referenced_description(A,C)
+        ;   referenced_description(B,C)).
+referenced_description_1(C) :-
+        equivalentClasses(L),
+        member(A,L),
+        referenced_description(A,C).
+referenced_description_1(C) :-
+        classAssertion(A,_),
+        referenced_description(A,C).
+
+% TODO - this is incomplete
+referenced_description(X,X) :- ground(X).
+referenced_description(someValuesFrom(_,X),Y) :- referenced_description(X,Y).
+referenced_description(allValuesFrom(_,X),Y) :- referenced_description(X,Y).
+referenced_description(intersectionOf(L),Y) :- member(X,L),referenced_description(X,Y).
+referenced_description(unionOf(L),Y) :- member(X,L),referenced_description(X,Y).
 
 
 /****************************************

@@ -8,7 +8,6 @@
            class_pair_least_common_subsumer/3,
            class_pair_least_common_subsumer/4,
            individual_neighborhood_expression/3,
-           individual_msc_chain/2,
            individual_msc/3
           ]).
 
@@ -55,8 +54,7 @@ reasoner_get_subsumer(C,P,Opts) :-
         reasoner_ask(R,subClassOf(C,P)),
         \+ exclude_tr(P).
 
-opts_reasoner(Opts,R) :- memberchk(reasoner(R),Opts),!.
-opts_reasoner(_,graph_reasoner).
+opts_reasoner(Opts,R) :- options(reasoner(R),Opts,graph_reasoner),!.
 
 % TODO - consider renaming all preds class_pair ==> entity_pair (also works for individuals)
 
@@ -388,34 +386,46 @@ is_subsumed_by(A,X,Opts) :-
 % INSTANCE GRAPHS
 % ----------------------------------------
 
-translate_links_to_class_expression([Prop-Y|Conns],someValuesFrom(Prop,intersectionOf([C,Z]))) :-
-        classAssertion(C,Y),
-        translate_links_to_class_expression(Conns,Z).
-translate_links_to_class_expression([Prop-Y],someValuesFrom(Prop,C)) :-
-        classAssertion(C,Y).
-
-individual_msc_chain(Individual,ParentExpr) :-
-        individual_ancestor_property_chain(Individual,_,Conns),
-        % TODO - hook to exlcude some?
-
-        reverse(Conns,RevConns),
-        % build the individual expression from the connections
-        translate_links_to_class_expression(RevConns,ParentExpr).
-
-individual_ancestor_property_chain(Indidual,Parent,Chain) :-
-        individual_ancestor_property_chain(Indidual,Parent,Chain,3).
-individual_ancestor_property_chain(ID,PID,Chain,MaxDepth) :-
-        setof(ID,is_individual(ID),IDs),
-        member(ID,IDs),
-	debug(graph_reasoner,'individual_ancestor_over(~w)',[ID]),
-	entities_linkchain([ID-[]],[],[],L,MaxDepth),
-	member(PID-Chain,L).
+individual_msc(Individual,ParentExpr,Opts) :-
+        option(max_depth(MD),Opts,3),
+        individual_neighborhood_expression(Individual,ParentExpr,MD,Opts).
 
 individual_neighborhood_expression(ID,Expr,MaxDepth) :-
+        individual_neighborhood_expression(ID,Expr,MaxDepth,[]).
+individual_neighborhood_expression(ID,Expr,MaxDepth,Opts) :-
         setof(ID,is_individual(ID),IDs),
         member(ID,IDs),
 	debug(graph_reasoner,'individual_ancestor_over(~w)',[ID]),
-	individual_neighbor_graph([0/ID/Expr-Expr],[],MaxDepth).
+	individual_neighbor_graph([0/ID/Expr-Expr],[],MaxDepth,Opts).
+
+individual_neighbor_graph([Depth/I/InnerExpr-_|ScheduledCCPairs],Visisted,MaxDepth,Opts) :-
+        Depth < MaxDepth,
+        classAssertion(C,I),
+        debug(mcs,'C: ~w E: ~w',[ci(C,I),Expr]),
+        DepthPlus1 is Depth+1,
+	setof(Prop-Parent,
+              (   individual_parent_over(I,Parent,Prop),
+                  \+ exclude_entity(Parent,Opts),
+                  \+ord_memberchk(Parent,Visisted)), % TODO; check for subpaths instead
+              NextLinks),
+	!,
+        findall(DepthPlus1/Parent/PE-someValuesFrom(Prop,PE),member(Prop-Parent,NextLinks),PRPairs),
+        prpairs_list(PRPairs,Restrictions),
+        InnerExpr=intersectionOf([C|Restrictions]),
+        debug(mcs,'    E: ~w',[Expr]),
+        append(ScheduledCCPairs,PRPairs,NewScheduledCCPairs),
+        debug(mcs,'    new: ~w',[NewScheduledCCPairs]),
+	individual_neighbor_graph(NewScheduledCCPairs,[I|Visisted],MaxDepth,Opts).
+individual_neighbor_graph([_/I/InnerExpr-_|ScheduledCCPairs],Visisted,MaxDepth,Opts) :-
+	!,
+        % I has no parents, or max depth is reached
+        classAssertion(InnerExpr,I),
+	individual_neighbor_graph(ScheduledCCPairs,[I|Visisted],MaxDepth,Opts).
+individual_neighbor_graph([],_,_,_). % iterature until all scheduled nodes processed
+
+prpairs_list([],[]).
+prpairs_list([_-R|PL],[R|RL]) :-
+        prpairs_list(PL,RL).
 
 is_individual(ID) :-  namedIndividual(ID).
 is_individual(ID) :-  classAssertion(_,ID).
@@ -434,59 +444,9 @@ inverse_of_symm(Prop,InverseProp) :- inverseProperties(Prop,InverseProp),!.
 inverse_of_symm(Prop,InverseProp) :- inverseProperties(InverseProp,Prop),!.
 inverse_of_symm(Prop,inverseOf(Prop)).
 
-individual_neighbor_graph([Depth/I/InnerExpr-_|ScheduledCCPairs],Visisted,MaxDepth) :-
-        Depth < MaxDepth,
-        classAssertion(C,I),
-        debug(mcs,'C: ~w E: ~w',[ci(C,I),Expr]),
-        DepthPlus1 is Depth+1,
-	setof(Prop-Parent,
-              (   individual_parent_over(I,Parent,Prop),
-                  \+ord_memberchk(Parent,Visisted)), % TODO; check for subpaths instead
-              NextLinks),
-	!,
-        findall(DepthPlus1/Parent/PE-someValuesFrom(Prop,PE),member(Prop-Parent,NextLinks),PRPairs),
-        prpairs_list(PRPairs,Restrictions),
-        InnerExpr=intersectionOf([C|Restrictions]),
-        debug(mcs,'    E: ~w',[Expr]),
-        append(ScheduledCCPairs,PRPairs,NewScheduledCCPairs),
-        debug(mcs,'    new: ~w',[NewScheduledCCPairs]),
-	individual_neighbor_graph(NewScheduledCCPairs,[I|Visisted],MaxDepth).
-individual_neighbor_graph([_/I/InnerExpr-_|ScheduledCCPairs],Visisted,MaxDepth) :-
-	!,
-        % I has no parents, or max depth is reached
-        classAssertion(InnerExpr,I),
-	individual_neighbor_graph(ScheduledCCPairs,[I|Visisted],MaxDepth).
-individual_neighbor_graph([],_,_). % iterature until all scheduled nodes processed
-
-prpairs_list([],[]).
-prpairs_list([_-R|PL],[R|RL]) :-
-        prpairs_list(PL,RL).
-
-
-individual_msc(I,MSC,Opts) :-
-        %opts_reasoner(Opts,R),
-        % todo - we want to *not* collapse pairs of predicates here;
-        % e.g. x po y po z ==> X and po some (Y and po some Z)
-        %setof(C,reasoner_ask(R,classAssertion(C,I)),Cs),
-        setof(C,individual_msc_chain(I,C),Cs),
-        classes_nr_subset(Cs,ISet,Opts),
-        normalize_expr(intersectionOf(ISet),MSC,Opts).
-
-classes_nr_subset(Cs,NR_Cs,Opts) :-
-        setof(C,(member(C,Cs),
-                 \+class_redunant_set(C,Cs,Opts)),NR_Cs).
-
-class_redunant_set(C,Cs,Opts) :-
-        member(RC,Cs),
-        RC\=C,
-        class_redundant(C,RC,Opts).
-
-class_redundant(C,RC,Opts) :-
-        is_equivalent(C,RC,Opts),
-        !,
-        C @< RC. % arbitrary direction
-class_redundant(C,RC,Opts) :-
-        is_subsumed_by_chk(RC,C,Opts).
+exclude_entity(X,Opts) :-
+        member(exclude_class(C),Opts),
+        classAssertion(C,X).
 
 
 
