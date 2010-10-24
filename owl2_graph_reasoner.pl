@@ -5,6 +5,8 @@
            class_ancestor/2,
            class_descendant/2,
            class_ancestor_over/3,
+           individual_ancestor/2,
+           individual_ancestor_over/3,
            graph_reasoner_memoize/0
            ]).
 
@@ -36,6 +38,14 @@ owl2_reasoner:reasoner_ask_hook(graph_reasoner,classAssertion(C,I)) :-
         \+ ((nonvar(C),
              var(I))),
         individual_ancestor(I,C).
+owl2_reasoner:reasoner_ask_hook(graph_reasoner,propertyAssertion(P,I,J)) :-
+        nonvar(J),
+        var(I),
+        individual_ancestor_over(I,J,[irel-P]). % TODO - desc
+owl2_reasoner:reasoner_ask_hook(graph_reasoner,propertyAssertion(P,I,J)) :-
+        \+ ((nonvar(J),
+             var(I))),
+        individual_ancestor_over(I,J,[irel-P]). % TODO - chain
 owl2_reasoner:reasoner_ask_hook(graph_reasoner,individual_cs(I,J,CS)) :-
 	individual_pair_common_subsumer(I,J,CS).
 
@@ -63,7 +73,7 @@ property_composition(A,B,P) :-
         subPropertyOfRT(A,P),
         subPropertyOfRT(B,P).
 property_composition(A,B,P) :-
-        subPropertyOf(propertyChain([A1,B1]),P),
+        subPropertyOf(propertyChain([A1,B1]),P), % TODO - longer chains
         subPropertyOfRT(A,A1),
         subPropertyOfRT(B,B1).
 calc_property_compositions :-
@@ -87,10 +97,18 @@ entity_parent_over(intersectionOf(CL),Parent,sub) :-
         member(Parent,CL).
 entity_parent_over(I,C,inst) :-
         classAssertion(C,I).
-entity_parent_over(Class,Parent,irel-Prop) :-
-        propertyAssertion(Prop,Class,Parent),
+entity_parent_over(Child,Parent,irel-Prop) :-
+        propertyAssertion(Prop,Child,Parent),
         \+ annotationProperty(Prop),
         Parent \= literal(_).
+entity_parent_over(Child,Parent,irel-Prop) :-
+        propertyAssertion(InverseProp,Parent,Child),
+        inverse_of_symm(InverseProp,Prop),
+        \+ annotationProperty(Prop),
+        Parent \= literal(_).
+
+inverse_of_symm(Prop,InverseProp) :- inverseProperties(Prop,InverseProp).
+inverse_of_symm(InverseProp,Prop) :- inverseProperties(Prop,InverseProp).
 
 /*
 % EXPERIMENTAL:
@@ -113,12 +131,14 @@ combine_prop_pair(some-Prop,some-Prop,some-Prop) :-
         transitiveProperty(Prop).
 combine_prop_pair(all-Prop,all-Prop,all-Prop) :-
         transitiveProperty(Prop).
-combine_prop_pair(irel-Prop,irel-Prop,irel-Prop) :-
-        transitiveProperty(Prop).
+%combine_prop_pair(irel-Prop,irel-Prop,irel-Prop) :-
+%        transitiveProperty(Prop).
 combine_prop_pair(some-Prop1,some-Prop2,some-Prop3) :-
         subPropertyOf(propertyChain([Prop1,Prop2]),Prop3).
 combine_prop_pair(all-Prop1,all-Prop2,all-Prop3) :-
         subPropertyOf(propertyChain([Prop1,Prop2]),Prop3).
+combine_prop_pair(irel-Prop1,irel-Prop2,irel-Prop3) :-
+        property_composition(Prop1,Prop2,Prop3).
 combine_prop_pair(irel-Prop,inst,some-Prop).
 
 
@@ -178,7 +198,7 @@ class_ancestor(Class,ParentExpr) :-
 
 %% class_ancestor_over(+Class,?ParentClass,?Path)
 % true if Path is a path between Class and ParentClass.
-% Path is a list of Quantifier-Property pairs.
+% Path is a list of Quantifier-Property pairs (ordered from Parent to Class)
 % Path is reduced to the most compact form using OWL semantics.
 class_ancestor_over(ID,PID,Over) :-
 	class_or_expr(ID),
@@ -200,6 +220,7 @@ translate_conns_to_class_expression([],P,P) :- !.
 translate_conn_to_class_expression(inst,Parent,Parent) :- !.
 translate_conn_to_class_expression(sub,Parent,Parent) :- !.
 translate_conn_to_class_expression(some-Prop,Parent,someValuesFrom(Prop,Parent)) :- !.
+translate_conn_to_class_expression(irel-Prop,Parent,someValuesFrom(Prop,Parent)) :- !. %
 translate_conn_to_class_expression(all-Prop,Parent,allValuesFrom(Prop,Parent)) :- !.
 translate_conn_to_class_expression(value-Prop,Parent,hasValue(Prop,Parent)) :- !.
 
@@ -280,6 +301,7 @@ individual_ancestor_over(ID,PID,Over) :-
 	entities_ancestors([ID-[]],[],[],L),
 	member(PID-Over,L).
 
+
 individual_ancestor(Individual,ParentExpr) :-
         individual_ancestor_over(Individual,Parent,Conns),
         % we exclude individual expressions here; there will be an alternate path to the named individual
@@ -288,6 +310,7 @@ individual_ancestor(Individual,ParentExpr) :-
         % build the individual expression from the connections
         translate_conns_to_class_expression(Conns,Parent,ParentExpr).
 
+  
 % ----------------------------------------
 % LCS
 % ----------------------------------------

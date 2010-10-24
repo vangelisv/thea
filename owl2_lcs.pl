@@ -6,7 +6,9 @@
            class_pair_common_subsumer/3,
            class_pair_common_subsumer/4,
            class_pair_least_common_subsumer/3,
-           class_pair_least_common_subsumer/4
+           class_pair_least_common_subsumer/4,
+           individual_msc_chain/2,
+           individual_msc/3
           ]).
 
 :- use_module(owl2_model).
@@ -19,7 +21,6 @@
 prepare_optimizations(_) :-
         ensure_loaded(library(thea2/util/memoization)),
         table_pred(is_subsumed_by/3),
-        table_pred(is_equivalent/3),
         table_pred(reasoner_get_subsumer/3),
         graph_reasoner_memoize.
 
@@ -382,7 +383,101 @@ is_subsumed_by(A,X,Opts) :-
         X1\=A, % non-reflexive
         X=X1.
 
+% ----------------------------------------
+% INSTANCE GRAPHS
+% ----------------------------------------
 
+translate_links_to_class_expression([Prop-Y|Conns],someValuesFrom(Prop,intersectionOf([C,Z]))) :-
+        classAssertion(C,Y),
+        translate_links_to_class_expression(Conns,Z).
+translate_links_to_class_expression([Prop-Y],someValuesFrom(Prop,C)) :-
+        classAssertion(C,Y).
+
+individual_msc_chain(Individual,ParentExpr) :-
+        individual_ancestor_property_chain(Individual,_,Conns),
+        % TODO - hook to exlcude some?
+
+        reverse(Conns,RevConns),
+        % build the individual expression from the connections
+        translate_links_to_class_expression(RevConns,ParentExpr).
+
+individual_ancestor_property_chain(Indidual,Parent,Chain) :-
+        individual_ancestor_property_chain(Indidual,Parent,Chain,3).
+individual_ancestor_property_chain(ID,PID,Chain,MaxDepth) :-
+        setof(ID,is_individual(ID),IDs),
+        member(ID,IDs),
+	debug(graph_reasoner,'individual_ancestor_over(~w)',[ID]),
+	entities_linkchain([ID-[]],[],[],L,MaxDepth),
+	member(PID-Chain,L).
+
+is_individual(ID) :-  namedIndividual(ID).
+is_individual(ID) :-  classAssertion(_,ID).
+
+individual_parent_over(Child,Parent,Prop) :-
+        propertyAssertion(Prop,Child,Parent),
+        \+ annotationProperty(Prop),
+        Parent \= literal(_).
+individual_parent_over(Child,Parent,InverseProp) :-
+        propertyAssertion(Prop,Parent,Child),
+        inverse_of_symm(Prop,InverseProp),
+        \+ annotationProperty(Prop),
+        Parent \= literal(_).
+
+inverse_of_symm(Prop,InverseProp) :- inverseProperties(Prop,InverseProp),!.
+inverse_of_symm(Prop,InverseProp) :- inverseProperties(InverseProp,Prop),!.
+inverse_of_symm(Prop,inverseOf(Prop)).
+
+% find all connections to a maximum depth
+% does not collapse
+entities_linkchain([Class-Conns|ScheduledCCPairs],Visisted,ResultCCPairs,FinalCCPairs) :-
+        entities_linkchain([Class-Conns|ScheduledCCPairs],Visisted,ResultCCPairs,FinalCCPairs,3).
+
+entities_linkchain([Class-Conns|ScheduledCCPairs],Visisted,ResultCCPairs,FinalCCPairs,MaxDepth) :-
+        length(Conns,Depth),
+        Depth < MaxDepth,
+	setof(Parent-[Prop-Parent|Conns],
+              (   individual_parent_over(Class,Parent,Prop),
+                  \+ord_memberchk(Parent,Visisted)), % TODO; check for subpaths instead
+              NextCCPairs),
+	!,
+	ord_union(ResultCCPairs,NextCCPairs,ResultCCPairsNew),
+        ord_union(ScheduledCCPairs,NextCCPairs,NewScheduledCCPairs),
+	entities_linkchain(NewScheduledCCPairs,[Class|Visisted],ResultCCPairsNew,FinalCCPairs,MaxDepth).
+entities_linkchain([Class-Conns|ScheduledCCPairs],Visisted,ResultCCPairs,FinalCCPairs,MaxDepth) :-
+	!,
+        % Class has no parents, or max depth is reached
+	entities_linkchain(ScheduledCCPairs,[Class-Conns|Visisted],ResultCCPairs,FinalCCPairs,MaxDepth).
+entities_linkchain([],_,ResultCCPairs,ResultCCPairs,_). % iterature until all scheduled nodes processed
+
+individual_msc(I,MSC,Opts) :-
+        %opts_reasoner(Opts,R),
+        % todo - we want to *not* collapse pairs of predicates here;
+        % e.g. x po y po z ==> X and po some (Y and po some Z)
+        %setof(C,reasoner_ask(R,classAssertion(C,I)),Cs),
+        setof(C,individual_msc_chain(I,C),Cs),
+        classes_nr_subset(Cs,ISet,Opts),
+        normalize_expr(intersectionOf(ISet),MSC,Opts).
+
+classes_nr_subset(Cs,NR_Cs,Opts) :-
+        setof(C,(member(C,Cs),
+                 \+class_redunant_set(C,Cs,Opts)),NR_Cs).
+
+class_redunant_set(C,Cs,Opts) :-
+        member(RC,Cs),
+        RC\=C,
+        class_redundant(C,RC,Opts).
+
+class_redundant(C,RC,Opts) :-
+        is_equivalent(C,RC,Opts),
+        !,
+        C @< RC. % arbitrary direction
+class_redundant(C,RC,Opts) :-
+        is_subsumed_by_chk(RC,C,Opts).
+
+
+
+
+        
 
 
         

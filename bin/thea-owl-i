@@ -14,7 +14,8 @@ main :-
         append(_SytemArgs, [--|Args], Arguments),
         !,
         set_prolog_flag(verbose,normal),
-        parse_args(Args,Opts),
+        parse_args(Args,Opts_1),
+        flatten(Opts_1,Opts),
         findall(X,
                 member(loadopt(X),Opts),
                 LoadOpts),
@@ -114,6 +115,12 @@ prolog_shell:-
 % ----------------------------------------
 
 show_term(T,Opts) :-
+        select(saveopt(combined),Opts,Opts2),
+        !,
+        write('% '),
+        show_term(T,Opts2),
+        format('~q.~n',[T]).
+show_term(T,Opts) :-
         member(saveopt(tabular),Opts),
         !,
         T=..L,
@@ -166,6 +173,11 @@ show_subterm(T,Sep,Opts) :-
         write(T),
         format(Sep),
         write(X).
+show_subterm(T,_Sep,Opts) :-
+        member(saveopt(plsyn),Opts),
+        !,
+        plsyn_owl(X,T),
+        write(X).
 show_subterm(T,Sep,Opts) :-
         member(saveopt(labels),Opts),
         !,
@@ -177,6 +189,10 @@ show_subterm(T,Sep,Opts) :-
 show_subterm(T,_,_) :-
         write(T).
 
+comma_term_to_list((A,B),[A|L]) :-
+        !,
+        comma_term_to_list(B,L).
+comma_term_to_list(A,[A]).
         
 
 % ----------------------------------------
@@ -216,6 +232,12 @@ arg_info(import,-,'follow import closure (default is to only load the selected f
 
 parse_arg(['--save-opt',A|L],L,saveopt(O)) :- atom_to_term(A,O,_).
 arg_info(save-opt,term,'format dependent: prolog term that is passed to the Options argument for the relevant writer').
+
+parse_arg(['--save-opts',A|L],L,Opts) :-
+        atom_to_term(A,T,_),
+        comma_term_to_list(T,OL),
+        findall(saveopt(O),member(O,OL),Opts).
+
 
 parse_arg(['--save-ontology',X|L],L,saveopt(ontology(X))).
 arg_info(save-ontology,atom,'save selected ontology').

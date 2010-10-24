@@ -415,7 +415,40 @@ rewritten, and the original clauses to be asserted but with a
 different name. The rewritten clauses will call table_call/5,
 which will check to see if the call is subsumed by a previous call; if
 so, use a dynamic cache to present all solutions; if not, call the
-clauses containing the original code
+clauses containing the original code.
+
+   ---+++ Example
+
+  The example above will be rewritten as:
+  
+  ==
+  fib(X,V) :-
+    memoization:table_call(fib(X,V), fib_tabled__(X,V), fib_cached__(X,V), fib_called__(X,V), user).
+
+  fib_tabled__(X,V) :-
+     % original clause...
+
+  % after call fib(4,X).
+  fib_cached__(1, 1).
+  fib_cached__(0, 0).
+  fib_cached__(2, 1).
+  fib_cached__(3, 2).
+  fib_cached__(4, 3).
+
+  fib_called__(1, _).
+  fib_called__(0, _).
+  fib_called__(2, _).
+  fib_called__(3, _).
+  fib_called__(4, _).
+
+  %then we call:
+  %?- fib(5,99).
+  %false.
+
+  % adds:
+  fib_called__(5, 99).
+  
+  ==
 
   ---++ Limitations
 
