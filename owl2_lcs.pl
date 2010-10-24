@@ -54,7 +54,7 @@ reasoner_get_subsumer(C,P,Opts) :-
         reasoner_ask(R,subClassOf(C,P)),
         \+ exclude_tr(P).
 
-opts_reasoner(Opts,R) :- options(reasoner(R),Opts,graph_reasoner),!.
+opts_reasoner(Opts,R) :- option(reasoner(R),Opts,graph_reasoner),!.
 
 % TODO - consider renaming all preds class_pair ==> entity_pair (also works for individuals)
 
