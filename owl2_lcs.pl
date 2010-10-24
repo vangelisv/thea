@@ -434,28 +434,6 @@ inverse_of_symm(Prop,InverseProp) :- inverseProperties(Prop,InverseProp),!.
 inverse_of_symm(Prop,InverseProp) :- inverseProperties(InverseProp,Prop),!.
 inverse_of_symm(Prop,inverseOf(Prop)).
 
-% find all connections to a maximum depth
-% does not collapse
-entities_linkchain([Class-Conns|ScheduledCCPairs],Visisted,ResultCCPairs,FinalCCPairs) :-
-        entities_linkchain([Class-Conns|ScheduledCCPairs],Visisted,ResultCCPairs,FinalCCPairs,3).
-
-entities_linkchain([Class-Conns|ScheduledCCPairs],Visisted,ResultCCPairs,FinalCCPairs,MaxDepth) :-
-        length(Conns,Depth),
-        Depth < MaxDepth,
-	setof(Parent-[Prop-Parent|Conns],
-              (   individual_parent_over(Class,Parent,Prop),
-                  \+ord_memberchk(Parent,Visisted)), % TODO; check for subpaths instead
-              NextCCPairs),
-	!,
-	ord_union(ResultCCPairs,NextCCPairs,ResultCCPairsNew),
-        ord_union(ScheduledCCPairs,NextCCPairs,NewScheduledCCPairs),
-	entities_linkchain(NewScheduledCCPairs,[Class|Visisted],ResultCCPairsNew,FinalCCPairs,MaxDepth).
-entities_linkchain([Class-Conns|ScheduledCCPairs],Visisted,ResultCCPairs,FinalCCPairs,MaxDepth) :-
-	!,
-        % Class has no parents, or max depth is reached
-	entities_linkchain(ScheduledCCPairs,[Class-Conns|Visisted],ResultCCPairs,FinalCCPairs,MaxDepth).
-entities_linkchain([],_,ResultCCPairs,ResultCCPairs,_). % iterature until all scheduled nodes processed
-
 individual_neighbor_graph([Depth/I/InnerExpr-_|ScheduledCCPairs],Visisted,MaxDepth) :-
         Depth < MaxDepth,
         classAssertion(C,I),
