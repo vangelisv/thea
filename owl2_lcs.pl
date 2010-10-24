@@ -7,6 +7,7 @@
            class_pair_common_subsumer/4,
            class_pair_least_common_subsumer/3,
            class_pair_least_common_subsumer/4,
+           individual_neighborhood_expression/3,
            individual_msc_chain/2,
            individual_msc/3
           ]).
@@ -410,6 +411,12 @@ individual_ancestor_property_chain(ID,PID,Chain,MaxDepth) :-
 	entities_linkchain([ID-[]],[],[],L,MaxDepth),
 	member(PID-Chain,L).
 
+individual_neighborhood_expression(ID,Expr,MaxDepth) :-
+        setof(ID,is_individual(ID),IDs),
+        member(ID,IDs),
+	debug(graph_reasoner,'individual_ancestor_over(~w)',[ID]),
+	individual_neighbor_graph([0/ID/Expr-Expr],[],MaxDepth).
+
 is_individual(ID) :-  namedIndividual(ID).
 is_individual(ID) :-  classAssertion(_,ID).
 
@@ -448,6 +455,35 @@ entities_linkchain([Class-Conns|ScheduledCCPairs],Visisted,ResultCCPairs,FinalCC
         % Class has no parents, or max depth is reached
 	entities_linkchain(ScheduledCCPairs,[Class-Conns|Visisted],ResultCCPairs,FinalCCPairs,MaxDepth).
 entities_linkchain([],_,ResultCCPairs,ResultCCPairs,_). % iterature until all scheduled nodes processed
+
+individual_neighbor_graph([Depth/I/InnerExpr-_|ScheduledCCPairs],Visisted,MaxDepth) :-
+        Depth < MaxDepth,
+        classAssertion(C,I),
+        debug(mcs,'C: ~w E: ~w',[ci(C,I),Expr]),
+        DepthPlus1 is Depth+1,
+	setof(Prop-Parent,
+              (   individual_parent_over(I,Parent,Prop),
+                  \+ord_memberchk(Parent,Visisted)), % TODO; check for subpaths instead
+              NextLinks),
+	!,
+        findall(DepthPlus1/Parent/PE-someValuesFrom(Prop,PE),member(Prop-Parent,NextLinks),PRPairs),
+        prpairs_list(PRPairs,Restrictions),
+        InnerExpr=intersectionOf([C|Restrictions]),
+        debug(mcs,'    E: ~w',[Expr]),
+        append(ScheduledCCPairs,PRPairs,NewScheduledCCPairs),
+        debug(mcs,'    new: ~w',[NewScheduledCCPairs]),
+	individual_neighbor_graph(NewScheduledCCPairs,[I|Visisted],MaxDepth).
+individual_neighbor_graph([_/I/InnerExpr-_|ScheduledCCPairs],Visisted,MaxDepth) :-
+	!,
+        % I has no parents, or max depth is reached
+        classAssertion(InnerExpr,I),
+	individual_neighbor_graph(ScheduledCCPairs,[I|Visisted],MaxDepth).
+individual_neighbor_graph([],_,_). % iterature until all scheduled nodes processed
+
+prpairs_list([],[]).
+prpairs_list([_-R|PL],[R|RL]) :-
+        prpairs_list(PL,RL).
+
 
 individual_msc(I,MSC,Opts) :-
         %opts_reasoner(Opts,R),
