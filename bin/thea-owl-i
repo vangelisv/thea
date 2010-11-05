@@ -85,6 +85,9 @@ main :-
         forall(member(reasonerquery(T,G),Opts),
                forall(reasoner_ask(Reasoner,G),
                       show_term(T,Opts))),
+        forall(member(reasonerquery(T,G,IsDirect),Opts),
+               forall(reasoner_ask(Reasoner,G,IsDirect),
+                      show_term(T,Opts))),
         forall(member(reasonercache(G,F),Opts),
                reasoner_cache_to_file(Reasoner,G,F)),
         forall(member(query(T,G),Opts),
@@ -308,6 +311,7 @@ parse_arg(['--check-consistency'|L],L,check_consistency).
 parse_arg(['--reasoner-query',select,TA,where,GA|L],L,reasonerquery( T, G)) :- sformat(A,'q((~w),(~w))',[TA,GA]),atom_to_term(A,q(T,G),_).
 parse_arg(['--reasoner-ask',GA|L],L,reasonerquery( T, G)) :- atom_to_term(GA,G-T,_).
 parse_arg(['--reasoner-ask',GA|L],L,reasonerquery( A, A)) :- atom_to_term(GA,A,_).
+parse_arg(['--reasoner-ask-direct',GA|L],L,reasonerquery( A, A, true)) :- atom_to_term(GA,A,_).
 parse_arg(['--reasoner-ask-all'|L],L,reasonerquery( A, A)).
 parse_arg(['--reasoner-cache-query-to',GA,F|L],L,reasonercache( A, F)) :- atom_to_term(GA,A,_).
 parse_arg(['--reasoner-cache-subclass-to',F|L],L,reasonercache( subClassOf(_,_), F)).
@@ -331,7 +335,7 @@ parse_arg(['--sim-pair',X,Y|L],L,
           query(sim(X,Y,LCS),
                 class_pair_least_common_subsumer(X,Y,LCS,[]))) :-
         ensure_loaded(library(thea2/owl2_lcs)),
-        prepare_optimizations(_). % note - do not prepare a second time!
+        prepare_optimizations(_). 
 
 parse_arg(['--load-catalog'|L],L,null) :- load_catalog.
 
