@@ -15,6 +15,7 @@
 :- dynamic persist_to/2. % track which predspecs are persisted to which files
 :- dynamic persist_to_stream/2. % track which predspecs are persisted to which streams
 :- dynamic cache_file/1. % track the full set of files to be loaded when ready
+:- dynamic is_tabled/2.
 
 :- multifile memoize_hook/1.
 
@@ -44,6 +45,10 @@ table_pred(P):-
         context_module(M),
         table_pred(P,M).
 table_pred(P,M):-
+        is_tabled(M,P),
+        !,
+        debug(tabling,'already tabled: ~w:~w',[M,P]).
+table_pred(P,M):-
         debug(tabling,'context mod ~w, tabling ~w',[M,P]),
         P = F/Arity,
         functor(T,F,Arity),     % T is term with unground args
@@ -59,6 +64,7 @@ table_pred(P,M):-
         % create a single wrapper clause that mimics the original
         % predicate and calls the implementation predicate
         create_tabled_pred_wrap(T,M),
+        assert(is_tabled(M,P)),
 	!.
 table_pred(P,M):-
 	throw(error(table_pred(P,M))).
