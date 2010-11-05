@@ -6,6 +6,7 @@
 	   initialize_reasoner/3,
 	   reasoner_tell/2,
 	   reasoner_tell_all/1,
+	   reasoner_ask/3,
 	   reasoner_ask/2,
            reasoner_ask/1,
 	   reasoner_check_consistency/1,
@@ -17,7 +18,8 @@
 :- multifile owl2_reasoner:initialize_reasoner_hook/3.
 :- multifile owl2_reasoner:reasoner_tell_hook/2.
 :- multifile owl2_reasoner:reasoner_tell_all_hook/1.
-:- multifile owl2_reasoner:reasoner_ask_hook/2.
+:- multifile owl2_reasoner:reasoner_ask_hook/2. % (R,Q)
+:- multifile owl2_reasoner:reasoner_ask_hook/3. % (R,Q,IsDirect)
 
 :- multifile owl2_reasoner:cached_subClassOf/2.
 :- multifile owl2_reasoner:cached_classAssertion/2.
@@ -63,6 +65,11 @@ reasoner_tell_all(Reasoner) :-
 	forall(axiom(A),
 	       reasoner_tell(Reasoner,A)).
 
+
+%% reasoner_ask(+Reasoner,?Axiom,+IsDirect)
+reasoner_ask(Reasoner,Axiom,IsDirect) :-  % experimental
+        debug(reasoner,'Reasoner query: ~w',[Axiom]),
+	reasoner_ask_hook(Reasoner,Axiom,IsDirect).
 
 %% reasoner_ask(+Reasoner,?Axiom)
 % in general Axiom should be one of
