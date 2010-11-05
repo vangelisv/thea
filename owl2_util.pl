@@ -9,6 +9,7 @@
 	   download_import_closure/1,
 	   download_import_closure/2,
            write_owl_as_prolog/0,
+           undeclared_property/3,
            expand_namespaces/0,
            remove_namespaces/0,
            contract_namespaces/0,
@@ -140,6 +141,14 @@ import_url_local(F,Local) :-
 	shell(Cmd).
 import_url_local(F,F).
 
+
+expr_refp(someValuesFrom(P,_),P).
+expr_refp(allValuesFrom(P,_),P).
+undeclared_property(P,A,X) :-
+        axiom_contains_expression(A,X),
+        expr_refp(X,P),
+        atom(P),
+        \+ property(P).
 
 
 
