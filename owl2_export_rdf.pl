@@ -114,7 +114,6 @@ owl_generate_rdf(Ontology,FileName,RDF_Load_Mode) :-
 owl_generate_rdf(Ontology,FileName,RDF_Load_Mode,Opts) :- 
 	(   RDF_Load_Mode=complete -> rdf_retractall(_,_,_); true),
 	retractall(blanknode_gen(_,_)),retractall(blanknode(_,_,_)),
-	debug(owl_generate_rdf,'exporting ~w',[Ontology]),
         % export a fake ontology directive if none specified
         (   var(Ontology)
         ->  owl2_export_axiom(ontology('http://example.org'),_)
@@ -122,7 +121,8 @@ owl_generate_rdf(Ontology,FileName,RDF_Load_Mode,Opts) :-
         (   member(merge(true),Opts)
         ->  true
         ;   SrcOntology=Ontology),
-	debug(owl_generate_rdf,'  ontologyAxiom/2',[]),
+	debug(owl_generate_rdf,'exporting Ont:~w',[Ontology]),
+	debug(owl_generate_rdf,'  gen: ontologyAxiom/2',[]),
 	forall(ontologyAxiom(SrcOntology,Axiom),
 	       (owl2_export_axiom(Axiom,main_triple(S,P,O)),
 		owl2_export_annotation(Axiom,'owl:Axiom',S,P,O))),
@@ -150,6 +150,7 @@ owl_rdf2n3 :-
     write(S1), write(' '), write(P1), write(' '), write(O1), write(' .'),nl,
     fail.
 
+%% owl2_export_axiom(+Axiom, ?Triple) is semidet
 /*
 owl2_export_axiom(X,main_triple(Node,_,_)) :-
 	blanknode_gen(Node,X),!.
@@ -333,9 +334,17 @@ owl2_export_axiom(negativePropertyAssertion(P,A1,A2),main_triple(BNode,'rdf:type
 
 owl2_export_axiom(annotationAssertion(AP,As,Av),main_triple(TAs,AP,TAv)) :- 
         atom(As), % TODO: see issue#8. axiom annotations result is As=annotation(_,_,_)
+        !,
 	owl2_export_axiom(As,main_triple(TAs,_,_)),
 	owl2_export_axiom(Av,main_triple(TAv,_,_)),
 	owl_rdf_assert(TAs,AP,TAv),!.
+
+owl2_export_axiom(annotationAssertion(Ap,As,Av),main_triple(TAs,TAp,TAv)) :-
+        as2rdf_bnode(As,BNode), % As is complex term - see above
+	owl2_export_axiom(Ap,main_triple(TAp,_,_)),
+	owl2_export_axiom(Av,main_triple(TAv,_,_)),
+	owl2_export_axiom(BNode,main_triple(TAs,_,_)).
+        %reify(TAs,TAp,TAv,_,_,_).
 
 %
 % Property Expressions (Descriptions)
@@ -498,15 +507,21 @@ owl2_export_annotation(Parent)
 */    
 
 
+owl2_export_annotation(annotation(_,_,_),_,S,_,_) :-
+        \+ atom(S), % do nothing with this for now - see issue #8
+        !.
 owl2_export_annotation(Parent,ParentType,S,ParentP,ParentO) :-
-	(   Parent = annotation(_,ParentAP,ParentAV) -> P = ParentAP, O = ParentAV,
-	    owl_rdf_assert(S,P,O); 
-	P = ParentP, O = ParentO),
+	(   Parent = annotation(_,ParentAP,ParentAV)
+        ->  P = ParentAP,
+            O = ParentAV,
+	    owl_rdf_assert(S,P,O)
+        ;   P = ParentP, O = ParentO),
 	findall(AP-AV,annotation(Parent,AP,AV),ANNs),
-	(   ANNs = [_|_] -> as2rdf_bnode(Parent,BNode),
+	(   ANNs = [_|_]
+        ->  as2rdf_bnode(Parent,BNode),
 	    reify(BNode,'rdf:type',ParentType,S,P,O),
-	    forall(member(ANN,ANNs),owl2_export_annotation(ANN,'owl:Annotation',BNode,_,_)); 
-	true).
+	    forall(member(ANN,ANNs),owl2_export_annotation(ANN,'owl:Annotation',BNode,_,_))
+        ;   true).
 
 reify(SNode,PTerm,OTerm,S,P,O) :-
 	owl_rdf_assert(SNode,PTerm,OTerm),
