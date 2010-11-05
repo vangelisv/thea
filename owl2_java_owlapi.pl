@@ -33,7 +33,6 @@ s/* -*- Mode: Prolog -*- */
 
 :- multifile owlterm_java/4.
 
-
 prefix('org.semanticweb.owlapi.model').
 
 version_info(Info) :-
@@ -863,11 +862,17 @@ owl2_reasoner:reasoner_tell_all_hook(owlapi_reasoner(OWLReasoner,Fac,_Opts)) :-
 owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),subClassOf(A,B)) :-
 	reasoner_subClassOf(R,Fac,A,B).
 
+owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),subClassOf(A,B),IsDirect) :-
+	reasoner_subClassOf(R,Fac,A,B,IsDirect).
+
 owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),directSubClassOf(A,B)) :-
 	reasoner_subClassOf(R,Fac,A,B,true).
 
 owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),classAssertion(C,I)) :-
 	reasoner_individualOf(R,Fac,I,C).
+
+owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),classAssertion(C,I),IsDirect) :-
+	reasoner_individualOf(R,Fac,I,C,IsDirect).
 
 owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),propertyAssertion(P,A,B)) :-
 	reasoner_objectPropertyAssertion(R,Fac,P,A,B).
