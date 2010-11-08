@@ -225,7 +225,9 @@ owl2plsyn(sameIndividuals(Args),Pl) :-
         maplist(owl2plsyn,Args,Args2),
         list_to_chain(Args2,(=),Pl).
 owl2plsyn(intersectionOf(Args),Pl) :-
-        maplist(owl2plsyn,Args,Args2),
+        % sort atoms first for aesthetic reasons: prefer <a and (r some b)> over <(r some b) and a>
+        sort(Args,ArgsSorted),
+        maplist(owl2plsyn,ArgsSorted,Args2),
         list_to_chain(Args2,and,Pl).
 owl2plsyn(disjointClasses(Args),Pl) :-
         maplist(owl2plsyn,Args,Args2),
