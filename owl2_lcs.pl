@@ -8,7 +8,11 @@
            class_pair_least_common_subsumer/3,
            class_pair_least_common_subsumer/4,
            individual_neighborhood_expression/3,
-           individual_msc/3
+           individual_msc/2,
+           individual_msc/3,
+           description_pivot/2,
+           simple_lcs/5,
+           class_pair_gmatch/3
           ]).
 
 :- use_module(owl2_model).
@@ -386,6 +390,8 @@ is_subsumed_by(A,X,Opts) :-
 % INSTANCE GRAPHS
 % ----------------------------------------
 
+individual_msc(Individual,ParentExpr) :-
+        individual_msc(Individual,ParentExpr,[]).
 individual_msc(Individual,ParentExpr,Opts) :-
         option(max_depth(MD),Opts,3),
         individual_neighborhood_expression(Individual,ParentExpr,MD,Opts).
@@ -395,7 +401,7 @@ individual_neighborhood_expression(ID,Expr,MaxDepth) :-
 individual_neighborhood_expression(ID,Expr,MaxDepth,Opts) :-
         setof(ID,is_individual(ID),IDs),
         member(ID,IDs),
-	debug(graph_reasoner,'individual_ancestor_over(~w)',[ID]),
+	debug(mcs,'individual_nex(~w)',[ID]),
 	individual_neighbor_graph([0/ID/Expr-Expr],[],MaxDepth,Opts).
 
 individual_neighbor_graph([Depth/I/InnerExpr-_|ScheduledCCPairs],Visisted,MaxDepth,Opts) :-
@@ -436,22 +442,447 @@ individual_parent_over(Child,Parent,Prop) :-
         Parent \= literal(_).
 individual_parent_over(Child,Parent,InverseProp) :-
         propertyAssertion(Prop,Parent,Child),
-        inverse_of_symm(Prop,InverseProp),
+        mk_inverse_prop(Prop,InverseProp),
         \+ annotationProperty(Prop),
         Parent \= literal(_).
 
-inverse_of_symm(Prop,InverseProp) :- inverseProperties(Prop,InverseProp),!.
-inverse_of_symm(Prop,InverseProp) :- inverseProperties(InverseProp,Prop),!.
-inverse_of_symm(Prop,inverseOf(Prop)).
+mk_inverse_prop(Prop,InverseProp) :- inverseProperties(Prop,InverseProp),!.
+mk_inverse_prop(Prop,InverseProp) :- inverseProperties(InverseProp,Prop),!.
+mk_inverse_prop(Prop,inverseOf(Prop)).
 
 exclude_entity(X,Opts) :-
         member(exclude_class(C),Opts),
         classAssertion(C,X).
 
+% ----------------------------------------
+% PIVOT
+% ----------------------------------------
+
+%% description_pivot(+InDesc,?OutDesc) is nondet
+% 'rotate' a description around a separate pivot point.
+% an owl description corresponds to a tree, we can re-root the tree at any node.
+% Examples:
+% ==
+% R some X => [X, R' some thing]
+% [A, R some X] => [X, R' some A]
+% [A, B, R some X] = [X, R' some [A,B]]
+% [A, Z, R some [B, S some X]] => [X, S' some [B, R' some [A,Z]]
+% ==
+description_pivot(In,Out) :-
+        description_pivot(In,'owl:Thing',Out_1),
+        remove_owl_thing(Out_1,Out).
+
+%% description_pivot(+InDesc,+AccumDesc,?OutDesc) is nondet
+%
+% recursive descent: select an edge, invert it, point back to remaining
+%  edges from node (this is Accum), traverse to target of selected edge,
+%  passing Accum as argument
+description_pivot(In,Accum,Out) :-
+        d_select_edge(In,P,To,Rest),
+        mk_inverse_prop(P,IP),
+        d_mk_edge(IP,Accum,Rest,NewAccum),
+        description_pivot(To,NewAccum,Out).
+
+% base case: merge Accum (which points back up to remainder of graph)
+% into current node
+description_pivot(In,Accum,Out) :-
+        d_intersect(Accum,In,Out).
+
+%% d_select_edge(+Desc,?Prop,?Desc,?Remaining:list) is nondet
+d_select_edge(intersectionOf(L),P,To,L2) :-
+        select(someValuesFrom(P,To),L,L2).
+d_select_edge(someValuesFrom(P,To),P,To,[]).
+
+%% d_mk_edge(+Prop, +TgtDesc, +Descs:list, ?NewDesc)
+d_mk_edge(Prop,TgtDesc,Descs,someValuesFrom(Prop,NewDesc) ) :-
+        d_cons(TgtDesc,Descs,NewDesc).
+
+% d_cons(+Desc, +DL:list, ?NewDesc)
+d_cons(D,L,New) :-
+        d_cons_1(D,L,NewL),
+        (   NewL=[New]
+        ->  true
+        ;   NewL=[]
+        ->  New='owl:Thing'
+        ;   New=intersectionOf(NewL)).
+d_cons_1('owl:Thing',L,L) :- !.
+d_cons_1(intersectionOf(L1),L2,L3) :-
+        !,
+        append(L1,L2,L3).
+d_cons_1(D,L,[D|L]).
+
+d_intersect(A,B,intersectionOf([A,B])).
+
+remove_owl_thing(intersectionOf(L),intersectionOf(L2)) :-
+        select('owl:Thing',L,L2),
+        !.
+remove_owl_thing(X,X).
+
+% ----------------------------------------
+% SIMPLE LCS
+% ----------------------------------------
+
+simple_class_ancestor_over(X,A,RX) :-
+        class_ancestor_over(X,A,RX),
+        atom(A).
+
+class_ancestors(X,AL) :-
+        setof(A,R^simple_class_ancestor_over(X,A,R),AL).
+
+simple_cs(X,Y,A,RX,RY) :-
+        class_ancestors(X,XAL),
+        class_ancestors(Y,YAL),
+        ord_intersection(XAL,YAL,AL),
+        member(A,AL),
+        simple_class_ancestor_over(X,A,RX),
+        simple_class_ancestor_over(Y,A,RY).
+
+simple_lcs(X,Y,A) :-
+        simple_lcs(X,Y,A,_,_).
+
+simple_lcs(X,Y,A,RA) :-
+        simple_lcs(X,Y,A,RX,RY),
+        relation_union(RX,RY,RA).
+
+simple_lcs(X,Y,A,RX,RY) :-
+        simple_cs(X,Y,A,RX,RY),
+        \+ ((simple_cs(X,Y,A2,RX2,RY2),
+             A2-RX2-RY2 \= A-RX-RY,
+             class_ancestor_over(A2,A,_))). % TODO
+
+relation_union(R,R,R) :- !.
+relation_union(RX,RY,or(RX,RY)) :- !.
+
+simple_lcs_dist(X,Y,A,RA,D) :-
+        simple_lcs(X,Y,A,RA),
+        calc_lcs_dist(X,Y,A,D).
+
+% TODO
+calc_lcs_dist(A,A,A,0) :- !.
+calc_lcs_dist(A,_,A,1) :- !.
+calc_lcs_dist(_,A,A,1) :- !.
+calc_lcs_dist(_,_,_,5).
+
+/*
+simple_lcs(X,Y,A,RX,RY) :-
+        simple_cs(X,Y,A,RX,RY),
+        \+ ((simple_cs(X,Y,A2,RX2,RY2),
+             A2-RX2-RY2 \= A-RX-RY,
+             class_ancestor_over(A2,A,R2),
+             %writeln('**test'(A<A2,R2,RX2,RY2)),
+             (   path_contains(RX2,R2)
+             ;   path_contains(RY2,R2)))).
+
+path_contains(R,R) :- !.
+path_contains([],[_|_]) :- fail,!.
+path_contains(_,[sub]) :- !.
+path_contains(R,Sub) :- append(Sub,_,R),!.
+*/        
+
+% ----------------------------------------
+% GMATCH
+% ----------------------------------------
+
+class_pair_gmatch(L1,L2,M) :-
+        desc_edgeset(L1,S1),
+        desc_edgeset(L2,S2),
+        ord_intersection(S1,S2,M).
+
+%% desc_edgeset(+Desc,?Edges:set) is semidet
+% TODO: singletons
+desc_edgeset(D,EL) :-
+        setof(E,d_edge_tr(D,E),EL).
+
+%% d_edge_tr(+Desc,?Edge) is nondet
+% Edge is an edge in the description, or subpart of the description
+d_edge_tr(SD,E) :-
+        d_edge(SD,E,_).
+d_edge_tr(SD,E) :-
+        d_edge(SD,_,X),
+        d_edge_tr(X,E).
+
+d_edge(SD,e(S,T,R),TD) :-
+        d_named_parent(SD,S),
+        d_conn(SD,R,TD_1),
+        d_extend(TD_1,T,TD).
+
+% d_extent(+In,?NextObj,?NextDesc)
+d_extend(A,B,A) :-
+        d_named_parent(A,B),
+        !.
+d_extend(A,B,X) :-
+        d_conn(A,_P,Z), % TODO
+        d_extend(Z,B,X).
+
+d_conn(someValuesFrom(Prop,Tgt),Prop,Tgt).
+d_conn(intersectionOf(L),Prop,Tgt) :-
+        member(X,L),
+        d_conn(X,Prop,Tgt).
+d_conn(D,Prop,Tgt) :-
+        equivalent_to(D,intersectionOf(L)),
+        member(X,L),
+        d_conn(X,Prop,Tgt).
 
 
+d_named_parent(D,P) :-
+        d_named_parent(D,P,[]).
+
+d_named_parent(intersectionOf(L),P,VL) :-
+        !,
+        member(X,L),
+        d_named_parent(X,P,VL).
+d_named_parent(D,P,VL) :-
+        \+ member(D,VL),
+        equivalent_to(D,EC),
+        !,
+        d_named_parent(EC,P,[D|VL]).
+d_named_parent(D,D,_) :- atom(D).
+
+edge_pair_subsumer_diff(E,E,E,0) :- !.
+edge_pair_subsumer_diff(E1,E2,E3,Dist) :-
+        E1=e(S1,T1,R1),
+        E2=e(S2,T2,R2),
+        E3=e(S3,T3,R3),
+        simple_lcs_dist(S1,S2,S3,_RS3,DS),
+        simple_lcs_dist(T1,T2,T3,_RT3,DT),
+        relation_union(R1,R2,R3), % TODO
+        Dist is DS+DT.
 
         
+d_pair_matching_edges(D1,D2,ML1,ML2) :-
+        desc_edgeset(D1,EL1),
+        desc_edgeset(D2,EL2),
+        e_pairs_scores(EL1,EL2,MEL),
+        findall(m(E1,E2,E3,Diff),
+                (   member(E1,EL1),
+                    best_match1(E1,MEL,E2,E3,Diff)),
+                ML1),
+        findall(m(E1,E2,E3,Diff),
+                (   member(E2,EL2),
+                    best_match1(E2,MEL,E1,E3,Diff)),
+                ML2).
+
+compare_individuals(I1,I2,ML1,ML2) :-
+        individual_msc(I1,D1),
+        individual_msc(I2,D2),
+        d_pair_matching_edges(D1,D2,ML1,ML2).
+
+e_pairs_scores(EL1,EL2,MEL) :-
+        setof(M,e_pairs_member_match(EL1,EL2,M),MEL).
+
+e_pairs_member_match(L1,L2,m(E1,E2,E3,Diff)) :-
+        member(E1,L1),
+        member(E2,L2),
+        debug(gm,'testing: ~w vs ~w',[E1,E2]),
+        edge_pair_subsumer_diff(E1,E2,E3,Diff).
+
+best_match1(E1,MEL,E2,E3,Diff) :-
+        setof(Diff-m(E2,E3),
+              member(m(E1,E2,E3,Diff),MEL),
+              [Diff-m(E2,E3)|_]).
+best_match2(E2,MEL,E1,E3,Diff) :-
+        setof(Diff-m(E1,E3),
+              member(m(E1,E2,E3,Diff),MEL),
+              [Diff-m(E1,E3)|_]).
 
 
-        
+
+/*
+d_parent(D,D).
+d_parent(intersectionOf(L),P) :-
+        member(X,L),
+        d_parent(X,P).
+d_parent(D,P) :-
+        equivalent_to(D,intersectionOf(L)),
+        member(X,L),
+        d_parent(X,P).
+*/
+
+% ----------------------------------------
+% GRAPHS
+% ----------------------------------------
+
+:- multifile user:parse_arg_hook/3.
+user:parse_arg_hook(['--display-object',Ob|L],L,goal(owl2_lcs:display_object(Ob))) :-
+        assume_entity_declarations.
+user:parse_arg_hook(['--display-object-pair',X1,X2|L],L,goal(owl2_lcs:display_object_pair(X1,X2,[]))) :-
+        assume_entity_declarations.
+
+:- use_module(util/dot).
+
+% TODO: Opts
+edge_gterm(e(S,_,_),node(S,[label=N])) :- node_label(S,N).
+edge_gterm(e(_,T,_),node(T,[label=N])) :- node_label(T,N).
+edge_gterm(e(S,T,R),edge(S,T,[label=RL])) :- node_label(R,RL).
+
+
+edge_to_gterm(e(S,T,invis),edge(S,T,[weight=100]),_) :- !.
+edge_to_gterm(e(S,T,R),GT,Opts) :-
+        GT=edge(S,T,[label=RL|Opts]),
+        node_label(R,RL).
+node_to_gterm(N,GT,Opts) :-
+        GT=node(N,[label=NL|Opts]),
+        node_label(N,NL).
+
+node_label(N,NL) :- labelAnnotation_value(N,NL),!.
+node_label(N,N) :- atom(N),!.
+node_label(N,A) :- term_to_atom(N,A).
+
+
+
+edges_to_gterms(EL,GTerms,Opts) :-
+        findall(GT,(member(E,EL),
+                    edge_to_gterm(E,GT,Opts)),
+                GTerms).
+nodes_to_gterms(NL,GTerms,Opts) :-
+        findall(GT,(member(N,NL),
+                    node_to_gterm(N,GT,Opts)),
+                GTerms).
+
+
+desc_gterm(D,graph(g,[],GTerms)) :-
+        desc_edgeset(D,EL),
+        findall(GTerm,
+                (   member(E,EL),
+                    edge_gterm(E,GTerm)),
+                GTerms).
+
+split_set(L1,L2,L3,L1_uniq,L2_uniq) :-
+        ord_intersection(L1,L2,L3),
+        ord_subtract(L1,L3,L1_uniq),
+        ord_subtract(L2,L3,L2_uniq).
+
+
+d_pair_gterm(D1,D2,G,Opts) :-
+        desc_edgeset(D1,EL1),
+        desc_edgeset(D2,EL2),
+        append(EL1,EL2,EL_Union),
+        split_set(EL1,EL2,EL_Intersection,EL1_Uniq,EL2_Uniq),
+        edges_to_nodes(EL1,NL1),
+        edges_to_nodes(EL2,NL2),
+        append(NL1,NL2,NL_Union),
+        fill_edges(NL_Union,EL_Union,EL_Ont,Opts),
+        split_set(NL1,NL2,NL_Intersection,NL1_Uniq,NL2_Uniq),
+        edges_to_gterms(EL1_Uniq,EGTerms1,[color=red]),
+        edges_to_gterms(EL2_Uniq,EGTerms2,[color=blue]),
+        edges_to_gterms(EL_Intersection,EGTerms_Intersection,[color=green,penwidth=5,weight=50]),
+        edges_to_gterms(EL_Ont,EGTerms_Ont,[color=grey,style=dashed,weight=100]),
+        nodes_to_gterms(NL1_Uniq,NGTerms1,[color=red]),
+        nodes_to_gterms(NL2_Uniq,NGTerms2,[color=blue]),
+        nodes_to_gterms(NL_Intersection,NGTerms_Intersection,[fillcolor=green,style=filled]),
+        flatten([EGTerms1,EGTerms2,EGTerms_Intersection,EGTerms_Ont,
+                 NGTerms1,NGTerms2,NGTerms_Intersection],GTerms),
+        gterms_add_ontol_links(NL_Union,graph(g,[],GTerms),G).
+
+gterms_add_ontol_links(Nodes,graph(GN,GProps,GTermsIn),GOut) :-
+        findall(e(N,T,declaredIn),(member(N,Nodes),
+                                   node_ont(N,T)),
+                EL),
+        setof(O,N^member(e(N,O,declaredIn),EL),Onts),
+        nodes_to_gterms(Onts,NTerms,[]),
+        edges_to_gterms(EL,ETerms,[]),
+        flatten([NTerms,ETerms,GTermsIn],GTermsNew),
+        graph_nest(graph(GN,GProps,GTermsNew),GOut,[declaredIn]).
+
+node_ont(N,O) :- ontologyAxiom(O,class(N)),!.
+node_ont(_,'x').
+
+
+
+
+fill_edges(_,_,[],Opts) :-
+        \+ member(fill_edges(true),Opts),
+        !.
+fill_edges(Nodes,Edges,NewEdgesNR,_) :-
+        findall(e(S,T,R),
+                (   member(S,Nodes),
+                    member(T,Nodes),
+                    S\=T,
+                    \+ member(e(S,T,_),Edges),
+                    \+ member(e(T,S,_),Edges),
+                    class_ancestor_over(S,T,RL),
+                    collapse_composite_edge_label(RL,R)),
+                NewEdges_1),
+        sort(NewEdges_1,NewEdges), % uniqify
+        append(Edges,NewEdges,AllEdges),
+        maplist(invert_edge,AllEdges,AllEdgesInv),
+        append(AllEdges,AllEdgesInv,AllEdgesSymm),
+        % TODO - more sophisticated redundancy checking
+        findall(E,
+                (   member(E,NewEdges),
+                    E=e(S,T,R),
+                    \+ ((member(e(S,Z,R),AllEdgesSymm),
+                         member(e(Z,T,R),AllEdgesSymm)
+                        ))),
+                NewEdgesNR).
+
+invert_edge(e(S,T,R),e(T,S,inverseOf(R))).
+
+
+collapse_composite_edge_label(RL,RC) :-
+        findall(Tok,(member(_-R,RL),sformat('~q',[R],Tok)),Toks),
+        reverse(Toks,RToks),
+        concat_atom(RToks,'->',RC).
+
+
+/*
+objs_gterm(OPairs,graph(g,[],GTerms)) :-
+        desc_edgeset(D,EL),
+        findall(GTerm,
+                (   member(E,EL),
+                    edge_gterm(E,GTerm)),
+                GTerms).
+*/
+
+edge_to_node(e(S,_,_),S).
+edge_to_node(e(_,T,_),T).
+
+edges_to_nodes(EL,Nodes) :- setof(N,E^(member(E,EL),edge_to_node(E,N)),Nodes).
+
+
+display_object(N) :-
+        labelAnnotation_value(Ob,N),
+        !,
+        display_object(Ob).
+display_object(Ob) :-       display_individual(Ob), !.
+display_object(Ob) :-       display_desc(Ob), !.
+
+object_gterm(I,G) :-
+        individual_msc(I,D),
+        !,
+        desc_gterm(D,G).
+object_gterm(D,G) :- desc_gterm(D,G).
+
+display_individual(I) :-
+        object_gterm(I,G),
+        graph_display(G,open).
+
+display_desc(D) :-
+        object_gterm(D,G),
+        graph_display(G,open).
+
+obj_desc(X,D) :- individual_msc(X,D),!.
+obj_desc(D,D2) :-
+        % TEMP: this is for NDPO diseases
+        setof(P,subClassOf(D,P),PL),
+        !,
+        D2=intersectionOf([D|PL]).
+obj_desc(D,D).
+
+display_object_pair(N1,N2,Opts) :-
+        labelAnnotation_value(X1,N1),
+        labelAnnotation_value(X2,N2),
+        !,
+        display_object_pair(X1,X2,Opts).
+display_object_pair(X1,X2,Opts) :-
+        obj_desc(X1,D1),
+        obj_desc(X2,D2),
+        d_pair_gterm(D1,D2,G,Opts),
+        graph_display(G,open).
+
+
+
+
+
+
+
