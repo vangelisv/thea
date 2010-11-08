@@ -2,6 +2,7 @@
 
 :- module(owl2_graph_reasoner,
           [
+           entity_parent_over/3,
            class_ancestor/2,
            class_descendant/2,
            class_ancestor_over/3,
@@ -20,8 +21,11 @@
 :- multifile owl2_reasoner:reasoner_ask_hook/2.
 :- multifile owl2_reasoner:initialize_reasoner_hook/3.
 
+:- multifile exclude_chain_hook/2.
+
 owl2_reasoner:initialize_reasoner_hook(graph_reasoner,graph_reasoner,_).
 
+% TODO: we can use more efficient procedures for finding subclasses between two named classes
 owl2_reasoner:reasoner_ask_hook(graph_reasoner,subClassOf(A,B)) :-
         nonvar(B),
         var(A),
@@ -52,8 +56,11 @@ owl2_reasoner:reasoner_ask_hook(graph_reasoner,individual_cs(I,J,CS)) :-
 graph_reasoner_memoize :-
         ensure_loaded(library(thea2/util/memoization)),
         table_pred(class_descendant/2),
+        table_pred(class_descendant_over/3),
         table_pred(class_ancestor/2),
         table_pred(class_ancestor_over/3),
+        table_pred(individual_ancestor/2),
+        table_pred(individual_ancestor_over/3),
         !.
 
 % ----------------------------------------
@@ -123,6 +130,10 @@ subClassOf_or_same(someValuesFrom(Prop,X),someValuesFrom(Prop,Y))) :- subClassOf
 */
 
 % TODO - subPropertyOf
+combine_prop_pair(P,Q,_) :-
+        exclude_chain_hook(P,Q), % TODO - this doesn't have desired effect, want to eliminate altogether
+        !,
+        fail.
 combine_prop_pair(inst,sub,inst).
 combine_prop_pair(sub,sub,sub).
 combine_prop_pair(sub,Q-P,Q-P).
@@ -168,6 +179,10 @@ combine_props([ConnPrev|InConns],ConnNext,NewConns) :-
         combine_prop_pair(ConnPrev,ConnNext,NewConn),
         !,
         combine_props(InConns,NewConn,NewConns).
+combine_props([ConnPrev|_],ConnNext,_) :- % NEW, experimental
+        exclude_chain_hook(ConnPrev,ConnNext),
+        !,
+        fail.
 combine_props(InConns,ConnNext,[ConnNext|InConns]).
 
 combine_props_rev([ConnPrev|InConns],ConnNext,NewConns) :-
@@ -302,7 +317,7 @@ individual_ancestor_over(ID,PID,Over) :-
 	entities_ancestors([ID-[]],[],[],L),
 	member(PID-Over,L).
 
-
+/*
 individual_ancestor(Individual,ParentExpr) :-
         individual_ancestor_over(Individual,Parent,Conns),
         % we exclude individual expressions here; there will be an alternate path to the named individual
@@ -310,8 +325,11 @@ individual_ancestor(Individual,ParentExpr) :-
         not_excluded(Parent),
         % build the individual expression from the connections
         translate_conns_to_class_expression(Conns,Parent,ParentExpr).
+*/
+individual_ancestor(Individual,ParentExpr) :-
+        classAssertion(Class,Individual),
+        class_ancestor(Class,ParentExpr).
 
-  
 % ----------------------------------------
 % LCS
 % ----------------------------------------
