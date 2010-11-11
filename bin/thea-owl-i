@@ -15,7 +15,6 @@ main :-
         current_prolog_flag(argv, Arguments),
         append(_SytemArgs, [--|Args], Arguments),
         !,
-        set_prolog_flag(verbose,normal),
         parse_args(Args,Opts_1),
         flatten(Opts_1,Opts),
         findall(X,
@@ -219,7 +218,7 @@ parse_args([A|Args],[rest(A)|Opts]) :-
 :- discontiguous parse_arg/3.
 :- discontiguous arg_info/3.
 
-parse_arg(['--debug',D|L],L,null) :- debug(D).
+parse_arg(['--debug',D|L],L,null) :- debug(D), set_prolog_flag(verbose,normal).
 arg_info(debug,atom,'(developers) debug target').
 
 parse_arg(['--prolog'|L],L,prolog(true)).

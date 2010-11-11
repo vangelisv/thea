@@ -1,0 +1,245 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl 'http://www.w3.org/2002/07/owl#'>
+    <!ENTITY rdf 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+    <!ENTITY rdfs 'http://www.w3.org/2000/01/rdf-schema#'>
+]>
+
+<rdf:RDF
+    xmlns:owl="&owl;"
+    xmlns:rdf="&rdf;"
+    xmlns:rdfs="&rdfs;"
+>
+<owl:Ontology rdf:about="http://x.org#http:/x.org/cc#"/>
+
+<owl:Class rdf:about="http://x.org#metabolism">
+  <owl:equivalentClass>
+    <owl:Class>
+      <owl:intersectionOf rdf:parseType="Collection">
+        <rdf:Description rdf:about="http://x.org#process"/>
+        <owl:Restriction>
+          <owl:onProperty rdf:resource="http://x.org#has_participant"/>
+          <owl:someValuesFrom rdf:resource="http://x.org#chemical"/>
+        </owl:Restriction>
+      </owl:intersectionOf>
+    </owl:Class>
+  </owl:equivalentClass>
+</owl:Class>
+
+<owl:Class rdf:about="http://x.org#biosynthesis">
+  <owl:equivalentClass>
+    <owl:Class>
+      <owl:intersectionOf rdf:parseType="Collection">
+        <rdf:Description rdf:about="http://x.org#process"/>
+        <owl:Restriction>
+          <owl:onProperty rdf:resource="http://x.org#has_output"/>
+          <owl:someValuesFrom rdf:resource="http://x.org#chemical"/>
+        </owl:Restriction>
+      </owl:intersectionOf>
+    </owl:Class>
+  </owl:equivalentClass>
+</owl:Class>
+
+<owl:Class rdf:about="http://x.org#foo_metabolism">
+  <owl:equivalentClass>
+    <owl:Class>
+      <owl:intersectionOf rdf:parseType="Collection">
+        <rdf:Description rdf:about="http://x.org#process"/>
+        <owl:Restriction>
+          <owl:onProperty rdf:resource="http://x.org#has_participant"/>
+          <owl:someValuesFrom rdf:resource="http://x.org#foo"/>
+        </owl:Restriction>
+      </owl:intersectionOf>
+    </owl:Class>
+  </owl:equivalentClass>
+</owl:Class>
+
+<owl:Class rdf:about="http://x.org#foo_biosynthesis">
+  <owl:equivalentClass>
+    <owl:Class>
+      <owl:intersectionOf rdf:parseType="Collection">
+        <rdf:Description rdf:about="http://x.org#process"/>
+        <owl:Restriction>
+          <owl:onProperty rdf:resource="http://x.org#has_output"/>
+          <owl:someValuesFrom rdf:resource="http://x.org#foo"/>
+        </owl:Restriction>
+      </owl:intersectionOf>
+    </owl:Class>
+  </owl:equivalentClass>
+</owl:Class>
+
+<owl:Class rdf:about="http://x.org#increased_foo">
+  <owl:equivalentClass>
+    <owl:Class>
+      <owl:intersectionOf rdf:parseType="Collection">
+        <rdf:Description rdf:about="http://x.org#increased_level"/>
+        <owl:Restriction>
+          <owl:onProperty rdf:resource="http://x.org#towards"/>
+          <owl:someValuesFrom rdf:resource="http://x.org#foo"/>
+        </owl:Restriction>
+      </owl:intersectionOf>
+    </owl:Class>
+  </owl:equivalentClass>
+</owl:Class>
+
+<owl:Class rdf:about="http://x.org#increased_foo_in_blood">
+  <owl:equivalentClass>
+    <owl:Class>
+      <owl:intersectionOf rdf:parseType="Collection">
+        <rdf:Description rdf:about="http://x.org#increased_level"/>
+        <owl:Restriction>
+          <owl:onProperty rdf:resource="http://x.org#inheres_in"/>
+          <owl:someValuesFrom rdf:resource="http://x.org#blood"/>
+        </owl:Restriction>
+
+        <owl:Restriction>
+          <owl:onProperty rdf:resource="http://x.org#towards"/>
+          <owl:someValuesFrom rdf:resource="http://x.org#foo"/>
+        </owl:Restriction>
+      </owl:intersectionOf>
+    </owl:Class>
+  </owl:equivalentClass>
+</owl:Class>
+
+<owl:Class rdf:about="http://x.org#abnormal_foo">
+  <owl:equivalentClass>
+    <owl:Class>
+      <owl:intersectionOf rdf:parseType="Collection">
+        <rdf:Description rdf:about="http://x.org#abnormal_level"/>
+        <owl:Restriction>
+          <owl:onProperty rdf:resource="http://x.org#towards"/>
+          <owl:someValuesFrom rdf:resource="http://x.org#foo"/>
+        </owl:Restriction>
+      </owl:intersectionOf>
+    </owl:Class>
+  </owl:equivalentClass>
+</owl:Class>
+
+<owl:Class rdf:about="http://x.org#abnormal_foo_in_blood">
+  <owl:equivalentClass>
+    <owl:Class>
+      <owl:intersectionOf rdf:parseType="Collection">
+        <rdf:Description rdf:about="http://x.org#abnormal_level"/>
+        <owl:Restriction>
+          <owl:onProperty rdf:resource="http://x.org#inheres_in"/>
+          <owl:someValuesFrom rdf:resource="http://x.org#blood"/>
+        </owl:Restriction>
+
+        <owl:Restriction>
+          <owl:onProperty rdf:resource="http://x.org#towards"/>
+          <owl:someValuesFrom rdf:resource="http://x.org#foo"/>
+        </owl:Restriction>
+      </owl:intersectionOf>
+    </owl:Class>
+  </owl:equivalentClass>
+</owl:Class>
+
+<owl:Class rdf:about="http://x.org#increased_foo_metabolism">
+  <owl:equivalentClass>
+    <owl:Class>
+      <owl:intersectionOf rdf:parseType="Collection">
+        <rdf:Description rdf:about="http://x.org#increased_rate"/>
+        <owl:Restriction>
+          <owl:onProperty rdf:resource="http://x.org#inheres_in"/>
+          <owl:someValuesFrom rdf:resource="http://x.org#foo_metabolism"/>
+        </owl:Restriction>
+      </owl:intersectionOf>
+    </owl:Class>
+  </owl:equivalentClass>
+</owl:Class>
+
+<owl:Class rdf:about="http://x.org#decreased_foo_metabolism">
+  <owl:equivalentClass>
+    <owl:Class>
+      <owl:intersectionOf rdf:parseType="Collection">
+        <rdf:Description rdf:about="http://x.org#decreased_rate"/>
+        <owl:Restriction>
+          <owl:onProperty rdf:resource="http://x.org#inheres_in"/>
+          <owl:someValuesFrom rdf:resource="http://x.org#foo_metabolism"/>
+        </owl:Restriction>
+      </owl:intersectionOf>
+    </owl:Class>
+  </owl:equivalentClass>
+</owl:Class>
+
+<owl:Class rdf:about="http://x.org#increased_foo_biosynthesis">
+  <owl:equivalentClass>
+    <owl:Class>
+      <owl:intersectionOf rdf:parseType="Collection">
+        <rdf:Description rdf:about="http://x.org#increased_rate"/>
+        <owl:Restriction>
+          <owl:onProperty rdf:resource="http://x.org#inheres_in"/>
+          <owl:someValuesFrom rdf:resource="http://x.org#foo_biosynthesis"/>
+        </owl:Restriction>
+      </owl:intersectionOf>
+    </owl:Class>
+  </owl:equivalentClass>
+</owl:Class>
+
+<owl:Class rdf:about="http://x.org#decreased_foo_biosynthesis">
+  <owl:equivalentClass>
+    <owl:Class>
+      <owl:intersectionOf rdf:parseType="Collection">
+        <rdf:Description rdf:about="http://x.org#decreased_rate"/>
+        <owl:Restriction>
+          <owl:onProperty rdf:resource="http://x.org#inheres_in"/>
+          <owl:someValuesFrom rdf:resource="http://x.org#foo_biosynthesis"/>
+        </owl:Restriction>
+      </owl:intersectionOf>
+    </owl:Class>
+  </owl:equivalentClass>
+</owl:Class>
+
+<owl:Class rdf:about="http://x.org#increased_rate">
+  <owl:equivalentClass>
+    <owl:Class>
+      <owl:intersectionOf rdf:parseType="Collection">
+        <rdf:Description rdf:about="http://x.org#rate"/>
+        <owl:Restriction>
+          <owl:onProperty rdf:resource="http://x.org#magnitude_increased_relative_to"/>
+          <owl:someValuesFrom rdf:resource="http://x.org#normal"/>
+        </owl:Restriction>
+      </owl:intersectionOf>
+    </owl:Class>
+  </owl:equivalentClass>
+</owl:Class>
+
+<owl:Class rdf:about="http://x.org#increased_level">
+  <owl:equivalentClass>
+    <owl:Class>
+      <owl:intersectionOf rdf:parseType="Collection">
+        <rdf:Description rdf:about="http://x.org#level"/>
+        <owl:Restriction>
+          <owl:onProperty rdf:resource="http://x.org#magnitude_increased_relative_to"/>
+          <owl:someValuesFrom rdf:resource="http://x.org#normal"/>
+        </owl:Restriction>
+      </owl:intersectionOf>
+    </owl:Class>
+  </owl:equivalentClass>
+</owl:Class>
+
+<owl:Class rdf:about="http://x.org#rate">
+  <rdfs:subClassOf rdf:resource="http://x.org#quality_of_process"/>
+</owl:Class>
+
+<owl:Class rdf:about="http://x.org#level">
+  <rdfs:subClassOf rdf:resource="http://x.org#quality_of_object"/>
+</owl:Class>
+
+<owl:Class rdf:about="http://x.org#quality_of_process">
+  <rdfs:subClassOf rdf:resource="http://x.org#quality"/>
+</owl:Class>
+
+<owl:Class rdf:about="http://x.org#quality_of_object">
+  <rdfs:subClassOf rdf:resource="http://x.org#quality"/>
+</owl:Class>
+
+<owl:Class rdf:about="http://x.org#foo">
+  <rdfs:subClassOf rdf:resource="http://x.org#chemical"/>
+</owl:Class>
+
+<rdf:Description rdf:about="http://x.org#has_output">
+  <rdfs:subPropertyOf rdf:resource="http://x.org#has_participant"/>
+</rdf:Description>
+
+</rdf:RDF>
