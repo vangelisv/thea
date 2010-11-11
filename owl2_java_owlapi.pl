@@ -86,7 +86,18 @@ build_ontology(Man,Fac,Ont) :-
         forall(axiom(Ax),
                (   debug(owl2,'[[Adding axiom: ~w',[Ax]),
                    add_axiom(Man,Fac,Ont,Ax,_),
-                   debug(owl2,'  /Added axiom: ~w]]',[Ax]))).
+                   debug(owl2,'  /Added axiom: ~w]]',[Ax]))),
+        debug(owl2,'Built ontology',[]).
+
+build_single_ontology(Man,Fac,OntIRI,Ont) :-
+        require_manager(Man),
+        create_ontology(Man,OntIRI,Ont),
+        forall(ontologyAxiom(OntIRI,Ax),
+               (   debug(owl2,'[[Adding axiom: ~w',[Ax]),
+                   add_axiom(Man,Fac,Ont,Ax,_),
+                   debug(owl2,'  /Added axiom: ~w]]',[Ax]))),
+        debug(owl2,'Built ontology',[]).
+
 
 :- multifile owl2_io:load_axioms_hook/3.
 owl2_io:load_axioms_hook(File,owlapi,Opts) :-
@@ -97,11 +108,18 @@ owl2_io:load_axioms_hook(File,owlapi(_Fmt),_Opts) :-
 
 :- multifile owl2_io:save_axioms_hook/3.
 owl2_io:save_axioms_hook(File,owlapi,Opts) :-
-	owl2_io:save_axioms_hook(File,owlapi(_),Opts).
-owl2_io:save_axioms_hook(File,owlapi(_Fmt),_Opts) :-
+        !,
+	owl2_io:save_axioms_hook(File,owlapi(''),Opts).
+owl2_io:save_axioms_hook(File,owlapi(Fmt),Opts) :-
+        member(ontology(OntIRI),Opts),
+        !,
+        create_factory(Man,Fac),
+        build_single_ontology(Man,Fac,OntIRI,Ont),
+        save_ontology(Man,Ont,Fmt,File).
+owl2_io:save_axioms_hook(File,owlapi(Fmt),_Opts) :-
         create_factory(Man,Fac),
         build_ontology(Man,Fac,Ont),
-        save_ontology(Man,Ont,File).
+        save_ontology(Man,Ont,Fmt,File).
 
 %% load_ontology(+Man,?Ont,+File) is det
 % TODO - need to maps java axioms to owlpl axioms
@@ -112,16 +130,26 @@ load_ontology(Man,Ont,File) :-
 
 %% save_ontology(+Man,+Ont,+File) is det
 save_ontology(Man,Ont,File) :-
+        save_ontology(Man,Ont,'',File).
+save_ontology(Man,Ont,Fmt,File) :-
         (   var(File)
         ->  tmp_file(owl,File),
             Tmp=true
         ;   Tmp=fail),
-        atom_javaIRI(File,IRI),
-        jpl_call(Man,saveOntology,[Ont,IRI],_),
+        atom_concat('file://',File,FileIRI),
+        atom_javaIRI(FileIRI,IRI),
+        fmt_cls(Fmt,FmtCls),
+        jpl_new(FmtCls,[],FmtObj),
+        jpl_call(Man,saveOntology,[Ont,FmtObj,IRI],_),
         (   Tmp
         ->  sformat(Cmd,'cat ~w',[File]),
             shell(Cmd)
         ;   true).
+
+fmt_cls(owlxml,'org.semanticweb.owlapi.io.OWLXMLOntologyFormat') :- !.
+fmt_cls(manchester,'org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxOntologyFormat') :- !.
+fmt_cls(_,'org.semanticweb.owlapi.io.RDFXMLOntologyFormat') :- !.
+
 
 
 
