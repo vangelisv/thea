@@ -188,7 +188,7 @@ combine_props(InConns,ConnNext,[ConnNext|InConns]).
 combine_props_rev([ConnPrev|InConns],ConnNext,NewConns) :-
         combine_prop_pair(ConnNext,ConnPrev,NewConn),
         !,
-        combine_props(InConns,NewConn,NewConns).
+        combine_props_rev(InConns,NewConn,NewConns).
 combine_props_rev(InConns,ConnNext,[ConnNext|InConns]).
 
 
@@ -220,9 +220,11 @@ class_ancestor_over(ID,PID,Over) :-
 	debug(graph_reasoner,'class_ancestor_over(~w)',[ID]),
 	entities_ancestors([ID-[]],[],[],L),
 	member(PID-Over,L).
-class_ancestor_over(ID,ID,[]) :- ground(ID). % Reflexive
-
-
+class_ancestor_over(ID,ID,[]) :-
+        ground(ID).             % Reflexive
+class_ancestor_over(ID,ID,[]) :-
+        \+ ground(ID),             % Reflexive
+        class(ID).
 
 % an edge list can be trabslated to a "linear" class expression.
 % e.g. [some-part_of,some-develops_from] X ==> part_of some develops_from some X
