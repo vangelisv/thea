@@ -166,6 +166,7 @@ format_module(write,ttl,owl2_export_rdf).
 format_module(write,plsyn,owl2_plsyn).
 format_module(write,dl_syntax,owl2_dl_syntax).
 format_module(write,dlp,owl2_to_prolog_dlp).
+format_module(write,owlapi(_),owl2_java_owlapi).
 
 
 /** <module>
