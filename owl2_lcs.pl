@@ -27,6 +27,7 @@ prepare_optimizations(_) :-
         ensure_loaded(library(thea2/util/memoization)),
         table_pred(is_subsumed_by/3),
         table_pred(reasoner_get_subsumer/3),
+        table_pred(class_pair_common_subsumer_ext/4),
         graph_reasoner_memoize.
 
 % HARCODE ALERT!!
