@@ -81,7 +81,12 @@ owl_parse_plsyn(File,_Opts) :-
         ->  true
         ;   read_term(IO,PlTerm,[module(owl2_plsyn)]),
             plsyn2owl(PlTerm,Axiom),
-            assert_axiom(Axiom),
+            (   nb_current(ontology,Ont)
+            ->  assert_axiom(Axiom,Ont)
+            ;   assert_axiom(Axiom)),
+            (   Axiom=ontology(OntNew)
+            ->  nb_setval(ontology,OntNew)
+            ;   true),
             fail),
         close(IO).
 
