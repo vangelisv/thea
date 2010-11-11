@@ -51,6 +51,8 @@ main :-
                 ;   print_message(error,reasoner(inconsistent)))
             ;   true)
         ;   true),
+
+        % GOALS AND TRANSFORMATIONS
         forall(member(goal(G),Opts),
                G),
         findall(PoplOpt,
@@ -73,17 +75,7 @@ main :-
                    maplist(writeln(Diffs)))),
           */
         
-        findall(X,
-                (   member(saveopt(X),Opts)
-		;   member(Ont,ConvertOnts),
-		    X=ontology(Ont)), % save this ontology specifically
-                SaveOpts),
-	
-        (   member(output_format(OutFmt),Opts)
-        ->  (   member(output_file(OutFile),Opts)
-            ->  save_axioms(OutFile,OutFmt,SaveOpts)
-            ;   save_axioms(_,OutFmt,SaveOpts))
-        ;   true),
+	% QUERIES
         forall(member(reasonerquery(T,G),Opts),
                forall(reasoner_ask(Reasoner,G),
                       show_term(T,Opts))),
@@ -94,14 +86,20 @@ main :-
                reasoner_cache_to_file(Reasoner,G,F)),
         forall(member(query(T,G),Opts),
                forall(G,show_term(T,Opts))),
-        (   member(qsave(QSF),Opts)
-        ->  ensure_loaded(library('thea2/owl2_export_rdf')),
-            ensure_loaded(library('thea2/owl2_from_rdf')),
-            qsave_program(QSF,
-                          [ goal(prolog_shell),
-                            emulator('/usr/bin/swipl'),
-                            stand_alone(true) ])
+
+        % SAVE
+        findall(X,
+                (   member(saveopt(X),Opts)
+		;   member(Ont,ConvertOnts),
+		    X=ontology(Ont)), % save this ontology specifically
+                SaveOpts),
+        (   member(output_format(OutFmt),Opts)
+        ->  (   member(output_file(OutFile),Opts)
+            ->  save_axioms(OutFile,OutFmt,SaveOpts)
+            ;   save_axioms(_,OutFmt,SaveOpts))
         ;   true),
+
+        % SHELL
         (   member(prolog(true),Opts)
         ->  prolog_shell
         ;   true).
@@ -125,6 +123,11 @@ show_term(T,Opts) :-
         write('% '),
         show_term(T,Opts2),
         format('~q.~n',[T]).
+show_term(T,Opts) :-
+        member(saveopt(tr(T,TG,Ont,Ax)),Opts),
+        !,
+        forall(TG,
+               assert_axiom(Ax,Ont)).
 show_term(T,Opts) :-
         member(saveopt(tabular),Opts),
         !,
@@ -259,7 +262,7 @@ parse_arg(['--load-mod',MA|L],L,null) :- atom_to_term(MA,M,_),ensure_loaded(libr
 
 parse_arg(['--convert',X|L],L,convert(X)).
 
-parse_arg(['--to',Fmt|L],L,output_format(Fmt)).
+parse_arg(['--to',A|L],L,output_format(Fmt)) :- atom_to_term(A,Fmt,_).
 arg_info(to,atom,'output format: one of {owl,owlpl,owlx,...}').
 
 parse_arg(['--out',File|L],L,output_file(File)).
@@ -267,6 +270,9 @@ arg_info(out,filepath,'saves to file (default is standard_output)').
 
 parse_arg(['--rewrite-with-labels'|L],L,goal(use_labels_for_IRIs)).
 arg_info(use-labels,-,'rewrite ontology to switch out all URIs and use labels instead').
+
+parse_arg(['--assume-entity-declarations'|L],L,goal(assume_entity_declarations)).
+
 
 parse_arg(['--use-labels'|L],L,saveopt(labels)).
 arg_info(use-labels,-,'use labels when writing axioms in reporting').
@@ -317,6 +323,7 @@ parse_arg(['--reasoner-ask',GA|L],L,reasonerquery( T, G)) :- atom_to_term(GA,G-T
 parse_arg(['--reasoner-ask',GA|L],L,reasonerquery( A, A)) :- atom_to_term(GA,A,_).
 parse_arg(['--reasoner-ask-direct',GA|L],L,reasonerquery( A, A, true)) :- atom_to_term(GA,A,_).
 parse_arg(['--reasoner-ask-all'|L],L,reasonerquery( A, A)).
+parse_arg(['--reasoner-get-superclasses',C|L],L,reasonerquery( P, subClassOf(C,P))).
 parse_arg(['--reasoner-cache-query-to',GA,F|L],L,reasonercache( A, F)) :- atom_to_term(GA,A,_).
 parse_arg(['--reasoner-cache-subclass-to',F|L],L,reasonercache( subClassOf(_,_), F)).
 
@@ -338,6 +345,14 @@ parse_arg(['--sim',A|L],L,
 parse_arg(['--sim-pair',X,Y|L],L,
           query(sim(X,Y,LCS),
                 class_pair_least_common_subsumer(X,Y,LCS,[]))) :-
+        ensure_loaded(library(thea2/owl2_lcs)),
+        prepare_optimizations(_). 
+parse_arg(['--sim-all'|L],L,
+          query(sim(X,Y,LCS),
+                (   class(X),
+                    class(Y),
+                    class_pair_least_common_subsumer(X,Y,LCS,[])))
+         ) :-
         ensure_loaded(library(thea2/owl2_lcs)),
         prepare_optimizations(_). 
 
