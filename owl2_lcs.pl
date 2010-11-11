@@ -7,6 +7,7 @@
            class_pair_common_subsumer/4,
            class_pair_least_common_subsumer/3,
            class_pair_least_common_subsumer/4,
+           derived_axiom_for_lcs/4,
            individual_neighborhood_expression/3,
            individual_msc/2,
            individual_msc/3,
@@ -66,6 +67,8 @@ opts_reasoner(Opts,R) :- option(reasoner(R),Opts,graph_reasoner),!.
 % CommonSubsumers is the set of classes and class expressions that subsume A and B
 class_pair_common_subsumers(A,B,CSs,Opts) :-
         class_pair_common_subsumers(A,B,_,_,CSs,Opts).
+
+%% class_pair_common_subsumers(+ClassA,+ClassB,?AncsA:set,?AncsB:set,?CommonSubsumers:set,+Opts:list) is det
 class_pair_common_subsumers(A,B,APs,BPs,CSs,Opts) :-
         debug(owlsim,'finding cs(~w,~w) via ~w',[A,B,Opts]),
         setof(X,reasoner_get_subsumer(A,X,Opts),APs),
@@ -139,16 +142,45 @@ class_pair_common_subsumers_with_union(A,B,CSs,Opts) :-
 
 class_pair_common_subsumer_with_union(A,B,CS,Opts) :-
         debug(owlsim_detail,'finding cs+u(~w,~w)',[A,B]),
-        class_pair_common_subsumers(A,B,APs,BPs,_,Opts),
+        %class_pair_common_subsumers(A,B,APs,BPs,_,Opts),
+        setof(X,reasoner_get_subsumer(A,X,Opts),APs),
+        setof(X,reasoner_get_subsumer(B,X,Opts),BPs),
         member(AP,APs),
         member(BP,BPs),
-        mk_union(AP,BP,CS).
+        debug(owlsim_detail,' candidate_u(~w,~w)',[AP,BP]),
+        mk_union(AP,BP,U),
+        debug(owlsim_detail,' U(~w,~w) = ~w',[AP,BP,U]),
+        flatten_union(U,CS),
+        debug(owlsim_detail,' U_normalized(~w,~w) == ~w',[AP,BP,CS]).
+
 class_pair_common_subsumer_with_union(A,B,CS,Opts) :-
         class_pair_common_subsumer(A,B,CS,Opts).
 
-mk_union(X,someValuesFrom(R,X),unionOf([X,someValuesFrom(R,X)])).
-mk_union(someValuesFrom(R,X),X,unionOf([X,someValuesFrom(R,X)])).
-mk_union(someValuesFrom(R,X),someValuesFrom(R,Y),someValuesFrom(R,U)) :- mk_union(X,Y,U).
+%mk_union(X,someValuesFrom(R,X),unionOf([X,someValuesFrom(R,X)])).
+%mk_union(someValuesFrom(R,X),X,unionOf([X,someValuesFrom(R,X)])).
+%mk_union(someValuesFrom(R,X),someValuesFrom(R,Y),someValuesFrom(R,U)) :- mk_union(X,Y,U).
+
+mk_union(X,X,X) :- !.
+mk_union(someValuesFrom(R,X),Y,unionOf([someValuesFrom(R,X),Y]) ) :-
+        mk_union(X,Y,_).
+mk_union(X,someValuesFrom(R,Y),unionOf([X,someValuesFrom(R,Y)]) ) :-
+        mk_union(X,Y,_).
+
+% TODO: cvt to NF
+flatten_union(unionOf(InL),unionOf(OutL)) :-
+        !,
+        findall(X,
+                (   member(Top,InL),
+                    flatten_union(Top,TopF),
+                    (   TopF=unionOf(NestL)
+                    ->  member(X,NestL)
+                    ;   X=TopF)),
+                OutL).
+flatten_union(X,X).
+
+
+
+
 
 % ----------------------------------------
 % EXTENDED - experimental
@@ -225,9 +257,16 @@ class_pair_common_subsumer_ext_chain(A,B,CSs,Used,CS_In,CS_Out,Opts) :-
 class_pair_common_subsumer_ext_chain(_,_,_,_,_,CS,CS,Opts).
 */
 
+all_class_pair_common_subsumer_ext(A,B,CS_Set,Opts) :-
+        setof(CS,class_pair_common_subsumer_ext(A,B,CS,Opts),CS_Set), % CONSIDER MEMOIZING THIS?
+        !.
+all_class_pair_common_subsumer_ext(A,B,CS_Set,Opts) :-
+        % no intersections found, return basic set
+        class_pair_common_subsumers_with_union(A,B,CS_Set,Opts).
+
 %% class_pair_least_common_subsumer_ext(+ClassA,+ClassB,?CommonSubsumerExpression,Opts)
 class_pair_least_common_subsumer_ext(A,B,CS_Simple,Opts) :-
-        setof(CS,class_pair_common_subsumer_ext(A,B,CS,Opts),CS_Set), % CONSIDER MEMOIZING THIS?
+        all_class_pair_common_subsumer_ext(A,B,CS_Set,Opts), % CONSIDER MEMOIZING THIS?
         debug(owlsim_detail,'   calculated set of extended subsumers.',[]),
         member(CS,CS_Set),
         debug(owlsim_detail,'   candidate LCS: ~w',[CS]),
@@ -385,6 +424,56 @@ is_subsumed_by(A,X,Opts) :-
         reasoner_ask(R,subClassOf(A,X1)),
         X1\=A, % non-reflexive
         X=X1.
+
+% ----------------------------------------
+% AXIOM GENERATION
+% ----------------------------------------
+
+% EXAMPLE:
+% ==
+% thea --assume-entity-declarations  testfiles/clinchem.plsyn  --save-opt "tr(sim(X,Y,A),derived_axiom_for_lcs(X,Y,A,Ax),'http://z.org#',Ax)" --sim-pair  increased_foo_metabolism increased_foo --to owl --save-ontology 'http://z.org#'
+% ==
+
+
+derived_axiom_for_lcs(X,Y,LCS,Axiom) :-
+        hack_name(X,Y,LCS_Named),
+        debug(owlsim,'lcs_named: ~w',[LCS_Named]),
+        Axioms =
+        [
+         subClassOf(X,LCS_Named),
+         subClassOf(Y,LCS_Named),
+         class(LCS_Named),
+         equivalentClasses([LCS_Named,LCS])
+        ],
+        member(Axiom,Axioms).
+
+split_on(A,D,X,Y) :-
+        sub_atom(A,P,_,_,D),
+        sub_atom(A,0,P,_,X),
+        Pp1 is P+1,
+        sub_atom(A,Pp1,_,0,Y).
+hack_name(X,Y,N) :-
+        D='#',
+        split_on(X,D,Pre,RX),
+        split_on(Y,D,Pre,RY),
+        concat_atom([Pre,D,'LCS-',RX,'-vs-',RY],N),
+        !.
+hack_name(X,_,N) :-
+        !,
+        gensym('-lcs',Z),
+        atom_concat(X,Z,N).
+xxhack_name(X,Y,N) :-
+        (   D='/'
+        ;   D='_'),
+        concat_atom([Pre|L1],D,X),
+        concat_atom([Pre|L2],D,Y),
+        append(L1,L2,L3),
+        concat_atom([Pre|L3],D,N),
+        !.
+
+
+        
+
 
 % ----------------------------------------
 % INSTANCE GRAPHS
