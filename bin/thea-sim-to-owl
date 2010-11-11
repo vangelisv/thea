@@ -1,0 +1,2 @@
+#!/bin/sh
+thea-jpl --save-opt "tr(sim(X,Y,A),derived_axiom_for_lcs(X,Y,A,Ax),'http://z.org#',Ax)" --to "owlapi(manchester)" --save-ontology 'http://z.org#' "$@"
