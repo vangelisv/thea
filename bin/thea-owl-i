@@ -203,6 +203,22 @@ comma_term_to_list(A,[A]).
         
 
 % ----------------------------------------
+% LOOKUP
+% ----------------------------------------
+
+lookup(X,X) :- entity(X),!.
+lookup(N,X) :- labelAnnotation_value(N,X),!.
+lookup(N,X) :-
+        % URI suffix
+        entity(X),
+        sub_atom(X,_,_,0,N),
+        !.
+lookup(N,_) :-
+        throw(error(cannot_find(N))).
+
+
+
+% ----------------------------------------
 % OPTION PROCESSING
 % ----------------------------------------
 
@@ -341,9 +357,11 @@ parse_arg(['--sim',A|L],L,
         ensure_loaded(library(thea2/owl2_lcs)),
         prepare_optimizations(_). % note - do not prepare a second time!
 
-parse_arg(['--sim-pair',X,Y|L],L,
+parse_arg(['--sim-pair',XN,YN|L],L,
           query(sim(X,Y,LCS),
-                class_pair_least_common_subsumer(X,Y,LCS,[]))) :-
+                (   lookup(XN,X),
+                    lookup(YN,Y),
+                    class_pair_least_common_subsumer(X,Y,LCS,[])))) :-
         ensure_loaded(library(thea2/owl2_lcs)),
         prepare_optimizations(_). 
 parse_arg(['--sim-all'|L],L,
@@ -360,3 +378,9 @@ parse_arg(['--load-catalog'|L],L,null) :- load_catalog.
 parse_arg(['--qsave',File|L],L,qsave(File)).
 
 parse_arg(L1,L2,X) :- user:parse_arg_hook(L1,L2,X).
+
+
+% GALAXY:
+
+:- multifile rdf_db:rdf_file_type/3.
+rdf_db:rdf_file_type(dat,xml).
