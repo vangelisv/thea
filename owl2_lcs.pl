@@ -166,6 +166,10 @@ mk_union(someValuesFrom(R,X),Y,unionOf([someValuesFrom(R,X),Y]) ) :-
         mk_union(X,Y,_).
 mk_union(X,someValuesFrom(R,Y),unionOf([X,someValuesFrom(R,Y)]) ) :-
         mk_union(X,Y,_).
+mk_union(allValuesFrom(R,X),Y,unionOf([allValuesFrom(R,X),Y]) ) :-
+        mk_union(X,Y,_).
+mk_union(X,allValuesFrom(R,Y),unionOf([X,allValuesFrom(R,Y)]) ) :-
+        mk_union(X,Y,_).
 
 % TODO: cvt to NF
 flatten_union(unionOf(InL),unionOf(OutL)) :-
@@ -358,6 +362,11 @@ combine_expr_pair(C1,C2,intersectionOf([C1,C2]),_).
 combine_expr_pair(C1x,C2x,someValuesFrom(R,CE) ,Opts) :-
         C1x=someValuesFrom(R,C1),
         C2x=someValuesFrom(R,C2),
+        \+ subsumes_or_subsumed_by(C1,C2,Opts),
+        combine_expr_pair(C1,C2,CE,Opts).
+combine_expr_pair(C1x,C2x,allValuesFrom(R,CE) ,Opts) :-
+        C1x=allValuesFrom(R,C1),
+        C2x=allValuesFrom(R,C2),
         \+ subsumes_or_subsumed_by(C1,C2,Opts),
         combine_expr_pair(C1,C2,CE,Opts).
 
