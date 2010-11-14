@@ -129,14 +129,18 @@ get_import_closure(F,Xs,_Opts) :-
 get_import_closure(F,[],_Opts) :-
 	format(user_error,'Could not download: ~w~n',[F]).
 
-
+% download a URL and store it locally in a directory with the same
+% name as the domain, with the same dir structure
+%
+%  http://x.org/foo/bar/waz.owl ==> x.org/foo/bar/waz.owl
 import_url_local(F,Local) :-
 	%sub_atom(F,0,_,_,'http:'),
 	concat_atom(['',Local],'http://',F),
 	!,
 	%truncate_url_to_local(F,Local),
 	%debug(download,'downloading ~w from ~w',[Local,F]),
-	sformat(Cmd,'wget -x ~w',[F]),
+        % 2010-11-13 : added -N option: don't re-retrieve files unless newer than local
+	sformat(Cmd,'wget -N -x ~w',[F]),
 	debug(download,'cmd: ~w',[Cmd]),
 	shell(Cmd).
 import_url_local(F,F).
@@ -257,6 +261,8 @@ use_property_as_IRI(X,X).
 
 prefix_IRI(Pre,X,Y) :-
         (   entity(X) ; ontology(X)),
+        \+ sub_atom(X,0,_,_,Pre),
+        \+ sub_atom(X,0,_,_,http),
         !,
         atom_concat(Pre,X,Y).
 prefix_IRI(_,X,X) :- !.
@@ -334,12 +340,19 @@ uniqify([H|L],[H|L2]) :-
 	uniqify(L,L2).
 
 
+% INCOMPLETE!
 inferred_declaration(class(C)) :- classAssertion(C,_),atom(C).
 inferred_declaration(class(C)) :- subClassOf(C,_),atom(C).
 inferred_declaration(class(C)) :- equivalentClasses(L),member(C,L),atom(C).
 inferred_declaration(namedIndividual(I)) :- classAssertion(_,I).
 inferred_declaration(namedIndividual(I)) :- propertyAssertion(_,I,_).
 inferred_declaration(namedIndividual(I)) :- propertyAssertion(_,_,I).
+inferred_declaration(objectProperty(P)) :- subPropertyOf(P,_).
+inferred_declaration(objectProperty(P)) :- subPropertyOf(_,P).
+inferred_declaration(objectProperty(P)) :- inverseProperties(P,_).
+inferred_declaration(objectProperty(P)) :- inverseProperties(_,P).
+
+
 
 assume_entity_declarations :-
         forall(inferred_declaration(A),
