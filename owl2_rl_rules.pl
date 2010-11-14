@@ -34,8 +34,8 @@ See http://www.w3.org/TR/2008/WD-owl2-profiles-20081202/#Reasoning_in_OWL_2_RL_a
 */
 
 
-:- use_module('owl2_from_rdf').
-:- use_module('owl2_model').
+:- use_module(owl2_from_rdf).
+:- use_module(owl2_model).
 
 :- dynamic entails/3.
 :- dynamic entailment/2.
@@ -80,6 +80,7 @@ u_assert(X) :- assert(X).
 % -----------------------------
 %
 
+%% is_entailed(?Axiom,?Expl) is semidet
 is_entailed(Axiom,Expl) :-
 	tbox(saved),
 	tbox_axiom_pred(F/A),
@@ -567,17 +568,15 @@ entails(scm-avf2,[subClassOf(_,allValuesFrom(P1,Y)),subClassOf(_,allValuesFrom(P
 entails(scm-int, [subClassOf(C,intersectionOf(L)),pl(member(C1,L))],[subClassOf(C,C1)]).
 entails(scm-uni, [subClassOf(C,unionOf(L)),pl(member(C1,L))],[subClassOf(C1,C)]).
 
+% ----------------------------------------
+% Hooks into owl2_reasoner
+% ----------------------------------------
 
+:- multifile owl2_reasoner:reasoner_ask_hook/2.
+:- multifile owl2_reasoner:initialize_reasoner_hook/3.
 
-
-
-
-
-
-
-
-
-
-
-
+owl2_reasoner:reasoner_ask_hook(rl_rules,G) :-
+        is_entailed(G,_).
+owl2_reasoner:initialize_reasoner_hook(rl_rules,rl_rules,_) :-
+        get_tbox_entailments.
 
