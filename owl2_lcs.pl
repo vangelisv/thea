@@ -16,6 +16,76 @@
            class_pair_gmatch/3
           ]).
 
+/** <module> OWL2 Least Common Subsumer
+
+---+ Synopsis
+
+This module is used for caclulating meaningful least common subsumer
+(LCS) class expressions.
+
+Note this is not as trivial as calculating the least common subsuming
+named class, see the examples below.
+
+This module also has similar functionality for individuals. It
+includes a method individual_msc/3 which will calculate the minimal
+subsuming class for an individual, up to a specified depth.
+
+
+---+ Example
+
+Consider the ontology:
+
+==
+  Class: spicy_tomato_pizza
+  EquivalentTo: pizza and hasPart some (topping and hasQuality some spicy) and hasPart some tomato
+
+  Class: pizza
+  SubClassOf: hasPart some mozzarella
+
+  Class: spicy_paneer_curry
+  EquivalentTo: curry and hasPart some paneer and hasPart some (sauce and derivesFrom some tomato) and hasQuality some spicy
+
+  Class: paneer SubClassOf: cheese
+  Class: mozzarella SubClassOf: cheese
+
+  Class: pizza SubClassOf: food
+  Class: curry SubClassOf: food
+==
+
+The named LCS of STP and SPC is "food", which is not very informative. This tool derives a more specific class expression:
+
+==
+  food and 
+   ((hasPart some tomato) or (hasPart some derivesFrom some tomato)) and 
+   ((hasPart some hasQuality some spicy) or (hasQuality some spicy)) and 
+   hasPart some cheese
+==
+
+This is quite an awkward class expression. It can be simplified by adding property chain axioms to the ontology.
+
+---+ Usage
+
+One convenient way to use this is via the command line:
+
+==
+thea testfiles/food.owl --sim-pair PastaWithNonSpicyRedSauceCourse NonSpicyRedMeatCourse --save-opts tabular,plsyn,combined
+==
+
+The above should work from within the thea directory
+
+The result should be:
+
+==
+  MealCourse and 
+    hasDrink only (hasBody value Medium) and
+    hasDrink only (hasColor value Red) and
+    hasDrink only (hasSugar value Dry) and 
+    hasFood only EdibleThing
+==
+
+
+*/
+
 :- use_module(owl2_model).
 :- use_module(owl2_reasoner).
 :- use_module(owl2_graph_reasoner). % force this for now
