@@ -10,7 +10,7 @@
     xmlns:rdf="&rdf;"
     xmlns:rdfs="&rdfs;"
 >
-<owl:Ontology rdf:about="http://x.org#http:/x.org/cc#"/>
+<owl:Ontology rdf:about="http://x.org#cc"/>
 
 <owl:Class rdf:about="http://x.org#metabolism">
   <owl:equivalentClass>
@@ -19,7 +19,7 @@
         <rdf:Description rdf:about="http://x.org#process"/>
         <owl:Restriction>
           <owl:onProperty rdf:resource="http://x.org#has_participant"/>
-          <owl:someValuesFrom rdf:resource="http://x.org#chemical"/>
+          <owl:someValuesFrom rdf:resource="chemical"/>
         </owl:Restriction>
       </owl:intersectionOf>
     </owl:Class>
@@ -33,7 +33,7 @@
         <rdf:Description rdf:about="http://x.org#process"/>
         <owl:Restriction>
           <owl:onProperty rdf:resource="http://x.org#has_output"/>
-          <owl:someValuesFrom rdf:resource="http://x.org#chemical"/>
+          <owl:someValuesFrom rdf:resource="chemical"/>
         </owl:Restriction>
       </owl:intersectionOf>
     </owl:Class>
@@ -89,7 +89,7 @@
         <rdf:Description rdf:about="http://x.org#increased_level"/>
         <owl:Restriction>
           <owl:onProperty rdf:resource="http://x.org#inheres_in"/>
-          <owl:someValuesFrom rdf:resource="http://x.org#blood"/>
+          <owl:someValuesFrom rdf:resource="blood"/>
         </owl:Restriction>
 
         <owl:Restriction>
@@ -105,7 +105,7 @@
   <owl:equivalentClass>
     <owl:Class>
       <owl:intersectionOf rdf:parseType="Collection">
-        <rdf:Description rdf:about="http://x.org#abnormal_level"/>
+        <rdf:Description rdf:about="abnormal_level"/>
         <owl:Restriction>
           <owl:onProperty rdf:resource="http://x.org#towards"/>
           <owl:someValuesFrom rdf:resource="http://x.org#foo"/>
@@ -119,10 +119,10 @@
   <owl:equivalentClass>
     <owl:Class>
       <owl:intersectionOf rdf:parseType="Collection">
-        <rdf:Description rdf:about="http://x.org#abnormal_level"/>
+        <rdf:Description rdf:about="abnormal_level"/>
         <owl:Restriction>
           <owl:onProperty rdf:resource="http://x.org#inheres_in"/>
-          <owl:someValuesFrom rdf:resource="http://x.org#blood"/>
+          <owl:someValuesFrom rdf:resource="blood"/>
         </owl:Restriction>
 
         <owl:Restriction>
@@ -227,19 +227,47 @@
 </owl:Class>
 
 <owl:Class rdf:about="http://x.org#quality_of_process">
-  <rdfs:subClassOf rdf:resource="http://x.org#quality"/>
+  <rdfs:subClassOf rdf:resource="quality"/>
 </owl:Class>
 
 <owl:Class rdf:about="http://x.org#quality_of_object">
-  <rdfs:subClassOf rdf:resource="http://x.org#quality"/>
+  <rdfs:subClassOf rdf:resource="quality"/>
 </owl:Class>
 
 <owl:Class rdf:about="http://x.org#foo">
-  <rdfs:subClassOf rdf:resource="http://x.org#chemical"/>
+  <rdfs:subClassOf rdf:resource="chemical"/>
 </owl:Class>
 
-<rdf:Description rdf:about="http://x.org#has_output">
+<owl:ObjectProperty rdf:about="http://x.org#has_output">
   <rdfs:subPropertyOf rdf:resource="http://x.org#has_participant"/>
-</rdf:Description>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://x.org#has_part">
+  <owl:inverseOf rdf:resource="http://x.org#part_of"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://x.org#inheres_in">
+  <owl:inverseOf rdf:resource="http://x.org#bearer_of"/>
+</owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://x.org#towards"/>
+
+<owl:ObjectProperty rdf:about="http://x.org#has_grain"/>
+
+<owl:ObjectProperty rdf:about="http://x.org#magnitude_increased_relative_to"/>
+
+<owl:ObjectProperty rdf:about="http://x.org#magnitude_decreased_relative_to"/>
+
+<owl:ObjectProperty rdf:about="http://x.org#has_participant"/>
+
+<owl:ObjectProperty rdf:about="http://x.org#part_of"/>
+
+<owl:ObjectProperty rdf:about="http://x.org#bearer_of"/>
+
+<owl:Class rdf:about="http://x.org#decreased_rate"/>
+
+<owl:Class rdf:about="http://x.org#process"/>
+
+<owl:Class rdf:about="http://x.org#normal"/>
 
 </rdf:RDF>

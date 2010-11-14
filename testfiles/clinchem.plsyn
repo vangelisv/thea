@@ -1,4 +1,4 @@
-ontology('http:/x.org/cc#').
+ontology('cc').
 metabolism == process and has_participant some chemical.
 biosynthesis == process and has_output some chemical.
 
@@ -29,3 +29,13 @@ foo < chemical.
 
 has_output @< has_participant.
 
+has_part inverseOf part_of.
+inheres_in inverseOf bearer_of.
+objectProperty(towards).
+objectProperty(has_grain).
+objectProperty(magnitude_increased_relative_to).
+objectProperty(magnitude_decreased_relative_to).
+
+class(decreased_rate).
+class(process).
+class(normal).
