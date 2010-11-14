@@ -344,8 +344,8 @@ parse_arg(['--reasoner-cache-subclass-to',F|L],L,reasonercache( subClassOf(_,_),
 
 parse_arg(['--sim',A|L],L,
           query(sim(X,Y,LCS),
-                (   setof(X,T1,Xs),
-                    setof(Y,T2,Ys),
+                (   setof(X,T1^T1,Xs),
+                    setof(Y,T2^T2,Ys),
                     member(X,Xs),
                     member(Y,Ys),
                     X@<Y,
@@ -356,6 +356,7 @@ parse_arg(['--sim',A|L],L,
         copy_term(V-T,Y-T2),
         ensure_loaded(library(thea2/owl2_lcs)),
         prepare_optimizations(_). % note - do not prepare a second time!
+arg_info(sim,term,'Find LCS of pairs based on query. Argument should be Template-Goal. ').
 
 parse_arg(['--sim-pair',XN,YN|L],L,
           query(sim(X,Y,LCS),
