@@ -302,6 +302,7 @@ plpred2owlpred(reflexive,reflexiveProperty).
 
 plpred2owlpred(some,someValuesFrom).
 plpred2owlpred(only,allValuesFrom).
+plpred2owlpred(value,hasValue).
 plpred2owlpred(not,complementOf).
 
 
