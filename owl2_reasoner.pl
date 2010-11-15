@@ -72,10 +72,12 @@ reasoner_ask(Reasoner,Axiom,IsDirect) :-  % experimental
 	reasoner_ask_hook(Reasoner,Axiom,IsDirect).
 
 %% reasoner_ask(+Reasoner,?Axiom)
-% in general Axiom should be one of
+%
+% in general Axiom should be a term using one of
 % * subClassOf/2
 % * classAssertion/2
 % * propertyAssertion/3
+%
 % with arguments that are either ground atoms or
 % variables.
 % some reasoners may be able to give results for class expressions
@@ -97,6 +99,9 @@ reasoner_ask(cached(_),subClassOf(A,B)) :- cached_subClassOf(A,B).
 reasoner_ask(cached(_),classAssertion(A,B)) :- cached_classAssertion(A,B).
 reasoner_ask(cached(_),propertyAssertion(A,B,C)) :- cached_propertyAssertion(A,B,C).
 
+%% reasoner_ask(Axiom) is semidet
+% as reasoner_ask/2, but uses the global variable 'reasoner' to determine
+% which reasoner to use. If not set, queries using ALL available reasoners.
 reasoner_ask(Axiom) :-
         nb_current(reasoner,Reasoner),
         !,
@@ -145,15 +150,15 @@ reasoner_module(graph_reasoner,owl2_graph_reasoner).
 
 
 
-/** <module> reasoner API - NOT YET IN USE
+/** <module> OWL Reasoning API 
 
   ---+ Synopsis
 
-  ==
+==
   :- use_module(bio(owl2_reasoner)).
 
   load_axioms('myont.owl'),
-  initialize_reasoner(pellet,Opts,Reasoner),
+  initialize_reasoner(pellet,[],Reasoner),
   reasoner_tell(Reasoner),
   forall(reasoner_ask(Reasoner,subClassOf(X,Y)),
          writeln(X-Y)).
@@ -163,9 +168,19 @@ reasoner_module(graph_reasoner,owl2_graph_reasoner).
 
 See Reasoning_using_Thea.txt
 
-  This module specifies which requests can be made of a reasoner. The actual implementation is in separate modules.
+This module specifies which requests can be made of a reasoner. The actual implementation is in separate modules, including
 
----+ Writing wrapping code for a new reasoner
+   * owl2_rl_rules.pl - based on the OWL2 RL profile
+   * owl2_java_owlapi.pl - use any reasoner supported by the java OWLAPI (requires JPL)
+   * owl2_owllink.pl - external reasoners over HTTP
+
+Note that you do not need to use the exported predicates of the above
+modules - you can use the generic predicates defined here and plugin
+your reasoner of choice.
+
+
+
+---+ Hooks
 
 You can provide a bridge module for your reasoner of choice. You should define the following:
   
