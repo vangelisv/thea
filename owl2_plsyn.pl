@@ -23,14 +23,17 @@
                       op(700,xfy,inverseOf),
                       %op(700,xfy,(->)),
                       op(650,xfy,(::)),
-                      op(600,xfy,not),
+                      op(600,fx,not),
                       op(500,xfy,or),
                       op(200,xfy,and),
                       op(200,xfy,that),
                       op(150,xfy,some),
                       op(150,xfy,only),
-                      op(150,xfy,value)
-
+                      op(150,xfy,value),
+                      op(150,xfy,min),
+                      op(150,xfy,max),
+                      op(150,xfy,exactly),
+                      op(125,xfy,of) % required for QCRs
                      ]).
 
 
@@ -57,13 +60,17 @@
 :- op(700,xfy,inverseOf).
 %:- op(700,xfy,(->)).
 :- op(650,xfy,(::)).
-:- op(600,xfy,not).
+:- op(600,fx,not).
 :- op(500,xfy,or).
 :- op(200,xfy,and).
 :- op(200,xfy,that).
 :- op(150,xfy,some).
 :- op(150,xfy,only).
 :- op(150,xfy,value).
+:- op(150,xfy,min).
+:- op(150,xfy,max).
+:- op(150,xfy,exactly).
+:- op(125,xfy,of).
 :- op(100,fx,(?)).
 
 :- multifile owl2_io:load_axioms_hook/3.
@@ -146,6 +153,14 @@ plsyn2owl(R @< R1*R2,subPropertyOf(propertyChain(Chain),R)) :-
         plsyn2owl_ec(R1*R2,(*),Chain),
         !.
 
+plsyn2owl(Pl,Owl) :-
+        Pl=..[PlPred,PlProp,of(Num,PlC)],
+        cardinality_pred(PlPred),
+        plpred2owlpred(PlPred,OwlPred),
+        !,
+        plsyn2owl(PlProp,Prop),
+        plsyn2owl(PlC,C),
+        Owl=..[OwlPred,Num,Prop,C].
 plsyn2owl(Pl,Owl) :-
         Pl=..[PlPred|Args],
         plpred2owlpred(PlPred,OwlPred),
@@ -300,6 +315,10 @@ plpred2owlpred(reflexive,reflexiveProperty).
 
 %plpred2owlpred(inverseOf,inverseProperties).
 
+plpred2owlpred(min,minCardinality).
+plpred2owlpred(max,maxCardinality).
+plpred2owlpred(exact,exactCardinality).
+
 plpred2owlpred(some,someValuesFrom).
 plpred2owlpred(only,allValuesFrom).
 plpred2owlpred(value,hasValue).
@@ -315,36 +334,44 @@ plpred2owlpred(@<,subPropertyOf).
 plpred2owlpred_list(\=,differentIndividuals). 
 %plpred2owlpred_list(\=,disjointClasses). 
 
-
-
+cardinality_pred(min).
+cardinality_pred(max).
+cardinality_pred(exact).
 
 
 /** <module> prolog-style syntactic sugar for OWL
 
   ---+ Synopsis
 
+Ontologies can be authored or written in prolog syntax, with
+convenience predicates declared infix in order to resemble Manchester
+Syntax.
+
+The following prolog file
+
 ==
-:- use_module(bio(owl2_plsyn)).
+ontology(spicy).
+spicy_tomato_pizza == pizza and hasPart some (topping and hasQuality some spicy) and hasPart some tomato.
+pizza < hasPart some mozzarella.
+pizza_with_4_cheeses == pizza and hasPart exactly 4 of cheese.
+==
 
-% 
-demo:-
-  nl.
-  
+Can be loaded like this:
 
+==
+load_axioms('myfile.plsyn',plsyn).
 ==
 
 ---+ Details
 
+The class expression syntax should resembly manchester syntax as far
+as possible. Additional symbols such as <, =, ==, @< are also used for
+axioms.
+
+We are forced to introduce an extra keyword 'of' for cardinality
+expressions to make this parseable by prolog.
 
 
----+ Additional Information
-
-This module is part of blip. For more details, see http://www.blipkit.org
-
-@author  Chris Mungall
-@version $Revision$
-@see     README
-@license License
-
+TODO: show translation table
 
 */
