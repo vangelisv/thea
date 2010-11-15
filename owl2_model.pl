@@ -106,6 +106,7 @@
            assert_axiom/1,
            assert_axiom/2,
            retract_axiom/1,
+           retract_axiom/2,
            retract_all_axioms/0,
 	   owl2_model_init/0,
            consult_axioms/1,
@@ -323,6 +324,7 @@ propertyAxiom(equivalentProperties(A)) :- equivalentProperties(A).
 propertyAxiom(inverseProperties(A, B)) :- inverseProperties(A, B).
 axiom_arguments(propertyAxiom,[axiom]).
 valid_axiom(propertyAxiom(A)) :- subsumed_by([A],[axiom]).
+
 
 %% subPropertyOf(?Sub:PropertyExpression, ?Super:ObjectPropertyExpression)
 % subproperty axioms are analogous to subclass axioms
@@ -1183,6 +1185,17 @@ retract_axiom(Axiom) :-
 	retractall(ontologyAxiom(_,Axiom)),
         !.
 
+%% retract_axiom(+Axiom:axiom,+Ontology)
+% retracts axioms from a specified ontology
+retract_axiom(Axiom,Ontology) :-
+        \+ var(Ontology),
+	retractall(ontologyAxiom(Ontology,Axiom)),
+        (   \+ \+ ontologyAxiom(_,Axiom)
+        ->  retractall(Axiom)
+        ;   true),              % still exists in other ontology..
+        !.
+
+
 retract_all_axioms :-
         findall(A,axiom(A),Axioms),
         maplist(retract,Axioms),
@@ -1213,6 +1226,18 @@ objectProperty(eats).
 subClassOf(animal,organism).
 equivalentClasses([carnivore,intersectionOf([animal,someValuesFrom(eats,animal)])]).
 disjointClasses([herbivore,carnivore]).
+==
+
+Example of use:
+
+==
+:- use_module(library(thea2/owl2_io)).
+:- use_module(library(thea2/owl2_model)).
+
+show_superclasses(OntFile,Class) :-
+        load_axioms(OntFile),
+        forall(subClassOf(Class,Super),
+               writeln(Super)).
 ==
 
 ---+ Details
@@ -1276,16 +1301,6 @@ subClassOf(cat,mammal).
 axiomAnnotation(SubClassOf(cat,mammal),author,linnaeus).
 ==
 
----+++ Punning
-
-  OWL2 allows classes to act as individuals, so this is legal (TODO: check!):
-
-
-==
-class(polarBear).
-class(endangered).
-classAssertion(endangered,polarBear).
-==
 
   ---++ Ontologies
 
@@ -1303,14 +1318,12 @@ TODO: check edge cases, eg two ontologies have the same axioms but different ann
 
 By default there is no type checking of IRIs, so =|class(polarBear)|=
 is allowed, even though "polarBear" is not an IRI - this makes for
-convenience in working with example ontologies
+convenience in working with example ontologies.
+
+See prefix_IRIs/1 in owl2_util.pl for converting between short names
+and valid IRIs.
 
 ---+ Open Issues
-
----++ Structure Sharing
-
-Should we allow bnode IDs as arguments of predicate axioms for
-expressions? I don't think this is necessary.
 
 ---++ Enumeration of expressions
 

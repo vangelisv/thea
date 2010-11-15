@@ -116,8 +116,8 @@ normalize_swrl_atom(A, description(Class,Ob) ) :-
 normalize_swrl_atom(A, A).
                    
 
-%% swrl_to_owl_axioms(+SWRLRule,?Axioms) is semidet
-% true if SWRLRule can be translated into Axiom.
+%% swrl_to_owl_axioms(+SWRLRule,?OWLAxioms) is semidet
+% true if SWRLRule can be translated into OWLAxiom.
 %
 % a subset of OWL-DL can be recapitulated as rules; however, it
 % if often best to treat these rules as OWL Axioms if an OWL
@@ -128,8 +128,8 @@ normalize_swrl_atom(A, A).
 % * subClassOf/2 between a class and an intersectionOf class description
 % * subPropertyOf/2 between property IDs
 % * subPropertyOf/2 involving role chains
-% * classAssertion/1 based on antecedent-free rules
-% * propertyAssertion/1 based on antecedent-free rules
+% * classAssertion/2 based on antecedent-free rules
+% * propertyAssertion/3 based on antecedent-free rules
 swrl_to_owl_axioms(Rule, Axioms) :-
         normalize_swrl_rule(Rule,implies(A,Cs)),
         findall(Axiom,
@@ -273,12 +273,13 @@ subgoal_to_description(description(D,V),V,D).
 
 %% prolog_clause_to_swrl_rule( +Term, ?SWRLAtom:swrlAtom )
 %
-% Prolog Terms are clauses of the form
+% Prolog clause terms are clauses of the form
 %== 
 % hasUncle(X1,X3):- hasParent(X1,X2),hasBrother(X2,X3)
 %==
 % 
-% These are translated to SWRL Rules
+% Are translated to embedded swrl.pl rule terms, using
+% the implies/2 functor.
 % 
 % complex atoms still require wrapping:
 %==
@@ -449,26 +450,21 @@ owl2_io:load_axioms_hook(File,pl_swrl_owl,Opts) :-
 
   ---+ Synopsis
 
-  Example SWRL Rule set in prolog:
+  Example SWRL Rule embedded as prolog swrl.pl fact:
+  
 ==
 implies([hasParent(v(x),v(y)),hasBrother(v(y),v(z))],[hasUncle(v(x),v(z))]).
 ==
 
+
 ---+ Details
 
-    This extends the owl2_model.pl collection of allowed axioms (see axiom/1) with the implies/2 axiom.
+This extends the owl2_model.pl collection of allowed axioms (see axiom/1) with the implies/2 axiom.
     
 http://www.w3.org/Submission/SWRL/
 
 This module also intends to allow for easy conversion between a natural prolog style and SWRL axioms.
- See for example prolog_clause_to_swrl_rule/2
-
----+ Additional Information
-
-@author  Chris Mungall
-@version $Revision$
-@see     README
-@license License
+See for example prolog_clause_to_swrl_rule/2
 
 
 */
