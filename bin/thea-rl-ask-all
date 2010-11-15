@@ -1,0 +1,2 @@
+#!/bin/sh
+thea-rl  --reasoner-ask-all "$@"
