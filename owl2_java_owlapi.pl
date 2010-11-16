@@ -924,70 +924,80 @@ prolog:message(bench(M,T1,T2)) -->
 
 ---+ Synopsis
 
-using OWLAPI to save files:
-  
-==
-[owl2_model].
-[owl2_java_owlapi].
-[owl2_from_rdf].
-owl_parse_rdf('testfiles/Hydrology.owl'), % parse using prolog/thea
-create_factory(Man,Fac),
-build_ontology(Man,Fac,Ont),
-save_ontology(Man,Ont,'file:///tmp/foo'). % save using owlapi
-==  
-
 using a reasoner:
 
 ==
-create_reasoner(Man,pellet,Reasoner),
-create_factory(Man,Fac),
-build_ontology(Man,Fac,Ont),
-reasoner_classify(Reasoner,Man,Ont),
-save_ontology(Man,Ont,'file:///tmp/foo').
+reasoner_test :-
+        initialize_reasoner(pellet,R),
+        forall(reasoner_ask(subClassOf(A,B)),
+               format('~w SubClassOf ~w~n',[A,B])).
 ==  
 
-==
-[owl2_model].
-[owl2_java_owlapi].
-[owl2_from_rdf].
-owl_parse_rdf('testfiles/music_ontology.owl'),
-create_factory(Man,Fac),
-build_ontology(Man,Fac,Ont),
-writeln(classifying),
-create_reasoner(Man,pellet,Reasoner),
-reasoner_classify(Reasoner,Man,Ont),
-writeln(classified),
-class(C),
-writeln(c=C),
-reasoner_subClassOf(Reasoner,Fac,C,P),
-writeln(p=P).
-==  
+To use this interactively, make sure to start-up prolog with JPL and
+everything in your classpath. You can use the thea-jpl wrapper script.
 
-queries:
+To start a prolog session:
 
 ==
-someValuesFrom('http://purl.org/ontology/mo/performed','http://purl.org/ontology/mo/Performance')
+thea-jpl --prolog
 ==
 
----+ Use
+To query reasoner results:
 
-  JPL Required
-
-  Set your CLASSPATH to include owlapi-bin.jar, pellet.jar, ...
-
-  start SWI
+==
+thea-jpl --reasoner pellet testfiles/pizza.owl --reasoner-ask "subClassOf(A,B)"
+==
 
 ---+ Details
 
-  This module is intended to interface with the OWLAPI
+This module is intended to interface with the OWLAPI
 
   http://owlapi.sourceforge.net/
 
-  This provides access to reasoners such as Pellet and FaCT++
+This provides access to reasoners such as Pellet and FaCT++, as well
+as OWLAPI parsers and renderers. You can also use this if you want
+additional capabilities provided by the OWLAPI.
 
-  JPL is required for this module
 
-  Note that this module is not required for the rest of Thea2
+---+ Hooks
+
+It provides hooks into both owl2_reasoner.pl and owl2_io.pl
+
+---++ I/O Hooks
+
+You can use the format =|owlapi(Format)|= to use the OWLAPI for
+reading or writing. E.g.
+
+==
+save_axioms('my.owl',owlapi(manchester)).
+==
+
+Supported values:
+
+ * owlapi(manchester)
+ * owlapi(owlxml)
+ * owlapi(owlrdf)
+
+ More can be added easily on request
+
+---++ Reasoner Hooks
+
+You can use any of
+
+ * pellet
+ * factpp
+ * hermit
+
+As arguments to reasoner_initialize/2.
+
+
+
+
+---+ Pre-Requisites
+
+JPL is required for this module
+
+Note that this module is not required for the rest of Thea2
 
 @author  Chris Mungall
 @version $Revision$

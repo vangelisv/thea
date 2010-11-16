@@ -69,6 +69,7 @@ The file owl2_from_rdf.plt has some examples
 
 :- use_module(owl2_model).
 
+:- use_module(library(debug)).
 :- use_module(library('semweb/rdf_db')).
 :- use_module(library('semweb/rdf_edit')).
 :- use_module(library('semweb/rdfs')).
@@ -214,7 +215,7 @@ owl_canonical_parse_3([IRI|Rest]) :-
         % see email to JanW July-1-2009
         forall((test_use_owl(S,P,BNode),
                 atom(BNode),
-                sub_string(BNode,0,2,_,'__'),
+                sub_atom(BNode,0,2,_,'__'),
                 test_use_owl(BNode,'http://www.w3.org/1999/02/22-rdf-syntax-ns#datatype',literal(_))),
                (   use_owl(S,P,BNode,datatype_fix),
                    use_owl(BNode,'http://www.w3.org/1999/02/22-rdf-syntax-ns#datatype',literal(_)),
@@ -335,7 +336,7 @@ rdf_load_stream(URL,Ontology,BaseURI,Imports) :-
 
 rdf_load_stream(URL,Ontology,BaseURI,Imports) :-
 	BaseURI = URL,
-  	(   sub_string(URL,0,4,_,'http')
+  	(   sub_atom(URL,0,4,_,'http')
         ->  catch((http_open(URL,RDF_Stream,[]),
 	      rdf_load(RDF_Stream,[if(true),base_uri(BaseURI),blank_nodes(noshare),
 				   result(Action, Triples, MD5),register_namespaces(true)]),
@@ -595,7 +596,7 @@ ann2(_,_,_,_).
 
 is_bnode(C) :-
 	atom(C),
-	sub_string(C,0,2,_,'__').
+	sub_atom(C,0,2,_,'__').
 
 % Table 11. Parsing Object Property Expressions
 

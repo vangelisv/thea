@@ -1,0 +1,43 @@
+sim(big_left_ear,retina_degenerates,has_quality some morphology and part_of some head).
+sim(big_left_ear,deformed_right_ear,ear and has_quality some morphology).
+sim(retina_degenerates,thin_mm_in_axon_of_dn_of_sn,has_quality some morphology and part_of some nervous_system).
+sim(axon_terminals_degenerated_in_ca2,retina_degenerates, (has_quality some degenerated or has_part some has_quality some degenerated)and part_of some brain).
+sim(axon_terminals_degenerated_in_ca2,deformed_ca2,ca2 and (has_quality some morphology or has_part some has_quality some morphology)).
+sim(axon_terminals_degenerated_in_ca2,thin_mm_in_axon_of_dn_of_sn, (has_quality some morphology or has_part some has_quality some morphology)and (part_of some axon or has_part some part_of some axon)).
+sim(axon_terminals_degenerated_in_ca2,thin_mm_in_axon_of_dn_of_sn, (has_quality some morphology or has_part some has_quality some morphology)and part_of some nervous_system).
+sim(axon_terminals_degenerated_in_ca2,thin_mm_in_axon_of_dn_of_sn, (part_of some axon or has_part some part_of some axon)and part_of some nervous_system).
+sim(axon_terminals_degenerated_in_ca2,axon_terminals_degenerated_in_ca3,has_part some (axon_terminal and has_quality some degenerated)and part_of some hippocampus).
+sim(axon_terminals_degenerated_in_ca2,axon_terminals_degenerated_in_ca3,has_part some (axon_terminal and has_quality some degenerated)).
+sim(axon_terminals_degenerated_in_ca2,deformed_hippocampus, (hippocampus or part_of some hippocampus)and (has_quality some morphology or has_part some has_quality some morphology)).
+sim(axon_terminals_degenerated_in_ca2,axon_terminals_degenerated_in_sn,has_part some axon_terminal and has_part some has_quality some degenerated).
+sim(axon_terminals_degenerated_in_ca2,axon_terminals_degenerated_in_sn,has_part some (axon_terminal and has_quality some degenerated)).
+sim(deformed_ca2,retina_degenerates,has_quality some morphology and part_of some brain).
+sim(deformed_ca2,thin_mm_in_axon_of_dn_of_sn,has_quality some morphology and part_of some nervous_system).
+sim(deformed_ca2,deformed_hippocampus, (hippocampus or part_of some hippocampus)and has_quality some deformed).
+sim(lewy_bodies_in_sn,lewy_bodies_in_sn2, (lewy_body or has_part some lewy_body)and (sn or part_of some sn)).
+sim(deformed_right_ear,retina_degenerates,has_quality some morphology and part_of some head).
+sim(axon_terminals_degenerated_in_ca3,retina_degenerates, (has_quality some degenerated or has_part some has_quality some degenerated)and part_of some brain).
+sim(axon_terminals_degenerated_in_ca3,deformed_ca2, (has_quality some morphology or has_part some has_quality some morphology)and part_of some hippocampus).
+sim(axon_terminals_degenerated_in_ca3,thin_mm_in_axon_of_dn_of_sn, (has_quality some morphology or has_part some has_quality some morphology)and (part_of some axon or has_part some part_of some axon)).
+sim(axon_terminals_degenerated_in_ca3,thin_mm_in_axon_of_dn_of_sn, (has_quality some morphology or has_part some has_quality some morphology)and part_of some nervous_system).
+sim(axon_terminals_degenerated_in_ca3,thin_mm_in_axon_of_dn_of_sn, (part_of some axon or has_part some part_of some axon)and part_of some nervous_system).
+sim(axon_terminals_degenerated_in_ca3,deformed_hippocampus, (hippocampus or part_of some hippocampus)and (has_quality some morphology or has_part some has_quality some morphology)).
+sim(axon_terminals_degenerated_in_ca3,axon_terminals_degenerated_in_sn,has_part some axon_terminal and has_part some has_quality some degenerated).
+sim(axon_terminals_degenerated_in_ca3,axon_terminals_degenerated_in_sn,has_part some (axon_terminal and has_quality some degenerated)).
+sim(atrophied_hippocampus,retina_degenerates,has_quality some degenerated and part_of some brain).
+sim(atrophied_hippocampus,axon_terminals_degenerated_in_ca2, (hippocampus or part_of some hippocampus)and (has_quality some degenerated or has_part some has_quality some degenerated)).
+sim(atrophied_hippocampus,deformed_ca2, (hippocampus or part_of some hippocampus)and has_quality some morphology).
+sim(atrophied_hippocampus,thin_mm_in_axon_of_dn_of_sn,has_quality some decreased and has_quality some morphology).
+sim(atrophied_hippocampus,thin_mm_in_axon_of_dn_of_sn,has_quality some decreased and part_of some nervous_system).
+sim(atrophied_hippocampus,thin_mm_in_axon_of_dn_of_sn,has_quality some morphology and part_of some nervous_system).
+sim(atrophied_hippocampus,axon_terminals_degenerated_in_ca3, (hippocampus or part_of some hippocampus)and (has_quality some degenerated or has_part some has_quality some degenerated)).
+sim(atrophied_hippocampus,deformed_hippocampus,hippocampus and has_quality some morphology).
+sim(atrophied_hippocampus,axon_terminals_degenerated_in_sn, (has_quality some degenerated or has_part some has_quality some degenerated)and (part_of some nervous_system or has_part some part_of some nervous_system)).
+sim(deformed_hippocampus,retina_degenerates,has_quality some morphology and part_of some brain).
+sim(deformed_hippocampus,thin_mm_in_axon_of_dn_of_sn,has_quality some morphology and part_of some nervous_system).
+sim(axon_terminals_degenerated_in_sn,retina_degenerates, (has_quality some degenerated or has_part some has_quality some degenerated)and (part_of some nervous_system or has_part some part_of some nervous_system)).
+sim(axon_terminals_degenerated_in_sn,deformed_ca2, (has_quality some morphology or has_part some has_quality some morphology)and (part_of some nervous_system or has_part some part_of some nervous_system)).
+sim(axon_terminals_degenerated_in_sn,thin_mm_in_axon_of_dn_of_sn, (sn or part_of some sn)and (has_quality some morphology or has_part some has_quality some morphology)).
+sim(axon_terminals_degenerated_in_sn,thin_mm_in_axon_of_dn_of_sn, (sn or part_of some sn)and (part_of some axon or has_part some part_of some axon)).
+sim(axon_terminals_degenerated_in_sn,thin_mm_in_axon_of_dn_of_sn, (has_quality some morphology or has_part some has_quality some morphology)and (part_of some axon or has_part some part_of some axon)).
+sim(axon_terminals_degenerated_in_sn,deformed_hippocampus, (has_quality some morphology or has_part some has_quality some morphology)and (part_of some nervous_system or has_part some part_of some nervous_system)).

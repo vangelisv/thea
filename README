@@ -10,6 +10,9 @@ This documentation is intended to be read via pldoc
 
 See INSTALL.txt
 
+You can bypass installation and use the 'thea' script directly. See
+below.
+
 ---++ Overview
 
 The module owl2_io.pl provides a means of loading and saving OWL2
@@ -47,6 +50,23 @@ reasoners can be plugged in, both native prolog and non-prolog (the
 latter accessed seamlessly via either owl2_owllink.pl or
 owl2_java_owlapi.pl).
 
+---++ Command Line Usage
+
+The script "thea" in the bin directory should work from anywhere, with
+no installation of thea modules required.
+
+Type
+
+==
+thea --help
+==
+
+for full instructions. Many complex operations can be chained on the
+command line.
+
+See also the other wrapper scripts in the bin directory
+
+See Command_Line_Usage.txt for more details
 
 ---++ Further Reading
 
@@ -63,15 +83,17 @@ See also the apps/ directory for example applications.
   * owl2_xml.pl -- support for OWL-XML
   * owl2_manchester_paser.pl -- incomplete support for Manchester syntax
   * owl2_plsyn.pl -- infix prolog syntax for OWL
- * owl2_model.pl
+ * owl2_model.pl -- definition of prolog predicates used to embed OWL
  * swrl.pl
- * owl2_model.pl
- * owl2_reasoner.pl
+  * swrl_rdf_hooks.pl -- allows SWRL to be parsed by owl2_from_rdf.pl
+ * owl2_reasoner.pl -- pluggable reasoner framework
   * owl2_rl_rules.pl
   * owl2_graph_reasoner.pl
  * owl2_java_owlapi.pl (requires JPL)
  * owl2_owllink.pl
-
+ * owl2_util.pl -- misc utilities
+ * owl2_popl.pl -- prolog ontology processing language
+ * owl2_metamodel.pl -- information about OWL axiom types
 
 ---++ Reasoning support
 

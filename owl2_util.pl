@@ -16,11 +16,14 @@
            remove_ns/2,
            replace_ns_prefix/4,
            use_label_as_IRI/2,
+           get_IRI_from_label/2,
            use_labels_for_IRIs/0,
            use_safe_labels_for_IRIs/0,
+           replace_labels_with_IRIs/0,
            use_numeric_IRIs_for_classes/2,
            prefix_IRIs/1,
            translate_IRIs/1,
+           translate_IRIs/2,
            map_IRIs/3,
            assume_entity_declarations/0,
            use_class_labels_as_synonyms/1,
@@ -211,6 +214,9 @@ use_labels_for_IRIs:-
 use_safe_labels_for_IRIs:-
         translate_IRIs(use_safe_label_as_IRI).
 
+replace_labels_with_IRIs:-
+        translate_IRIs(get_IRI_from_label).
+
 remove_ns(IRI,X) :-
         concat_atom([_,X],'#',IRI),
         !.
@@ -250,6 +256,11 @@ use_label_as_IRI(IRI,X) :-
         !.
 use_label_as_IRI(X,X).
 
+get_IRI_from_label(X,IRI) :- labelAnnotation_value(IRI,X),!.
+get_IRI_from_label(X,X).
+
+
+
 use_property_as_IRI(Prop,IRI,NewIRI) :-
         anyPropertyAssertion(Prop,IRI,Literal),
 	Literal=literal(type(_,Val)),
@@ -281,6 +292,14 @@ translate_IRIs(Goal):-
         maplist(map_IRIs(Goal),Axioms,Axioms2),
         maplist(retract_axiom,Axioms),
         maplist(assert_axiom,Axioms2).
+
+:- module_transparent translate_IRIs/2.
+translate_IRIs(Goal,Ontology):-
+        findall(A,ontologyAxiom(Ontology,A),Axioms),
+        maplist(map_IRIs(Goal),Axioms,Axioms2),
+        maplist(retract_axiom,Axioms),
+        forall(member(A,Axioms2),
+               assert_axiom(A,Ontology)).
 
 %% map_IRIs(+MapGoal,+AxiomIn,?AxiomOut)
 :- module_transparent map_IRIs/3.

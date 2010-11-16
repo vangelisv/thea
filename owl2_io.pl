@@ -9,6 +9,7 @@
            convert_axioms/5
           ]).
 
+:- use_module(library(debug)).
 :- use_module(owl2_model,[consult_axioms/1, axiom/1]).
 
 %% load_axioms_hook(+File,+Fmt,+Opts)

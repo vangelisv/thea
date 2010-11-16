@@ -121,10 +121,15 @@ exclude_axiom(H,Opts) :-
 	\+ ((ontologyAxiom(Ont,H),
 	     member(Ont,Onts))).
 
+%% plsyn_owl(?Pl,?Owl)
+% as plsyn_owl/3
 plsyn_owl(Pl,Owl) :-
 	plsyn_owl(Pl,Owl,[]).
 
-%% plsyn_owl(+Pl,?Owl,+Opts:list)
+%% plsyn_owl(?Pl,?Owl,+Opts:list)
+%
+% convert between a plsyn prolog term and an owl2_model.pl prolog term.
+% either one of Pl or Owl must be ground
 plsyn_owl(Pl,Owl,Opts) :-
 	select(use_labels,Opts,Opts2),
 	!,
@@ -347,7 +352,7 @@ Ontologies can be authored or written in prolog syntax, with
 convenience predicates declared infix in order to resemble Manchester
 Syntax.
 
-The following prolog file
+The following is a valid plsyn file:
 
 ==
 ontology(spicy).
@@ -356,7 +361,7 @@ pizza < hasPart some mozzarella.
 pizza_with_4_cheeses == pizza and hasPart exactly 4 of cheese.
 ==
 
-Can be loaded like this:
+This file can be loaded via load_axioms/2 like this:
 
 ==
 load_axioms('myfile.plsyn',plsyn).
@@ -371,7 +376,66 @@ axioms.
 We are forced to introduce an extra keyword 'of' for cardinality
 expressions to make this parseable by prolog.
 
-
 TODO: show translation table
+
+---++ Infix Predicate Symbols for Axioms
+
+  * < --- subClassOf/2
+  * @< --- subPropertyOf/2
+  * == --- equivalentClasses/1
+  * = --- sameIndividual/1
+  * \= --- differentIndividuals/1
+  * :: --- classAssertion/2
+ 
+---++ Property Characteristic Prefix Predicates
+
+the following are all declared prefix
+
+  * transitive --- transitiveProperty/1
+  * symmetric --- symmetricProperty/1
+  * reflexive --- reflexiveProperty/1
+  * functional --- functionalProperty/1
+
+---++ Other Infix Predicates
+
+  * inverseOf --- inverseProperties/2
+
+---++ Class Expressions
+
+  * and --- intersectionOf
+  * or --- unionOf
+  * some --- someValuesFrom
+  * only --- allValuesFrom
+  * value --- hasValue
+  * not --- complementOf (prefix)
+  * exactly --- exactCardinality
+  * min --- minCardinality
+  * max --- maxCardinality
+  * of --- required when making QCRs. E.g. exactly 5 of finger
+
+ ---++ Property Expressions
+
+ Use the '*' symbol. For example
+
+ ==
+ uncleOf @< fatherOf * brotherOf.
+ ==
+
+ ---++ Uses
+
+ plsyn makes it easier to mix OWL ontologies and ontology templates into prolog programs.
+
+For example, consider the following failure-driven loop to add an OWL
+axiom with a complex nested expression for all facts of a 4-argument predicate:
+
+==
+generate_ownership_assertions :-
+        owns(Person,Number,Thing,Loc),
+        plsyn_owl( owns exactly Number of (Thing and located_in value Loc) :: Person, OwlAxiom),
+        assert_axiom(OwlAxiom),
+        fail.
+==
+
+The owl2_popl.pl module facilitates this kind of translation
 
 */

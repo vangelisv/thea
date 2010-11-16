@@ -17,7 +17,6 @@
 
 This module implements the OWL2 RL rule-based reasoninng
 
-
 ---+ Details
 
 See http://www.w3.org/TR/2008/WD-owl2-profiles-20081202/#Reasoning_in_OWL_2_RL_and_RDF_Graphs_using_Rules
@@ -73,7 +72,9 @@ set_tbox(X) :-
 
 u_assert(X) :-
 	call(X),!.
-u_assert(X) :- assert(X).
+u_assert(X) :-
+        debug(rl_rules,'asserting : ~w',[X]),
+        assert(X).
 
 
 
