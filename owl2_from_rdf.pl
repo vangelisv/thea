@@ -35,9 +35,10 @@
 
 :- module(owl2_from_rdf,
 	  [
-            owl_parse_rdf/1,
-            owl_parse_rdf/2,
-	    owl_parse/4,
+           owl_parse_rdf/1,
+           owl_parse_rdf/2,
+           translate_rdf_db/1,
+           owl_parse/4,
            rdf_db_to_owl/0,
             convert/3,
 	    expand_ns/2,                  %  ?NS_URL, ?Full_URL
@@ -132,6 +133,9 @@ owl_parse_rdf(F,Opts):-
 	;   Clear=false),
 	owl_parse(F,Clear,Clear,Imports),
 	debug(owl_parser,'parsed ~w',[F]).
+
+
+
 
 %% owl_parse(+URL, +RDF_Load_Mode, +OWL_Parse_Mode, +ImportFlag:boolean)
 %
@@ -282,9 +286,17 @@ rdf_db_to_owl :-
                 (   rdf(Ont,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type','http://www.w3.org/2002/07/owl#Ontology',BaseURI:_),
                     rdf_2_owl(BaseURI,Ont),
                     owl_canonical_parse_3(IRIs)),
-                IRIs),
-                %owl_canonical_parse_3(IRIs).
-                true.
+                IRIs).
+
+%% translate_rdf_db(+IRI)
+% translates a graph in current rdf_db instance into an owl2_model.pl set of facts.
+% assumes that IRI has already been loaded using the semweb package
+translate_rdf_db(BaseURI) :-
+        rdf(Ont,'http://www.w3.org/1999/02/22-rdf-syntax-ns#type','http://www.w3.org/2002/07/owl#Ontology',BaseURI:_),
+        !,
+        rdf_2_owl(BaseURI,Ont),
+        owl2_model_init,
+        owl_canonical_parse_3(BaseURI).
 
 
 omitthis(ontology/1).
