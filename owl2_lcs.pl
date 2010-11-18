@@ -872,9 +872,9 @@ d_parent(D,P) :-
 % ----------------------------------------
 
 :- multifile user:parse_arg_hook/3.
-user:parse_arg_hook(['--display-object',Ob|L],L,goal(owl2_lcs:display_object(Ob))) :-
+user:parse_arg_hook(['--sim-display-object',Ob|L],L,goal(owl2_lcs:display_object(Ob))) :-
         assume_entity_declarations.
-user:parse_arg_hook(['--display-object-pair',X1,X2|L],L,goal(owl2_lcs:display_object_pair(X1,X2,[]))) :-
+user:parse_arg_hook(['--sim-display-object-pair',X1,X2|L],L,goal(owl2_lcs:display_object_pair(X1,X2,[]))) :-
         assume_entity_declarations.
 
 :- use_module(util/dot).
