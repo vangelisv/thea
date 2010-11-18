@@ -13,11 +13,12 @@
 % **********************************************************************
 
 :- module(owl2_export_rdf,
-	  [ 	    	    
-	    owl_generate_rdf/2, % FileName, RDF_Load_Mode (complete/not)
-	    owl_generate_rdf/3, % Ontology,FileName, RDF_Load_Mode (complete/not)
-	    owl_generate_rdf/4, % Ontology,FileName, RDF_Load_Mode (complete/not), Opts
-	    owl_rdf2n3/0 		    
+	  [owl_generate_rdf/2, % FileName, RDF_Load_Mode (complete/not)
+           owl_generate_rdf/3, % Ontology,FileName, RDF_Load_Mode (complete/not)
+           owl_generate_rdf/4, % Ontology,FileName, RDF_Load_Mode (complete/not), Opts
+           owl_synchronize_to_rdf/0,
+           owl_synchronize_to_rdf/1,
+           owl_rdf2n3/0 		    
 	  ]).
 
 :- use_module(owl2_model).
@@ -112,6 +113,12 @@ owl_generate_rdf(Ontology,FileName,RDF_Load_Mode) :-
 % @param FileName - path to save
 % @param RDF_Load_Mode (complete/not)
 owl_generate_rdf(Ontology,FileName,RDF_Load_Mode,Opts) :- 
+        owl_generate_rdf_in_memory(Ontology,RDF_Load_Mode,Opts),
+        (   member(rdf_syntax(ttl),Opts) % TODO - use rdf_db hooks
+        ->  rdf_save_turtle(FileName,Opts)
+	;   rdf_db:rdf_save(FileName)).
+
+owl_generate_rdf_in_memory(Ontology,RDF_Load_Mode,Opts) :- 
 	(   RDF_Load_Mode=complete -> rdf_retractall(_,_,_); true),
 	retractall(blanknode_gen(_,_)),retractall(blanknode(_,_,_)),
         % export a fake ontology directive if none specified
@@ -128,15 +135,35 @@ owl_generate_rdf(Ontology,FileName,RDF_Load_Mode,Opts) :-
 		owl2_export_annotation(Axiom,'owl:Axiom',S,P,O))),
 	debug(owl_generate_rdf,'  stray axioms',[]),
         % TODO - better way of doing this - stray axioms
-	forall((axiom(Axiom),\+ontologyAxiom(_,Axiom)),
-	       (owl2_export_axiom(Axiom,main_triple(S,P,O)),
-		owl2_export_annotation(Axiom,'owl:Axiom',S,P,O))),
-        % TODO - make this a hook?
+        (   var(Ontology)
+	->  forall((axiom(Axiom),\+ontologyAxiom(_,Axiom)),
+                   (   owl2_export_axiom(Axiom,main_triple(S,P,O)),
+                       owl2_export_annotation(Axiom,'owl:Axiom',S,P,O)))
+        ;   true),
+        % TODO - make SWRL export a hook?
         forall(axiom(implies(A,C)),
-               owl2_export_axiom(implies(A,C),_)),
-        (   member(rdf_syntax(ttl),Opts)
-        ->  rdf_save_turtle(FileName,Opts)
-	;   rdf_db:rdf_save(FileName)).
+               owl2_export_axiom(implies(A,C),_)).
+
+owl_synchronize_to_rdf :-
+        setof(Ont,ontology(Ont),Onts),
+        !,
+        maplist(owl_synchronize_to_rdf,Onts).
+owl_synchronize_to_rdf :-
+        owl_generate_rdf_in_memory(_,false,[]).
+owl_synchronize_to_rdf(Ont) :-
+        !,
+        debug(owl_sync,'Synchronizing: ~w',[Ont]),
+        % this is not very efficient!
+        % see email http://groups.google.com/group/thea-owl-lib/browse_thread/thread/d9fcc8cc28a2d347
+        % TODO: refactor code such that rdf can be asserted in other graphs during export
+        owl_generate_rdf_in_memory(Ont,false,[]),
+        debug(owl_sync,'Copying from user to ~w',[Ont]),
+        rdf_transaction(forall(rdf(S,P,O,user),
+                               rdf_assert(S,P,O,Ont))),
+        debug(owl_sync,' Clearing user',[]),
+        rdf_retractall(_,_,_,user).
+
+
 
 
 
