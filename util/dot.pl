@@ -122,6 +122,7 @@ graph_to_dot_file(GraphTerm,File):-
 % translate Graph to dot, translate to an image format and write to File.
 % if File is var, write to user_output
 graph_to_dot_file(GraphTerm,Fmt,File):-
+        Opts=[], % TODO
         (nonvar(Fmt) -> true ; Fmt=dot),
         (   nonvar(File) -> true ; tmp_file(Fmt,FileBase),concat_atom([FileBase,Fmt],'.',File)),
         graph_to_dot_atom(GraphTerm,Dot),
@@ -133,7 +134,10 @@ graph_to_dot_file(GraphTerm,Fmt,File):-
         told,
         (   Fmt=dot
         ->  true
-        ;   concat_atom([dot,'-o',File,'-T',Fmt,DotFile],' ',Cmd),
+        ;   (   member(rankdir(RankDir),Opts)
+            ->  true
+            ;   RankDir='BT'),
+            concat_atom([dot,' -o ',File,' -Grankdir=',RankDir,' -T',Fmt,' ',DotFile],Cmd),
             shell(Cmd)).
 
 
