@@ -69,7 +69,7 @@ hippocampus < part_of some brain.
 retina < part_of some brain.
 neuron < part_of some nervous_system.
 brain < organ.
-organism < part_of some organism.
+organ < part_of some organism.
 brain < part_of some nervous_system.
 nervous_system < system.
 system < part_of some organism.
