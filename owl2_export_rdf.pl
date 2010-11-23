@@ -145,6 +145,10 @@ owl_generate_rdf_in_memory(Ontology,RDF_Load_Mode,Opts) :-
         forall(axiom(implies(A,C)),
                owl2_export_axiom(implies(A,C),_)).
 
+%% owl_synchronize_to_rdf is det
+%% owl_synchronize_to_rdf(Ont) is det
+%
+% translates existing owl2_model.pl database into current rdf_db
 owl_synchronize_to_rdf :-
         setof(Ont,ontology(Ont),Onts),
         !,
