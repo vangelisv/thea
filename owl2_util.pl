@@ -289,9 +289,17 @@ replace_IRI_using_map(_,X,X).
 :- module_transparent translate_IRIs/1.
 translate_IRIs(Goal):-
         findall(A,axiom(A),Axioms),
-        maplist(map_IRIs(Goal),Axioms,Axioms2),
-        maplist(retract_axiom,Axioms),
-        maplist(assert_axiom,Axioms2).
+        findall(A-A2,(member(A,Axioms),
+                      map_IRIs(Goal,A,A2)),
+                MapPairs),
+        forall(member(A-A2,MapPairs),
+               (   findall(O2,(ontologyAxiom(O,A),
+                              map_IRIs(Goal,O,O2)),
+                           Os),
+                   retract_axiom(A),
+                   assert_axiom(A2),
+                   forall(member(O,Os),
+                          assert_axiom(A2,O)))).
 
 :- module_transparent translate_IRIs/2.
 translate_IRIs(Goal,Ontology):-
