@@ -45,13 +45,13 @@ load_axioms(File,Fmt,Opts) :-
         guess_format(File,Fmt,Opts),
         !,
         load_axioms(File,Fmt,Opts).
-load_axioms(File,Fmt,_Opts) :-
+load_axioms(File,Fmt,Opts) :-
         nonvar(Fmt),
         (   Fmt=prolog
         ;   Fmt=owlpl
         ;   Fmt=pl),
         !,
-	load_prolog_axioms(File).
+	load_prolog_axioms(File,Opts).
 load_axioms(File,Fmt,Opts) :-
         load_handler(read,Fmt),
         load_axioms_hook(File,Fmt,Opts),
@@ -61,11 +61,14 @@ load_axioms(File,Fmt,Opts) :-
         throw(owl2_io('cannot parse fmt for',File,Fmt,Opts)).
 
 load_prolog_axioms(File) :-
+        load_prolog_axioms(File,[]).
+load_prolog_axioms(File,Opts) :-
 	\+ predicate_property(qcompile(_),_), % e.g. Yap
 	!,
         style_check(-discontiguous),
-	consult_axioms(File).
-load_prolog_axioms(File) :-
+	consult_axioms(File),
+        post_process_prolog_axioms(Opts).
+load_prolog_axioms(File,Opts) :-
         style_check(-discontiguous),
 	style_check(-atom),	
 	file_name_extension(Base, _Ext, File),
@@ -81,7 +84,18 @@ load_prolog_axioms(File) :-
             consult_axioms(QlfFile)
         ;   debug(load,'  cannot write to qlf (permission problem?), loading from: ~w',[File]),
             consult_axioms(File)
-	).
+	),
+        post_process_prolog_axioms(Opts).
+
+post_process_prolog_axioms(Opts) :-
+        \+ member(noOntologyAxiom(true),Opts),
+        ontology(Ont),
+        \+ ontologyAxiom(_,_),
+        !,
+        forall(axiom(A),
+               assert_axiom(A,Ont)).
+post_process_prolog_axioms(_).
+
 
 %% save_axioms(+File,+Fmt)
 % see save_axioms/3
@@ -106,11 +120,16 @@ save_axioms(File,Fmt,Opts) :-
         ->  tell(File)
         ;   true),
         option(ontology(Ont),Opts,_),
-        % TODO - respect ontology(O) argument
         forall(ontologyAxiom(Ont,A),
                (   A=implies(_,_)
                ->  format('swrl:~q.~n',[A]) % ugly hack - assume owl2_model module for everything except this
                ;   format('~q.~n',[A]))),
+        % write orphans
+        (   var(Ont)
+        ->  forall((axiom(A),\+ontologyAxiom(_,A)),
+                   format('~q.~n',[A]))
+        ;   true),
+        % write ontologyAxiom/2
 	(   member(exclude(ontologyAxiom),Opts)
 	->  true
 	;   forall(owl2_model:ontologyAxiom(Ont,A),
