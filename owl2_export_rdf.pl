@@ -63,7 +63,8 @@ owl2_io:save_axioms_hook(File,owl,Opts) :-
         % if the user did not select an ontology, and there is not
         %  exactly 1 ontology in memory, then they are implicitly choosing
         %  to ignore ontologyAxiom/2 and save all axioms in one file.
-        (   var(O)
+        (   (   var(O)
+            ;   \+ ontologyAxiom(_,_))
         ->  (   nonvar(Merge),Merge=false
             ->  throw(error('cannot override merge(true) unless there is a single ontology'))
             ;   Merge=true,
@@ -74,8 +75,8 @@ owl2_io:save_axioms_hook(File,owl,Opts) :-
         (   var(Merge)
         ->  Opts2=Opts
         ;   Opts2=[merge(Merge)|Opts]),
-        
-        owl_generate_rdf(O,File,RDF_Load_Mode,Opts),
+
+        owl_generate_rdf(O,File,RDF_Load_Mode,Opts2),
 
         % hack to allow 'saving' to standard output
         (   IsTemp
