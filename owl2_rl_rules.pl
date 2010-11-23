@@ -81,9 +81,9 @@ u_assert(X) :- assert(X).
 %
 
 is_entailed(Axiom,Expl) :-
-	tbox(saved),
+	tbox(saved),!,
 	tbox_axiom_pred(F/A),
-	functor(Axiom,F,A),!,
+	functor(Axiom,F,A),
 	entailment(Axiom,Expl).
 
 
