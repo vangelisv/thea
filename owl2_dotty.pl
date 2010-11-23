@@ -44,7 +44,9 @@ entity_edge(X,Y,eq,Opts) :- equivalent_to(X,Y),option(follow(equivalentClasses),
 %entity_edge(X,Y,R,Opts) :- equivalent_to(X,Z),entity_edge(Z,Y,R,Opts). % cycle
 entity_edge(X,Y,subClassOf,Opts) :- subClassOf(X,Y),class(Y).
 entity_edge(X,Y,R,Opts) :- subClassOf(X,Z),\+class(Z),entity_edge(Z,Y,R,Opts).
-entity_edge(someValuesFrom(R,Y),Y,R,Opts).
+entity_edge(someValuesFrom(R,Y),Y,R,_).
+entity_edge(I,C,type,_) :- classAssertion(C,I).
+entity_edge(I,J,R,_) :- propertyAssertion(R,I,J).
 entity_edge(intersectionOf(L),X,cr,Opts) :- member(X,L),class(X).
 entity_edge(intersectionOf(L),Y,R,Opts) :- member(X,L),\+class(X),entity_edge(X,Y,R,Opts).
 %entity_edge(intersectionOf(L),Y,R,Opts) :- member(X,L),entity_edge(X,Y,R,follow(equivalentClasses)).
@@ -115,7 +117,9 @@ obj_to_dotnode_1(X,node(X,Props),Opts) :-
 node_prop(X,label,Label,_) :- labelAnnotation_value(X,Label).
 node_prop(X,label,X,_) :- atom(X), \+ labelAnnotation_value(X,_).
 node_prop(X,label,'',_) :- \+ atom(X).
-node_prop(X,shape,box,_).
+node_prop(X,shape,box,_) :- class(X).
+node_prop(X,shape,box,_) :- \+ atom(X).
+
 
 
 
