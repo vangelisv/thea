@@ -1,4 +1,4 @@
-/* -*- Mode: Prolog -*- */
+% /* -*- Mode: Prolog -*- */
 
 :- use_module(owl2_model).
 :- use_module(owl2_from_rdf).
@@ -167,7 +167,38 @@ test(with_repos) :-
 
 :- end_tests(repository_test).
 
+
+:- begin_tests(owl2_test_cases,[setup(setup_owl2_test_cases)]).
+
+test(all) :-
+	expand_file_name('c:/sw/supportmaterial/owl/owl2_test_cases/all/*.rdf',Files),
+	forall(member(File,Files),
+	       (owl_parse(File,complete,complete,false),
+		aggregate_all(count,owl2_from_rdf:owl(not_used,_,_,_),S),
+		( S = 0, print('...success') ; print('...fail'-S-unused-'triples')),
+		nl)).
+
+:- end_tests(owl2_test_cases).
+
 % TEST UTILITY PREDICATES
+
+setup_owl2_test_cases :-
+      owl_parse('c:/sw/supportmaterial/owl/owl2_test_cases/all.rdf',complete,complete,true),
+      print('parsin all tests --ok'),
+      forall((axiom(classAssertion('http://www.w3.org/2007/OWL/testOntology#TestCase',X)),
+	      propertyAssertion('http://www.w3.org/2007/OWL/testOntology#rdfXmlPremiseOntology',X,literal(type(_,V))),
+	      propertyAssertion('http://www.w3.org/2007/OWL/testOntology#identifier',X,literal(type(_,ID)))
+	     ),
+	     (print(ID),nl,
+	      atomic_list_concat(['c:/sw/supportmaterial/owl/owl2_test_cases/all/',ID,'.rdf'],Filename),print(Filename),nl,
+	      open(Filename,write,S),
+	      write(S,'<?xml version="1.0" encoding="UTF-8"?>'),nl(S),
+	      write(S,V),
+	      close(S)
+	     )
+	    ).
+
+
 
 :- module_transparent test_expected_count/0.
 test_expected_count :-
