@@ -24,7 +24,8 @@ s/* -*- Mode: Prolog -*- */
            reasoner_individualOf/4,
            reasoner_nr_individualOf/4,
            reasoner_objectPropertyAssertion/5,
-           add_axiom/5
+           add_axiom/5,
+           show_java_memory_info/0
            ]).
 
 :- use_module(library(jpl)).
@@ -908,6 +909,29 @@ owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),propertyAssertion(P
 owl2_reasoner:reasoner_check_consistency_hook(owlapi_reasoner(R,_Fac,_Opts)) :-
         debug(reasoner,'checking consistency',[]),
         is_consistent(R).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% utils                       %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+show_java_memory_info :-
+        java_memory_info(M,TM,FM,MM),
+        Mb is M/(1024*1024),
+        MMb is MM/(1024*1024),
+        format(user_error,'Mem: ~wmb (~wb) // Max: ~wmb (~wb) // ~w - ~w',[Mb,M,MMb,MM,TM,FM]).
+        %print_message(informational,memory(M,TM,FM)).
+java_memory_info(M,TM,FM,MM) :-
+        java_gc,
+        java_gc,
+        java_gc,
+        jpl_call('java.lang.Runtime',getRuntime,[],RunTime),
+        jpl_call(RunTime,totalMemory,[],TM),
+        jpl_call(RunTime,freeMemory,[],FM),
+        jpl_call(RunTime,maxMemory,[],MM),
+        M is TM-FM.
+
+java_gc :-     jpl_call('java.lang.System',gc,[],_).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% messages                    %%%
