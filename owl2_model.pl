@@ -74,6 +74,7 @@
 
            axiom_arguments/2,
 
+           % EXPRESSIOM TYPE CHECKING
            classExpression/1,
            objectIntersectionOf/1, objectUnionOf/1, objectComplementOf/1, objectOneOf/1,
            objectSomeValuesFrom/1, objectAllValuesFrom/1, objectHasValue/1, objectHasSelf/1,
@@ -81,6 +82,8 @@
            dataSomeValuesFrom/1, dataAllValuesFrom/1, dataHasValue/1,
            dataMinCardinality/1, dataMaxCardinality/1, dataExactCardinality/1,
 
+           objectPropertyExpression/1,
+           
            dataRange/1,
            dataIntersectionOf/1,
            dataUnionOf/1,
