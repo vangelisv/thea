@@ -274,6 +274,11 @@ parse_arg(['--load-app',MA|L],L,ensure_loaded(library(thea2/apps/M))) :- atom_to
 %parse_arg(['--load-mod',MA|L],L,ensure_loaded(library(thea2/M))) :- atom_to_term(MA,M,_).
 parse_arg(['--load-mod',MA|L],L,null) :- atom_to_term(MA,M,_),ensure_loaded(library(thea2/M)).
 
+parse_arg(['--jvm-opt',A|L],L,null) :-
+        (   jpl_set_default_jvm_opts([A])
+        ->  true
+        ;   throw(error(jvm('Cannot set jvm opts (must be called BEFORE jpl is loaded)')))).
+
 
 parse_arg(['--convert',X|L],L,convert(X)).
 
@@ -340,6 +345,7 @@ parse_arg(['--reasoner-ask',GA|L],L,reasonerquery( T, G)) :- atom_to_term(GA,G-T
 parse_arg(['--reasoner-ask',GA|L],L,reasonerquery( A, A)) :- atom_to_term(GA,A,_).
 parse_arg(['--reasoner-ask-direct',GA|L],L,reasonerquery( A, A, true)) :- atom_to_term(GA,A,_).
 parse_arg(['--reasoner-ask-all'|L],L,reasonerquery( A, A)).
+parse_arg(['--reasoner-ask-all-direct'|L],L,reasonerquery( A, A, true)).
 parse_arg(['--reasoner-get-superclasses',C|L],L,reasonerquery( P, subClassOf(C,P))).
 parse_arg(['--reasoner-cache-query-to',GA,F|L],L,reasonercache( A, F)) :- atom_to_term(GA,A,_).
 parse_arg(['--reasoner-cache-subclass-to',F|L],L,reasonercache( subClassOf(_,_), F)).
