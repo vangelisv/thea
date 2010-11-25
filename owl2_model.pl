@@ -1193,7 +1193,7 @@ retract_axiom(Axiom) :-
 retract_axiom(Axiom,Ontology) :-
         \+ var(Ontology),
 	retractall(ontologyAxiom(Ontology,Axiom)),
-        (   \+ \+ ontologyAxiom(_,Axiom)
+        (   \+ ontologyAxiom(_,Axiom)
         ->  retractall(Axiom)
         ;   true),              % still exists in other ontology..
         !.

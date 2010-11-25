@@ -26,6 +26,7 @@
            translate_IRIs/2,
            map_IRIs/3,
            assume_entity_declarations/0,
+           collect_orphan_axioms/1,
            use_class_labels_as_synonyms/1,
            class_label_synonym_axiom/2,
 	   any_axiom_template/1,
@@ -385,7 +386,14 @@ assume_entity_declarations :-
         forall(inferred_declaration(A),
                assert_axiom(A)).
 
+collect_orphan_axioms(Ont) :-
+        (   \+ ontology(Ont)
+        ->  assert_axiom(ontology(Ont))
+        ;   true),
+        forall((axiom(A),\+ontologyAxiom(_,A)),
+               assert_axiom(A,Ont)).
 
+               
                
         
 

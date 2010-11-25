@@ -847,6 +847,21 @@ expr_method(dataExactCardinality,getOWLDataExactCardinality,[N,P,CE],[N,P,CE]).
 expr_method(dataExactCardinality,getOWLDataExactCardinality,[N,P],[N,P]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% incrememntal classifier     %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/*
+  TODO - need to detect which changes have been applied
+  
+new_incremental_classifier(pellet_incremental(R)) :-
+	require_manager(Man),
+	create_factory(Man,Fac),
+        build_ontology(Man,Fac,Ont),
+        jpl_new('com.clarkparsia.modularity.IncrementalClassifier',[Ont],R),
+        jpl_call(R,classify,[],_).
+*/
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Hooks for owl2_reasoner.pl  %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
