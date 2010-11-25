@@ -114,7 +114,7 @@ xml_axiom(Ont,Elt,_) :-
 % if axiom argument is a class expression then call the
 % desc_xml
 % VV 18/12/2009 for OWLlink individual support
-axiom_xml_arg(ParentAxiom,c(Arg),Element) :-
+axiom_xml_arg(ParentAxiom,Element,c(Arg)) :-
 	desc_xml(ParentAxiom,Arg,Element),!.
 
 % everything else return the argument itself eg. property, individual
@@ -331,6 +331,14 @@ desc_xml(_Parent,IRI,element('http://www.w3.org/2006/12/owl2-xml#':Name,['URI'=I
 % see wine.owl, if we do not follow imports, cannot determine what PotableLiquid is,
 % except by guesswork
 desc_xml(_Parent,IRI,element('http://www.w3.org/2006/12/owl2-xml#':'Class',['URI'=IRI],[])) :-
+        atom(IRI),
+        !.
+
+desc_xml(_Parent,IRI,element('http://www.w3.org/2002/07/owl#':'Class',['URI'=IRI],[])) :-
+        atom(IRI),
+        !.
+
+desc_xml(_Parent,IRI,element('http://www.w3.org/2002/07/owl#':'Class',['IRI'=IRI],[])) :-
         atom(IRI),
         !.
 

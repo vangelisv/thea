@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Ontology
+    xml:base="http://www.w3.org/2002/07/owl#"
+    xmlns="http://www.w3.org/2002/07/owl#"
+    ontologyIRI="http://attempto.ifi.uzh.ch/ontologies/owlswrl/test">
+    <SubClassOf>
+        <Class    
+            IRI="http://attempto.ifi.uzh.ch/ontologies/owlswrl/test#man"/>
+        <Class                
+            IRI="http://attempto.ifi.uzh.ch/ontologies/owlswrl/test#human"/>
+    </SubClassOf>
+</Ontology> 
