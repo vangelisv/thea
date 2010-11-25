@@ -9,17 +9,21 @@
 	   download_import_closure/1,
 	   download_import_closure/2,
            write_owl_as_prolog/0,
+           undeclared_property/3,
            expand_namespaces/0,
            remove_namespaces/0,
            contract_namespaces/0,
            remove_ns/2,
            replace_ns_prefix/4,
            use_label_as_IRI/2,
+           get_IRI_from_label/2,
            use_labels_for_IRIs/0,
            use_safe_labels_for_IRIs/0,
+           replace_labels_with_IRIs/0,
            use_numeric_IRIs_for_classes/2,
            prefix_IRIs/1,
            translate_IRIs/1,
+           translate_IRIs/2,
            map_IRIs/3,
            assume_entity_declarations/0,
            use_class_labels_as_synonyms/1,
@@ -38,7 +42,6 @@
 :- use_module(owl2_from_rdf).
 :- use_module(owl2_xml).
 :- use_module(owl2_catalog).
-:- use_module(owl2_basic_reasoner).
 :- use_module(owl2_reasoner).
 
 
@@ -129,18 +132,30 @@ get_import_closure(F,Xs,_Opts) :-
 get_import_closure(F,[],_Opts) :-
 	format(user_error,'Could not download: ~w~n',[F]).
 
-
+% download a URL and store it locally in a directory with the same
+% name as the domain, with the same dir structure
+%
+%  http://x.org/foo/bar/waz.owl ==> x.org/foo/bar/waz.owl
 import_url_local(F,Local) :-
 	%sub_atom(F,0,_,_,'http:'),
 	concat_atom(['',Local],'http://',F),
 	!,
 	%truncate_url_to_local(F,Local),
 	%debug(download,'downloading ~w from ~w',[Local,F]),
-	sformat(Cmd,'wget -x ~w',[F]),
+        % 2010-11-13 : added -N option: don't re-retrieve files unless newer than local
+	sformat(Cmd,'wget -N -x ~w',[F]),
 	debug(download,'cmd: ~w',[Cmd]),
 	shell(Cmd).
 import_url_local(F,F).
 
+
+expr_refp(someValuesFrom(P,_),P).
+expr_refp(allValuesFrom(P,_),P).
+undeclared_property(P,A,X) :-
+        axiom_contains_expression(A,X),
+        expr_refp(X,P),
+        atom(P),
+        \+ property(P).
 
 
 
@@ -199,6 +214,9 @@ use_labels_for_IRIs:-
 use_safe_labels_for_IRIs:-
         translate_IRIs(use_safe_label_as_IRI).
 
+replace_labels_with_IRIs:-
+        translate_IRIs(get_IRI_from_label).
+
 remove_ns(IRI,X) :-
         concat_atom([_,X],'#',IRI),
         !.
@@ -238,6 +256,11 @@ use_label_as_IRI(IRI,X) :-
         !.
 use_label_as_IRI(X,X).
 
+get_IRI_from_label(X,IRI) :- labelAnnotation_value(IRI,X),!.
+get_IRI_from_label(X,X).
+
+
+
 use_property_as_IRI(Prop,IRI,NewIRI) :-
         anyPropertyAssertion(Prop,IRI,Literal),
 	Literal=literal(type(_,Val)),
@@ -249,6 +272,8 @@ use_property_as_IRI(X,X).
 
 prefix_IRI(Pre,X,Y) :-
         (   entity(X) ; ontology(X)),
+        \+ sub_atom(X,0,_,_,Pre),
+        \+ sub_atom(X,0,_,_,http),
         !,
         atom_concat(Pre,X,Y).
 prefix_IRI(_,X,X) :- !.
@@ -264,9 +289,25 @@ replace_IRI_using_map(_,X,X).
 :- module_transparent translate_IRIs/1.
 translate_IRIs(Goal):-
         findall(A,axiom(A),Axioms),
+        findall(A-A2,(member(A,Axioms),
+                      map_IRIs(Goal,A,A2)),
+                MapPairs),
+        forall(member(A-A2,MapPairs),
+               (   findall(O2,(ontologyAxiom(O,A),
+                              map_IRIs(Goal,O,O2)),
+                           Os),
+                   retract_axiom(A),
+                   assert_axiom(A2),
+                   forall(member(O,Os),
+                          assert_axiom(A2,O)))).
+
+:- module_transparent translate_IRIs/2.
+translate_IRIs(Goal,Ontology):-
+        findall(A,ontologyAxiom(Ontology,A),Axioms),
         maplist(map_IRIs(Goal),Axioms,Axioms2),
         maplist(retract_axiom,Axioms),
-        maplist(assert_axiom,Axioms2).
+        forall(member(A,Axioms2),
+               assert_axiom(A,Ontology)).
 
 %% map_IRIs(+MapGoal,+AxiomIn,?AxiomOut)
 :- module_transparent map_IRIs/3.
@@ -326,12 +367,19 @@ uniqify([H|L],[H|L2]) :-
 	uniqify(L,L2).
 
 
+% INCOMPLETE!
 inferred_declaration(class(C)) :- classAssertion(C,_),atom(C).
 inferred_declaration(class(C)) :- subClassOf(C,_),atom(C).
 inferred_declaration(class(C)) :- equivalentClasses(L),member(C,L),atom(C).
 inferred_declaration(namedIndividual(I)) :- classAssertion(_,I).
 inferred_declaration(namedIndividual(I)) :- propertyAssertion(_,I,_).
 inferred_declaration(namedIndividual(I)) :- propertyAssertion(_,_,I).
+inferred_declaration(objectProperty(P)) :- subPropertyOf(P,_).
+inferred_declaration(objectProperty(P)) :- subPropertyOf(_,P).
+inferred_declaration(objectProperty(P)) :- inverseProperties(P,_).
+inferred_declaration(objectProperty(P)) :- inverseProperties(_,P).
+
+
 
 assume_entity_declarations :-
         forall(inferred_declaration(A),

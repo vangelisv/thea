@@ -1,0 +1,11 @@
+spicy_tomato_pizza == pizza and hasPart some (topping and hasQuality some spicy) and hasPart some tomato.
+
+pizza < hasPart some mozzarella.
+
+spicy_paneer_curry == curry and hasPart some paneer and hasPart some (sauce and derivesFrom some tomato) and hasQuality some spicy.
+
+paneer < cheese.
+mozzarella < cheese.
+
+pizza < food.
+curry < food.

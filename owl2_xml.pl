@@ -55,7 +55,8 @@ xsb_owl_parse_xml(File,_Opts) :-
 %% xml_ontology(+XML, ?Ont, ?Axioms:list) is det
 % Translate XML term conforming to OWLX to a collecton of owl2_model axioms
 xml_ontology(element(_:'Ontology',Atts,Elts),ontology(O),Axioms) :-
-        atts_iri(Atts,O),
+        %atts_iri(Atts,O),
+        member('ontologyIRI'=O,Atts),
         % TODO: imports
         elts_axioms(O,Elts,Axioms).
 

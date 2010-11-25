@@ -23,14 +23,17 @@
                       op(700,xfy,inverseOf),
                       %op(700,xfy,(->)),
                       op(650,xfy,(::)),
-                      op(600,xfy,not),
+                      op(600,fx,not),
                       op(500,xfy,or),
                       op(200,xfy,and),
                       op(200,xfy,that),
                       op(150,xfy,some),
                       op(150,xfy,only),
-                      op(150,xfy,value)
-
+                      op(150,xfy,value),
+                      op(150,xfy,min),
+                      op(150,xfy,max),
+                      op(150,xfy,exactly),
+                      op(125,xfy,of) % required for QCRs
                      ]).
 
 
@@ -57,13 +60,17 @@
 :- op(700,xfy,inverseOf).
 %:- op(700,xfy,(->)).
 :- op(650,xfy,(::)).
-:- op(600,xfy,not).
+:- op(600,fx,not).
 :- op(500,xfy,or).
 :- op(200,xfy,and).
 :- op(200,xfy,that).
 :- op(150,xfy,some).
 :- op(150,xfy,only).
 :- op(150,xfy,value).
+:- op(150,xfy,min).
+:- op(150,xfy,max).
+:- op(150,xfy,exactly).
+:- op(125,xfy,of).
 :- op(100,fx,(?)).
 
 :- multifile owl2_io:load_axioms_hook/3.
@@ -81,7 +88,12 @@ owl_parse_plsyn(File,_Opts) :-
         ->  true
         ;   read_term(IO,PlTerm,[module(owl2_plsyn)]),
             plsyn2owl(PlTerm,Axiom),
-            assert_axiom(Axiom),
+            (   nb_current(ontology,Ont)
+            ->  assert_axiom(Axiom,Ont)
+            ;   assert_axiom(Axiom)),
+            (   Axiom=ontology(OntNew)
+            ->  nb_setval(ontology,OntNew)
+            ;   true),
             fail),
         close(IO).
 
@@ -109,10 +121,15 @@ exclude_axiom(H,Opts) :-
 	\+ ((ontologyAxiom(Ont,H),
 	     member(Ont,Onts))).
 
+%% plsyn_owl(?Pl,?Owl)
+% as plsyn_owl/3
 plsyn_owl(Pl,Owl) :-
 	plsyn_owl(Pl,Owl,[]).
 
-%% plsyn_owl(+Pl,?Owl,+Opts:list)
+%% plsyn_owl(?Pl,?Owl,+Opts:list)
+%
+% convert between a plsyn prolog term and an owl2_model.pl prolog term.
+% either one of Pl or Owl must be ground
 plsyn_owl(Pl,Owl,Opts) :-
 	select(use_labels,Opts,Opts2),
 	!,
@@ -141,6 +158,14 @@ plsyn2owl(R @< R1*R2,subPropertyOf(propertyChain(Chain),R)) :-
         plsyn2owl_ec(R1*R2,(*),Chain),
         !.
 
+plsyn2owl(Pl,Owl) :-
+        Pl=..[PlPred,PlProp,of(Num,PlC)],
+        cardinality_pred(PlPred),
+        plpred2owlpred(PlPred,OwlPred),
+        !,
+        plsyn2owl(PlProp,Prop),
+        plsyn2owl(PlC,C),
+        Owl=..[OwlPred,Num,Prop,C].
 plsyn2owl(Pl,Owl) :-
         Pl=..[PlPred|Args],
         plpred2owlpred(PlPred,OwlPred),
@@ -225,7 +250,9 @@ owl2plsyn(sameIndividuals(Args),Pl) :-
         maplist(owl2plsyn,Args,Args2),
         list_to_chain(Args2,(=),Pl).
 owl2plsyn(intersectionOf(Args),Pl) :-
-        maplist(owl2plsyn,Args,Args2),
+        % sort atoms first for aesthetic reasons: prefer <a and (r some b)> over <(r some b) and a>
+        sort(Args,ArgsSorted),
+        maplist(owl2plsyn,ArgsSorted,Args2),
         list_to_chain(Args2,and,Pl).
 owl2plsyn(disjointClasses(Args),Pl) :-
         maplist(owl2plsyn,Args,Args2),
@@ -293,8 +320,13 @@ plpred2owlpred(reflexive,reflexiveProperty).
 
 %plpred2owlpred(inverseOf,inverseProperties).
 
+plpred2owlpred(min,minCardinality).
+plpred2owlpred(max,maxCardinality).
+plpred2owlpred(exact,exactCardinality).
+
 plpred2owlpred(some,someValuesFrom).
 plpred2owlpred(only,allValuesFrom).
+plpred2owlpred(value,hasValue).
 plpred2owlpred(not,complementOf).
 
 
@@ -307,36 +339,103 @@ plpred2owlpred(@<,subPropertyOf).
 plpred2owlpred_list(\=,differentIndividuals). 
 %plpred2owlpred_list(\=,disjointClasses). 
 
-
-
+cardinality_pred(min).
+cardinality_pred(max).
+cardinality_pred(exact).
 
 
 /** <module> prolog-style syntactic sugar for OWL
 
   ---+ Synopsis
 
+Ontologies can be authored or written in prolog syntax, with
+convenience predicates declared infix in order to resemble Manchester
+Syntax.
+
+The following is a valid plsyn file:
+
 ==
-:- use_module(bio(owl2_plsyn)).
+ontology(spicy).
+spicy_tomato_pizza == pizza and hasPart some (topping and hasQuality some spicy) and hasPart some tomato.
+pizza < hasPart some mozzarella.
+pizza_with_4_cheeses == pizza and hasPart exactly 4 of cheese.
+==
 
-% 
-demo:-
-  nl.
-  
+This file can be loaded via load_axioms/2 like this:
 
+==
+load_axioms('myfile.plsyn',plsyn).
 ==
 
 ---+ Details
 
+The class expression syntax should resembly manchester syntax as far
+as possible. Additional symbols such as <, =, ==, @< are also used for
+axioms.
 
+We are forced to introduce an extra keyword 'of' for cardinality
+expressions to make this parseable by prolog.
 
----+ Additional Information
+TODO: show translation table
 
-This module is part of blip. For more details, see http://www.blipkit.org
+---++ Infix Predicate Symbols for Axioms
 
-@author  Chris Mungall
-@version $Revision$
-@see     README
-@license License
+  * < --- subClassOf/2
+  * @< --- subPropertyOf/2
+  * == --- equivalentClasses/1
+  * = --- sameIndividual/1
+  * \= --- differentIndividuals/1
+  * :: --- classAssertion/2
+ 
+---++ Property Characteristic Prefix Predicates
 
+the following are all declared prefix
+
+  * transitive --- transitiveProperty/1
+  * symmetric --- symmetricProperty/1
+  * reflexive --- reflexiveProperty/1
+  * functional --- functionalProperty/1
+
+---++ Other Infix Predicates
+
+  * inverseOf --- inverseProperties/2
+
+---++ Class Expressions
+
+  * and --- intersectionOf
+  * or --- unionOf
+  * some --- someValuesFrom
+  * only --- allValuesFrom
+  * value --- hasValue
+  * not --- complementOf (prefix)
+  * exactly --- exactCardinality
+  * min --- minCardinality
+  * max --- maxCardinality
+  * of --- required when making QCRs. E.g. exactly 5 of finger
+
+ ---++ Property Expressions
+
+ Use the '*' symbol. For example
+
+ ==
+ uncleOf @< fatherOf * brotherOf.
+ ==
+
+ ---++ Uses
+
+ plsyn makes it easier to mix OWL ontologies and ontology templates into prolog programs.
+
+For example, consider the following failure-driven loop to add an OWL
+axiom with a complex nested expression for all facts of a 4-argument predicate:
+
+==
+generate_ownership_assertions :-
+        owns(Person,Number,Thing,Loc),
+        plsyn_owl( owns exactly Number of (Thing and located_in value Loc) :: Person, OwlAxiom),
+        assert_axiom(OwlAxiom),
+        fail.
+==
+
+The owl2_popl.pl module facilitates this kind of translation
 
 */

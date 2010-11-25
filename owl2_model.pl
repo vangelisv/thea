@@ -74,6 +74,7 @@
 
            axiom_arguments/2,
 
+           % EXPRESSIOM TYPE CHECKING
            classExpression/1,
            objectIntersectionOf/1, objectUnionOf/1, objectComplementOf/1, objectOneOf/1,
            objectSomeValuesFrom/1, objectAllValuesFrom/1, objectHasValue/1, objectHasSelf/1,
@@ -81,6 +82,8 @@
            dataSomeValuesFrom/1, dataAllValuesFrom/1, dataHasValue/1,
            dataMinCardinality/1, dataMaxCardinality/1, dataExactCardinality/1,
 
+           objectPropertyExpression/1,
+           
            dataRange/1,
            dataIntersectionOf/1,
            dataUnionOf/1,
@@ -99,13 +102,19 @@
            axiom_directly_references/2,
            axiom_about/2,
            axiom_references/2,
-
+           axiom_contains_expression/2,
+           axiom_contains_expression/3,
+           referenced_description/1,
+           
            assert_axiom/1,
            assert_axiom/2,
            retract_axiom/1,
+           retract_axiom/2,
            retract_all_axioms/0,
 	   owl2_model_init/0,
-           consult_axioms/1
+           consult_axioms/1,
+
+           valid_axiom/1
 
 	  ]).
 %:- require([ is_list/1
@@ -212,7 +221,7 @@ valid_axiom(annotationProperty(A)) :- subsumed_by([A],[iri]).
 % @see anonymousIndividual/1, namedIndividual/1
 individual(A) :- anonymousIndividual(A).
 individual(A) :- namedIndividual(A).
-individual(A) :- nonvar(A),iri(A),\+property(A),\+class(A),\+ontology(A). % TODO: check: make individuals the default
+%individual(A) :- nonvar(A),iri(A),\+property(A),\+class(A),\+ontology(A). % TODO: check: make individuals the default
 axiom_arguments(individual,[iri]).
 valid_axiom(individual(A)) :- subsumed_by([A],[iri]).
 
@@ -319,14 +328,15 @@ propertyAxiom(inverseProperties(A, B)) :- inverseProperties(A, B).
 axiom_arguments(propertyAxiom,[axiom]).
 valid_axiom(propertyAxiom(A)) :- subsumed_by([A],[axiom]).
 
-%% subPropertyOf(?Sub:PropertyExpression, ?Super:ObjectPropertyExpressions)
+
+%% subPropertyOf(?Sub:PropertyExpression, ?Super:ObjectPropertyExpression)
 % subproperty axioms are analogous to subclass axioms
 % (extensional predicate - can be asserted)
 :- dynamic(subPropertyOf/2).
 :- multifile(subPropertyOf/2).
 axiompred(subPropertyOf/2).
-axiom_arguments(subPropertyOf,[propertyExpression, objectPropertyExpressions]).
-valid_axiom(subPropertyOf(A, B)) :- subsumed_by([A, B],[propertyExpression, objectPropertyExpressions]).
+axiom_arguments(subPropertyOf,[propertyExpression, objectPropertyExpression]).
+valid_axiom(subPropertyOf(A, B)) :- subsumed_by([A, B],[propertyExpression, objectPropertyExpression]).
 
 %% subObjectPropertyOf(?Sub:ObjectPropertyExpressionOrChain, ?Super:ObjectPropertyExpression)
 % The basic form is SubPropertyOf( OPE1 OPE2 ). This axiom states that the object property expression OPE1 is a subproperty of the object property expression OPE2 - that is, if an individual x is connected by OPE1 to an individual y, then x is also connected by OPE2 to y. The more complex form is SubPropertyOf( PropertyChain( OPE1 ... OPEn ) OPE ). This axiom states that, if an individual x is connected by a sequence of object property expressions OPE1, ..., OPEn with an individual y, then x is also connected with y by the object property expression OPE
@@ -615,7 +625,7 @@ axiom_arguments(negativeDataPropertyAssertion,[dataPropertyExpression, individua
 valid_axiom(negativeDataPropertyAssertion(A, B, C)) :- subsumed_by([A, B, C],[dataPropertyExpression, individual, literal]).
 
 %% annotationAssertion(?AnnotationProperty, ?AnnotationSubject, ?AnnotationValue)
-% An annotation assertion AnnotationAssertion( AP as at ) states that the annotation subject as - an IRI or an anonymous individual - is annotated with the annotation property AP and the annotation value av
+% An annotation assertion AnnotationAssertion( AP as av ) states that the annotation subject as - an IRI or an anonymous individual - is annotated with the annotation property AP and the annotation value av
 :- dynamic(annotationAssertion/3).
 :- multifile(annotationAssertion/3).
 axiompred(annotationAssertion/3).
@@ -739,6 +749,7 @@ iri(IRI) :- atomic(IRI).	%
 %literal(_).			% TODO
 literal(literal(_)).			% TODO
 
+propertyExpression(E) :- objectPropertyExpression(E) ; dataPropertyExpression(E).
 
 %% objectPropertyExpression(?OPE)
 % true if OPE is an ObjectPropertyExpression
@@ -757,6 +768,12 @@ objectPropertyExpressionOrChain(PE) :- objectPropertyExpression(PE).
 inverseObjectProperty(inverseOf(OP)) :- objectProperty(OP).
 
 dataPropertyExpression(E) :- dataProperty(E).
+
+dataPropertyExpression(DPEs) :-
+	(   is_list(DPEs)
+	->  forall(member(DPE,DPEs),
+		   dataPropertyExpression(DPE))
+	;   dataPropertyExpression(DPEs)).
 
 % give benefit of doubt; e.g. rdfs:label
 % in the OWL2 spec we have DataProperty := IRI
@@ -924,18 +941,18 @@ datatypeRestriction(datatypeRestriction(DR,FacetValues)):-
 
 %% dataSomeValuesFrom(+DR) is semidet
 dataSomeValuesFrom(someValuesFrom(DPE,DR)):-
-	dataPropertyExpressions(DPE),
+	dataPropertyExpression(DPE),
 	dataRange(DR).
 
 %% dataAllValuesFrom(+DR) is semidet
 dataAllValuesFrom(allValuesFrom(DPE,DR)):-
-	dataPropertyExpressions(DPE),
+	dataPropertyExpression(DPE),
 	dataRange(DR).
 
 %% dataHasValue(+DR) is semidet
 % A has-value class expression HasValue( DPE lt ) consists of a data property expression DPE and a literal lt, and it contains all those individuals that are connected by DPE to lt. Each such class expression can be seen as a syntactic shortcut for the class expression SomeValuesFrom( DPE OneOf( lt ) )
 dataHasValue(hasValue(DPE,L)):-
-	dataPropertyExpressions(DPE),
+	dataPropertyExpression(DPE),
 	literal(L).
 
 %% dataMinCardinality(+DR) is semidet
@@ -982,11 +999,6 @@ dataExactCardinality(cardinality(C,OPE)):-
 	C>=0,
 	objectPropertyExpression(OPE).
 
-dataPropertyExpressions(DPEs) :-
-	(   is_list(DPEs)
-	->  forall(member(DPE,DPEs),
-		   dataPropertyExpression(DPE))
-	;   dataPropertyExpression(DPEs)).
 
 %% valid_axiom(?Axiom) is semidet
 % true if Axiom passes typechecking
@@ -1077,6 +1089,51 @@ axiom_references(Ax,Ref) :-
         axiom_directly_references(Ax,X),
         axiom_or_expression_references(X,Ref).
 
+axiom_contains_expression(Ax,Ex) :-
+        axiom_contains_expression(Ax,Ex,_).
+axiom_contains_expression(Ax,Ex,D) :-
+        axiom(Ax),
+        expression_has_subexpression(Ax,Ex,[],Chain),
+        length(Chain,D).
+
+expression_has_subexpression(Ex,Ex,Accum,Accum).
+expression_has_subexpression(Ex,SubEx,Accum,Results) :-
+        Ex =.. [F|Args],
+        member(A,Args),
+        expression_has_subexpression(A,SubEx,[F|Accum],Results).
+
+
+
+%% referenced_description(?Desc) is nondet
+% true if Desc is either a class or a class expression using the set of ontologies loaded.
+% Example: if the ontology contains
+% ==
+% subClassOf(a,intersectionOf([b,someValuesFrom(p,c)]))
+% ==
+% then Desc will be a member of [a, b, c, b and p some c, p some c]
+referenced_description(C) :-
+        setof(C,referenced_description_1(C),Cs),
+        member(C,Cs).
+
+referenced_description_1(C) :- class(C).
+referenced_description_1(C) :-
+        subClassOf(A,B),
+        (   referenced_description(A,C)
+        ;   referenced_description(B,C)).
+referenced_description_1(C) :-
+        equivalentClasses(L),
+        member(A,L),
+        referenced_description(A,C).
+referenced_description_1(C) :-
+        classAssertion(A,_),
+        referenced_description(A,C).
+
+% TODO - this is incomplete
+referenced_description(X,X) :- ground(X).
+referenced_description(someValuesFrom(_,X),Y) :- referenced_description(X,Y).
+referenced_description(allValuesFrom(_,X),Y) :- referenced_description(X,Y).
+referenced_description(intersectionOf(L),Y) :- member(X,L),referenced_description(X,Y).
+referenced_description(unionOf(L),Y) :- member(X,L),referenced_description(X,Y).
 
 
 /****************************************
@@ -1131,6 +1188,17 @@ retract_axiom(Axiom) :-
 	retractall(ontologyAxiom(_,Axiom)),
         !.
 
+%% retract_axiom(+Axiom:axiom,+Ontology)
+% retracts axioms from a specified ontology
+retract_axiom(Axiom,Ontology) :-
+        \+ var(Ontology),
+	retractall(ontologyAxiom(Ontology,Axiom)),
+        (   \+ \+ ontologyAxiom(_,Axiom)
+        ->  retractall(Axiom)
+        ;   true),              % still exists in other ontology..
+        !.
+
+
 retract_all_axioms :-
         findall(A,axiom(A),Axioms),
         maplist(retract,Axioms),
@@ -1161,6 +1229,18 @@ objectProperty(eats).
 subClassOf(animal,organism).
 equivalentClasses([carnivore,intersectionOf([animal,someValuesFrom(eats,animal)])]).
 disjointClasses([herbivore,carnivore]).
+==
+
+Example of use:
+
+==
+:- use_module(library(thea2/owl2_io)).
+:- use_module(library(thea2/owl2_model)).
+
+show_superclasses(OntFile,Class) :-
+        load_axioms(OntFile),
+        forall(subClassOf(Class,Super),
+               writeln(Super)).
 ==
 
 ---+ Details
@@ -1224,16 +1304,6 @@ subClassOf(cat,mammal).
 axiomAnnotation(SubClassOf(cat,mammal),author,linnaeus).
 ==
 
----+++ Punning
-
-  OWL2 allows classes to act as individuals, so this is legal (TODO: check!):
-
-
-==
-class(polarBear).
-class(endangered).
-classAssertion(endangered,polarBear).
-==
 
   ---++ Ontologies
 
@@ -1251,14 +1321,12 @@ TODO: check edge cases, eg two ontologies have the same axioms but different ann
 
 By default there is no type checking of IRIs, so =|class(polarBear)|=
 is allowed, even though "polarBear" is not an IRI - this makes for
-convenience in working with example ontologies
+convenience in working with example ontologies.
+
+See prefix_IRIs/1 in owl2_util.pl for converting between short names
+and valid IRIs.
 
 ---+ Open Issues
-
----++ Structure Sharing
-
-Should we allow bnode IDs as arguments of predicate axioms for
-expressions? I don't think this is necessary.
 
 ---++ Enumeration of expressions
 

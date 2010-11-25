@@ -1,0 +1,3 @@
+#!/bin/sh
+# e.g. thea-jpl-pellet-get-superclasses http://purl.obolibrary.org/obo/CARO_0000019 testfiles/caro.owl --save-opt labels
+thea-jpl --reasoner pellet  --reasoner-get-superclasses "$@"

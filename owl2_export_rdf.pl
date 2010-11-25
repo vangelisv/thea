@@ -13,11 +13,12 @@
 % **********************************************************************
 
 :- module(owl2_export_rdf,
-	  [ 	    	    
-	    owl_generate_rdf/2, % FileName, RDF_Load_Mode (complete/not)
-	    owl_generate_rdf/3, % Ontology,FileName, RDF_Load_Mode (complete/not)
-	    owl_generate_rdf/4, % Ontology,FileName, RDF_Load_Mode (complete/not), Opts
-	    owl_rdf2n3/0 		    
+	  [owl_generate_rdf/2, % FileName, RDF_Load_Mode (complete/not)
+           owl_generate_rdf/3, % Ontology,FileName, RDF_Load_Mode (complete/not)
+           owl_generate_rdf/4, % Ontology,FileName, RDF_Load_Mode (complete/not), Opts
+           owl_synchronize_to_rdf/0,
+           owl_synchronize_to_rdf/1,
+           owl_rdf2n3/0 		    
 	  ]).
 
 :- use_module(owl2_model).
@@ -62,7 +63,8 @@ owl2_io:save_axioms_hook(File,owl,Opts) :-
         % if the user did not select an ontology, and there is not
         %  exactly 1 ontology in memory, then they are implicitly choosing
         %  to ignore ontologyAxiom/2 and save all axioms in one file.
-        (   var(O)
+        (   (   var(O)
+            ;   \+ ontologyAxiom(_,_))
         ->  (   nonvar(Merge),Merge=false
             ->  throw(error('cannot override merge(true) unless there is a single ontology'))
             ;   Merge=true,
@@ -73,8 +75,8 @@ owl2_io:save_axioms_hook(File,owl,Opts) :-
         (   var(Merge)
         ->  Opts2=Opts
         ;   Opts2=[merge(Merge)|Opts]),
-        
-        owl_generate_rdf(O,File,RDF_Load_Mode,Opts),
+
+        owl_generate_rdf(O,File,RDF_Load_Mode,Opts2),
 
         % hack to allow 'saving' to standard output
         (   IsTemp
@@ -112,9 +114,14 @@ owl_generate_rdf(Ontology,FileName,RDF_Load_Mode) :-
 % @param FileName - path to save
 % @param RDF_Load_Mode (complete/not)
 owl_generate_rdf(Ontology,FileName,RDF_Load_Mode,Opts) :- 
+        owl_generate_rdf_in_memory(Ontology,RDF_Load_Mode,Opts),
+        (   member(rdf_syntax(ttl),Opts) % TODO - use rdf_db hooks
+        ->  rdf_save_turtle(FileName,Opts)
+	;   rdf_db:rdf_save(FileName)).
+
+owl_generate_rdf_in_memory(Ontology,RDF_Load_Mode,Opts) :- 
 	(   RDF_Load_Mode=complete -> rdf_retractall(_,_,_); true),
 	retractall(blanknode_gen(_,_)),retractall(blanknode(_,_,_)),
-	debug(owl_generate_rdf,'exporting ~w',[Ontology]),
         % export a fake ontology directive if none specified
         (   var(Ontology)
         ->  owl2_export_axiom(ontology('http://example.org'),_)
@@ -122,21 +129,46 @@ owl_generate_rdf(Ontology,FileName,RDF_Load_Mode,Opts) :-
         (   member(merge(true),Opts)
         ->  true
         ;   SrcOntology=Ontology),
-	debug(owl_generate_rdf,'  ontologyAxiom/2',[]),
+	debug(owl_generate_rdf,'exporting Ont:~w',[Ontology]),
+	debug(owl_generate_rdf,'  gen: ontologyAxiom/2',[]),
 	forall(ontologyAxiom(SrcOntology,Axiom),
 	       (owl2_export_axiom(Axiom,main_triple(S,P,O)),
 		owl2_export_annotation(Axiom,'owl:Axiom',S,P,O))),
 	debug(owl_generate_rdf,'  stray axioms',[]),
         % TODO - better way of doing this - stray axioms
-	forall((axiom(Axiom),\+ontologyAxiom(_,Axiom)),
-	       (owl2_export_axiom(Axiom,main_triple(S,P,O)),
-		owl2_export_annotation(Axiom,'owl:Axiom',S,P,O))),
-        % TODO - make this a hook?
+        (   var(Ontology)
+	->  forall((axiom(Axiom),\+ontologyAxiom(_,Axiom)),
+                   (   owl2_export_axiom(Axiom,main_triple(S,P,O)),
+                       owl2_export_annotation(Axiom,'owl:Axiom',S,P,O)))
+        ;   true),
+        % TODO - make SWRL export a hook?
         forall(axiom(implies(A,C)),
-               owl2_export_axiom(implies(A,C),_)),
-        (   member(rdf_syntax(ttl),Opts)
-        ->  rdf_save_turtle(FileName,Opts)
-	;   rdf_db:rdf_save(FileName)).
+               owl2_export_axiom(implies(A,C),_)).
+
+%% owl_synchronize_to_rdf is det
+%% owl_synchronize_to_rdf(Ont) is det
+%
+% translates existing owl2_model.pl database into current rdf_db
+owl_synchronize_to_rdf :-
+        setof(Ont,ontology(Ont),Onts),
+        !,
+        maplist(owl_synchronize_to_rdf,Onts).
+owl_synchronize_to_rdf :-
+        owl_generate_rdf_in_memory(_,false,[]).
+owl_synchronize_to_rdf(Ont) :-
+        !,
+        debug(owl_sync,'Synchronizing: ~w',[Ont]),
+        % this is not very efficient!
+        % see email http://groups.google.com/group/thea-owl-lib/browse_thread/thread/d9fcc8cc28a2d347
+        % TODO: refactor code such that rdf can be asserted in other graphs during export
+        owl_generate_rdf_in_memory(Ont,false,[]),
+        debug(owl_sync,'Copying from user to ~w',[Ont]),
+        rdf_transaction(forall(rdf(S,P,O,user),
+                               rdf_assert(S,P,O,Ont))),
+        debug(owl_sync,' Clearing user',[]),
+        rdf_retractall(_,_,_,user).
+
+
 
 
 
@@ -150,6 +182,7 @@ owl_rdf2n3 :-
     write(S1), write(' '), write(P1), write(' '), write(O1), write(' .'),nl,
     fail.
 
+%% owl2_export_axiom(+Axiom, ?Triple) is semidet
 /*
 owl2_export_axiom(X,main_triple(Node,_,_)) :-
 	blanknode_gen(Node,X),!.
@@ -332,9 +365,18 @@ owl2_export_axiom(negativePropertyAssertion(P,A1,A2),main_triple(BNode,'rdf:type
 %
 
 owl2_export_axiom(annotationAssertion(AP,As,Av),main_triple(TAs,AP,TAv)) :- 
+        atom(As), % TODO: see issue#8. axiom annotations result is As=annotation(_,_,_)
+        !,
 	owl2_export_axiom(As,main_triple(TAs,_,_)),
 	owl2_export_axiom(Av,main_triple(TAv,_,_)),
 	owl_rdf_assert(TAs,AP,TAv),!.
+
+owl2_export_axiom(annotationAssertion(Ap,As,Av),main_triple(TAs,TAp,TAv)) :-
+        as2rdf_bnode(As,BNode), % As is complex term - see above
+	owl2_export_axiom(Ap,main_triple(TAp,_,_)),
+	owl2_export_axiom(Av,main_triple(TAv,_,_)),
+	owl2_export_axiom(BNode,main_triple(TAs,_,_)).
+        %reify(TAs,TAp,TAv,_,_,_).
 
 %
 % Property Expressions (Descriptions)
@@ -497,21 +539,27 @@ owl2_export_annotation(Parent)
 */    
 
 
+owl2_export_annotation(annotation(_,_,_),_,S,_,_) :-
+        \+ atom(S), % do nothing with this for now - see issue #8
+        !.
 owl2_export_annotation(Parent,ParentType,S,ParentP,ParentO) :-
-	(   Parent = annotation(_,ParentAP,ParentAV) -> P = ParentAP, O = ParentAV,
-	    owl_rdf_assert(S,P,O); 
-	P = ParentP, O = ParentO),
+	(   Parent = annotation(_,ParentAP,ParentAV)
+        ->  P = ParentAP,
+            O = ParentAV,
+	    owl_rdf_assert(S,P,O)
+        ;   P = ParentP, O = ParentO),
 	findall(AP-AV,annotation(Parent,AP,AV),ANNs),
-	(   ANNs = [_|_] -> as2rdf_bnode(Parent,BNode),
+	(   ANNs = [_|_]
+        ->  as2rdf_bnode(Parent,BNode),
 	    reify(BNode,'rdf:type',ParentType,S,P,O),
-	    forall(member(ANN,ANNs),owl2_export_annotation(ANN,'owl:Annotation',BNode,_,_)); 
-	true).
+	    forall(member(ANN,ANNs),owl2_export_annotation(ANN,'owl:Annotation',BNode,_,_))
+        ;   true).
 
 reify(SNode,PTerm,OTerm,S,P,O) :-
 	owl_rdf_assert(SNode,PTerm,OTerm),
-	owl_rdf_assert(SNode,'owl:subject',S),
-	owl_rdf_assert(SNode,'owl:predicate',P),
-	owl_rdf_assert(SNode,'owl:object',O).
+	owl_rdf_assert(SNode,'owl:annotatedSource',S),
+	owl_rdf_assert(SNode,'owl:annotatedProperty',P),
+	owl_rdf_assert(SNode,'owl:annotatedTarget',O).
 
 
 

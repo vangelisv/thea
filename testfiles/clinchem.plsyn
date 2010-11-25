@@ -1,0 +1,41 @@
+ontology('cc').
+metabolism == process and has_participant some chemical.
+biosynthesis == process and has_output some chemical.
+
+foo_metabolism == process and has_participant some foo.
+foo_biosynthesis == process and has_output some foo.
+
+increased_foo == increased_level and towards some foo.
+increased_foo_in_blood == increased_level and inheres_in some blood and towards some foo.
+
+abnormal_foo == abnormal_level and towards some foo.
+abnormal_foo_in_blood == abnormal_level and inheres_in some blood and towards some foo.
+
+increased_foo_metabolism == increased_rate and inheres_in some foo_metabolism.
+decreased_foo_metabolism == decreased_rate and inheres_in some foo_metabolism.
+increased_foo_biosynthesis == increased_rate and inheres_in some foo_biosynthesis.
+decreased_foo_biosynthesis == decreased_rate and inheres_in some foo_biosynthesis.
+
+increased_rate == rate and magnitude_increased_relative_to some normal.
+increased_level == level and magnitude_increased_relative_to some normal.
+
+rate < quality_of_process.
+level < quality_of_object.
+
+quality_of_process < quality.
+quality_of_object < quality.
+
+foo < chemical.
+
+has_output @< has_participant.
+
+has_part inverseOf part_of.
+inheres_in inverseOf bearer_of.
+objectProperty(towards).
+objectProperty(has_grain).
+objectProperty(magnitude_increased_relative_to).
+objectProperty(magnitude_decreased_relative_to).
+
+class(decreased_rate).
+class(process).
+class(normal).

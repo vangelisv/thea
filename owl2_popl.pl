@@ -50,9 +50,10 @@ popl_translate( X1 ===> X2 where G, Opts) :-
         replace_expression_in_all_axioms_where(X1,X2,G,Opts).
 
 popl_translate( X1 ===> X2, Opts) :-
+        debug(popl,'Replacing axioms',[]),
         replace_matching_axioms(X1,X2,Opts),
+        debug(popl,'Replacing expressions',[]),
         replace_expression_in_all_axioms(X1,X2,Opts).
-
 
 popl_translate( add X2 where G, Opts) :-
         replace_matching_axioms_where(true,X2,G,Opts),
@@ -75,7 +76,7 @@ execute_popl_file(F, Opts) :-
 %
 % if Opts contains copy(true) then a copy of the old one is retained.
 replace_matching_axioms(Ax1,Ax2,Opts) :-
-        forall(Ax1,replace_axiom(Ax1,Ax2,Opts)).
+        forall(axiom(Ax1),replace_axiom(Ax1,Ax2,Opts)).
 
 %% replace_matching_axioms(+AxiomTemplateOld,+AxiomTemplateNew) is det
 % as replace_matching_axioms/3, default options
@@ -148,6 +149,10 @@ replace_axiom(Ax1,Ax2,Opts) :-
 replace_axiom(Ax1,Ax2) :-
         replace_axiom(Ax1,Ax2,[]).
 
+%% replace_expression_in_all_axioms(+TemplateIn,+TemplateOut)
+% as replace_expression_in_all_axioms/3, default options
+replace_expression_in_all_axioms(T1,T2) :-
+        replace_expression_in_all_axioms(T1,T2,[]).
 
 %% replace_expression_in_all_axioms(+TemplateIn,+TemplateOut,+Opts:list)
 %
@@ -160,33 +165,39 @@ replace_axiom(Ax1,Ax2) :-
 %
 % see replace_axiom/3 for Opts
 replace_expression_in_all_axioms(T1,T2,Opts) :-
-        forall(axiom(Ax),
-               replace_expression_in_axiom(T1,T2,Ax,Opts)).
+        replace_expression_in_all_axioms_where(T1,T2,true,Opts).
+%        forall(axiom(Ax),
+%               replace_expression_in_axiom(T1,T2,Ax,Opts)).
 
-%% replace_expression_in_all_axioms(+TemplateIn,+TemplateOut)
-% as replace_expression_in_all_axioms/3, default options
-replace_expression_in_all_axioms(T1,T2) :-
-        replace_expression_in_all_axioms(T1,T2,[]).
 
 %% replace_expression_in_all_axioms_where(+TemplateIn,+TemplateOut,+WhereGoal,Opts)
+replace_expression_in_all_axioms_where(T1a,T2a,Ga,Opts) :-
+        select(syntax(plsyn),Opts,Opts2),
+        !,
+        plsyn_owl(T1a,T1),
+        plsyn_owl(T2a,T2),
+        plsyn_owl(Ga,G),
+        replace_expression_in_all_axioms_where(T1,T2,G,Opts2).
 replace_expression_in_all_axioms_where(T1,T2,G,Opts) :-
         member(ontology(Ont),Opts),
         !,
+        normalize_term(T1,T1_Norm),
         findall(Ax-Ax2,
                 (   ontologyAxiom(Ont,Ax),
                     debug(popl,'texting: ~w ',[Ax]),
                     G,
-                    replace_expression_in_axiom_term(T1,T2,Ax,Ax2),
+                    replace_expression_in_axiom_term(T1_Norm,T2,Ax,Ax2),
                     Ax2\=Ax,
                     debug(popl,'  scheduling: ~w ==> ~w',[Ax,Ax2])),
                 Replacements),
         forall(member(Ax-Ax2,Replacements),
                replace_axiom(Ax,Ax2,Opts)).
 replace_expression_in_all_axioms_where(T1,T2,G,Opts) :-
+        normalize_term(T1,T1_Norm),
         findall(Ax-Ax2,
                 (   axiom(Ax),
                     G,
-                    replace_expression_in_axiom_term(T1,T2,Ax,Ax2),
+                    replace_expression_in_axiom_term(T1_Norm,T2,Ax,Ax2),
                     Ax2\=Ax,
                     debug(popl,'scheduling: ~w ==> ~w',[Ax,Ax2])),
                 Replacements),
@@ -207,13 +218,15 @@ replace_expression_in_axiom(T1,T2,Ax,Opts) :-
 % T1 is replaced no matter how deep it is within the expression
 replace_expression_in_axiom_term(T1,T2,Ax1,Ax2) :-
         nonvar(Ax1),
-        Ax1=T1,
+        normalize_term(Ax1,Ax1_Norm),
+        Ax1_Norm=T1,
         Ax2=T2, % top-level match
         !.
 replace_expression_in_axiom_term(T1,T2,Ax1,Ax2) :-
         axiom(Ax1),
-        debug(popl_detail,'IN ~w ==> ~w :: ~w',[T1,T2,Ax1]),
-        Ax1 =.. [P|Args1],
+        normalize_term(Ax1,Ax1_Norm),
+        debug(popl_detail,'IN ~w ==> ~w :: ~w',[T1,T2,Ax1_Norm]),
+        Ax1_Norm =.. [P|Args1],
         maplist(replace_expression(T1,T2),Args1,Args2),
         Ax2 =.. [P|Args2].
         %debug(popl,'OUT ~w ==> ~w :: ~w',[T1,T2,Ax2]).
@@ -242,6 +255,19 @@ replace_expression(T1,T2,X1,X2) :-
         maplist(replace_expression(T1,T2),Args1,Args2),
         X2 =.. [F|Args2].
 replace_expression(_,_,X,X).
+
+normalize_term(X,X) :- atom(X),!.
+normalize_term([],[]) :- !.
+normalize_term(L,S) :-
+        L=[_|_],
+        !,
+        sort(L,S).
+normalize_term(T,T2) :-
+        !,
+        T=..[F|Args],
+        maplist(normalize_term,Args,Args2),
+        T2=..[F|Args2].
+
 
 /** <module> OWL2 Prolog Ontology Processing Language
 

@@ -19,11 +19,13 @@ s/* -*- Mode: Prolog -*- */
            inferred_axiom/3,
            reasoner_nr_subClassOf/4,
            reasoner_subClassOf/4,
+           reasoner_subClassOf/5,
            reasoner_equivalent_to/4,
            reasoner_individualOf/4,
            reasoner_nr_individualOf/4,
            reasoner_objectPropertyAssertion/5,
-           add_axiom/5
+           add_axiom/5,
+           show_java_memory_info/0
            ]).
 
 :- use_module(library(jpl)).
@@ -31,7 +33,6 @@ s/* -*- Mode: Prolog -*- */
 :- use_module(owl2_metamodel).
 
 :- multifile owlterm_java/4.
-
 
 prefix('org.semanticweb.owlapi.model').
 
@@ -86,7 +87,18 @@ build_ontology(Man,Fac,Ont) :-
         forall(axiom(Ax),
                (   debug(owl2,'[[Adding axiom: ~w',[Ax]),
                    add_axiom(Man,Fac,Ont,Ax,_),
-                   debug(owl2,'  /Added axiom: ~w]]',[Ax]))).
+                   debug(owl2,'  /Added axiom: ~w]]',[Ax]))),
+        debug(owl2,'Built ontology',[]).
+
+build_single_ontology(Man,Fac,OntIRI,Ont) :-
+        require_manager(Man),
+        create_ontology(Man,OntIRI,Ont),
+        forall(ontologyAxiom(OntIRI,Ax),
+               (   debug(owl2,'[[Adding axiom: ~w',[Ax]),
+                   add_axiom(Man,Fac,Ont,Ax,_),
+                   debug(owl2,'  /Added axiom: ~w]]',[Ax]))),
+        debug(owl2,'Built ontology',[]).
+
 
 :- multifile owl2_io:load_axioms_hook/3.
 owl2_io:load_axioms_hook(File,owlapi,Opts) :-
@@ -97,11 +109,18 @@ owl2_io:load_axioms_hook(File,owlapi(_Fmt),_Opts) :-
 
 :- multifile owl2_io:save_axioms_hook/3.
 owl2_io:save_axioms_hook(File,owlapi,Opts) :-
-	owl2_io:save_axioms_hook(File,owlapi(_),Opts).
-owl2_io:save_axioms_hook(File,owlapi(_Fmt),_Opts) :-
+        !,
+	owl2_io:save_axioms_hook(File,owlapi(''),Opts).
+owl2_io:save_axioms_hook(File,owlapi(Fmt),Opts) :-
+        member(ontology(OntIRI),Opts),
+        !,
+        create_factory(Man,Fac),
+        build_single_ontology(Man,Fac,OntIRI,Ont),
+        save_ontology(Man,Ont,Fmt,File).
+owl2_io:save_axioms_hook(File,owlapi(Fmt),_Opts) :-
         create_factory(Man,Fac),
         build_ontology(Man,Fac,Ont),
-        save_ontology(Man,Ont,File).
+        save_ontology(Man,Ont,Fmt,File).
 
 %% load_ontology(+Man,?Ont,+File) is det
 % TODO - need to maps java axioms to owlpl axioms
@@ -112,16 +131,26 @@ load_ontology(Man,Ont,File) :-
 
 %% save_ontology(+Man,+Ont,+File) is det
 save_ontology(Man,Ont,File) :-
+        save_ontology(Man,Ont,'',File).
+save_ontology(Man,Ont,Fmt,File) :-
         (   var(File)
         ->  tmp_file(owl,File),
             Tmp=true
         ;   Tmp=fail),
-        atom_javaIRI(File,IRI),
-        jpl_call(Man,saveOntology,[Ont,IRI],_),
+        atom_concat('file://',File,FileIRI),
+        atom_javaIRI(FileIRI,IRI),
+        fmt_cls(Fmt,FmtCls),
+        jpl_new(FmtCls,[],FmtObj),
+        jpl_call(Man,saveOntology,[Ont,FmtObj,IRI],_),
         (   Tmp
         ->  sformat(Cmd,'cat ~w',[File]),
             shell(Cmd)
         ;   true).
+
+fmt_cls(owlxml,'org.semanticweb.owlapi.io.OWLXMLOntologyFormat') :- !.
+fmt_cls(manchester,'org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxOntologyFormat') :- !.
+fmt_cls(_,'org.semanticweb.owlapi.io.RDFXMLOntologyFormat') :- !.
+
 
 
 
@@ -259,7 +288,9 @@ inferred_axiom(R,Fac,propertyAssertion(P,I,I2)) :-
 %
 % an unbound variable may be bound to a named class
 % or to a class expression using equivalentClasses/1 -- TODO - this is an axiom not expression        
-        
+%
+% DEPRECATED - use reasoner_nr_subClassOf/5 with final argument 'true'
+
 % reasoner_nr_subClassOf(+R,+Fac,?C,?P)
 reasoner_nr_subClassOf(R,Fac,C,P) :-
         throw(not_implemented),
@@ -291,30 +322,38 @@ reasoner_nr_subClassOf(R,Fac,C,P) :-
 % ?C ?P - find superclasses for all named classes C
 % +C ?P - find superclasses
 % ?C +P - find subclasses
-
-% reasoner_subClassOf(+R,+Fac,?C,?P)
 reasoner_subClassOf(R,Fac,C,P) :-
+        reasoner_subClassOf(R,Fac,C,P,false).
+
+%% reasoner_subClassOf(+R,+Fac,?C,?P,+IsDirect)
+% ?C ?P - find superclasses for all named classes C
+% +C ?P - find superclasses
+% ?C +P - find subclasses
+% IsDirect - true or false
+
+% reasoner_subClassOf(+R,+Fac,?C,?P,+IsDirect)
+reasoner_subClassOf(R,Fac,C,P,IsDirect) :-
         var(C),
         var(P),
         !,
         class(C),
-        reasoner_subClassOf(R,Fac,C,P).
+        reasoner_subClassOf(R,Fac,C,P,IsDirect).
 
-% reasoner_subClassOf(+R,+Fac,+C,?P) 
-reasoner_subClassOf(R,Fac,C,P) :-
+% reasoner_subClassOf(+R,+Fac,+C,?P,+IsDirect) 
+reasoner_subClassOf(R,Fac,C,P,IsDirect) :-
         nonvar(C),
         !,
         pl2javaref(Fac,C,JC),
-        jpl_call(R,getSuperClasses,[JC,@(false)],JPSetSet),
+        jpl_call(R,getSuperClasses,[JC,@(IsDirect)],JPSetSet),
         nodeset_entity(JPSetSet,P).
 
-% reasoner_subClassOf(+R,+Fac,?C,+P) 
-reasoner_subClassOf(R,Fac,C,P) :-
+% reasoner_subClassOf(+R,+Fac,?C,+P,+IsDirect) 
+reasoner_subClassOf(R,Fac,C,P,IsDirect) :-
         nonvar(P),
         !,
         debug(reasoner,'getSubClasses( ~w )',[P]),
         pl2javaref(Fac,P,JP),
-        jpl_call(R,getSubClasses,[JP,@(false)],JCSetSet),
+        jpl_call(R,getSubClasses,[JP,@(IsDirect)],JCSetSet),
         debug(reasoner,'getSubClasses( ~w ) = ~w',[P,JCSetSet]),
         nodeset_entity(JCSetSet,C).
 
@@ -852,8 +891,17 @@ owl2_reasoner:reasoner_tell_all_hook(owlapi_reasoner(OWLReasoner,Fac,_Opts)) :-
 owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),subClassOf(A,B)) :-
 	reasoner_subClassOf(R,Fac,A,B).
 
+owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),subClassOf(A,B),IsDirect) :-
+	reasoner_subClassOf(R,Fac,A,B,IsDirect).
+
+owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),directSubClassOf(A,B)) :-
+	reasoner_subClassOf(R,Fac,A,B,true).
+
 owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),classAssertion(C,I)) :-
 	reasoner_individualOf(R,Fac,I,C).
+
+owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),classAssertion(C,I),IsDirect) :-
+	reasoner_individualOf(R,Fac,I,C,IsDirect).
 
 owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),propertyAssertion(P,A,B)) :-
 	reasoner_objectPropertyAssertion(R,Fac,P,A,B).
@@ -861,6 +909,29 @@ owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),propertyAssertion(P
 owl2_reasoner:reasoner_check_consistency_hook(owlapi_reasoner(R,_Fac,_Opts)) :-
         debug(reasoner,'checking consistency',[]),
         is_consistent(R).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% utils                       %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+show_java_memory_info :-
+        java_memory_info(M,TM,FM,MM),
+        Mb is M/(1024*1024),
+        MMb is MM/(1024*1024),
+        format(user_error,'Mem: ~wmb (~wb) // Max: ~wmb (~wb) // ~w - ~w',[Mb,M,MMb,MM,TM,FM]).
+        %print_message(informational,memory(M,TM,FM)).
+java_memory_info(M,TM,FM,MM) :-
+        java_gc,
+        java_gc,
+        java_gc,
+        jpl_call('java.lang.Runtime',getRuntime,[],RunTime),
+        jpl_call(RunTime,totalMemory,[],TM),
+        jpl_call(RunTime,freeMemory,[],FM),
+        jpl_call(RunTime,maxMemory,[],MM),
+        M is TM-FM.
+
+java_gc :-     jpl_call('java.lang.System',gc,[],_).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% messages                    %%%
@@ -877,70 +948,80 @@ prolog:message(bench(M,T1,T2)) -->
 
 ---+ Synopsis
 
-using OWLAPI to save files:
-  
-==
-[owl2_model].
-[owl2_java_owlapi].
-[owl2_from_rdf].
-owl_parse_rdf('testfiles/Hydrology.owl'), % parse using prolog/thea
-create_factory(Man,Fac),
-build_ontology(Man,Fac,Ont),
-save_ontology(Man,Ont,'file:///tmp/foo'). % save using owlapi
-==  
-
 using a reasoner:
 
 ==
-create_reasoner(Man,pellet,Reasoner),
-create_factory(Man,Fac),
-build_ontology(Man,Fac,Ont),
-reasoner_classify(Reasoner,Man,Ont),
-save_ontology(Man,Ont,'file:///tmp/foo').
+reasoner_test :-
+        initialize_reasoner(pellet,R),
+        forall(reasoner_ask(subClassOf(A,B)),
+               format('~w SubClassOf ~w~n',[A,B])).
 ==  
 
-==
-[owl2_model].
-[owl2_java_owlapi].
-[owl2_from_rdf].
-owl_parse_rdf('testfiles/music_ontology.owl'),
-create_factory(Man,Fac),
-build_ontology(Man,Fac,Ont),
-writeln(classifying),
-create_reasoner(Man,pellet,Reasoner),
-reasoner_classify(Reasoner,Man,Ont),
-writeln(classified),
-class(C),
-writeln(c=C),
-reasoner_subClassOf(Reasoner,Fac,C,P),
-writeln(p=P).
-==  
+To use this interactively, make sure to start-up prolog with JPL and
+everything in your classpath. You can use the thea-jpl wrapper script.
 
-queries:
+To start a prolog session:
 
 ==
-someValuesFrom('http://purl.org/ontology/mo/performed','http://purl.org/ontology/mo/Performance')
+thea-jpl --prolog
 ==
 
----+ Use
+To query reasoner results:
 
-  JPL Required
-
-  Set your CLASSPATH to include owlapi-bin.jar, pellet.jar, ...
-
-  start SWI
+==
+thea-jpl --reasoner pellet testfiles/pizza.owl --reasoner-ask "subClassOf(A,B)"
+==
 
 ---+ Details
 
-  This module is intended to interface with the OWLAPI
+This module is intended to interface with the OWLAPI
 
   http://owlapi.sourceforge.net/
 
-  This provides access to reasoners such as Pellet and FaCT++
+This provides access to reasoners such as Pellet and FaCT++, as well
+as OWLAPI parsers and renderers. You can also use this if you want
+additional capabilities provided by the OWLAPI.
 
-  JPL is required for this module
 
-  Note that this module is not required for the rest of Thea2
+---+ Hooks
+
+It provides hooks into both owl2_reasoner.pl and owl2_io.pl
+
+---++ I/O Hooks
+
+You can use the format =|owlapi(Format)|= to use the OWLAPI for
+reading or writing. E.g.
+
+==
+save_axioms('my.owl',owlapi(manchester)).
+==
+
+Supported values:
+
+ * owlapi(manchester)
+ * owlapi(owlxml)
+ * owlapi(owlrdf)
+
+ More can be added easily on request
+
+---++ Reasoner Hooks
+
+You can use any of
+
+ * pellet
+ * factpp
+ * hermit
+
+As arguments to reasoner_initialize/2.
+
+
+
+
+---+ Pre-Requisites
+
+JPL is required for this module
+
+Note that this module is not required for the rest of Thea2
 
 @author  Chris Mungall
 @version $Revision$

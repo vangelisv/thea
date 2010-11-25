@@ -104,7 +104,7 @@ has backwards chaining rules. Caveat emptor: this module is
 experimental, liable to change and could be non-terminating. See the
 module docs for details.
 
-[VV] Another implementation is provided in owl2_rl_rules.pl. The module
+Another implementation is provided in owl2_rl_rules.pl. The module
 implements OWL RL Rules with simple forward and backward chaining engines
 See more in module documentation
 

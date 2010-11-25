@@ -1,27 +1,2 @@
 #!/bin/sh
-
-# Give a space-separated list of classpath items RELATIVE TO THE CURRENT SCRIPT
-# These will be resolved into absolute pathnames
-# Wildcards are allowed
-CLASSPATH_RELATIVE=jars/*.jar
-
-
-for ARG in "$CLASSPATH_RELATIVE"
-do
-	DEREFERENCED_CLASSPATH=`ls -1 -L $ARG`
-        echo A = $DEREFERENCED_CLASSPATH
-	for CP_ENTRY in $DEREFERENCED_CLASSPATH
-	do
-		if [ -z "$CLASSPATH" ]
-		then
-			CLASSPATH="$CP_ENTRY"
-		else
-			CLASSPATH="$CLASSPATH:$CP_ENTRY"
-		fi
-	done
-done
-
-echo CP = $CLASSPATH
-#CLASSPATH="jars/owlapi-bin.jar:" swipl -g "[owl2_java_owlapi],create_manager(M)" $0
-#swipl -g "[owl2_java_owlapi],owl_parse_rdf('$1'),create_factory(Man,Fac),build_ontology(Man,Fac,Ont),save_ontology(Man,Ont,'$2').halt"
-swipl -g "[owl2_java_owlapi],[owl2_model],debug(owl2),owl2_model:consult('$1'),create_factory(Man,Fac),build_ontology(Man,Fac,Ont),save_ontology(Man,Ont,'$2'),halt"
+thea --assume-entity-declarations --to owl "$@"

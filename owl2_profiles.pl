@@ -2,6 +2,9 @@
 
 :- module(owl2_profiles,
           [
+           ontology_profile/2,
+           ontology_profile_violation/3,
+           trim_axioms_by_profile/2,
            owl2_profile/1,
            axiom_profile/2,
            axiom_profile/3
@@ -10,17 +13,41 @@
 :- use_module(owl2_model).
 :- use_module(owl2_metamodel).
 
+ontology_profile(Ont,Profile) :-
+        owl2_profile(Profile),
+        ontology(Ont),
+        forall(ontologyAxiom(Ont,Ax),
+               axiom_profile(Ax,Profile,true)).
+
+ontology_profile_violation(Ont,Profile,Ax) :-
+        owl2_profile(Profile),
+        ontology(Ont),
+        ontologyAxiom(Ont,Ax),
+        \+ axiom_profile(Ax,Profile,true).
+
+trim_axioms_by_profile(Ont,Profile) :-
+        ontology(Ont),
+        owl2_profile(Profile),
+        !,
+        findall(Ax,ontology_profile_violation(Ont,Profile,Ax),Axs),
+        forall(member(Ax,Axs),
+               retract_axiom(Ax,Ont)).
+
 
 %% owl2_profile(?Profile) is nondet
+%
+% true if Profile is the name of an OWL2 profile
 owl2_profile(owl2_EL).
-%owl2_profile(owl2_QL).
-%owl2_profile(owl2_RL).
+owl2_profile(owl2_QL).
+owl2_profile(owl2_RL).
 
 %% construct_profile(+Construct,?Profile,?Passes:boolean)
 construct_profile(X,P,T) :- axiom_profile(X,P,T).
 construct_profile(X,P,T) :- expression_profile(X,P,T).
 
+%% axiom_profile(+Axiom,?Profile)
 %% axiom_profile(+Axiom,?Profile,?Passes:boolean)
+axiom_profile(A,P) :- axiom_profile(A,P,true).
 :- discontiguous axiom_profile/3.
 
 %% expression_profile(+Axiom,?Profile,?Passes:boolean)
@@ -32,6 +59,14 @@ construct_profile(X,P,T) :- expression_profile(X,P,T).
 expression_profile(C,P,true) :- owl2_profile(P),class(C).
 expression_profile(C,P,true) :- owl2_profile(P),property(C).
 expression_profile(C,P,true) :- owl2_profile(P),dataRange(C).
+
+% ----------------------------------------
+% all profiles
+% ----------------------------------------
+axiom_profile(annotationAssertion(_,_,_),_,true).
+axiom_profile(ontology(_),_,true).
+axiom_profile(annotationProperty(_),_,true).
+axiom_profile(Ax,_,true) :- declarationAxiom(Ax).
 
 % ----------------------------------------
 % EL
@@ -48,14 +83,15 @@ expression_profile(intersectionOf(L),owl2_EL,true) :- forall(member(X,L),express
 expression_profile(propertyChain(L),owl2_EL,true) :- forall(member(X,L),expression_profile(X,owl2_EL,true)). % inverses..?
 
 
-expression_profile(allValuesFrom(P,_),owl2_EL,false).
-expression_profile(maxCardinality(P,_),owl2_EL,false).
-expression_profile(minCardinality(P,_),owl2_EL,false).
-expression_profile(exactCardinality(P,_),owl2_EL,false).
-expression_profile(maxCardinality(P,_,_),owl2_EL,false).
-expression_profile(minCardinality(P,_,_),owl2_EL,false).
-expression_profile(exactCardinality(P,_,_),owl2_EL,false).
+expression_profile(allValuesFrom(_P,_),owl2_EL,false).
+expression_profile(maxCardinality(_P,_),owl2_EL,false).
+expression_profile(minCardinality(_P,_),owl2_EL,false).
+expression_profile(exactCardinality(_P,_),owl2_EL,false).
+expression_profile(maxCardinality(_P,_,_),owl2_EL,false).
+expression_profile(minCardinality(_P,_,_),owl2_EL,false).
+expression_profile(exactCardinality(_P,_,_),owl2_EL,false).
 
+% TODO - use a generic visitor style approach
 axiom_profile(subClassOf(A,B),owl2_EL,true) :- expression_profile(A,owl2_EL,true),expression_profile(B,owl2_EL,true).
 axiom_profile(equivalentClasses(L),owl2_EL,true) :- forall(member(X,L),expression_profile(X,owl2_EL,true)).
 axiom_profile(disjointClasses(L),owl2_EL,true) :- forall(member(X,L),expression_profile(X,owl2_EL,true)).
@@ -108,7 +144,7 @@ superClassExpression(complementOf(A),owl2_QL,true) :- subClassExpression(A,owl2_
 superClassExpression(someValuesFrom(P,A),owl2_QL,true) :- class(A),objectPropertyExpression(P).
 
 
-axiom_profile(subClassOf(A,B),owl2_QL,true) :- subClassExpression(A,owl2_QL,true),superClassExpression(B,owl2_QL,true),
+axiom_profile(subClassOf(A,B),owl2_QL,true) :- subClassExpression(A,owl2_QL,true),superClassExpression(B,owl2_QL,true).
 axiom_profile(equivalentClasses(L),owl2_QL,true) :- forall(member(X,L),subClassExpression(X,owl2_QL,true)).
 axiom_profile(disjointClasses(L),owl2_QL,true) :- forall(member(X,L),subClassExpression(X,owl2_QL,true)).
 axiom_profile(subPropertyOf(A,B),owl2_QL,true) :- expression_profile(A,owl2_QL,true),expression_profile(B,owl2_QL,true).
@@ -116,7 +152,7 @@ axiom_profile(equivalentProperties(L),owl2_QL,true) :- forall(member(X,L),expres
 axiom_profile(disjointProperties(_),owl2_QL,true).
 axiom_profile(inverseProperties(_,_),owl2_QL,true).
 axiom_profile(propertyRange(A,B),owl2_QL,true) :- objectPropertyExpression(A),superClassExpression(B,owl2_QL,true).
-axiom_profile(propertyRange(A,B),owl2_QL,true) :- dataPropertyExpression(A).
+axiom_profile(propertyRange(A,_B),owl2_QL,true) :- dataPropertyExpression(A).
 axiom_profile(propertyDomain(_A,B),owl2_QL,true) :- superClassExpression(B,owl2_QL,true).
 
 
@@ -136,13 +172,13 @@ expression_profile(intersectionOf(L),owl2_QL,true) :- forall(member(X,L),express
 
 
 
-expression_profile(allValuesFrom(P,_),owl2_QL,false).
-expression_profile(maxCardinality(P,_),owl2_QL,false).
-expression_profile(minCardinality(P,_),owl2_QL,false).
-expression_profile(exactCardinality(P,_),owl2_QL,false).
-expression_profile(maxCardinality(P,_,_),owl2_QL,false).
-expression_profile(minCardinality(P,_,_),owl2_QL,false).
-expression_profile(exactCardinality(P,_,_),owl2_QL,false).
+expression_profile(allValuesFrom(_P,_),owl2_QL,false).
+expression_profile(maxCardinality(_P,_),owl2_QL,false).
+expression_profile(minCardinality(_P,_),owl2_QL,false).
+expression_profile(exactCardinality(_P,_),owl2_QL,false).
+expression_profile(maxCardinality(_P,_,_),owl2_QL,false).
+expression_profile(minCardinality(_P,_,_),owl2_QL,false).
+expression_profile(exactCardinality(_P,_,_),owl2_QL,false).
 
 
 % forbidden:
@@ -151,16 +187,16 @@ expression_profile(exactCardinality(P,_,_),owl2_QL,false).
 expression_profile(unionOf(_),owl2_QL,false).
 expression_profile(complementOf(_),owl2_QL,false).
 expression_profile(oneOf([_,_|_]),owl2_QL,false).
-expression_profile(propertyChain(L),owl2_QL,false).
+expression_profile(propertyChain(_),owl2_QL,false).
 
 % forbidden axioms:
 axiom_profile(transitiveProperty(_),owl2_QL,false).
-axiom_profile(functionalProperty(P),owl2_QL,false).
+axiom_profile(functionalProperty(_),owl2_QL,false).
 axiom_profile(irreflexiveProperty(_),owl2_QL,false).
 %axiom_profile(inverseOf(_),owl2_QL,false).
 axiom_profile(inverseFunctionalProperty(_),owl2_QL,false).
 axiom_profile(hasKey(_,_),owl2_QL,false).
-axiom_profile(negativePropertyAssertion(A,_,_),owl2_QL,false).
+axiom_profile(negativePropertyAssertion(_,_,_),owl2_QL,false).
 axiom_profile(sameIndividuals(_,_),owl2_QL,false).
 
 

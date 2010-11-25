@@ -1,7 +1,5 @@
 ---+ Thea2 : Prolog Modules for OWL2
 
-%TOC%
-
 A collection of modules for parsing and manipulating OWL2 ontologies
 in Prolog. It is developed with SWI-Prolog in mind, but the goal is to
 maximize portability with other prologs, such as Yap and XSB.
@@ -12,45 +10,90 @@ This documentation is intended to be read via pldoc
 
 See INSTALL.txt
 
+You can bypass installation and use the 'thea' script directly. See
+below.
+
 ---++ Overview
 
-The model is based on Structural Specification and Functional-Style
-Syntax for OWL2 (http://www.w3.org/TR/owl2-syntax), and can be found
-in owl2_model.pl
+The module owl2_io.pl provides a means of loading and saving OWL2
+axioms in a prolog model using predicates such as load_axioms/3 and
+save_axioms/3. For example =|load_axioms('pizza.owl').|=
 
-Predicates such as subClassOf/2 can be used to query in-memory axioms
+The model is documented in owl2_model.pl, and is based on Structural
+Specification and Functional-Style Syntax for OWL2
+(http://www.w3.org/TR/owl2-syntax). Predicate names such as
+subClassOf2/, equivalent_to/2 and class/1 can be used to query an
+in-memory prolog database.
 
-There are a variety of surface forms for OWL2. The goal is to
-eventually support all of these for both parsing and writing. So far
-we have parsers and writers for:
-
-* RDF - owl2_from_rdf.pl
-* OWL-XML - owl2_xml.pl
-
-We also allow for reading and writing from prolog factfiles.
-
-The module owl2_io.pl is used for reading and writing other formats
-and languages. For example:
+For example:
 
 ==
-swipl -g "[library('thea2/owl2_io')],load_axioms('testfiles/wine.owl',owl)"
+:- use_module(library(thea2/owl2_io)).
+:- use_module(library(thea2/owl2_model)).
+
+show_superclasses(OntFile,Class) :-
+        load_axioms(OntFile),
+        forall(subClassOf(Class,Super),
+               writeln(Super)).
 ==
 
-See
+The database can be manipulated via assert_axiom/2 and
+retract_axiom/2. For more advanced OWL pattern matching and
+replacement, see owl2_popl.pl
 
-* Cookbook.txt
+The Semantic Web Rule Language (SWRL) is also supported via swrl.pl
 
-For some handy recipes
+A number of different reasoners can be used - the module
+owl2_reasoner.pl provides predicates such as reasoner_ask/2, which can
+be used to query over an entailed knowledge base. A variety of
+reasoners can be plugged in, both native prolog and non-prolog (the
+latter accessed seamlessly via either owl2_owllink.pl or
+owl2_java_owlapi.pl).
 
----++ SWRL support
+---++ Command Line Usage
 
-The module swrl.pl provides support for the Semantic Web Rules Language
+The script "thea" in the bin directory should work from anywhere, with
+no installation of thea modules required.
 
-SWRL rules are treated as axioms, extending owl2_model.pl
+Type
 
-In addition, we allow for representation of rules as prolog terms and
-prolog programs - there is a partial converter from prolog programs to
-OWL2+SWRL
+==
+thea --help
+==
+
+for full instructions. Many complex operations can be chained on the
+command line.
+
+See also the other wrapper scripts in the bin directory
+
+See Command_Line_Usage.txt for more details
+
+---++ Further Reading
+
+ * Cookbook.txt - a collection of recipes for various tasks
+ * Reasoning_using_Thea.txt - how to use reasoners
+
+See also the apps/ directory for example applications.
+
+---++ Module Manifest
+
+ * owl2_io.pl -- reading/writing OWL from different sources, including:
+  * owl2_from_rdf.pl -- requires library(semweb)
+  * owl2_export_rdf.pl -- requires library(semweb)
+  * owl2_xml.pl -- support for OWL-XML
+  * owl2_manchester_paser.pl -- incomplete support for Manchester syntax
+  * owl2_plsyn.pl -- infix prolog syntax for OWL
+ * owl2_model.pl -- definition of prolog predicates used to embed OWL
+ * swrl.pl
+  * swrl_rdf_hooks.pl -- allows SWRL to be parsed by owl2_from_rdf.pl
+ * owl2_reasoner.pl -- pluggable reasoner framework
+  * owl2_rl_rules.pl
+  * owl2_graph_reasoner.pl
+ * owl2_java_owlapi.pl (requires JPL)
+ * owl2_owllink.pl
+ * owl2_util.pl -- misc utilities
+ * owl2_popl.pl -- prolog ontology processing language
+ * owl2_metamodel.pl -- information about OWL axiom types
 
 ---++ Reasoning support
 
@@ -73,13 +116,6 @@ owl2_owlapi_java.pl
 
 For more information see Reasoning_using_Thea.txt
 
----++ Utilities
-
-Currently the owl2_util.pl is a grab-bag of ad-hoc utility
-predicates. Browse this to get an idea of some of the capabilities.
-
-For example, one useful predicate is use_labels_for_IRIs/0
-
 ---++ Relationship to SWI-Prolog SemWeb Library
 
 Currently we use rdf_db.pl to translate from OWL RDF-XML to OWL
@@ -88,7 +124,7 @@ would like a dynamic view over an RDF database, although this will be
 difficult due to the non-monotonic nature of the mapping between RDF
 and OWL.
 
----++ On namespaces
+---+++ On namespaces
 
 Currently all IRIs are treated as Prolog atoms. This makes for
 slightly verbose axioms, especially if long URLs are used.
@@ -104,56 +140,7 @@ be used, Thea allows you to use any unique atom to identify an
 entity. See remove_namespaces/0 in owl2_util.pl for details. Of course,
 care must be taken when doing this.
 
----++ Optional Extras
-
-The core modules are
-
-* owl2_model.pl -- for representing and manipulating axioms and expressions in OWL ontologies
-* owl2_io.pl -- for reading/writing axioms
-
-However, there are various additional modules that are not required
-but may be useful for specific purposes. Here is an overview of what
-is currently distributed (some of these may move to separate
-distributions):
-
-
----+++ Integration with other LP systems
-
-Pure prolog, disjunctive datalog, description logics etc are all
-related families of languages constituting some subset of first-order
-logic. Each offers its own inference procedures including the prolog
-WAM, SLG resolution, DL reasoners, ILP etc. Navigating this territory
-can be difficult due to a lack of standards. Thea aims to make this
-easier.
-
-See Cookbook.txt for some recipes
-
----+++ Integration with exteral tools
-
----++++ OWLAPI
-
-If you have JPL installed you can use a bridge module to access
-all the capabilities of the OWLAPI. This includes reasoners such as
-Pellet and FaCT++.
-
-* owl2_java_owlapi.pl
-
-Requires JPL
-
----++++ OWLGRES
-
-Owlgres is an open source, database-backed scalable reasoner for
-OWL2.  
-
-* owl2_sqlmap_owlgres.pl - allows ABox axiom predicates to be mapped
-to an OWLGRES database
-
-Requirements:
-
-* ODBC
-* sql_compiler.pro (currently distributed as part of blipkit)
-
----++ Compatibility
+---++ Prolog Compatibility
 
 The goal is to keep the core ISO compliant and usable across prolog
 systems but this is difficult due to the different implementations of
@@ -185,7 +172,6 @@ There is the beginnings of a primitive web front end:
 
 * apps/mireot/mireot.pl
 
-
 ---++ Authors
 
 This module is a continuation of Thea1, developed by VV.
@@ -194,4 +180,4 @@ Some of the code was developed by CJM
 
 Contributions from:
 
-* Martin Günther
+* Martin Güther

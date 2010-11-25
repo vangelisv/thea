@@ -9,6 +9,7 @@
 :- use_module(library('thea2/owl2_manchester_parser')).
 
 literal_atom(literal(lang(_,A)),A) :- !.
+literal_atom(literal(type(_,A)),A) :- !.
 literal_atom(literal(A),A).
 
 

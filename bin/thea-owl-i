@@ -9,12 +9,14 @@
 :- use_module(library('thea2/owl2_catalog')).
 :- use_module(library('thea2/owl2_plsyn')).
 
+:- multifile user:parse_arg_hook/3.
+
 main :-
         current_prolog_flag(argv, Arguments),
         append(_SytemArgs, [--|Args], Arguments),
         !,
-        set_prolog_flag(verbose,normal),
-        parse_args(Args,Opts),
+        parse_args(Args,Opts_1),
+        flatten(Opts_1,Opts),
         findall(X,
                 member(loadopt(X),Opts),
                 LoadOpts),
@@ -48,6 +50,8 @@ main :-
                 ;   print_message(error,reasoner(inconsistent)))
             ;   true)
         ;   true),
+
+        % GOALS AND TRANSFORMATIONS
         forall(member(goal(G),Opts),
                G),
         findall(PoplOpt,
@@ -70,32 +74,31 @@ main :-
                    maplist(writeln(Diffs)))),
           */
         
-        findall(X,
-                (   member(saveopt(X),Opts)
-		;   member(Ont,ConvertOnts),
-		    X=ontology(Ont)), % save this ontology specifically
-                SaveOpts),
-	
-        (   member(output_format(OutFmt),Opts)
-        ->  (   member(output_file(OutFile),Opts)
-            ->  save_axioms(OutFile,OutFmt,SaveOpts)
-            ;   save_axioms(_,OutFmt,SaveOpts))
-        ;   true),
+	% QUERIES
         forall(member(reasonerquery(T,G),Opts),
                forall(reasoner_ask(Reasoner,G),
+                      show_term(T,Opts))),
+        forall(member(reasonerquery(T,G,IsDirect),Opts),
+               forall(reasoner_ask(Reasoner,G,IsDirect),
                       show_term(T,Opts))),
         forall(member(reasonercache(G,F),Opts),
                reasoner_cache_to_file(Reasoner,G,F)),
         forall(member(query(T,G),Opts),
                forall(G,show_term(T,Opts))),
-        (   member(qsave(QSF),Opts)
-        ->  ensure_loaded(library('thea2/owl2_export_rdf')),
-            ensure_loaded(library('thea2/owl2_from_rdf')),
-            qsave_program(QSF,
-                          [ goal(prolog_shell),
-                            emulator('/usr/bin/swipl'),
-                            stand_alone(true) ])
+
+        % SAVE
+        findall(X,
+                (   member(saveopt(X),Opts)
+		;   member(Ont,ConvertOnts),
+		    X=ontology(Ont)), % save this ontology specifically
+                SaveOpts),
+        (   member(output_format(OutFmt),Opts)
+        ->  (   member(output_file(OutFile),Opts)
+            ->  save_axioms(OutFile,OutFmt,SaveOpts)
+            ;   save_axioms(_,OutFmt,SaveOpts))
         ;   true),
+
+        % SHELL
         (   member(prolog(true),Opts)
         ->  prolog_shell
         ;   true).
@@ -114,6 +117,17 @@ prolog_shell:-
 % ----------------------------------------
 
 show_term(T,Opts) :-
+        select(saveopt(combined),Opts,Opts2),
+        !,
+        write('% '),
+        show_term(T,Opts2),
+        format('~q.~n',[T]).
+show_term(T,Opts) :-
+        member(saveopt(tr(T,TG,Ont,Ax)),Opts),
+        !,
+        forall(TG,
+               assert_axiom(Ax,Ont)).
+show_term(T,Opts) :-
         member(saveopt(tabular),Opts),
         !,
         T=..L,
@@ -129,6 +143,9 @@ show_term(T,Opts) :-
         !,
         map_IRIs(use_label_as_IRI,T,T2),
         plsyn_owl(X,T2),
+        (   member(saveopt(show_orig),Opts)
+        ->  format('~q.~n',[T])
+        ;   true),
         (   member(saveopt(no_plquote),Opts)
         ->  format('~w~n',[X])
         ;   format('~q.~n',[X])).
@@ -163,6 +180,11 @@ show_subterm(T,Sep,Opts) :-
         write(T),
         format(Sep),
         write(X).
+show_subterm(T,_Sep,Opts) :-
+        member(saveopt(plsyn),Opts),
+        !,
+        plsyn_owl(X,T),
+        write(X).
 show_subterm(T,Sep,Opts) :-
         member(saveopt(labels),Opts),
         !,
@@ -174,7 +196,27 @@ show_subterm(T,Sep,Opts) :-
 show_subterm(T,_,_) :-
         write(T).
 
+comma_term_to_list((A,B),[A|L]) :-
+        !,
+        comma_term_to_list(B,L).
+comma_term_to_list(A,[A]).
         
+
+% ----------------------------------------
+% LOOKUP
+% ----------------------------------------
+
+lookup(X,X) :- entity(X),!.
+lookup(N,X) :- labelAnnotation_value(N,X),!.
+lookup(N,X) :-
+        % URI suffix
+        entity(X),
+        sub_atom(X,_,_,0,N),
+        !.
+lookup(N,_) :-
+        throw(error(cannot_find(N))).
+
+
 
 % ----------------------------------------
 % OPTION PROCESSING
@@ -192,7 +234,7 @@ parse_args([A|Args],[rest(A)|Opts]) :-
 :- discontiguous parse_arg/3.
 :- discontiguous arg_info/3.
 
-parse_arg(['--debug',D|L],L,null) :- debug(D).
+parse_arg(['--debug',D|L],L,null) :- debug(D), set_prolog_flag(verbose,normal).
 arg_info(debug,atom,'(developers) debug target').
 
 parse_arg(['--prolog'|L],L,prolog(true)).
@@ -214,6 +256,12 @@ arg_info(import,-,'follow import closure (default is to only load the selected f
 parse_arg(['--save-opt',A|L],L,saveopt(O)) :- atom_to_term(A,O,_).
 arg_info(save-opt,term,'format dependent: prolog term that is passed to the Options argument for the relevant writer').
 
+parse_arg(['--save-opts',A|L],L,Opts) :-
+        atom_to_term(A,T,_),
+        comma_term_to_list(T,OL),
+        findall(saveopt(O),member(O,OL),Opts).
+
+
 parse_arg(['--save-ontology',X|L],L,saveopt(ontology(X))).
 arg_info(save-ontology,atom,'save selected ontology').
 
@@ -223,11 +271,18 @@ arg_info(format,atom,'input format: one of {owl,owlpl,owlx,...}').
 parse_arg(['--ensure_loaded',MA|L],L,ensure_loaded(M)) :- atom_to_term(MA,M,_).
 parse_arg(['--ensure-loaded',MA|L],L,ensure_loaded(M)) :- atom_to_term(MA,M,_).
 parse_arg(['--load-app',MA|L],L,ensure_loaded(library(thea2/apps/M))) :- atom_to_term(MA,M,_).
-parse_arg(['--load-mod',MA|L],L,ensure_loaded(library(thea2/M))) :- atom_to_term(MA,M,_).
+%parse_arg(['--load-mod',MA|L],L,ensure_loaded(library(thea2/M))) :- atom_to_term(MA,M,_).
+parse_arg(['--load-mod',MA|L],L,null) :- atom_to_term(MA,M,_),ensure_loaded(library(thea2/M)).
+
+parse_arg(['--jvm-opt',A|L],L,null) :-
+        (   jpl_set_default_jvm_opts([A])
+        ->  true
+        ;   throw(error(jvm('Cannot set jvm opts (must be called BEFORE jpl is loaded)')))).
+
 
 parse_arg(['--convert',X|L],L,convert(X)).
 
-parse_arg(['--to',Fmt|L],L,output_format(Fmt)).
+parse_arg(['--to',A|L],L,output_format(Fmt)) :- atom_to_term(A,Fmt,_).
 arg_info(to,atom,'output format: one of {owl,owlpl,owlx,...}').
 
 parse_arg(['--out',File|L],L,output_file(File)).
@@ -236,12 +291,17 @@ arg_info(out,filepath,'saves to file (default is standard_output)').
 parse_arg(['--rewrite-with-labels'|L],L,goal(use_labels_for_IRIs)).
 arg_info(use-labels,-,'rewrite ontology to switch out all URIs and use labels instead').
 
+parse_arg(['--assume-entity-declarations'|L],L,goal(assume_entity_declarations)).
+
+
 parse_arg(['--use-labels'|L],L,saveopt(labels)).
 arg_info(use-labels,-,'use labels when writing axioms in reporting').
 parse_arg(['--use-labels-and-IRIs'|L],L,saveopt(labels_and_IRIs)).
 arg_info(use-labels,-,'use labels and IRIs when writing axioms in reporting').
 
 parse_arg(['--use-safe-labels'|L],L,goal(use_safe_labels_for_IRIs)).
+
+parse_arg(['--iri-map',A,in,O|L],L,goal(translate_IRIs(T,O))) :- atom_to_term(A,T,_).
 
 parse_arg(['--goal',GA|L],L,goal(G)) :- atom_to_term(GA,G,_).
 arg_info(goal,goal,'execute prolog goal after loading ontologies').
@@ -283,30 +343,53 @@ parse_arg(['--check-consistency'|L],L,check_consistency).
 parse_arg(['--reasoner-query',select,TA,where,GA|L],L,reasonerquery( T, G)) :- sformat(A,'q((~w),(~w))',[TA,GA]),atom_to_term(A,q(T,G),_).
 parse_arg(['--reasoner-ask',GA|L],L,reasonerquery( T, G)) :- atom_to_term(GA,G-T,_).
 parse_arg(['--reasoner-ask',GA|L],L,reasonerquery( A, A)) :- atom_to_term(GA,A,_).
+parse_arg(['--reasoner-ask-direct',GA|L],L,reasonerquery( A, A, true)) :- atom_to_term(GA,A,_).
 parse_arg(['--reasoner-ask-all'|L],L,reasonerquery( A, A)).
+parse_arg(['--reasoner-ask-all-direct'|L],L,reasonerquery( A, A, true)).
+parse_arg(['--reasoner-get-superclasses',C|L],L,reasonerquery( P, subClassOf(C,P))).
 parse_arg(['--reasoner-cache-query-to',GA,F|L],L,reasonercache( A, F)) :- atom_to_term(GA,A,_).
 parse_arg(['--reasoner-cache-subclass-to',F|L],L,reasonercache( subClassOf(_,_), F)).
 
 parse_arg(['--sim',A|L],L,
           query(sim(X,Y,LCS),
-                (   setof(X,T1,Xs),
-                    setof(Y,T2,Ys),
+                (   setof(X,T1^T1,Xs),
+                    setof(Y,T2^T2,Ys),
                     member(X,Xs),
                     member(Y,Ys),
                     X@<Y,
-                    class_pair_least_common_subsumer_ext_combined(_,X,Y,LCS)) )
+                    class_pair_least_common_subsumer(X,Y,LCS,[])) )
          ) :-
         atom_to_term(A,V-T,_),
         copy_term(V-T,X-T1),
-        copy_term(V-T,Y-T2).
+        copy_term(V-T,Y-T2),
+        ensure_loaded(library(thea2/owl2_lcs)),
+        prepare_optimizations(_). % note - do not prepare a second time!
+arg_info(sim,term,'Find LCS of pairs based on query. Argument should be Template-Goal. ').
 
-parse_arg(['--sim-pair',X,Y|L],L,
+parse_arg(['--sim-pair',XN,YN|L],L,
           query(sim(X,Y,LCS),
-                class_pair_least_common_subsumer_ext_combined(_,X,Y,LCS))).
-
-
+                (   lookup(XN,X),
+                    lookup(YN,Y),
+                    class_pair_least_common_subsumer(X,Y,LCS,[])))) :-
+        ensure_loaded(library(thea2/owl2_lcs)),
+        prepare_optimizations(_). 
+parse_arg(['--sim-all'|L],L,
+          query(sim(X,Y,LCS),
+                (   class(X),
+                    class(Y),
+                    class_pair_least_common_subsumer(X,Y,LCS,[])))
+         ) :-
+        ensure_loaded(library(thea2/owl2_lcs)),
+        prepare_optimizations(_). 
 
 parse_arg(['--load-catalog'|L],L,null) :- load_catalog.
 
 parse_arg(['--qsave',File|L],L,qsave(File)).
 
+parse_arg(L1,L2,X) :- user:parse_arg_hook(L1,L2,X).
+
+
+% GALAXY:
+
+:- multifile rdf_db:rdf_file_type/3.
+rdf_db:rdf_file_type(dat,xml).

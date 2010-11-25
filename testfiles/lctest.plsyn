@@ -11,6 +11,7 @@ classAssertion(lewy_bodies_in_sn,o1p6).
 propertyAssertion(has,o1,o1p1).
 propertyAssertion(has,o1,o1p2).
 propertyAssertion(has,o1,o1p3).
+propertyAssertion(has,o1,o3p1). % test
 
 classAssertion(organism,o2).
 classAssertion(deformed_right_ear,o2p1).
@@ -22,6 +23,7 @@ classAssertion(lewy_bodies_in_sn2,o2p6).
 propertyAssertion(has,o2,o2p1).
 propertyAssertion(has,o2,o2p2).
 propertyAssertion(has,o2,o2p3).
+propertyAssertion(has,o2,o4p1). % test
 
 o1_x < organism and has_part some thin_mm_in_axon_of_dn_of_sn.
 o2_x < organism and has_part some axon_terminals_degenerated_in_ca3.
@@ -29,7 +31,11 @@ o3_x < organism and has_part some axon_degenerated_in_hippocampus.
 o4_x < organism and has_part some (axon_terminal and has_quality some degenerated).
 
 
+probe_1 == organism and has_part some (hippocampus and has_part some (ca2 and has_part some (axon and has_part some (axon_terminal and has_quality some degenerated)))).
 probe_2 == organism and has_part some (hippocampus and has_part some (ca3 and has_part some (axon and has_part some (axon_terminal and has_quality some degenerated)))).
+probe_2b == organism and has_part some (hippocampus and
+                                       has_part some (ca2 and has_part some (axon and has_part some (axon_terminal and has_quality some degenerated))) and
+                                       has_part some (ca3 and has_part some (axon and has_part some (axon_terminal and has_quality some degenerated)))).
 probe_3 == organism and has_part some ((axon and part_of some hippocampus) and has_quality some degenerated).
 
 probe_4 == organism and has_part some (axon and has_part some (axon_terminal and has_quality some degenerated)).
@@ -44,6 +50,7 @@ retina_degenerates == retina and has_quality some degenerated.
 axon_terminals_degenerated_in_ca2 == ca2 and has_part some (axon_terminal and has_quality some degenerated).
 axon_terminals_degenerated_in_ca3 == ca3 and has_part some (axon_terminal and has_quality some degenerated).
 axon_terminals_degenerated_in_sn == sn and has_part some (axon_terminal and has_quality some degenerated).
+axon_terminals_degenerated == axon_terminal and has_quality some degenerated.
 axon_degenerated_in_hippocampus == hippocampus and has_part some (axon and has_quality some degenerated).
 atrophied_hippocampus == hippocampus and has_quality some atrophied.
 atrophied_ca2 == ca2 and has_quality some atrophied.
@@ -62,7 +69,7 @@ hippocampus < part_of some brain.
 retina < part_of some brain.
 neuron < part_of some nervous_system.
 brain < organ.
-organism < part_of some organism.
+organ < part_of some organism.
 brain < part_of some nervous_system.
 nervous_system < system.
 system < part_of some organism.
@@ -73,17 +80,17 @@ dopmainergic_neuron == neuron and outputs some dopamine.
 dopamine < neurotransmitter.
 lewy_body < inclusion.
 
-left_ear == ear and left.
-right_ear == ear and right.
-left_eye == eye and left.
-right_eye == eye and right.
+left_ear == ear and has_laterality some left.
+right_ear == ear and has_laterality some right.
+left_eye == eye and has_laterality some left.
+right_eye == eye and has_laterality some right.
 ear < organ.
 ear < part_of some head.
 retina < part_of some eye.
 eye < part_of some head.
 
-big == size and increased.
-small == size and decreased.
+big == size and has_value some increased.
+small == size and has_value some decreased.
 size < morphology.
 deformed < morphology.
 morphology < quality.
@@ -96,9 +103,24 @@ green < color.
 red < color.
 color < quality.
 
+objectProperty(has_value).
+objectProperty(has_laterality).
 objectProperty(overlaps).
 transitiveProperty(part_of).
 transitiveProperty(has_part).
 inverseProperties(part_of,has_part).
 
 overlaps @< has_part * part_of.
+
+ontology(species).
+ontology(anatomy).
+ontology(subcellular).
+ontologyAxiom(species,class(organism)).
+ontologyAxiom(anatomy,class(ca2)).
+ontologyAxiom(anatomy,class(ca3)).
+ontologyAxiom(anatomy,class(hippocampus)).
+ontologyAxiom(anatomy,class(retina)).
+ontologyAxiom(anatomy,class(eye)).
+ontologyAxiom(anatomy,class(ear)).
+ontologyAxiom(subcellular,class(axon_terminal)).
+
