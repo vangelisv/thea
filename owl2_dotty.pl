@@ -2,56 +2,57 @@
 
 :- module(owl2_dotty,
           [
-           display_obj/1,
-           display_obj/2,
-           display_objs/1,
-           display_objs/2,
-           display_all/0
+           visualize_obj/1,
+           visualize_obj/2,
+           visualize_objs/1,
+           visualize_objs/2,
+           visualize_all/0
            ]).
 
 :- use_module(owl2_model).
 :- use_module(util/dot).
 
 :- multifile user:parse_arg_hook/3.
-user:parse_arg_hook(['--display-object',Ob|L],L,goal(owl2_dotty:display_obj(Ob))).
-user:parse_arg_hook(['--display-all-objects'|L],L,goal(owl2_dotty:display_all)).
+user:parse_arg_hook(['--display-object',Ob|L],L,goal(owl2_dotty:visualize_obj(Ob))).
+user:parse_arg_hook(['--display-all-objects'|L],L,goal(owl2_dotty:visualize_all)).
 
-display_obj(Name) :-
-        display_obj(Name,[]).
-%display_obj(Name,[follow(equivalentClasses)]).
-display_obj(Name,Opts) :-
+visualize_obj(Name) :-
+        visualize_obj(Name,[]).
+%visualize_obj(Name,[follow(equivalentClasses)]).
+visualize_obj(Name,Opts) :-
         resolve_obj(Name,Obj),
         obj_dotgraph(Obj,G,Opts),
         graph_display(G,open).
 
-display_objs(Names) :-
-        display_objs(Names,[]).
-display_objs(Names,Opts) :-
+visualize_objs(Names) :-
+        visualize_objs(Names,[]).
+visualize_objs(Names,Opts) :-
         maplist(resolve_obj,Names,Objs),
         objlist_dotgraph(Objs,G,Opts),
         graph_display(G,open).
 
-display_all :-
+visualize_all :-
         setof(E,entity(E),Objs),
-        display_objs(Objs).
+        visualize_objs(Objs).
 
 resolve_obj(N,Obj) :- labelAnnotation_value(Obj,N),!.
 resolve_obj(Obj,Obj).
 
 entity_edge(X,Y,R,Opts) :- equivalent_to(X,Z),\+option(follow(equivalentClasses),Opts),atom(X),\+atom(Z),entity_edge(Z,Y,R,Opts).
-entity_edge(X,Y,cr,Opts) :- equivalent_to(X,intersectionOf(L)),atom(X),member(Y,L),class(Y).
+entity_edge(X,Y,cr,_Opts) :- equivalent_to(X,intersectionOf(L)),atom(X),member(Y,L),class(Y).
 entity_edge(X,Y,eq,Opts) :- equivalent_to(X,Y),option(follow(equivalentClasses),Opts).
 %entity_edge(X,Y,R,Opts) :- equivalent_to(X,Z),entity_edge(Z,Y,R,Opts). % cycle
-entity_edge(X,Y,subClassOf,Opts) :- subClassOf(X,Y),class(Y).
+entity_edge(X,Y,subClassOf,_Opts) :- subClassOf(X,Y),class(Y).
 entity_edge(X,Y,R,Opts) :- subClassOf(X,Z),\+class(Z),entity_edge(Z,Y,R,Opts).
 entity_edge(someValuesFrom(R,Y),Y,R,_).
 entity_edge(I,C,type,_) :- classAssertion(C,I).
 entity_edge(I,J,R,_) :- propertyAssertion(R,I,J).
-entity_edge(intersectionOf(L),X,cr,Opts) :- member(X,L),class(X).
+entity_edge(intersectionOf(L),X,cr,_Opts) :- member(X,L),class(X).
 entity_edge(intersectionOf(L),Y,R,Opts) :- member(X,L),\+class(X),entity_edge(X,Y,R,Opts).
 %entity_edge(intersectionOf(L),Y,R,Opts) :- member(X,L),entity_edge(X,Y,R,follow(equivalentClasses)).
 
 entities_edges([InEdge|ScheduledEdges],Visisted,ResultEdges,FinalEdges,Opts) :-
+        debug(dot,'edge: ~w',[InEdge]),
         InEdge = edge(_,Obj,_),
 	findall(Edge,
                 (   entity_edge(Obj,Parent,Conn,Opts),
@@ -105,7 +106,12 @@ edge_to_dotedge(edge(S,T,R),E2,Opts) :-
         safe(T,T2),
         edge_to_dotedge_1(edge(S2,T2,R),E2,Opts).
 
-edge_to_dotedge_1(edge(S,T,R),edge(S,T,[label=R]),_).
+edge_to_dotedge_1(E,edge(S,T,Props),Opts) :-
+        E=edge(S,T,_R),
+        findall(P=V,edge_prop(E,P,V,Opts),Props).
+
+edge_prop(edge(_,_,R),label,Label,_) :- labelAnnotation_value(R,Label).
+edge_prop(edge(_,_,R),label,R,_) :- atom(R),\+labelAnnotation_value(R,_).
 
 obj_to_dotnode(X,node(X2,Props),Opts) :-
         obj_to_dotnode_1(X,node(X,Props),Opts),
@@ -119,9 +125,6 @@ node_prop(X,label,X,_) :- atom(X), \+ labelAnnotation_value(X,_).
 node_prop(X,label,'',_) :- \+ atom(X).
 node_prop(X,shape,box,_) :- class(X).
 node_prop(X,shape,box,_) :- \+ atom(X).
-
-
-
 
 safe(X,X) :- atom(X),!.
 safe(X,Y) :- term_to_atom(X,Y).
