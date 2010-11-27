@@ -12,6 +12,7 @@
                       %op(950,fx,class),
                       op(950,fx,individual),
                       op(950,xfy,disjointUnion),
+                      op(950,fx,class),
                       op(950,fx,functional),
                       op(950,fx,transitive),
                       op(950,fx,symmetric),
@@ -49,6 +50,7 @@
 
 :- op(950,xfy,\^). % disjoint classes
 
+:- op(950,fx,class).
 :- op(950,fx,functional).
 :- op(950,fx,transitive).
 :- op(950,fx,symmetric).
@@ -184,7 +186,6 @@ plsyn2owl(Ax--Comments,[PlAx,axiomAnnotation('rdfs:comment',literal(Comments))])
         !,
         plsyn2owl(Ax,PlAx).
 
-
 % we can chain over a=b=c=d as equivalent/sameAs is transitive
 % (note we cannot do this for different/disjoint)
 plsyn2owl(A=B,sameIndividual(ECs)) :-
@@ -205,6 +206,13 @@ plsyn2owl(A \^ B,disjointClasses(ECs)) :-
 plsyn2owl(A or B,unionOf(ECs)) :-
         !,
         plsyn2owl_ec(A or B,or,ECs).
+plsyn2owl(Pl,Owl) :-
+        % Assume OwlPred is valid, translate sub-args
+        Pl=..[OwlPred|Args],
+        Args\=[],
+        !,
+        maplist(plsyn2owl,Args,Args2),
+        Owl=..[OwlPred|Args2].
 plsyn2owl(X,X) :- !.
 
 
