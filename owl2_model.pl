@@ -4,6 +4,8 @@
 	  [
            entity/1,
            declarationAxiom/1,
+           builtin_class/1,
+           is_class/1,
            class/1,
            datatype/1,
            property/1,
@@ -113,8 +115,10 @@
            retract_all_axioms/0,
 	   owl2_model_init/0,
            consult_axioms/1,
-
-           valid_axiom/1
+           axiom_type/2,
+           
+           valid_axiom/1,
+           is_valid_axiom/1
 
 	  ]).
 %:- require([ is_list/1
@@ -134,6 +138,11 @@
 :- discontiguous(valid_axiom/1).
 :- discontiguous(axiompred/1).
 :- discontiguous(axiom_arguments/2).
+
+builtin_class('http://www.w3.org/2002/07/owl#Thing').
+builtin_class('http://www.w3.org/2002/07/owl#Nothing').
+is_class(C) :- class(C).
+is_class(C) :- builtin_class(C).
 
 
 % TODO: hasKey
@@ -631,6 +640,8 @@ valid_axiom(negativeDataPropertyAssertion(A, B, C)) :- subsumed_by([A, B, C],[da
 axiompred(annotationAssertion/3).
 axiom_arguments(annotationAssertion,[annotationProperty, annotationSubject, annotationValue]).
 valid_axiom(annotationAssertion(A, B, C)) :- subsumed_by([A, B, C],[annotationProperty, annotationSubject, annotationValue]).
+annotationSubject(_).
+annotationValue(_).
 
 %% annotation(?IRI,?AnnotationProperty,?AnnotationValue)
 %
@@ -725,6 +736,7 @@ valid_axiom(ontologyVersionInfo(A, B)) :- subsumed_by([A, B],[ontology, iri]).
   EXPRESSIONS
   ****************************************/
 
+subsumed_by(X,_) :- var(X),!.
 subsumed_by([],[]) :- !.
 subsumed_by([I|IL],[T|TL]) :-
 	!,
@@ -1000,8 +1012,14 @@ dataExactCardinality(cardinality(C,OPE)):-
 	objectPropertyExpression(OPE).
 
 
-%% valid_axiom(?Axiom) is semidet
+%% valid_axiom(?Axiom) is nondet
 % true if Axiom passes typechecking
+
+
+%% is_valid_axiom(?Axiom) is semidet
+% true if Axiom passes typechecking
+is_valid_axiom(Axiom) :- \+ \+ valid_axiom(Axiom).
+
 
 /****************************************
   VIEW PREDICATES
@@ -1214,6 +1232,7 @@ owl2_model_init :-
 consult_axioms(File) :-
         consult(File).
 
+axiom_type(A,T) :- functor(A,T,_).
 
 /** <module> Ontology language axioms and expressions
 
