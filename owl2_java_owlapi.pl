@@ -16,6 +16,7 @@ s/* -*- Mode: Prolog -*- */
            reasoner_classify_using/3,
            is_consistent/1,
            inconsistent_class/2,
+           unsatisfiable_class/2,
            inferred_axiom/3,
            reasoner_nr_subClassOf/4,
            reasoner_subClassOf/4,
@@ -40,6 +41,12 @@ version_info(Info) :-
         jpl_call('org.semanticweb.owlapi.util.VersionInfo',getVersionInfo,[],VI),
         jpl_call(VI,getVersion,[],Info).
 
+atom_javaIRI('owl:Thing',U):-
+        !,
+        atom_javaIRI('http://www.w3.org/2002/07/owl#Thing',U).
+atom_javaIRI('owl:Nothing',U):-
+        !,
+        atom_javaIRI('http://www.w3.org/2002/07/owl#Nothing',U).
 atom_javaIRI(X,U):-
         sub_atom(X,_,_,_,':'),
         !,
@@ -208,6 +215,14 @@ inconsistent_class(Reasoner,Class) :-
         member(JOWLClass,JOWLClasses),
         java_namedentity(JOWLClass,Class).
 
+unsatisfiable_class(Reasoner,Class) :-
+        jpl_call(Reasoner,getUnsatisfiableClasses,[],Node),
+        jpl_call(Node,getEntities,[],ESet),
+        jpl_call(ESet,toArray,[],EArr),
+        jpl_array_to_list(EArr,PList),
+        member(JOWLClass,PList),
+        java_namedentity(JOWLClass,Class).
+
 java_namedentity(J,C) :-
         jpl_call(J,getIRI,[],IRI),
         jpl_call(IRI,toString,[],C).
@@ -373,7 +388,7 @@ reasoner_individualOf(R,Fac,I,C,IsDirect) :-
         var(C),
         var(I),
         !,
-        class(C),
+        is_class(C),
         reasoner_individualOf(R,Fac,I,C,IsDirect).
 
 
@@ -401,7 +416,7 @@ reasoner_objectPropertyAssertion(R,Fac,P,I,I2) :-
         (   var(I)
         ->  classAssertion(_,I), % TODO - better way to get enumerate individuals?
             \+ objectProperty(I), % see issue 16 - hack for now
-            \+ class(I)
+            \+ is_class(I)
         ;   true),
         (   var(P)
         ->  objectProperty(P)
@@ -423,7 +438,7 @@ jset_member(JPSet,JP) :-
 %% reasoner_equivalent_to(+R,+Fac,+C,?P)
 reasoner_equivalent_to(R,Fac,C,P) :-
         (   var(C)
-        ->  class(C)
+        ->  is_class(C)
         ;   true),
         owlterm_java(Fac,_,class(C),JC),
         jpl_call(R,getEquivalentClasses,[JC],JPSet),
@@ -521,7 +536,7 @@ owlterm_java(Fac,_,OWLTerm,Obj) :-
         !,
         debug(owl2,'converting to IRI: ~w',[OWLTerm]),
         atom_javaIRI(OWLTerm,U),
-        (   class(OWLTerm)
+        (   is_class(OWLTerm)
         ->  M=getOWLClass
         ;   objectProperty(OWLTerm)
         ->  M=getOWLObjectProperty
@@ -684,7 +699,7 @@ translate_arg_to_java(_Fac,X,T,Obj) :- % TODO
 
 translate_arg_to_java(Fac,X,_T,Obj) :-
         atom(X),
-        class(X),
+        is_class(X),
         !,
         debug(owl2,'converting to IRI: ~w',[X]),
         atom_javaIRI(X,U),
@@ -852,6 +867,8 @@ expr_method(dataExactCardinality,getOWLDataExactCardinality,[N,P],[N,P]).
 
 /*
   TODO - need to detect which changes have been applied
+
+  add reasoner_reclassify_hook
   
 new_incremental_classifier(pellet_incremental(R)) :-
 	require_manager(Man),
@@ -869,7 +886,8 @@ new_incremental_classifier(pellet_incremental(R)) :-
 :- multifile owl2_reasoner:reasoner_tell_hook/2.
 :- multifile owl2_reasoner:reasoner_tell_all_hook/1.
 :- multifile owl2_reasoner:reasoner_ask_hook/2.
-:- multifile owl2_reasoner:reasoner_check_consistency_hook/1.
+:- multifile owl2_reasoner:reasoner_check_consistency_hook/2.
+:- multifile owl2_reasoner:reasoner_unsatisfiable_class_hook/2.
 
 wrapped_reasoner(pellet).
 wrapped_reasoner(hermit).
@@ -921,9 +939,15 @@ owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),classAssertion(C,I)
 owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),propertyAssertion(P,A,B)) :-
 	reasoner_objectPropertyAssertion(R,Fac,P,A,B).
 
-owl2_reasoner:reasoner_check_consistency_hook(owlapi_reasoner(R,_Fac,_Opts)) :-
+owl2_reasoner:reasoner_unsatisfiable_class_hook(owlapi_reasoner(R,_Fac,_Opts),C) :-
+	unsatisfiable_class(R,C).
+
+owl2_reasoner:reasoner_check_consistency_hook(owlapi_reasoner(R,_Fac,_Opts),V) :-
         debug(reasoner,'checking consistency',[]),
-        is_consistent(R).
+        (   is_consistent(R)
+        ->  V=true
+        ;   V=false).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% utils                       %%%
