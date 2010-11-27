@@ -3,7 +3,6 @@
 :- module(owl2_text_display,
           [display_term/1,
            display_term/2,
-           display_term/3,
 
            display_class_tree/1,
            display_class_tree/2
@@ -18,7 +17,6 @@
 % cut and pasted from thea-owl-i. todo: move to module
 % added stream. s/saveopt/display/
 
-%% display_term(+Stream,+T,+Opts) is det
 %% display_term(+T,+Opts) is det
 %% display_term(+T) is det
 %
@@ -26,89 +24,87 @@
 % an arbitrary prolog term that contains an axiom or expression with it)
 display_term(T) :-
     display_term(T,[]).
-display_term(T,Opts) :-
-        display_term(user_output,T,Opts).
 
-display_term(Stream,T,Opts) :-
+display_term(T,Opts) :-
         select(display(combined),Opts,Opts2),
         !,
-        format(Stream,'% ',[]),
-        display_term(Stream,T,Opts2),
-        format(Stream,'~q.~n',[T]).
-display_term(_Stream,T,Opts) :-
+        format('% ',[]),
+        display_term(T,Opts2),
+        format('~q.~n',[T]).
+display_term(T,Opts) :-
         member(display(tr(T,TG,Ont,Ax)),Opts),
         !,
         forall(TG,
                assert_axiom(Ax,Ont)).
-display_term(Stream,T,Opts) :-
+display_term(T,Opts) :-
         member(display(tabular),Opts),
         !,
         T=..L,
-        display_subterms(Stream,L,'\t',Opts),
+        display_subterms(L,'\t',Opts),
         nl.
-display_term(Stream,T,Opts) :-
+display_term(T,Opts) :-
         member(display(prolog),Opts),
         !,
-        format(Stream,'~q.~n',[T]).
-display_term(Stream,T,Opts) :-
+        format('~q.~n',[T]).
+display_term(T,Opts) :-
         member(display(plsyn),Opts),
         member(display(labels),Opts),
         !,
         map_IRIs(use_label_as_IRI,T,T2),
         plsyn_owl(X,T2),
         (   member(display(show_orig),Opts)
-        ->  format(Stream,'~q.~n',[T])
+        ->  format('~q.~n',[T])
         ;   true),
         (   member(display(no_plquote),Opts)
-        ->  format(Stream,'~w~n',[X])
-        ;   format(Stream,'~q.~n',[X])).
-display_term(Stream,T,Opts) :-
+        ->  format('~w~n',[X])
+        ;   format('~q.~n',[X])).
+display_term(T,Opts) :-
         member(display(plsyn),Opts),
         !,
         plsyn_owl(X,T),
-        format(Stream,'~q.~n',[X]).
-display_term(Stream,T,Opts) :-
+        format('~q.~n',[X]).
+display_term(T,Opts) :-
         member(display(labels),Opts),
         !,
         map_IRIs(use_label_as_IRI,T,X),
-        format(Stream,'~w~n',[X]).
-display_term(Stream,T,_) :-
-        format(Stream,'~w~n',[T]).
+        format('~w~n',[X]).
+display_term(T,_) :-
+        format('~w~n',[T]).
 
 display_subterms(_,[],_,_).
-display_subterms(Stream,[T|L],Sep,Opts) :-
+display_subterms([T|L],Sep,Opts) :-
         !,
-        display_subterm(Stream,T,Sep,Opts),
+        display_subterm(T,Sep,Opts),
         (   L=[]
         ->  true
-        ;   format(Stream,Sep,[]),
-            display_subterms(Stream,L,Sep,Opts)).
+        ;   format(Sep,[]),
+            display_subterms(L,Sep,Opts)).
 
 display_subterm(T,Opts) :-
-        display_subterm(user_output,T,' ',Opts).
+        display_subterm(T,' ',Opts).
 
-display_subterm(Stream,T,Sep,Opts) :-
+display_subterm(T,Sep,Opts) :-
         member(display(labels),Opts),
         member(display(plsyn),Opts),
         !,
         map_IRIs(use_label_as_IRI,T,T2),
         plsyn_owl(X,T2),
-        format(Stream,'~w~w~w',[T,Sep,X]).
-display_subterm(Stream,T,_Sep,Opts) :-
+        format('~w~w~w',[T,Sep,X]).
+display_subterm(T,_Sep,Opts) :-
         member(display(plsyn),Opts),
         !,
         plsyn_owl(X,T),
-        format(Stream,'~w',[X]).
-display_subterm(Stream,T,Sep,Opts) :-
+        format('~w',[X]).
+display_subterm(T,Sep,Opts) :-
         member(display(labels),Opts),
         !,
-        format(Stream,'~w',[T]),
-        format(Stream,'~w',[Sep]),
+        format('~w',[T]),
+        format('~w',[Sep]),
         (   labelAnnotation_value(T,N)
-        ->  format(Stream,'~w',[N])
+        ->  format('~w',[N])
         ;   true).
-display_subterm(Stream,T,_,_) :-
-        format(Stream,'~w',[T]).
+display_subterm(T,_,_) :-
+        format('~w',[T]).
 
 
 %% display_class_tree(+Class,+Opts:list) is det
