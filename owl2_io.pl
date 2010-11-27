@@ -154,7 +154,7 @@ load_handler(Dir,Fmt) :-
 	       ensure_loaded(library(thea2/Mod))).
 
 guess_format(File,Fmt,_Opts) :-
-        concat_atom(Toks,'.',File),
+        atomic_list_concat(Toks,'.',File),
         reverse(Toks,[Suffix,_|_]),
         suffix_format(Suffix,Fmt).
 
