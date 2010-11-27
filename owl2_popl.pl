@@ -50,9 +50,10 @@ popl_translate( X1 ===> X2 where G, Opts) :-
         replace_expression_in_all_axioms_where(X1,X2,G,Opts).
 
 popl_translate( X1 ===> X2, Opts) :-
+        debug(popl,'translating ~w ===> ~w',[X1,X2]),
         debug(popl,'Replacing axioms',[]),
         replace_matching_axioms(X1,X2,Opts),
-        debug(popl,'Replacing expressions',[]),
+        debug(popl,'Replacing expressions ~w ===> ~w',[X1,X2]),
         replace_expression_in_all_axioms(X1,X2,Opts).
 
 popl_translate( add X2 where G, Opts) :-
@@ -183,9 +184,9 @@ replace_expression_in_all_axioms_where(T1,T2,G,Opts) :-
         !,
         normalize_term(T1,T1_Norm),
         findall(Ax-Ax2,
-                (   ontologyAxiom(Ont,Ax),
-                    debug(popl,'texting: ~w ',[Ax]),
-                    G,
+                (   G,
+                    ontologyAxiom(Ont,Ax),
+                    debug(popl,'testing: ~w ',[Ax]),
                     replace_expression_in_axiom_term(T1_Norm,T2,Ax,Ax2),
                     Ax2\=Ax,
                     debug(popl,'  scheduling: ~w ==> ~w',[Ax,Ax2])),
@@ -195,8 +196,8 @@ replace_expression_in_all_axioms_where(T1,T2,G,Opts) :-
 replace_expression_in_all_axioms_where(T1,T2,G,Opts) :-
         normalize_term(T1,T1_Norm),
         findall(Ax-Ax2,
-                (   axiom(Ax),
-                    G,
+                (   G,
+                    axiom(Ax),
                     replace_expression_in_axiom_term(T1_Norm,T2,Ax,Ax2),
                     Ax2\=Ax,
                     debug(popl,'scheduling: ~w ==> ~w',[Ax,Ax2])),
@@ -211,7 +212,6 @@ replace_expression_in_axiom(T1,T2,Ax,Opts) :-
         replace_expression_in_axiom_term(T1,T2,Ax,Ax2),
         replace_axiom(Ax,Ax2,Opts),
         debug(popl,'DONE Replaced ~w ==> ~w for macro ~w ==> ~w',[Ax,Ax2,T1,T2]).
-
 
 %% replace_expression_in_axiom_term(+T1,+T2,+Ax1,?Ax2)
 % Ax2 is the same as Ax1 with all instances of T1 replaced with T2.
@@ -228,6 +228,7 @@ replace_expression_in_axiom_term(T1,T2,Ax1,Ax2) :-
         debug(popl_detail,'IN ~w ==> ~w :: ~w',[T1,T2,Ax1_Norm]),
         Ax1_Norm =.. [P|Args1],
         maplist(replace_expression(T1,T2),Args1,Args2),
+        debug(popl_detail,'  OUT: ~w',[Args2]),
         Ax2 =.. [P|Args2].
         %debug(popl,'OUT ~w ==> ~w :: ~w',[T1,T2,Ax2]).
 
@@ -241,6 +242,7 @@ replace_expression_in_axiom_term(T1,T2,Ax1,Ax2) :-
 %        fail.
 replace_expression(_,_,X,X) :- var(X),!. % allow expressions with variables
 replace_expression(T1,T2,X1,X2) :-
+        debug(popl_detail,'attempting_match(~w == ~w)',[T1-T2,X1-X2]),
         copy_term(T1-T2,X1-X2), % copy and match
         debug(popl,'repl(~w ==> ~w)',[X1,X2]),
         !. % do not recurse below
@@ -256,6 +258,7 @@ replace_expression(T1,T2,X1,X2) :-
         X2 =.. [F|Args2].
 replace_expression(_,_,X,X).
 
+normalize_term(X,X) :- var(X),!.
 normalize_term(X,X) :- atom(X),!.
 normalize_term([],[]) :- !.
 normalize_term(L,S) :-
