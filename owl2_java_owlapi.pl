@@ -37,6 +37,9 @@ s/* -*- Mode: Prolog -*- */
 
 prefix('org.semanticweb.owlapi.model').
 
+nothing('http://www.w3.org/2002/07/owl#Nothing').
+
+
 version_info(Info) :-
         jpl_call('org.semanticweb.owlapi.util.VersionInfo',getVersionInfo,[],VI),
         jpl_call(VI,getVersion,[],Info).
@@ -922,13 +925,17 @@ owl2_reasoner:reasoner_tell_all_hook(owlapi_reasoner(OWLReasoner,Fac,_Opts)) :-
 %	throw(error(reasoner(R,Axiom))).
 
 owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),subClassOf(A,B)) :-
-	reasoner_subClassOf(R,Fac,A,B).
+	reasoner_subClassOf(R,Fac,A,B),
+        \+ nothing(A).
+
 
 owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),subClassOf(A,B),IsDirect) :-
-	reasoner_subClassOf(R,Fac,A,B,IsDirect).
+	reasoner_subClassOf(R,Fac,A,B,IsDirect),
+        \+ nothing(A).
 
 owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),directSubClassOf(A,B)) :-
-	reasoner_subClassOf(R,Fac,A,B,true).
+	reasoner_subClassOf(R,Fac,A,B,true),
+        \+ nothing(A).
 
 owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),classAssertion(C,I)) :-
 	reasoner_individualOf(R,Fac,I,C).
