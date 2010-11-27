@@ -257,6 +257,7 @@ use_label_as_IRI(IRI,X) :-
         !.
 use_label_as_IRI(X,X).
 
+get_IRI_from_label(X,X) :- var(X),!.
 get_IRI_from_label(X,IRI) :- labelAnnotation_value(IRI,X),!.
 get_IRI_from_label(X,X).
 
@@ -312,6 +313,7 @@ translate_IRIs(Goal,Ontology):-
 
 %% map_IRIs(+MapGoal,+AxiomIn,?AxiomOut)
 :- module_transparent map_IRIs/3.
+map_IRIs(_,X,X) :- var(X),!.
 map_IRIs(_,[],[]) :- !.
 map_IRIs(G,[X|Xs],[X2|X2s]) :-
         !,
