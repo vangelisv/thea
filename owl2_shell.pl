@@ -15,14 +15,14 @@
 :- op(1090,fx,rm).
 :- op(1090,fx,m).
 :- op(1090,fx,q).
-:- op(1090,fx,rq).
+:- op(1090,fx,qi).
+:- op(1090,fx,pq).
 :- op(1090,fx,v).
 :- op(1090,fx,t).
 :- op(1090,fx,l).
-:- op(1090,fx,rq).
 :- op(1090,fx,set).
 :- op(1090,fx,unset).
-
+:- op(1100,xfy,===>). % from POPL
 :- op(1000,xfy,where).
 :- op(800,xfy,to).
 :- op(800,fx,(?)).
@@ -74,6 +74,7 @@ cmd_doc(edit,redo,[],'Redo last undo').
 
 edit_op(Op,AxiomIn) :- current_ontology(Ont),!,tr(AxiomIn,Axiom), Act =.. [Op,Axiom,Ont],Act,print_message(informational,Act),asserta(transaction(Act)).
 edit_op(_,_) :- print_message(error,no_current_ontology).
+add AxiomIn where Goal :- !, forall(Goal,add(AxiomIn)).
 add AxiomIn :- edit_op(assert_axiom,AxiomIn).
 rm AxiomIn :- edit_op(retract_axiom,AxiomIn).
 undo :- transaction(Act),undo(Act),print_message(informational,undo(Act)),asserta(redo_stack(Act)),retract(transaction(Act)).
@@ -81,6 +82,9 @@ undo(assert_axiom(A,O)) :- retract_axiom(A,O).
 undo(retract_axiom(A,O)) :- assert_axiom(A,O).
 redo :- redo_stack(Act),Act,print_message(informational,redo(Act)),retract(redo_stack(Act)).
 new Ont :- assert_axiom(ontology(Ont)),nb_setval(ontology,Ont).
+
+'===>'(AIn,BIn where G) :- !,tr(AIn,A),tr(BIn,B),popl_translate(A ===> B where G).
+'===>'(AIn,BIn) :- tr(AIn,A),tr(BIn,B),popl_translate(A ===> B).
 
 % EDIT TEMPLATES
 +(TN) :-
@@ -199,12 +203,10 @@ l N :-
         fail.
 l _.
 
-q SelectIn where QueryIn :- !,tr(QueryIn,Query),tr(SelectIn,Select), forall(Query,show(Select)).
-q QueryIn :- !,tr(QueryIn,Query), forall(Query,show(Query)).
 %q :- tr(Query,Axiom), q(_).
 trshow(XIn) :- tr(XIn,X),show(X).
 show(X) :- current_opts(Opts),display_term(X,Opts).
-v ObjIn :- tr(ObjIn,Obj),current_opts(Opts),visualize_obj(Obj,Opts),read(_).
+v ObjIn :- tr(ObjIn,Obj),current_opts(Opts),visualize_obj(Obj,Opts).
 '--'(GoalIn,Cmd) :-
         tr(GoalIn,Goal),
         open(pipe(Cmd),write,S,[]),
@@ -243,18 +245,35 @@ stats(Ont) :-
         forall(aggregate(count,A,Arity^(ontologyAxiom(Ont,A),functor(A,T,Arity)),Num),
                format('#~w\t~w~n',[T,Num])).
 
-% REASONER CMDS
-cmd_doc(reasoner,init,[name],'Initialize a reasoner on current ont. E.g. reasoner pellet.').
-init RN :- initialize_reasoner(RN,_,[]).
-rq SelectIn where QueryIn :- !,tr(QueryIn,Query),tr(SelectIn,Select), forall(reasoner_ask(Query),show(Select)).
-rq QueryIn :- !,tr(QueryIn,Query), forall(reasoner_ask(Query),show(Query)).
+% QUERY CMDS
 
-rt(AxiomIn) :- tr(AxiomIn,Axiom),reasoner_ask(Axiom).
-qt(AxiomIn) :- tr(AxiomIn,Axiom),Axiom.
+%% gi(Axiom) - entailment query - translates Axiom to prolog axiom term and calls reasoner_ask/1
+%% g(Axiom) - assertion query  - translates Axiom to prolog goal and calls it directly
+cmd_doc(query,gi,[axiom],'Entailment query - translates Axiom to native prolog axiom term and calls reasoner. as qi/1 with no result mapping.').
+cmd_doc(query,g,[axiom],'Assertion query - translates Axiom to prolog goal and calls directly. As q/1 with no result mapping.').
+gi(AxiomIn) :- tr(AxiomIn,Axiom),reasoner_ask(Axiom).
+g(AxiomIn) :- tr(AxiomIn,Axiom),Axiom.
+
+% select from asserted database
+q SelectIn where QueryIn :- !,tr(QueryIn,Query),tr(SelectIn,Select), forall(Query,show(Select)).
+q QueryIn :- !,tr(QueryIn,Query), forall(Query,show(Query)).
+
+% select from asserted database, no translation
+pq Select where Query :- !, forall(Query,show(Select)).
+pq Query :- !, forall(Query,show(Query)).
+
+% select from reasoned database
+qi SelectIn where QueryIn :- !,tr(QueryIn,Query),tr(SelectIn,Select), forall(reasoner_ask(Query),show(Select)).
+qi QueryIn :- !,tr(QueryIn,Query), forall(reasoner_ask(Query),show(Query)).
+
+cmd_doc(reasoner,init,[name],'Initialize a reasoner on current ont. E.g. "reasoner pellet.". Stores current reasoner in global variable.').
+init RN :- initialize_reasoner(RN,_,[]).
 
 
 
 % HELP
+cmd_doc(help,?,[cmd],'Get help about a command.').
+cmd_doc(help,h,[],'Show history.').
 ? X :- usage(X).
 help :- usage.
 
@@ -300,7 +319,7 @@ label2iri(X,X).
 
 
 prolog:message(thea_shell_welcome) -->
-               ['%  ::: Welcome to BOMB Shell :::'].
+               ['%  ::: Welcome to Posh, the Prolog OWL Shell :::'].
 
 prolog:message(redo(Act)) --> ['Redo: '],prolog:message(Act).
 prolog:message(undo(Act)) --> ['Undo: '],prolog:message(Act).
