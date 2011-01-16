@@ -62,8 +62,6 @@ visit_expression(Axiom,Ex,Visitor,Ts_All) :-
         append(Ts,Ts2,Ts_All).
 visit_expression(_,_,_,[]).
 
-%cv(visitor(VisitGoal,Axiom,Expr,_,L), visitor(VisitGoal,Axiom,Expr,L,_)).
-
 visitor_axiom_template(visitor(G,AT,_,R),G,AT,R) :- !.
 visitor_axiom_template(axiom_visitor(G,AT,R),G,AT,R) :- !.
 visitor_axiom_template(_,fail,_,_) :- !.
@@ -71,7 +69,12 @@ visitor_expression_template(visitor(G,AT,ET,R),G,AT,ET,R) :- !.
 visitor_expression_template(expression_visitor(G,ET,R),G,_,ET,R) :- !.
 visitor_expression_template(expression_visitor(G,AT,ET,R),G,AT,ET,R) :- !.
 
-% ---
+% ----------------------------------------
+% axiom rewriting
+% ----------------------------------------
+
+axiom_rewrite_list(Axiom,Rule,NewAxioms) :-
+        setof(NewAxiom,rewrite_axiom(Axiom,Rule,NewAxiom),NewAxioms).
 
 %% rewrite_axiom(+Axiom,+Rule,?NewAxiom) is nondet
 %
@@ -81,7 +84,7 @@ visitor_expression_template(expression_visitor(G,AT,ET,R),G,AT,ET,R) :- !.
 % Rules are non-deterministic if 
 rewrite_axiom(Axiom,Rule,NewAxiom) :-
         rule_axiom_template(Rule,ConditionalGoal,AxiomTemplate,TrAxiom),
-        findall(TrAxiom,(Axiom=AxiomTemplate,ConditionalGoal),[A1]),
+        findall(TrAxiom,(smatch(Axiom,AxiomTemplate),ConditionalGoal),[A1]),
         !,
         member_or_identity(A1x,A1),
         A1x =.. [Pred|Args],
@@ -102,8 +105,13 @@ rewrite_args(Axiom,[Arg|Args],Rule,[NewArg|NewArgs]) :-
 %
 % Goal is called if the input expression matches the expression template
 rewrite_expression(Axiom,Ex,Rule,NewEx) :-
+        nonvar(Ex),
+        is_list(Ex),
+        !,
+        rewrite_args(Axiom,Ex,Rule,NewEx).
+rewrite_expression(Axiom,Ex,Rule,NewEx) :-
         rule_expression_template(Rule,ConditionalGoal,ExTemplate,TrEx),
-        findall(TrEx,(Ex=ExTemplate,ConditionalGoal),[Ex1]),
+        findall(TrEx,(smatch(Ex,ExTemplate),ConditionalGoal),[Ex1]),
         !,
         member_or_identity(Ex1_Single,Ex1),
         Ex1_Single =.. [Pred|Args],
@@ -111,19 +119,9 @@ rewrite_expression(Axiom,Ex,Rule,NewEx) :-
         NewEx =.. [Pred|NewArgs].
 rewrite_expression(_,Ex,_,Ex) :- !.
 
-/*
-rule_axiom_template(axiom_tr(In,Out),true,In,Out).
-rule_axiom_template(tr(In,Out),true,In,Out). % treat as axiom
-rule_axiom_template(tr(_,_),true,Ax,Ax). % pass-through
-rule_axiom_template(expression_tr(_,_),true,Ax,Ax). % pass-through
-
-rule_expression_template(tr(In,Out),true,In,Out).
-rule_expression_template(expression_tr(In,Out),true,In,Out).
-*/
 
 rule_axiom_template(tr(axiom,In,Out,G,_),G,In,Out).
-rule_axiom_template(tr(_,_,_,G,_),G,Ax,Ax). % pass-through
-
+rule_axiom_template(tr(_,_,_,_,_),true,Ax,Ax). % pass-through
 rule_expression_template(tr(expression,In,Out,G,_),G,In,Out).
 
 member_or_identity(X,L) :-
@@ -131,6 +129,50 @@ member_or_identity(X,L) :-
         *-> (   member_or_identity(X,A)
             ;   member_or_identity(X,B))
         ;   X=L).
+
+% structural match
+smatch(Term,Term) :- !.
+smatch(QTerm,MTerm) :-
+        QTerm =.. [Pred|QArgs],
+        MTerm =.. [Pred|MArgs],
+        smatch_args(QArgs,MArgs),
+        !.
+
+smatch_args(X,X) :- !.
+smatch_args(propertyChain(L1),propertyChain(L2)) :-
+        !,
+        % property chains are the only expressions where order is important
+        L1=L2.
+smatch_args([Set1],[Set2]) :- % order of args is unimportant e.g. intersectionOf(List)
+        is_list(Set1),
+        !,
+        list_subsumed_by(Set1,Set2),
+        list_subsumed_by(Set2,Set1).
+        /*
+        %  sort would be more efficient, but would not work for open lists
+        forall(member(X,Set1),
+               (   member(Y,Set2),
+                   smatch(X,Y))),
+        % testing in both directions is necessary if the list is open
+        forall(member(X,Set2),
+               (   member(Y,Set1),
+                   smatch(X,Y))).
+          */
+        
+smatch_args([],[]).
+smatch_args([A1|Args1],[A2|Args2]) :-
+        smatch(A1,A2),
+        smatch_args(Args1,Args2).
+
+list_subsumed_by([],_) :- !.
+list_subsumed_by(X,_) :- var(X),!.
+list_subsumed_by(_,[]) :- !, fail.
+list_subsumed_by([X|L],L2) :-
+        memberchk(X,L2),
+        list_subsumed_by(L,L2).
+
+
+
 
 % ----------------------------------------
 % test

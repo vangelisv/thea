@@ -56,43 +56,85 @@ test(tr_expr_dupe, [true((member(subClassOf(a,allValuesFrom(p,b)),Axioms),
                 Axioms),
         writeln(Axioms).
 
-/*
-  test(tr_axiom, [true(Axiom = subClassOf(b,someValuesFrom(p2,a)))]) :-
-        rewrite_axiom(subClassOf(a,someValuesFrom(p,b)),
-                      tr(subClassOf(A,someValuesFrom(p,B)),
-                         subClassOf(B,someValuesFrom(p2,A))),
-                      Axiom).
-test(tr_axiom_dupe, [true(Axioms = [_,_])]) :-
-        findall(Axiom,
-                rewrite_axiom(subClassOf(a,someValuesFrom(p,b)),
-                              tr(subClassOf(A,someValuesFrom(p,B)),
-                                 (   subClassOf(B,someValuesFrom(p2,A)),
-                                     subClassOf(B,someValuesFrom(p3,A))
-                                 )),
-                              Axiom),
-                Axioms).
-
-
-test(tr_expr, [true(Axiom = subClassOf(a,allValuesFrom(p,b)))]) :-
-        rewrite_axiom(subClassOf(a,someValuesFrom(p,b)),
-                      tr(someValuesFrom(p,B),
-                         allValuesFrom(p,B)),
+test(tr_expr_ec, [true(Axiom = equivalentClasses([z,someValuesFrom(p,intersectionOf([a,b]))]))]) :-
+        rewrite_axiom(equivalentClasses([z,intersectionOf([a,someValuesFrom(p,b)])]),
+                      tr(expression,
+                         intersectionOf([A,someValuesFrom(P,B)]),
+                         someValuesFrom(P,intersectionOf([A,B])),
+                         true,
+                         []),
                       Axiom),
-        writeln(Axiom).
+        writeln(a1=Axiom).
+test(tr_expr_ec2, [true(Axiom = equivalentClasses([z,someValuesFrom(p,intersectionOf([a,b]))]))]) :-
+        rewrite_axiom(equivalentClasses([z,intersectionOf([a,someValuesFrom(p,b)])]),
+                      tr(expression,
+                         intersectionOf([A,someValuesFrom(P,B)]),
+                         someValuesFrom(P,intersectionOf([A,B])),
+                         atomic(A),
+                         []),
+                      Axiom),
+        writeln(a2=Axiom).
 
-test(tr_expr_dupe, [true((member(subClassOf(a,allValuesFrom(p,b)),Axioms),
-                          member(subClassOf(a,allValuesFrom(p2,b)),Axioms),
-                          Axioms=[_,_]))]) :-
-        findall(Axiom,
-                rewrite_axiom(subClassOf(a,someValuesFrom(p,b)),
-                              tr(someValuesFrom(p,B),
-                                 (   allValuesFrom(p,B),
-                                     allValuesFrom(p2,B)
-                                 )),
-                              Axiom),
-                Axioms),
-        writeln(Axioms).
-*/
+test(tr_expr_open, [true(Axiom = equivalentClasses([z,someValuesFrom(p,intersectionOf([a,b]))]))]) :-
+        rewrite_axiom(equivalentClasses([z,intersectionOf([a,someValuesFrom(p,b)])]),
+                      tr(expression,
+                         intersectionOf([A,someValuesFrom(P,B) | _]),
+                         someValuesFrom(P,intersectionOf([A,B])),
+                         true,
+                         []),
+                      Axiom),
+        writeln(a3=Axiom).
+test(tr_expr_open2, [true(Axiom = equivalentClasses([z,someValuesFrom(p,intersectionOf([a,b]))]))]) :-
+        rewrite_axiom(equivalentClasses([z,intersectionOf([a,someValuesFrom(p,b),someValuesFrom(q,c)])]),
+                      tr(expression,
+                         intersectionOf([A,someValuesFrom(P,B) | _]),
+                         someValuesFrom(P,intersectionOf([A,B])),
+                         true,
+                         []),
+                      Axiom),
+        writeln(a4=Axiom).
+test(tr_expr_open3, [true(Axiom = equivalentClasses([z,someValuesFrom(p,intersectionOf([a,b,someValuesFrom(q,c)]))]))]) :-
+        rewrite_axiom(equivalentClasses([z,intersectionOf([a,someValuesFrom(p,b),someValuesFrom(q,c)])]),
+                      tr(expression,
+                         intersectionOf([A,someValuesFrom(P,B) | Rest]),
+                         someValuesFrom(P,intersectionOf([A,B | Rest])),
+                         P==p,
+                         []),
+                      Axiom),
+        writeln(a5=Axiom).
+
+
+
+test(smatch1, [true(smatch(a,a))]) :- true.
+test(smatch2, [true(smatch(someValuesFrom(a,b),someValuesFrom(a,b)))]) :- true.
+test(smatch3, [true(\+smatch(someValuesFrom(a,b),someValuesFrom(b,a)))]) :- true.
+test(smatch4, [true(smatch(intersectionOf([a,b,c]),
+                           intersectionOf([b,a,c])))]) :- true.
+test(smatch5, [true(\+smatch(intersectionOf([a,b,c,d]),
+                             intersectionOf([b,a,c])))]) :- true.
+test(smatch6, [true(smatch(intersectionOf([a,b,c]),
+                           intersectionOf([b,a|_])))]) :- true.
+test(smatch7, [true(\+smatch(intersectionOf([a,b,c]),
+                             intersectionOf([d|_])))]) :- true.
+
+test(smatch8, [true(A/P/B=a/p/b)]) :-
+        smatch(intersectionOf([a,someValuesFrom(p,b)]),
+               intersectionOf([someValuesFrom(P,B),A])),
+        writeln(sm(A/P/B)).
+test(smatch9, [true(A/P/B=a/p/b)]) :-
+        smatch(intersectionOf([a,someValuesFrom(p,b)]),
+               intersectionOf([A,someValuesFrom(P,B)|_])),
+        writeln(sm(A/P/B)).
+test(smatch10, [true(A/P/B=a/p/b)]) :-
+        smatch(intersectionOf([a,someValuesFrom(p,b),b,c]),
+               intersectionOf([A,someValuesFrom(P,B)|_])),
+        writeln(sm(A/P/B)).
+test(smatch11, [true(P/B/Rest=p/b/[c,someValuesFrom(q,d)])]) :-
+        smatch(intersectionOf([a,someValuesFrom(p,b),c,someValuesFrom(q,d)]),
+               intersectionOf([a,someValuesFrom(P,B)|Rest])),
+        writeln(sm(P/B/Rest)).
+
+
 
 
         
