@@ -5,7 +5,10 @@
            display_term/2,
 
            display_class_tree/1,
-           display_class_tree/2
+           display_class_tree/2,
+
+           display_instance_tree/2,
+           display_object_tree/2
            ]).
 
 :- use_module(owl2_model).
@@ -89,7 +92,8 @@ display_subterm(T,Sep,Opts) :-
         !,
         map_IRIs(use_label_as_IRI,T,T2),
         plsyn_owl(X,T2),
-        format('~w~w~w',[T,Sep,X]).
+        contract_iri(T,Tc,Opts),
+        format('~w~w~w',[Tc,Sep,X]).
 display_subterm(T,_Sep,Opts) :-
         member(display(plsyn),Opts),
         !,
@@ -98,7 +102,8 @@ display_subterm(T,_Sep,Opts) :-
 display_subterm(T,Sep,Opts) :-
         member(display(labels),Opts),
         !,
-        format('~w',[T]),
+        contract_iri(T,Tc,Opts),
+        format('~w',[Tc]),
         format('~w',[Sep]),
         (   labelAnnotation_value(T,N)
         ->  format('~w',[N])
@@ -106,6 +111,15 @@ display_subterm(T,Sep,Opts) :-
 display_subterm(T,_,_) :-
         format('~w',[T]).
 
+contract_iri(X,Y,Opts) :-
+        ground(X),
+        atom(X),
+        member(display(fragments),Opts),
+        atomic_list_concat([_,Y],'#',X),
+        !.
+contract_iri(X,X,_).
+
+        
 
 %% display_class_tree(+Class,+Opts:list) is det
 %
@@ -158,3 +172,54 @@ write_owl_class(Class,_) :-
 write_owl_class(Class,_) :-
         write(Class).
 */
+
+display_instance_tree(X,Opts) :-
+        display_instance_tree('',X,[],[_,_,_,_,_],[],Opts).
+display_instance_tree(P,X,D,MD,VL,Opts) :-
+        \+ member(X,VL),
+        \+ D=MD,
+        !,
+        writetab(D),
+        display_subterm(P,Opts),
+        write(' '),
+        display_subterm(X,Opts),
+        nl,
+        D2=[x|D],
+        forall(propertyAssertion(P2,X,X2),
+               display_instance_tree(P2,X2,D2,MD,[X|VL],Opts)).
+display_instance_tree(_,_,_,_,_,_).
+
+display_object_tree(X,Opts) :-
+        display_object_tree('',X,[],[_,_,_,_,_,_,_],[],Opts).
+display_object_tree(P,X,D,MD,VL,Opts) :-
+        \+ ((atom(X),           % don't worry about revisiting expressions
+             member(X,VL))),
+        \+ D=MD,
+        !,
+        writetab(D),
+        write('|'),
+        display_subterm(P,Opts),
+        write(' '),
+        display_subterm(X,Opts),
+        nl,
+        D2=[x|D],
+        forall(object_tree_link(X,X2,P2),
+               display_object_tree(P2,X2,D2,MD,[X|VL],Opts)).
+display_object_tree(_,_,_,_,_,_).
+
+object_tree_link(X,Y,eq) :- equivalent_to(X,Y),atom(X),\+atom(Y).
+object_tree_link(intersectionOf(L),Y,'*') :- member(Y,L).
+object_tree_link(someValuesFrom(P,Y),Y,P).
+object_tree_link(allValuesFrom(P,Y),Y,only-P).
+object_tree_link(X,Y,P) :- propertyAssertion(P,X,Y),atom(Y). % config?
+object_tree_link(X,Y,inst) :- classAssertion(Y,X),\+builtin_class(Y).
+
+
+
+
+
+
+
+
+        
+

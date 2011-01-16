@@ -121,7 +121,7 @@ owl2_reasoner:reasoner_ask_hook(graph_reasoner,classAssertion(C,I)) :-
 owl2_reasoner:reasoner_ask_hook(graph_reasoner,classAssertion(C,I)) :-
         \+ ((nonvar(C),
              var(I))),
-        individual_ancestor(I,C).
+        individual_ancestor_uniq(I,C).
 owl2_reasoner:reasoner_ask_hook(graph_reasoner,propertyAssertion(P,I,J)) :-
         nonvar(J),
         var(I),
@@ -180,10 +180,10 @@ entity_parent_over(someValuesFrom(Prop,Parent),Parent,some-Prop).
 entity_parent_over(allValuesFrom(Prop,Parent),Parent,all-Prop).
 entity_parent_over(hasValue(Prop,Parent),Parent,value-Prop).
 % deliberately omit maxCardinality
-entity_parent_over(minCardinality(N,Prop,Parent),Parent,min(N)-Prop) :- N>0.
-entity_parent_over(exactCardinality(N,Prop,Parent),Parent,exact(N)-Prop) :- N>0.
+entity_parent_over(minCardinality(N,Prop,Parent),Parent,min(N)-Prop) :- ground(N),N>0.
+entity_parent_over(exactCardinality(N,Prop,Parent),Parent,exact(N)-Prop) :- ground(N),N>0.
 entity_parent_over(intersectionOf(CL),Parent,sub) :-
-        ground(CL),
+        ground(CL),             % TODO - allow for reverse direction
         member(Parent,CL).
 entity_parent_over(I,C,inst) :-
         classAssertion(C,I).
@@ -248,6 +248,9 @@ entity_parent_chain(Class,Parent,InConns,NewConns) :-
         combine_props(InConns,ConnNext,NewConns).
 
 % DOWN
+%  TODO - this currently doesn't take into account all axioms
+%  e.g. ab = a and r some b, b < part_of some c
+%  consider pre-computing entity_parent_over/3
 entity_child_chain(Class,Child,InConns,NewConns) :-
         %debug(foo,'testing ~w',[Class]),
         entity_parent_over(Child,Class,ConnNext),
@@ -402,7 +405,10 @@ individual_ancestor_over(ID,PID,Over) :-
 	entities_ancestors([ID-[]],[],[],L),
 	member(PID-Over,L).
 
-/*
+
+individual_ancestor_uniq(Individual,ParentExpr) :-
+        setof(Individual-ParentExpr,individual_ancestor(Individual,ParentExpr),Pairs),
+        member(Individual-ParentExpr,Pairs).
 individual_ancestor(Individual,ParentExpr) :-
         individual_ancestor_over(Individual,Parent,Conns),
         % we exclude individual expressions here; there will be an alternate path to the named individual
@@ -410,10 +416,11 @@ individual_ancestor(Individual,ParentExpr) :-
         not_excluded(Parent),
         % build the individual expression from the connections
         translate_conns_to_class_expression(Conns,Parent,ParentExpr).
-*/
+/*/
 individual_ancestor(Individual,ParentExpr) :-
         classAssertion(Class,Individual),
         class_ancestor(Class,ParentExpr).
+*/
 
 % ----------------------------------------
 % LCS

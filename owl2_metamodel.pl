@@ -10,7 +10,7 @@
 
 
 
-%% owlpredicate_typed(?UntypedPredicate,?TypedPredicate) is non det
+%% owlpredicate_typed(?UntypedPredicate,?TypedPredicate) is nondet
 %
 % true if UntypedPredicate has a stringly typed for TypedPredicate
 % Example: =|owlpredicate_typed(intersectionOf,objectIntersectionOf)|=

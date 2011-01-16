@@ -1,3 +1,4 @@
+ontology(phenotype).
 classAssertion(small_green_left_eye,o3p1).
 classAssertion(deformed_blue_right_eye,o4p1).
 
@@ -11,25 +12,31 @@ classAssertion(lewy_bodies_in_sn,o1p6).
 propertyAssertion(has,o1,o1p1).
 propertyAssertion(has,o1,o1p2).
 propertyAssertion(has,o1,o1p3).
+propertyAssertion(has,o1,o1p4).
+propertyAssertion(has,o1,o1p5).
 propertyAssertion(has,o1,o3p1). % test
+classAssertion(has some pb_in_dg, o1).
 
 classAssertion(organism,o2).
 classAssertion(deformed_right_ear,o2p1).
 classAssertion(axon_terminals_degenerated_in_ca3,o2p2).
-classAssertion(atrophied_hippocampus,o2p3).
+classAssertion(atrophied_ca2,o2p3). 
 classAssertion(deformed_hippocampus,o2p4).
 classAssertion(axon_terminals_degenerated_in_sn,o2p5).
-classAssertion(lewy_bodies_in_sn2,o2p6).
+classAssertion(lewy_bodies_in_sn,o2p6).
 propertyAssertion(has,o2,o2p1).
 propertyAssertion(has,o2,o2p2).
 propertyAssertion(has,o2,o2p3).
+propertyAssertion(has,o2,o2p4).
+propertyAssertion(has,o2,o2p5).
+propertyAssertion(has,o2,o2p6).
 propertyAssertion(has,o2,o4p1). % test
+classAssertion(has some lb_in_ns, o2).
 
 o1_x < organism and has_part some thin_mm_in_axon_of_dn_of_sn.
 o2_x < organism and has_part some axon_terminals_degenerated_in_ca3.
 o3_x < organism and has_part some axon_degenerated_in_hippocampus.
 o4_x < organism and has_part some (axon_terminal and has_quality some degenerated).
-
 
 probe_1 == organism and has_part some (hippocampus and has_part some (ca2 and has_part some (axon and has_part some (axon_terminal and has_quality some degenerated)))).
 probe_2 == organism and has_part some (hippocampus and has_part some (ca3 and has_part some (axon and has_part some (axon_terminal and has_quality some degenerated)))).
@@ -57,28 +64,44 @@ atrophied_ca2 == ca2 and has_quality some atrophied.
 deformed_hippocampus == hippocampus and has_quality some deformed.
 deformed_ca2 == ca2 and has_quality some deformed.
 thin_mm_in_axon_of_dn_of_sn == (((mitochondrion_membrane and part_of some axon) and part_of some dopaminergic_neuron) and part_of some sn) and has_quality some thin. 
+
 lewy_bodies_in_sn == sn and has_part some lewy_body.
 lewy_bodies_in_sn2 == lewy_body and part_of some sn.
 
+pb_in_dg == dentate_gyrus and has_part some (foo_transmitting_neuron and (has_part some pick_body) and has_quality some decreased_volume).
+lb_in_ns == neostriatum and has_part some (foo_receiving_neuron and (has_part some lewy_body) and has_quality some atrophied).
+
 ca2 < part_of some hippocampus.
 ca3 < part_of some hippocampus.
+ca4 < part_of some hippocampus.
 axon < part_of some neuron.
 neuron < cell.
+interneuron < neuron.
 cell < part_of some organism.
 hippocampus < part_of some brain.
 retina < part_of some brain.
+neostriatum < part_of some brain.
+dentate_gyrus < part_of some hippocampus.
 neuron < part_of some nervous_system.
 brain < organ.
 organ < part_of some organism.
 brain < part_of some nervous_system.
+sn < part_of some brain.
 nervous_system < system.
 system < part_of some organism.
 axon_terminal < part_of some axon.
 mitochondrial_membrane == membrane and part_of some mitochondrion.
 mitochondrion < part_of some cell.
 dopmainergic_neuron == neuron and outputs some dopamine.
+foo_transmitting_neuron == neuron and transmits some foo.
+foo_receiving_neuron == neuron and receives some foo.
 dopamine < neurotransmitter.
 lewy_body < inclusion.
+lewy_body < has_part some alpha_syn.
+lewy_body < has_part some ubq.
+pick_body < inclusion.
+pick_body < has_part some alpha_syn.
+pick_body < has_part some ubq.
 
 left_ear == ear and has_laterality some left.
 right_ear == ear and has_laterality some right.
@@ -91,6 +114,7 @@ eye < part_of some head.
 
 big == size and has_value some increased.
 small == size and has_value some decreased.
+decreased_volume == volume and has_value some decreased.
 size < morphology.
 deformed < morphology.
 morphology < quality.
@@ -102,16 +126,24 @@ blue < color.
 green < color.
 red < color.
 color < quality.
+volume < physical_quality.
+physical_quality < quality.
 
+left < laterality.
+right < laterality.
+
+objectProperty(has).
 objectProperty(has_value).
+objectProperty(has_quality).
 objectProperty(has_laterality).
 objectProperty(overlaps).
 transitiveProperty(part_of).
 transitiveProperty(has_part).
 inverseProperties(part_of,has_part).
 
-overlaps @< has_part * part_of.
+has_part * part_of @< overlaps.
 
+/*
 ontology(species).
 ontology(anatomy).
 ontology(subcellular).
@@ -123,4 +155,4 @@ ontologyAxiom(anatomy,class(retina)).
 ontologyAxiom(anatomy,class(eye)).
 ontologyAxiom(anatomy,class(ear)).
 ontologyAxiom(subcellular,class(axon_terminal)).
-
+*/

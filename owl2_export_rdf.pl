@@ -699,11 +699,12 @@ owl_rdf_assert(S,P,O) :-
 as2rdf_bnode(+X,-Node).  
         It generates a bnode Node for construct X in case it does not
 	exist already as a blanknode/3 clause.
-*/   
-as2rdf_bnode(X,Node) :-
-	blanknode_gen(Node,X),
-        debug(bnode,'bnode REUSE ~w ==> ~w',[X,Node]),
-        !.
+*/
+% NO STRUCTURE SHARING IN OWL2
+%as2rdf_bnode(X,Node) :-
+%	blanknode_gen(Node,X),
+%        debug(bnode,'bnode REUSE ~w ==> ~w',[X,Node]),
+%        !.
 
 as2rdf_bnode(X,Node) :-
 	rdf_db:rdf_bnode(Node),

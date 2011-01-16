@@ -99,6 +99,7 @@
            equivalent_to/2,
            disjoint_with/2,
            labelAnnotation_value/2,
+           rdf_literal_to_atom/2,
 
            axiom_directly_about/2,
            axiom_directly_references/2,
@@ -117,6 +118,7 @@
            consult_axioms/1,
            axiom_type/2,
            
+           filtered_ontology_axiom/3,
            valid_axiom/1,
            is_valid_axiom/1
 
@@ -230,6 +232,7 @@ valid_axiom(annotationProperty(A)) :- subsumed_by([A],[iri]).
 % @see anonymousIndividual/1, namedIndividual/1
 individual(A) :- anonymousIndividual(A).
 individual(A) :- namedIndividual(A).
+individual(A) :- nonvar(A), \+ \+classAssertion(_,A). % assumed individual
 %individual(A) :- nonvar(A),iri(A),\+property(A),\+class(A),\+ontology(A). % TODO: check: make individuals the default
 axiom_arguments(individual,[iri]).
 valid_axiom(individual(A)) :- subsumed_by([A],[iri]).
@@ -781,16 +784,10 @@ inverseObjectProperty(inverseOf(OP)) :- objectProperty(OP).
 
 dataPropertyExpression(E) :- dataProperty(E).
 
-dataPropertyExpression(DPEs) :-
-	(   is_list(DPEs)
-	->  forall(member(DPE,DPEs),
-		   dataPropertyExpression(DPE))
-	;   dataPropertyExpression(DPEs)).
-
 % give benefit of doubt; e.g. rdfs:label
 % in the OWL2 spec we have DataProperty := IRI
 % here dataProperty/1 is an asserted fact
-dataPropertyExpression(E) :- nonvar(E),iri(E).
+% dataPropertyExpression(E) :- nonvar(E),iri(E).
 
 %already declared as entity
 %datatype(IRI) :- iri(IRI).
@@ -1046,6 +1043,14 @@ labelAnnotation_value(X,Val) :-
 labelAnnotation_value(X,Val) :-
         anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(Val)),atom(Val).
 
+rdf_literal_to_atom(literal(type(_,Val)), Val) :-
+        atom(Val),!.
+rdf_literal_to_atom(literal(lang(_,Val)), Val) :-
+        atom(Val),!.
+rdf_literal_to_atom(literal(Val), Val) :-
+        atom(Val),!.
+
+
 /****************************************
   META-PREDICATES
   ****************************************/
@@ -1202,6 +1207,7 @@ retract_axiom(Axiom) :-
         retract_axiom_hook(Axiom),
         !.
 retract_axiom(Axiom) :-
+        debug(owl2_model,'retracting ~q from all ontologies',[Axiom]),
         retractall(Axiom),
 	retractall(ontologyAxiom(_,Axiom)),
         !.
@@ -1210,6 +1216,7 @@ retract_axiom(Axiom) :-
 % retracts axioms from a specified ontology
 retract_axiom(Axiom,Ontology) :-
         \+ var(Ontology),
+        debug(owl2_model,'retracting ~q from ~q',[Axiom,Ontology]),
 	retractall(ontologyAxiom(Ontology,Axiom)),
         (   \+ ontologyAxiom(_,Axiom)
         ->  retractall(Axiom)
@@ -1223,6 +1230,13 @@ retract_all_axioms :-
         findall(ontologyAxiom(O,A),ontologyAxiom(O,A),OAxioms),
         maplist(retract,OAxioms),
 	!.
+
+%% filtered_ontology_axiom(?Ont,?Axiom,+Goal)
+%
+% e.g. filtered_ontology_axiom(O,A,axiom_profile(A,owl2_EL))
+filtered_ontology_axiom(O,A,Goal) :-
+        ontologyAxiom(O,A),
+        Goal.
 
 
 owl2_model_init :-

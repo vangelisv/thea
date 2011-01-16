@@ -22,6 +22,7 @@
                                 % 700 <
                                 % 700 =
                       op(700,xfy,inverseOf),
+                      op(700,xfy,sameAs),
                       %op(700,xfy,(->)),
                       op(650,xfy,(::)),
                       op(600,fx,not),
@@ -60,6 +61,7 @@
 % 700 <
 % 700 =
 :- op(700,xfy,inverseOf).
+:- op(700,xfy,sameAs).
 %:- op(700,xfy,(->)).
 :- op(650,xfy,(::)).
 :- op(600,fx,not).
@@ -89,13 +91,15 @@ owl_parse_plsyn(File,_Opts) :-
         (   at_end_of_stream(IO)
         ->  true
         ;   read_term(IO,PlTerm,[module(owl2_plsyn)]),
-            plsyn2owl(PlTerm,Axiom),
-            (   nb_current(ontology,Ont)
-            ->  assert_axiom(Axiom,Ont)
-            ;   assert_axiom(Axiom)),
-            (   Axiom=ontology(OntNew)
-            ->  nb_setval(ontology,OntNew)
-            ;   true),
+            (   PlTerm=end_of_file
+            ->  true
+            ;   plsyn2owl(PlTerm,Axiom),
+                (   nb_current(ontology,Ont)
+                ->  assert_axiom(Axiom,Ont)
+                ;   assert_axiom(Axiom)),
+                (   Axiom=ontology(OntNew)
+                ->  nb_setval(ontology,OntNew)
+                ;   true)),
             fail),
         close(IO).
 
@@ -156,7 +160,7 @@ plsyn2owl(V,V) :-
         !.
 
 % e.g. r < r1 * r2 *r3 ...
-plsyn2owl(R @< R1*R2,subPropertyOf(propertyChain(Chain),R)) :-
+plsyn2owl(R1*R2 @< R,subPropertyOf(propertyChain(Chain),R)) :-
         plsyn2owl_ec(R1*R2,(*),Chain),
         !.
 
@@ -176,6 +180,7 @@ plsyn2owl(Pl,Owl) :-
         Owl=..[OwlPred|Args2].
 plsyn2owl(Pl,Owl) :-
         Pl=..[PlPred|Args],
+        nonvar(PlPred),
         plpred2owlpred_list(PlPred,OwlPred), % TODO - reverse
         !,
         maplist(plsyn2owl,Args,Args2),
@@ -188,7 +193,7 @@ plsyn2owl(Ax--Comments,[PlAx,axiomAnnotation('rdfs:comment',literal(Comments))])
 
 % we can chain over a=b=c=d as equivalent/sameAs is transitive
 % (note we cannot do this for different/disjoint)
-plsyn2owl(A=B,sameIndividual(ECs)) :-
+plsyn2owl(A sameAs B,sameIndividual(ECs)) :-
         !,
         plsyn2owl_ec(A=B,(=),ECs).
 plsyn2owl(A==B,equivalentClasses(ECs)) :-
@@ -230,14 +235,17 @@ plsyn2owl_ec(T,Op,L) :-
 plsyn2owl_ec(A,_,[AX]) :-
         plsyn2owl(A,AX).
 
+owl2plsyn(X,X) :- var(X),!.
 owl2plsyn(Owl,Pl) :-
         Owl=..[OwlPred|Args],
+        nonvar(OwlPred),
         plpred2owlpred(PlPred,OwlPred),
         !,
         maplist(owl2plsyn,Args,Args2),
         Pl=..[PlPred|Args2].
 owl2plsyn(Owl,Pl) :-
         Owl=..[OwlPred|Args],
+        nonvar(OwlPred),
         plpred2owlpred_list(PlPred,OwlPred),
         !,
         maplist(owl2plsyn,Args,Args2),
@@ -391,7 +399,7 @@ TODO: show translation table
   * < --- subClassOf/2
   * @< --- subPropertyOf/2
   * == --- equivalentClasses/1
-  * = --- sameIndividual/1
+  * sameAs --- sameIndividual/1
   * \= --- differentIndividuals/1
   * :: --- classAssertion/2
  

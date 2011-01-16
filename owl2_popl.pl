@@ -26,6 +26,7 @@
 
 :- use_module(owl2_model).
 :- use_module(owl2_plsyn).
+:- use_module(owl2_util).
 
 
 %% popl_translate(+Directive) is det
@@ -43,6 +44,11 @@ popl_translate(T) :-
 % Opts can be:
 %  * syntax(Syntax)
 %     currently only val allowed is plsyn
+popl_translate( T, Opts) :-
+        select(translate(labels),Opts,Opts2),
+        !,
+        map_IRIs(get_IRI_from_label,T,T2),
+        popl_translate(T2, Opts2).
 popl_translate( X1 ===> X2 where G, Opts) :-
         debug(popl,'Replacing axioms',[]),
         %replace_matching_axioms_where(X1,X2,G,Opts),
@@ -90,6 +96,8 @@ replace_matching_axioms(Ax1,Ax2) :-
 replace_matching_axioms_where(Ax1a,Ax2a,Ga,Opts) :-
         select(syntax(plsyn),Opts,Opts2),
         !,
+        % always work with native owl model.
+        % this should also ensure normalized order in intersection/union lists
         plsyn_owl(Ax1a,Ax1),
         plsyn_owl(Ax2a,Ax2),
         plsyn_owl(Ga,G),
@@ -167,8 +175,6 @@ replace_expression_in_all_axioms(T1,T2) :-
 % see replace_axiom/3 for Opts
 replace_expression_in_all_axioms(T1,T2,Opts) :-
         replace_expression_in_all_axioms_where(T1,T2,true,Opts).
-%        forall(axiom(Ax),
-%               replace_expression_in_axiom(T1,T2,Ax,Opts)).
 
 
 %% replace_expression_in_all_axioms_where(+TemplateIn,+TemplateOut,+WhereGoal,Opts)
@@ -217,12 +223,14 @@ replace_expression_in_axiom(T1,T2,Ax,Opts) :-
 % Ax2 is the same as Ax1 with all instances of T1 replaced with T2.
 % T1 is replaced no matter how deep it is within the expression
 replace_expression_in_axiom_term(T1,T2,Ax1,Ax2) :-
+        % this clause tests for a match
         nonvar(Ax1),
         normalize_term(Ax1,Ax1_Norm),
-        Ax1_Norm=T1,
-        Ax2=T2, % top-level match
+        expression_matches(T1,Ax1_Norm),
+        Ax2=T2,                 % replace
         !.
 replace_expression_in_axiom_term(T1,T2,Ax1,Ax2) :-
+        % traverse down expression structure
         axiom(Ax1),
         normalize_term(Ax1,Ax1_Norm),
         debug(popl_detail,'IN ~w ==> ~w :: ~w',[T1,T2,Ax1_Norm]),
@@ -232,18 +240,24 @@ replace_expression_in_axiom_term(T1,T2,Ax1,Ax2) :-
         Ax2 =.. [P|Args2].
         %debug(popl,'OUT ~w ==> ~w :: ~w',[T1,T2,Ax2]).
 
-
+expression_matches(X / partial, X) :- !.
+expression_matches(X / partial, Y) :-
+        X =.. [P|ArgsX],
+        Y =.. [P|ArgsY],
+        forall(member(ArgX,ArgsX),
+               (   member(ArgY,ArgsY),
+                   expression_matches(ArgX,ArgY))),
+        !.
+expression_matches(X, X).
 
 %% replace_expression(+T1,+T2,+Expr1,?Expr2)
 % Expr2 is the same as Expr1 with all instances of T1 replaced with T2.
 % T1 is replaced no matter how deep it is placed.
-%replace_expression(T1,T2,X1,_) :-
-%        debug(popl,'repl(~w ==> ~w) in ~w',[T1,T2,X1]),
-%        fail.
 replace_expression(_,_,X,X) :- var(X),!. % allow expressions with variables
 replace_expression(T1,T2,X1,X2) :-
         debug(popl_detail,'attempting_match(~w == ~w)',[T1-T2,X1-X2]),
-        copy_term(T1-T2,X1-X2), % copy and match
+        copy_term(T1-T2,T1_Copy-X2), % copy and match
+        expression_matches(T1_Copy,X1),
         debug(popl,'repl(~w ==> ~w)',[X1,X2]),
         !. % do not recurse below
 replace_expression(T1,T2,X1,X2) :-
@@ -265,6 +279,8 @@ normalize_term(L,S) :-
         L=[_|_],
         !,
         sort(L,S).
+normalize_term(propertyChain(L),propertyChain(L)) :-
+        !. % order is important with property chains
 normalize_term(T,T2) :-
         !,
         T=..[F|Args],

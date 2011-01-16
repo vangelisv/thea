@@ -4,6 +4,7 @@
           [
            ontology_profile/2,
            ontology_profile_violation/3,
+           trim_axioms_by_profile/1,
            trim_axioms_by_profile/2,
            owl2_profile/1,
            axiom_profile/2,
@@ -32,6 +33,12 @@ trim_axioms_by_profile(Ont,Profile) :-
         findall(Ax,ontology_profile_violation(Ont,Profile,Ax),Axs),
         forall(member(Ax,Axs),
                retract_axiom(Ax,Ont)).
+trim_axioms_by_profile(Profile) :-
+        owl2_profile(Profile),
+        !,
+        findall(Ax-Ont,ontology_profile_violation(Ont,Profile,Ax),AxOnts),
+        forall(member(Ax-Ont,AxOnts),
+               retract_axiom(Ax,Ont)).
 
 
 %% owl2_profile(?Profile) is nondet
@@ -56,9 +63,10 @@ axiom_profile(A,P) :- axiom_profile(A,P,true).
 
 % generic
 
-expression_profile(C,P,true) :- owl2_profile(P),class(C).
-expression_profile(C,P,true) :- owl2_profile(P),property(C).
-expression_profile(C,P,true) :- owl2_profile(P),dataRange(C).
+expression_profile(C,P,true) :- owl2_profile(P),atom(C),!. % assume OWL2-DL
+%expression_profile(C,P,true) :- owl2_profile(P),class(C),!.
+%expression_profile(C,P,true) :- owl2_profile(P),property(C),!.
+%expression_profile(C,P,true) :- owl2_profile(P),dataRange(C),!.
 
 % ----------------------------------------
 % all profiles
@@ -74,8 +82,8 @@ axiom_profile(Ax,_,true) :- declarationAxiom(Ax).
 % http://www.w3.org/TR/owl2-profiles/#OWL_2_EL
 
 % permitted:
-
-expression_profile(someValuesFrom(P,_),owl2_EL,true) :- objectProperty(P).
+% TODO - recurse down
+expression_profile(someValuesFrom(P,X),owl2_EL,true) :- objectProperty(P),expression_profile(X,owl2_EL,true).
 expression_profile(hasValue(P,_),owl2_EL,true) :- objectProperty(P).
 expression_profile(hasSelf(P),owl2_EL,true) :- objectProperty(P).
 expression_profile(oneOf([I]),owl2_EL,true) :- individual(I).

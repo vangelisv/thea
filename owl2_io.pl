@@ -10,7 +10,8 @@
           ]).
 
 :- use_module(library(debug)).
-:- use_module(owl2_model,[consult_axioms/1, axiom/1]).
+%:- use_module(owl2_model,[consult_axioms/1, axiom/1, ontologyAxiom/2, ontology/1]).
+:- use_module(owl2_model).
 
 %% load_axioms_hook(+File,+Fmt,+Opts)
 % define this multifile predicate to add a new parser
@@ -80,7 +81,7 @@ load_prolog_axioms(File,Opts) :-
 	    QlfTime >= PlTime
 	->  consult_axioms(QlfFile)
 	;   access_file(QlfFile, write)
-	->  qcompile(File),
+	->  owl2_model:qcompile(File),
             consult_axioms(QlfFile)
         ;   debug(load,'  cannot write to qlf (permission problem?), loading from: ~w',[File]),
             consult_axioms(File)
@@ -122,18 +123,18 @@ save_axioms(File,Fmt,Opts) :-
         option(ontology(Ont),Opts,_),
         forall(ontologyAxiom(Ont,A),
                (   A=implies(_,_)
-               ->  format('swrl:~q.~n',[A]) % ugly hack - assume owl2_model module for everything except this
-               ;   format('~q.~n',[A]))),
+               ->  write_fact(swrl:A) % ugly hack - assume owl2_model module for everything except this
+               ;   write_fact(A))),
         % write orphans
         (   var(Ont)
         ->  forall((axiom(A),\+ontologyAxiom(_,A)),
-                   format('~q.~n',[A]))
+                   write_fact(A))
         ;   true),
         % write ontologyAxiom/2
 	(   member(exclude(ontologyAxiom),Opts)
 	->  true
 	;   forall(owl2_model:ontologyAxiom(Ont,A),
-		   format('~q.~n',[ontologyAxiom(Ont,A)]))),
+		   write_fact(ontologyAxiom(Ont,A)))),
         told.
 save_axioms(File,Fmt,Opts) :-
         load_handler(write,Fmt),
@@ -141,6 +142,11 @@ save_axioms(File,Fmt,Opts) :-
         !.
 save_axioms(File,Fmt,Opts) :-
         throw(owl2_io('cannot save fmt for',File,Fmt,Opts)).
+
+write_fact(Fact) :-
+        write_canonical(Fact),
+        writeln('.').
+
 
 %% convert_axioms(+FileIn,+FmtIn,+FileOut,+FmtOut,+Opts)
 % combines load_axioms/3 with save_axioms/3

@@ -52,7 +52,7 @@ Consider the ontology:
   Class: curry SubClassOf: food
 ==
 
-The named LCS of STP and SPC is "food", which is not very informative. This tool derives a more specific class expression:
+The named-LCS of STP and SPC is "food", which is not very informative. This tool derives a more specific class expression:
 
 ==
   food and 
@@ -62,6 +62,10 @@ The named LCS of STP and SPC is "food", which is not very informative. This tool
 ==
 
 This is quite an awkward class expression. It can be simplified by adding property chain axioms to the ontology.
+
+A simple label generation algorithm could produce:
+
+  food that has tomatos or tomato derivates, is spicy or has spicy parts, and has cheese
 
 ---+ Usage
 
@@ -173,6 +177,7 @@ class_pair_least_common_subsumer(A,B,LCS,Opts) :-
         % default - use ext_combined algorithm
         class_pair_least_common_subsumer_ext_combined(A,B,LCS,Opts).
 
+%% class_pair_least_common_subsumer_basic(+A,+B,?LCS,+Opts:list)
 class_pair_least_common_subsumer_basic(A,B,LCS,Opts) :-
         class_pair_common_subsumers(A,B,CSs,Opts),
         member(LCS,CSs),
@@ -470,7 +475,7 @@ is_equivalent(C1,C2,Opts) :-
 subsumes_or_subsumed_by(C1,C2,Opts) :-       is_subsumed_by_chk(C1,C2,Opts).
 subsumes_or_subsumed_by(C1,C2,Opts) :-       is_subsumed_by_chk(C2,C1,Opts).
 
-%% is_subsumed_by_chk(+ClassX,+ClassY,Opts) :- is semidet
+%% is_subsumed_by_chk(+ClassX,+ClassY,+Opts) is semidet
 % semideterministic version of is_subsumed_by/3
 is_subsumed_by_chk(X,Y,Opts) :-
         !,

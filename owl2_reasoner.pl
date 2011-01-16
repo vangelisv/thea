@@ -44,7 +44,7 @@ initialize_reasoner(Type,Reasoner) :-
 initialize_reasoner(Type,Reasoner,Opts) :-
         load_handler(Type,Opts),
 	initialize_reasoner_hook(Type,Reasoner,Opts),
-        debug(reasoner,'Initialized reasoner: ~w',[Reasoner]),
+        debug(reasoner,'Initialized reasoner: ~w opts: ~w',[Reasoner,Opts]),
         nb_setval(reasoner,Reasoner),
         !.
 initialize_reasoner(null,null,_) :- !.
@@ -118,7 +118,7 @@ reasoner_ask(Axiom) :-
 
 
 %% reasoner_check_consistency(+Reasoner)
-%% reasoner_check_consistency(+Reasoner, ?IsConsistent:boolean)
+%% reasoner_check_consistency(+Reasoner, ?IsConsistent)
 reasoner_check_consistency(Reasoner) :- 
         reasoner_check_consistency(Reasoner,true).
 reasoner_check_consistency(Reasoner,V) :- 

@@ -13,6 +13,7 @@
            expand_namespaces/0,
            remove_namespaces/0,
            contract_namespaces/0,
+           translate_IRIs_from_obo_ids/0,
            remove_ns/2,
            replace_ns_prefix/4,
            use_label_as_IRI/2,
@@ -180,6 +181,10 @@ expand_namespaces:-
 contract_namespaces:-
         translate_IRIs(contract_ns).
 
+translate_IRIs_from_obo_ids :-
+        translate_IRIs(oboid_uri).
+
+
 %% prefix_IRIs(+NS)
 % attaches a prefix to all names.
 prefix_IRIs(X):-
@@ -260,6 +265,14 @@ use_label_as_IRI(X,X).
 get_IRI_from_label(X,X) :- var(X),!.
 get_IRI_from_label(X,IRI) :- labelAnnotation_value(IRI,X),!.
 get_IRI_from_label(X,X).
+
+
+oboid_uri(X,U) :-
+        concat_atom([S,A],':',X),
+        S\=http,
+        !,
+        concat_atom(['http://purl.obolibrary.org/obo/',S,'_',A],U).
+oboid_uri(U,U).
 
 
 
@@ -371,22 +384,23 @@ uniqify([H|L],[H|L2]) :-
 
 
 % INCOMPLETE!
-inferred_declaration(class(C)) :- classAssertion(C,_),atom(C).
-inferred_declaration(class(C)) :- subClassOf(C,_),atom(C).
-inferred_declaration(class(C)) :- equivalentClasses(L),member(C,L),atom(C).
-inferred_declaration(namedIndividual(I)) :- classAssertion(_,I).
-inferred_declaration(namedIndividual(I)) :- propertyAssertion(_,I,_).
-inferred_declaration(namedIndividual(I)) :- propertyAssertion(_,_,I).
-inferred_declaration(objectProperty(P)) :- subPropertyOf(P,_).
-inferred_declaration(objectProperty(P)) :- subPropertyOf(_,P).
-inferred_declaration(objectProperty(P)) :- inverseProperties(P,_).
-inferred_declaration(objectProperty(P)) :- inverseProperties(_,P).
+inferred_declaration(O,class(C)) :- ontologyAxiom(O,classAssertion(C,_)),atom(C).
+inferred_declaration(O,class(C)) :- ontologyAxiom(O,subClassOf(C,_)),atom(C).
+inferred_declaration(O,class(C)) :- ontologyAxiom(O,subClassOf(_,C)),atom(C).
+inferred_declaration(O,class(C)) :- ontologyAxiom(O,equivalentClasses(L)),member(C,L),atom(C).
+inferred_declaration(O,namedIndividual(I)) :- ontologyAxiom(O,classAssertion(_,I)).
+inferred_declaration(O,namedIndividual(I)) :- ontologyAxiom(O,propertyAssertion(_,I,_)).
+inferred_declaration(O,namedIndividual(I)) :- ontologyAxiom(O,propertyAssertion(_,_,I)).
+inferred_declaration(O,objectProperty(P)) :- ontologyAxiom(O,subPropertyOf(P,_)),atom(P).
+inferred_declaration(O,objectProperty(P)) :- ontologyAxiom(O,subPropertyOf(_,P)),atom(P).
+inferred_declaration(O,objectProperty(P)) :- ontologyAxiom(O,inverseProperties(P,_)),atom(P).
+inferred_declaration(O,objectProperty(P)) :- ontologyAxiom(O,inverseProperties(_,P)),atom(P).
 
 
 
 assume_entity_declarations :-
-        forall(inferred_declaration(A),
-               assert_axiom(A)).
+        forall(inferred_declaration(O,A),
+               assert_axiom(A,O)).
 
 collect_orphan_axioms(Ont) :-
         (   \+ ontology(Ont)

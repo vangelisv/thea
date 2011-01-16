@@ -89,24 +89,47 @@ build_ontology(Ont) :-
 %% build_ontology(+Man,+Fac,?Ont)
 % create an ontology from the current prolog db
 build_ontology(Man,Fac,Ont) :-
+        build_ontology(Man,Fac,Ont,[]).
+build_ontology(Man,Fac,Ont,Opts) :-
+        setof(OntIRI,member(ontology(OntIRI),Opts),OntIRIs),
+        !,
+        require_manager(Man),
+        (   ontology(OntName)
+        ->  true
+        ;   OntName='http://example.org'),
+        create_ontology(Man,OntName,Ont),
+        forall((member(OntIRI,OntIRIs),
+                ontologyAxiom(OntIRI,Ax)),
+               add_axiom(Man,Fac,Ont,Ax,_)),
+        debug(owl2,'Built ontology',[]).
+build_ontology(Man,Fac,Ont,Opts) :-
+        memberchk(filter(Ax,FilterGoal),Opts),
+        !,
+        require_manager(Man),
+        (   ontology(OntName)
+        ->  true
+        ;   OntName='http://example.org'),
+        create_ontology(Man,OntName,Ont),
+        forall((axiom(Ax),
+                debug(owl2,'Testing axiom against filter: ~w',[Ax]),
+                FilterGoal),
+               add_axiom(Man,Fac,Ont,Ax,_)),
+        debug(owl2,'Built ontology',[]).
+build_ontology(Man,Fac,Ont,_Opts) :-
         require_manager(Man),
         (   ontology(OntName)
         ->  true
         ;   OntName='http://example.org'),
         create_ontology(Man,OntName,Ont),
         forall(axiom(Ax),
-               (   debug(owl2,'[[Adding axiom: ~w',[Ax]),
-                   add_axiom(Man,Fac,Ont,Ax,_),
-                   debug(owl2,'  /Added axiom: ~w]]',[Ax]))),
+               add_axiom(Man,Fac,Ont,Ax,_)),
         debug(owl2,'Built ontology',[]).
 
 build_single_ontology(Man,Fac,OntIRI,Ont) :-
         require_manager(Man),
         create_ontology(Man,OntIRI,Ont),
         forall(ontologyAxiom(OntIRI,Ax),
-               (   debug(owl2,'[[Adding axiom: ~w',[Ax]),
-                   add_axiom(Man,Fac,Ont,Ax,_),
-                   debug(owl2,'  /Added axiom: ~w]]',[Ax]))),
+               add_axiom(Man,Fac,Ont,Ax,_)),
         debug(owl2,'Built ontology',[]).
 
 
@@ -459,7 +482,10 @@ add_axiom(Manager,Factory,Ont,Axiom,JAx) :-
         ;   JAx=ignore
         ->  true
         ;   jpl_new('org.semanticweb.owlapi.model.AddAxiom',[Ont,JAx],AddAxiom),
-            jpl_call(Manager,applyChange,[AddAxiom],_)).
+            jpl_call(Manager,applyChange,[AddAxiom],_)),
+        debug(owl2,' added axiom ~w = ~w',[Axiom,JAx]),
+        !.
+
 
 %% owlterm_java(+Factory,?Type,+OWLTerm,?Obj) is det
 % translate OWL Axiom or OWL Expression from prolog term to java object
@@ -483,6 +509,9 @@ owlterm_java(_,_,propertyAssertion(P,S,V),ignore) :-
         !.
 owlterm_java(_,_,annotationAssertion(_,Sub,_),ignore) :-
         ontology(Sub),
+        !.
+% todo:
+owlterm_java(_,_,annotation(_),ignore) :-
         !.
 
 % disable this for now whilst we figure out owlapi3
@@ -732,7 +761,7 @@ translate_arg_to_java(Fac,UntypedExpr,_T,Obj) :-
         debug(owl2,'  testing for java expr method ~w',[TypedPred]),
         expr_method(TypedPred,Method),
         Check =.. [TypedPred,UntypedExpr], % eg objectIntersectionOf(intersectionOf(L))
-        debug(owl2,'  checking expr ~w',[Check]),
+        debug(owl2,'  checking expr ~q',[Check]),
         Check,
         !,
         debug(owl2,'  typed expr ~w -> ~w :: ~w',[UntypedExpr,TypedPred,ArgTypes]),
@@ -746,7 +775,7 @@ translate_arg_to_java(Fac,UntypedExpr,_T,Obj) :-
         owlpredicate_typed(UntypedPred,TypedPred),
         owlpredicate_arguments(TypedPred,ArgTypes),
         Check =.. [TypedPred,UntypedExpr], % eg objectIntersectionOf(intersectionOf(L))
-        debug(owl2,'  checking expr ~w',[Check]),
+        debug(owl2,'  checking expr ~q',[Check]),
         Check,
         debug(owl2,'  typed expr ~w -> ~w :: ~w',[UntypedExpr,TypedPred,ArgTypes]),
         translate_args_to_java(Fac,Args,ArgTypes,Objs),
@@ -906,7 +935,7 @@ owl2_reasoner:initialize_reasoner_hook(owlapi(Type),owlapi_reasoner(R,Fac,Opts),
 	create_factory(Man,Fac),
         statistics(cputime,T1),
         print_message(informational,bench(reasoner,T1)),
-        build_ontology(Man,Fac,Ont),
+        build_ontology(Man,Fac,Ont,Opts),
 	create_reasoner(Ont,Type,R),
         statistics(cputime,T2),
         print_message(informational,bench(reasoner,T1,T2)).
@@ -914,8 +943,8 @@ owl2_reasoner:initialize_reasoner_hook(owlapi(Type),owlapi_reasoner(R,Fac,Opts),
 
 %reasoner_tell_hook(R,Axiom) :- foo.
 
-owl2_reasoner:reasoner_tell_all_hook(owlapi_reasoner(OWLReasoner,Fac,_Opts)) :-
-	build_ontology(Man,Fac,Ont),
+owl2_reasoner:reasoner_tell_all_hook(owlapi_reasoner(OWLReasoner,Fac,Opts)) :-
+	build_ontology(Man,Fac,Ont,Opts),
 	reasoner_classify(OWLReasoner,Man,Ont).
 
 	

@@ -7,6 +7,7 @@
 :- use_module(owl2_text_display).
 :- use_module(owl2_popl,[popl_translate/1]).
 :- use_module(owl2_dotty).
+:- use_module(owl2_profiles).
 
 :- op(1100,xfy,--).
 :- op(1090,fx,new).
@@ -18,12 +19,14 @@
 :- op(1090,fx,qi).
 :- op(1090,fx,pq).
 :- op(1090,fx,v).
+:- op(1090,fx,itree).
 :- op(1090,fx,t).
 :- op(1090,fx,l).
 :- op(1090,fx,set).
 :- op(1090,fx,unset).
 :- op(1100,xfy,===>). % from POPL
 :- op(1000,xfy,where).
+:- op(1000,xfy,with).
 :- op(800,xfy,to).
 :- op(800,fx,(?)).
 
@@ -54,7 +57,9 @@ consult_rc :-
         rcfile(F),
         exists_file(F),
         !,
-        consult(F).
+        style_check(-singleton),
+        consult(F),
+        style_check(+singleton).
 consult_rc.
 
 
@@ -72,11 +77,11 @@ cmd_doc(edit,rm,[axiom],'Retract axiom to current ontology').
 cmd_doc(edit,undo,[],'Undo last add/rm').
 cmd_doc(edit,redo,[],'Redo last undo').
 
-edit_op(Op,AxiomIn) :- current_ontology(Ont),!,tr(AxiomIn,Axiom), Act =.. [Op,Axiom,Ont],Act,print_message(informational,Act),asserta(transaction(Act)).
-edit_op(_,_) :- print_message(error,no_current_ontology).
+edit_op(ActIn) :- tr(ActIn,Act), Act,print_message(informational,Act),asserta(transaction(Act)).
+%edit_op(_,_) :- print_message(error,no_current_ontology).
 add AxiomIn where Goal :- !, forall(Goal,add(AxiomIn)).
-add AxiomIn :- edit_op(assert_axiom,AxiomIn).
-rm AxiomIn :- edit_op(retract_axiom,AxiomIn).
+add AxiomIn :- current_ontology(Ont),edit_op(assert_axiom(AxiomIn,Ont)).
+rm AxiomIn :- edit_op(retract_axiom(AxiomIn)). % todo - to make this undoable we must ground variables within a forall...
 undo :- transaction(Act),undo(Act),print_message(informational,undo(Act)),asserta(redo_stack(Act)),retract(transaction(Act)).
 undo(assert_axiom(A,O)) :- retract_axiom(A,O).
 undo(retract_axiom(A,O)) :- assert_axiom(A,O).
@@ -191,13 +196,14 @@ cmd_doc(display,--,[cmd],'pipe through unix shell. E.g. q _<_ -- \'grep neuron\'
 t N :- label2iri(N,X), nb_setval(obj,X),current_opts(Opts), display_class_tree(X,Opts).
 l N :-
         label2iri(N,X),
+        format('% IRI: ~w~n',[X]),
         nb_setval(obj,X),
         current_opts(Opts),
         setof(A,
               (   axiom_references(A,X),
                   axiom_type(A,T)),
               As),
-        format('* Axiom Type: ~w~n',[T]),
+        format('% Axiom Type: ~w~n',[T]),
         forall(member(A,As),
                display_term(A,Opts)),
         fail.
@@ -216,6 +222,8 @@ Cmd > File :-                   % TODO
         open(File,write,S,[]),
         with_output_to(S,Cmd),
         close(S).
+
+itree ObjIn :- tr(ObjIn,Obj),current_opts(Opts),display_object_tree(Obj,Opts).
 
 % LIST CMDS
 cmd_doc(display,ls,[],'List ontologies').
@@ -267,7 +275,15 @@ qi SelectIn where QueryIn :- !,tr(QueryIn,Query),tr(SelectIn,Select), forall(rea
 qi QueryIn :- !,tr(QueryIn,Query), forall(reasoner_ask(Query),show(Query)).
 
 cmd_doc(reasoner,init,[name],'Initialize a reasoner on current ont. E.g. "reasoner pellet.". Stores current reasoner in global variable.').
-init RN :- initialize_reasoner(RN,_,[]).
+init (RN with Opts) :-
+        !,
+        print_message(informational,setting('Reasoner options',Opts)),
+        initialize_reasoner(RN,R,Opts),
+        print_message(informational,setting('Reasoner',R)).
+
+init RN :-
+        findall(Opt,settings(reasoner_opt,Opt),Opts),
+        init(RN with Opts).
 
 
 
@@ -283,7 +299,7 @@ set (P to V) :- !,unset(P), assert(settings(P,V)),save_settings.
 set P + V :- !,assert(settings(P,V)),save_settings.
 set P - V :- !,retractall(settings(P,V)),save_settings.
 unset P :- retractall(settings(P,_)),save_settings.
-settings :- q(settings(_,_)).
+settings :- Query=settings(_,_),forall(Query,show(Query)).
 
 
 %tr(In,Out) :- plsyn_owl(In,Out),!.
@@ -318,15 +334,21 @@ label2iri(Label,Obj) :- labelAnnotation_value(Obj,Label),!.
 label2iri(X,X).
 
 
+shcol(Num) :-  format('\033['),write(Num),write(m).
+shnocol :- shcol(0).
+
 prolog:message(thea_shell_welcome) -->
                ['%  ::: Welcome to Posh, the Prolog OWL Shell :::'].
 
+% TODO - colors
 prolog:message(redo(Act)) --> ['Redo: '],prolog:message(Act).
 prolog:message(undo(Act)) --> ['Undo: '],prolog:message(Act).
 prolog:message(assert_axiom(A,Ont)) --> ['Asserting '],prolog:message(ax(A)),[' into ',Ont].
 prolog:message(retract_axiom(A,Ont)) --> ['Retracting '],prolog:message(ax(A)),[' into ',Ont].
 prolog:message(ax(Ax)) --> [Atom],{current_opts(Opts),with_output_to(atom(Atom),display_term(Ax,Opts))}.
 prolog:message(shell(M)) --> [M].
+prolog:message(setting(P,V)) --> ['Setting: '],[P],['=\t'],{term_to_atom(V,VA)},[VA].
+
 
 
 usage :-

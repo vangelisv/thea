@@ -227,7 +227,7 @@ ontology_xml(O,Axioms,element('http://www.w3.org/2006/12/owl2-xml#':'Ontology',[
         axioms_elts(O,Axioms,Elts).
 
 axioms_elts(_,[],[]).
-%% cjm 2010-06-24 - assume processed elsewhere
+% cjm 2010-06-24 - assume processed elsewhere
 axioms_elts(O,[ontology(_)|Axioms],Elts):-
         !,
         axioms_elts(O,Axioms,Elts).
