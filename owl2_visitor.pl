@@ -208,25 +208,6 @@ smatch_args_unordered(L1,[A2|L2_Tail]) :-
         smatch(A1,A2),
         smatch_args_unordered(L1_Tail,L2_Tail).
 
-/*
-smatch_args_unordered([A1|L1_Tail],L2) :-
-        select(A2,L2,L2_Tail),
-        smatch(A1,A2),
-        smatch_args_unordered(L1_Tail,L2_Tail).
-*/
-        
-
-
-
-list_subsumed_by([],_) :- !.
-list_subsumed_by(X,_) :- var(X),!.
-list_subsumed_by(_,[]) :- !, fail.
-list_subsumed_by([X|L],L2) :-
-        select(X,L2,L2_Rest),
-        !,
-        list_subsumed_by(L,L2_Rest).
-
-% rsort(L,S) :- writeln(sorting(L)),sort(L,S1),reverse(S1,S).
 
 % ----------------------------------------
 % test
