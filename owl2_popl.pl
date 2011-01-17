@@ -132,6 +132,10 @@ perform_translation(X, Opts) :-
         !,
         perform_translation(X, AxiomTemplate, Goal, Opts).
 perform_translation(X, Opts) :-
+        memberchk(filter(AxiomTemplate),Opts),
+        !,
+        perform_translation(X, AxiomTemplate, AxiomTemplate, Opts).
+perform_translation(X, Opts) :-
         perform_translation(X, A, axiom(A), Opts).
 
 perform_translation(X, AxiomTemplate, Goal, Opts) :-

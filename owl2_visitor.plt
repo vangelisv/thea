@@ -142,6 +142,14 @@ test(smatch11, [true(P/B/Rest=p/b/[c,someValuesFrom(q,d)])]) :-
         smatch(intersectionOf([a,someValuesFrom(p,b),c,someValuesFrom(q,d)]),
                intersectionOf([a,someValuesFrom(P,B)|Rest])),
         writeln(sm(P/B/Rest)).
+test(smatch12, [true(Q/E/Rest=p/b/[c,someValuesFrom(q,d)])]) :-
+        smatch(intersectionOf([someValuesFrom(inheres_in,unionOf([e,someValuesFrom(po,e)])),
+                               q,
+                               someValuesFrom(qualifier,abn)]),
+               intersectionOf([Q,
+                               someValuesFrom(inheres_in,E)
+                              |Rest])),
+        writeln(sm12(Q/E/Rest)).
 
 
 

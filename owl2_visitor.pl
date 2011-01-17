@@ -101,9 +101,13 @@ rewrite_axiom(Axiom,Rule,NewAxiom) :-
         findall(TrAxiom,(smatch(Axiom,AxiomTemplate),once(ConditionalGoal)),[A1]),
         !,
         member_or_identity(A1x,A1),
-        debug(visitor,'  rewriting ~w ===> ~w',[Axiom,A1x]),
+        debug(visitor,'  rewriting ~q ===> ~q',[Axiom,A1x]),
+        (   Axiom=zequivalentClasses(['http://purl.obolibrary.org/obo/MP_0000057',intersectionOf([someValuesFrom('http://purl.obolibrary.org/obo/BFO_0000052',unionOf(['http://purl.obolibrary.org/obo/GO_0001503',someValuesFrom('http://purl.obolibrary.org/obo/BFO_0000050','http://purl.obolibrary.org/obo/GO_0001503')])),'http://purl.obolibrary.org/obo/PATO_0000001',someValuesFrom('http://purl.obolibrary.org/obo/test_qualifier','http://purl.obolibrary.org/obo/PATO_0000460')])])
+        ->  trace
+        ;   true),
         A1x =.. [Pred|Args],
         rewrite_args(Axiom,Args,Rule,Args2),
+        debug(visitor,'  rewrote ~w ===> ~w',[Args,Args2]),
         NewAxiom =.. [Pred|Args2].
 
 
@@ -120,9 +124,10 @@ rewrite_axiom_multirule(Axiom,[Rule|Rules],NewAxiom) :-
 
 rewrite_args(_,[],_,[]) :- !.
 rewrite_args(Axiom,[Arg|Args],Rule,[NewArg|NewArgs]) :-
+        debug(v2,'  XX rewriting ~w',[Arg]),
         rewrite_expression(Axiom,Arg,Rule,NewArg),
+        %debug(v2,'  ===> XX  ~w',[NewArg]),
         rewrite_args(Axiom,Args,Rule,NewArgs).
-
 
 
 %% rewrite_expression(+SourceAxiom,+Expression,+Rule,?NewExpression) is nondet
@@ -139,18 +144,23 @@ rewrite_expression(Axiom,Ex,Rule,NewEx) :-
         rule_expression_template(Rule,ConditionalGoal,ExTemplate,TrEx),
         findall(TrEx,(smatch(Ex,ExTemplate),once(ConditionalGoal)),[Ex1]),
         !,
+        debug(v2,'  ** tr ~q',[Ex1]),
         member_or_identity(Ex1_Single,Ex1),
         Ex1_Single =.. [Pred|Args],
         rewrite_args(Axiom,Args,Rule,NewArgs),
         NewEx =.. [Pred|NewArgs].
-rewrite_expression(_,Ex,_,Ex) :- !.
+rewrite_expression(Axiom,Ex,Rule,NewEx) :-
+        !,
+        Ex =.. [Pred|Args],
+        rewrite_args(Axiom,Args,Rule,NewArgs),
+        NewEx =.. [Pred|NewArgs].
 
 
 rule_axiom_template(tr(axiom,In,Out,G,_),G,In,Out).
 rule_axiom_template(tr(_,_,_,_,_),true,Ax,Ax). % pass-through
 rule_axiom_template(Rule,_,_,_) :- Rule\=tr(_,_,_,_,_),throw(error(invalid(Rule))).
 rule_expression_template(tr(expression,In,Out,G,_),G,In,Out).
-rule_expression_template(tr(_,_,_,_,_),true,Ex,Ex). % pass-through
+%rule_expression_template(tr(_,_,_,_,_),true,Ex,Ex). % pass-through
 
 member_or_identity(X,L) :-
         (   L=(A,B)
@@ -171,12 +181,12 @@ smatch_args(propertyChain(L1),propertyChain(L2)) :-
         !,
         % property chains are the only expressions where order is important
         L1=L2.
-smatch_args([Set1],[Set2]) :- % order of args is unimportant e.g. intersectionOf(List)
+smatch_args([Set1],[Set2]) :- % order of args is unimportant e.g. intersectionOf(Set)
         is_list(Set1),
         !,
         list_subsumed_by(Set1,Set2),
         list_subsumed_by(Set2,Set1).
-        
+
 smatch_args([],[]).
 smatch_args([A1|Args1],[A2|Args2]) :-
         smatch(A1,A2),
@@ -186,9 +196,11 @@ list_subsumed_by([],_) :- !.
 list_subsumed_by(X,_) :- var(X),!.
 list_subsumed_by(_,[]) :- !, fail.
 list_subsumed_by([X|L],L2) :-
-        memberchk(X,L2),
-        list_subsumed_by(L,L2).
+        select(X,L2,L2_Rest),
+        !,
+        list_subsumed_by(L,L2_Rest).
 
+% rsort(L,S) :- writeln(sorting(L)),sort(L,S1),reverse(S1,S).
 
 % ----------------------------------------
 % test
