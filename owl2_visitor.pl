@@ -184,13 +184,39 @@ smatch_args(propertyChain(L1),propertyChain(L2)) :-
 smatch_args([Set1],[Set2]) :- % order of args is unimportant e.g. intersectionOf(Set)
         is_list(Set1),
         !,
-        list_subsumed_by(Set1,Set2),
-        list_subsumed_by(Set2,Set1).
+        smatch_args_unordered(Set1,Set2),
+        !.
 
 smatch_args([],[]).
 smatch_args([A1|Args1],[A2|Args2]) :-
         smatch(A1,A2),
         smatch_args(Args1,Args2).
+
+smatch_args_unordered([],[]) :- !.
+smatch_args_unordered(Tail,[X]) :- nonvar(X),X=tail(Tail),!.
+smatch_args_unordered(_,[]) :- !,fail.
+smatch_args_unordered([],_) :- !,fail.
+smatch_args_unordered(L1,[X,A2|L2_Tail]) :-
+        nonvar(X),
+        X=tail(_),
+        !,
+        select(A1,L1,L1_Tail),
+        smatch(A1,A2),
+        smatch_args_unordered(L1_Tail,[X|L2_Tail]).
+smatch_args_unordered(L1,[A2|L2_Tail]) :-
+        select(A1,L1,L1_Tail),
+        smatch(A1,A2),
+        smatch_args_unordered(L1_Tail,L2_Tail).
+
+/*
+smatch_args_unordered([A1|L1_Tail],L2) :-
+        select(A2,L2,L2_Tail),
+        smatch(A1,A2),
+        smatch_args_unordered(L1_Tail,L2_Tail).
+*/
+        
+
+
 
 list_subsumed_by([],_) :- !.
 list_subsumed_by(X,_) :- var(X),!.

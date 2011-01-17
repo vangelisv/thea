@@ -226,7 +226,7 @@ plsyn2owl(X,X) :- !.
 plsyn2owl_ec(T,_,[T]) :-
         var(T),
         !.
-plsyn2owl_ec(list(T),_,T) :-
+plsyn2owl_ec(insert(T),_,T) :-
         !.
 plsyn2owl_ec(T,Op,L) :-
         T=..[Op,A,B],

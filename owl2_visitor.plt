@@ -87,12 +87,13 @@ test(tr_expr_ec2, [true(Axiom = equivalentClasses([z,someValuesFrom(p,intersecti
 test(tr_expr_open, [true(Axiom = equivalentClasses([z,someValuesFrom(p,intersectionOf([a,b]))]))]) :-
         rewrite_axiom(equivalentClasses([z,intersectionOf([a,someValuesFrom(p,b)])]),
                       tr(_,
-                         intersectionOf([A,someValuesFrom(P,B) | _]),
+                         intersectionOf([A,someValuesFrom(P,B), tail(_)]),
                          someValuesFrom(P,intersectionOf([A,B])),
                          true,
                          []),
                       Axiom),
         writeln(a3=Axiom).
+/*
 test(tr_expr_open2, [true(Axiom = equivalentClasses([z,someValuesFrom(p,intersectionOf([a,b]))]))]) :-
         rewrite_axiom(equivalentClasses([z,intersectionOf([a,someValuesFrom(p,b),someValuesFrom(q,c)])]),
                       tr(expression,
@@ -111,6 +112,7 @@ test(tr_expr_open3, [true(Axiom = equivalentClasses([z,someValuesFrom(p,intersec
                          []),
                       Axiom),
         writeln(a5=Axiom).
+*/
 
 
 
@@ -122,9 +124,9 @@ test(smatch4, [true(smatch(intersectionOf([a,b,c]),
 test(smatch5, [true(\+smatch(intersectionOf([a,b,c,d]),
                              intersectionOf([b,a,c])))]) :- true.
 test(smatch6, [true(smatch(intersectionOf([a,b,c]),
-                           intersectionOf([b,a|_])))]) :- true.
+                           intersectionOf([b,a,tail(_)])))]) :- true.
 test(smatch7, [true(\+smatch(intersectionOf([a,b,c]),
-                             intersectionOf([d|_])))]) :- true.
+                             intersectionOf([d,tail(_)])))]) :- true.
 
 test(smatch8, [true(A/P/B=a/p/b)]) :-
         smatch(intersectionOf([a,someValuesFrom(p,b)]),
@@ -132,25 +134,28 @@ test(smatch8, [true(A/P/B=a/p/b)]) :-
         writeln(sm(A/P/B)).
 test(smatch9, [true(A/P/B=a/p/b)]) :-
         smatch(intersectionOf([a,someValuesFrom(p,b)]),
-               intersectionOf([A,someValuesFrom(P,B)|_])),
+               intersectionOf([A,someValuesFrom(P,B),tail(_)])),
         writeln(sm(A/P/B)).
 test(smatch10, [true(A/P/B=a/p/b)]) :-
         smatch(intersectionOf([a,someValuesFrom(p,b),b,c]),
-               intersectionOf([A,someValuesFrom(P,B)|_])),
+               intersectionOf([A,someValuesFrom(P,B),tail(_)])),
         writeln(sm(A/P/B)).
 test(smatch11, [true(P/B/Rest=p/b/[c,someValuesFrom(q,d)])]) :-
         smatch(intersectionOf([a,someValuesFrom(p,b),c,someValuesFrom(q,d)]),
-               intersectionOf([a,someValuesFrom(P,B)|Rest])),
+               intersectionOf([a,someValuesFrom(P,B),tail(Rest)])),
         writeln(sm(P/B/Rest)).
-test(smatch12, [true(Q/E/Rest=p/b/[c,someValuesFrom(q,d)])]) :-
+test(smatch12, [true(Q/E/Rest=p/unionOf([e,someValuesFrom(po,e)])/[someValuesFrom(qualifier,abn)])]) :-
         smatch(intersectionOf([someValuesFrom(inheres_in,unionOf([e,someValuesFrom(po,e)])),
-                               q,
+                               p,
                                someValuesFrom(qualifier,abn)]),
                intersectionOf([Q,
-                               someValuesFrom(inheres_in,E)
-                              |Rest])),
+                               someValuesFrom(inheres_in,E),
+                               tail(Rest)])),
         writeln(sm12(Q/E/Rest)).
 
+test(smatch13, [true(true)]) :-
+        owl2_visitor:smatch_args_unordered([q, someValuesFrom('http://purl.obolibrary.org/obo/test_inheres_in_part_of', e), someValuesFrom('http://purl.obolibrary.org/obo/test_qualifier', ab)],
+                                           [someValuesFrom('http://purl.obolibrary.org/obo/test_inheres_in_part_of', E), tail(Tail)]).
 
 
 
