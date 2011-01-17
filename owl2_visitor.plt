@@ -1,7 +1,6 @@
 /* -*- Mode: Prolog -*- */
 
-%:- use_module(owl2_visitor).
-:- [owl2_visitor].
+:- use_module(owl2_visitor).
 
 :- begin_tests(owl2_visitor,[setup(init_axioms),cleanup(retract_all_axioms)]).
 
@@ -32,6 +31,16 @@ test(tr_axiom_dupe, [true(Axioms = [_,_])]) :-
 
 test(tr_expr, [true(Axiom = subClassOf(a,allValuesFrom(p,b)))]) :-
         rewrite_axiom(subClassOf(a,someValuesFrom(p,b)),
+                      tr(expression,
+                         someValuesFrom(p,B),
+                         allValuesFrom(p,B),
+                         true,
+                         []),
+                      Axiom),
+        writeln(Axiom).
+
+test(tr_expr_deep, [true(Axiom = subClassOf(a,intersectionOf([z,someValuesFrom(q,allValuesFrom(p,b))])))]) :-
+        rewrite_axiom(subClassOf(a,intersectionOf([z,someValuesFrom(q,someValuesFrom(p,b))])),
                       tr(expression,
                          someValuesFrom(p,B),
                          allValuesFrom(p,B),
@@ -77,7 +86,7 @@ test(tr_expr_ec2, [true(Axiom = equivalentClasses([z,someValuesFrom(p,intersecti
 
 test(tr_expr_open, [true(Axiom = equivalentClasses([z,someValuesFrom(p,intersectionOf([a,b]))]))]) :-
         rewrite_axiom(equivalentClasses([z,intersectionOf([a,someValuesFrom(p,b)])]),
-                      tr(expression,
+                      tr(_,
                          intersectionOf([A,someValuesFrom(P,B) | _]),
                          someValuesFrom(P,intersectionOf([A,B])),
                          true,

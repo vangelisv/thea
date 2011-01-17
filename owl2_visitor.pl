@@ -1,5 +1,14 @@
 /* -*- Mode: Prolog -*- */
 
+:- module(owl2_visitor,
+          [
+           visit_all/2,
+           visit_axioms/3,
+           axiom_rewrite_list/3,
+           rewrite_axiom/3,
+           smatch/2 % only exported for testing purposes..
+           ]).
+
 :- use_module(owl2_model).
 
 %% visit_all_axioms(+Visitor,Ts)
@@ -82,15 +91,32 @@ axiom_rewrite_list(Axiom,Rule,NewAxioms) :-
 % succeeds once if Rule is deterministic.
 % succeeds one or more times if Rule is non-deterministic.
 % Rules are non-deterministic if 
+rewrite_axiom(Axiom,Rules,NewAxiom) :-
+        is_list(Rules),
+        !,
+        rewrite_axiom_multirule(Axiom,Rules,NewAxiom).
 rewrite_axiom(Axiom,Rule,NewAxiom) :-
+        debug(visitor,'testing ~w using ~w',[Axiom,Rule]),
         rule_axiom_template(Rule,ConditionalGoal,AxiomTemplate,TrAxiom),
-        findall(TrAxiom,(smatch(Axiom,AxiomTemplate),ConditionalGoal),[A1]),
+        findall(TrAxiom,(smatch(Axiom,AxiomTemplate),once(ConditionalGoal)),[A1]),
         !,
         member_or_identity(A1x,A1),
+        debug(visitor,'  rewriting ~w ===> ~w',[Axiom,A1x]),
         A1x =.. [Pred|Args],
         rewrite_args(Axiom,Args,Rule,Args2),
         NewAxiom =.. [Pred|Args2].
 
+
+rewrite_axiom_multirule(Axiom,[],Axiom) :- !.
+rewrite_axiom_multirule(Axiom,[Rule|Rules],NewAxiom) :-
+        rewrite_axiom(Axiom,Rule,Axiom_2), % todo - nd
+        (   Axiom\=Axiom_2
+        ->  
+            debug(v2,'  rewriting ~w ***===>*** ~w',[Axiom,Axiom_2]),
+            debug(v2,'     TO GO: ~w',[Rules])
+        ;
+            true),
+        rewrite_axiom_multirule(Axiom_2,Rules,NewAxiom).
 
 rewrite_args(_,[],_,[]) :- !.
 rewrite_args(Axiom,[Arg|Args],Rule,[NewArg|NewArgs]) :-
@@ -111,7 +137,7 @@ rewrite_expression(Axiom,Ex,Rule,NewEx) :-
         rewrite_args(Axiom,Ex,Rule,NewEx).
 rewrite_expression(Axiom,Ex,Rule,NewEx) :-
         rule_expression_template(Rule,ConditionalGoal,ExTemplate,TrEx),
-        findall(TrEx,(smatch(Ex,ExTemplate),ConditionalGoal),[Ex1]),
+        findall(TrEx,(smatch(Ex,ExTemplate),once(ConditionalGoal)),[Ex1]),
         !,
         member_or_identity(Ex1_Single,Ex1),
         Ex1_Single =.. [Pred|Args],
@@ -122,7 +148,9 @@ rewrite_expression(_,Ex,_,Ex) :- !.
 
 rule_axiom_template(tr(axiom,In,Out,G,_),G,In,Out).
 rule_axiom_template(tr(_,_,_,_,_),true,Ax,Ax). % pass-through
+rule_axiom_template(Rule,_,_,_) :- Rule\=tr(_,_,_,_,_),throw(error(invalid(Rule))).
 rule_expression_template(tr(expression,In,Out,G,_),G,In,Out).
+rule_expression_template(tr(_,_,_,_,_),true,Ex,Ex). % pass-through
 
 member_or_identity(X,L) :-
         (   L=(A,B)
@@ -148,16 +176,6 @@ smatch_args([Set1],[Set2]) :- % order of args is unimportant e.g. intersectionOf
         !,
         list_subsumed_by(Set1,Set2),
         list_subsumed_by(Set2,Set1).
-        /*
-        %  sort would be more efficient, but would not work for open lists
-        forall(member(X,Set1),
-               (   member(Y,Set2),
-                   smatch(X,Y))),
-        % testing in both directions is necessary if the list is open
-        forall(member(X,Set2),
-               (   member(Y,Set1),
-                   smatch(X,Y))).
-          */
         
 smatch_args([],[]).
 smatch_args([A1|Args1],[A2|Args2]) :-
@@ -170,8 +188,6 @@ list_subsumed_by(_,[]) :- !, fail.
 list_subsumed_by([X|L],L2) :-
         memberchk(X,L2),
         list_subsumed_by(L,L2).
-
-
 
 
 % ----------------------------------------

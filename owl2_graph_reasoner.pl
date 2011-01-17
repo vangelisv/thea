@@ -103,7 +103,9 @@ if the combination is not found then the QRs are concatenated
 
 :- multifile exclude_chain_hook/2.
 
-owl2_reasoner:initialize_reasoner_hook(graph_reasoner,graph_reasoner,_).
+owl2_reasoner:initialize_reasoner_hook(graph_reasoner,graph_reasoner,_) :-
+        graph_reasoner_memoize.
+
 
 % TODO: we can use more efficient procedures for finding subclasses between two named classes
 owl2_reasoner:reasoner_ask_hook(graph_reasoner,subClassOf(A,B)) :-

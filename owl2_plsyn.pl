@@ -354,7 +354,7 @@ plpred2owlpred(::,classAssertion).
 plpred2owlpred(<,subClassOf).
 plpred2owlpred(@<,subPropertyOf).
 
-plpred2owlpred_list(\=,differentIndividuals). 
+plpred2owlpred_list(neq,differentIndividuals). 
 %plpred2owlpred_list(\=,disjointClasses). 
 
 cardinality_pred(min).
@@ -402,7 +402,6 @@ TODO: show translation table
   * @< --- subPropertyOf/2
   * == --- equivalentClasses/1
   * sameAs --- sameIndividual/1
-  * \= --- differentIndividuals/1
   * :: --- classAssertion/2
  
 ---++ Property Characteristic Prefix Predicates

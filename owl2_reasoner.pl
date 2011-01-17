@@ -2,6 +2,7 @@
 
 :- module(owl2_reasoner,
           [
+	   initialize_reasoner/1,
 	   initialize_reasoner/2,
 	   initialize_reasoner/3,
 	   reasoner_tell/2,
@@ -26,6 +27,11 @@
 :- multifile owl2_reasoner:cached_subClassOf/2.
 :- multifile owl2_reasoner:cached_classAssertion/2.
 :- multifile owl2_reasoner:cached_propertyAssertion/3.
+
+%% initialize_reasoner(+Type)
+initialize_reasoner(Type) :- 
+        initialize_reasoner(Type,_).
+
 
 %% initialize_reasoner(+Type,?Reasoner)
 % see initialize_reasoner/2

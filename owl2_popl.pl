@@ -2,12 +2,6 @@
 
 :- module(owl2_popl,
           [
-           replace_matching_axioms/2,
-           replace_matching_axioms/3,
-           replace_matching_axioms_where/3,
-           replace_matching_axioms_where/4,
-           replace_expression_in_all_axioms/2,
-           replace_expression_in_all_axioms/3,
 
            popl_translate/1,
            popl_translate/2,
@@ -16,17 +10,19 @@
            
            op(1100,xfy,===>),
            op(1000,xfy,where),
-           op(950,fx,add)
+           op(990,fx,add)
 
           ]).
 
 :- op(1100,xfy,===>).
 :- op(1000,xfy,where).
-:- op(950,fx,add).
+:- op(990,fx,add).
 
 :- use_module(owl2_model).
 :- use_module(owl2_plsyn).
 :- use_module(owl2_util).
+:- use_module(owl2_visitor).
+:- use_module(owl2_reasoner).
 
 
 %% popl_translate(+Directive) is det
@@ -41,30 +37,74 @@ popl_translate(T) :-
 %  * InExpression ===> OutExpression where Goal
 %  * add Expression where Goal
 %
+% OR a list of directives
+%
 % Opts can be:
 %  * syntax(Syntax)
 %     currently only val allowed is plsyn
 popl_translate( T, Opts) :-
+        forall(member(Opt,Opts),
+               process_option(Opt)),
+        preprocess_directives(T, T2, Opts),
+        perform_translation(T2, Opts).
+
+process_option(reasoner(R)) :- !,initialize_reasoner(R).
+process_option(_).
+
+preprocess_directives(L,L2,Opts) :-
+        is_list(L),
+        !,
+        findall(X2,
+                (   member(X,L),
+                    preprocess_directive(X,X2,Opts)),
+                L2).
+preprocess_directives(X,X2,Opts) :-
+        preprocess_directive(X,X2,Opts).
+
+preprocess_directive( In ===> +(Out) where G, tr(_,In2,(In2,Out2),G2,Opts), Opts) :-
+        !,
+        preprocess_term(In,In2,Opts),
+        preprocess_term(Out,Out2,Opts),
+        preprocess_term(G,G2,Opts).
+preprocess_directive( In ===> +(Out), tr(_,In2,(In2,Out2),true,Opts), Opts) :-
+        !,
+        preprocess_term(In,In2,Opts),
+        preprocess_term(Out,Out2,Opts).
+preprocess_directive( In ===> Out where G, tr(_,In2,Out2,G2,Opts), Opts) :-
+        !,
+        preprocess_term(In,In2,Opts),
+        preprocess_term(Out,Out2,Opts),
+        preprocess_term(G,G2,Opts).
+preprocess_directive( In ===> Out , tr(_,In2,Out2,true,Opts), Opts) :-
+        !,
+        preprocess_term(In,In2,Opts),
+        preprocess_term(Out,Out2,Opts).
+preprocess_directive( add Out where G, _, Opts) :-
+        % todo
+        !,
+        preprocess_term(Out,Out2,Opts),
+        preprocess_term(G,G2,Opts),
+        forall(G2,
+               replace_pair(null-[Out2],Opts)),
+        fail.
+preprocess_directive( Term, _, _) :-
+        print_message(error,invalid(Term)),
+        fail.
+
+
+preprocess_term(T,T3,Opts) :-
+        \+ member(noplsyn,Opts),
+        !,
+        plsyn_owl(T,T2),
+        preprocess_term(T2,T3,[noplsyn|Opts]).
+preprocess_term(T,T3,Opts) :-
         select(translate(labels),Opts,Opts2),
         !,
         map_IRIs(get_IRI_from_label,T,T2),
-        popl_translate(T2, Opts2).
-popl_translate( X1 ===> X2 where G, Opts) :-
-        debug(popl,'Replacing axioms',[]),
-        %replace_matching_axioms_where(X1,X2,G,Opts),
-        debug(popl,'Replacing expressions',[]),
-        replace_expression_in_all_axioms_where(X1,X2,G,Opts).
+        preprocess_term(T2,T3,Opts2).
 
-popl_translate( X1 ===> X2, Opts) :-
-        debug(popl,'translating ~w ===> ~w',[X1,X2]),
-        debug(popl,'Replacing axioms',[]),
-        replace_matching_axioms(X1,X2,Opts),
-        debug(popl,'Replacing expressions ~w ===> ~w',[X1,X2]),
-        replace_expression_in_all_axioms(X1,X2,Opts).
-
-popl_translate( add X2 where G, Opts) :-
-        replace_matching_axioms_where(true,X2,G,Opts),
-        replace_expression_in_all_axioms_where(true,X2,G,Opts).
+preprocess_term(T,T,_) :- !.
+        
 
 %% execute_popl_file(+File)
 % see execute_popl_file/2,
@@ -74,204 +114,75 @@ execute_popl_file(F) :-
 
 %% execute_popl_file(+File, +Opts:list)
 execute_popl_file(F, Opts) :-
-        read_file_to_terms(F,Directives,[]),
-        forall(member(Directive,Directives),
-               popl_translate(Directive, Opts)).
+        read_file_to_terms(F,Terms,[]),
+        findall(Opt,member(option(Opt),Terms),FileOpts),
+        append(FileOpts,Opts,AllOpts),
+        forall(member( (Head :- Goal),Terms),
+               user:assert( (Head :- Goal) )),
+        findall(Directive,(member(Directive,Terms),
+                           \+Directive= ( _ :- _ ),
+                           \+Directive=option(_)),
+                Directives),
+        popl_translate(Directives, AllOpts).
 
-%% replace_matching_axioms(+AxiomTemplateOld,+AxiomTemplateNew,+Opts:list) is det
-% replace all occurrences of AxiomTemplateOld with AxiomTemplateNew.
-%
-% if Opts contains copy(true) then a copy of the old one is retained.
-replace_matching_axioms(Ax1,Ax2,Opts) :-
-        forall(axiom(Ax1),replace_axiom(Ax1,Ax2,Opts)).
 
-%% replace_matching_axioms(+AxiomTemplateOld,+AxiomTemplateNew) is det
-% as replace_matching_axioms/3, default options
-replace_matching_axioms(Ax1,Ax2) :-
-        replace_matching_axioms(Ax1,Ax2,[]).
 
-%% replace_matching_axioms_where(+AxiomTemplateOld,+AxiomTemplateNew,+WhereGoal,+Opts:list) is det
-% replace all occurrences of AxiomTemplateOld with AxiomTemplateNew for all WhereGoal.
-% Opts as for replace_axiom/3
-replace_matching_axioms_where(Ax1a,Ax2a,Ga,Opts) :-
-        select(syntax(plsyn),Opts,Opts2),
+perform_translation(X, Opts) :-
+        memberchk(filter(AxiomTemplate,Goal),Opts),
         !,
-        % always work with native owl model.
-        % this should also ensure normalized order in intersection/union lists
-        plsyn_owl(Ax1a,Ax1),
-        plsyn_owl(Ax2a,Ax2),
-        plsyn_owl(Ga,G),
-        replace_matching_axioms_where(Ax1,Ax2,G,Opts2).
-replace_matching_axioms_where(Ax1,Ax2,G,Opts) :-
-        member(reasoner(R),Opts),
+        perform_translation(X, AxiomTemplate, Goal, Opts).
+perform_translation(X, Opts) :-
+        perform_translation(X, A, axiom(A), Opts).
+
+perform_translation(X, AxiomTemplate, Goal, Opts) :-
+        debug(popl,'collecting axioms...',[]),
+        setof(AxiomTemplate,Goal,Axioms),
         !,
-        ensure_loaded(owl2_reasoner),
-        forall((reasoner_ask(R,G),
-                Ax1),
-               replace_axiom(Ax1,Ax2,Opts)),
-        forall((G,Ax1),replace_axiom(Ax1,Ax2,Opts)).
-replace_matching_axioms_where(Ax1,Ax2,G,Opts) :-
-        forall((G,Ax1),replace_axiom(Ax1,Ax2,Opts)).
+        perform_translation_on_axioms(X, Axioms, Opts).
+perform_translation(_,_,_,_).
 
-%% replace_matching_axioms_where(+AxiomTemplateOld,+AxiomTemplateNew,+WhereGoal) is det
-% as replace_matching_axioms_where/3, default options
-replace_matching_axioms_where(Ax1,Ax2,G) :-
-        replace_matching_axioms_where(Ax1,Ax2,G,[]).
+perform_translation_on_axioms(X, Axioms, Opts) :-
+        debug(popl,'performing: ~w',[X]),
+        findall(A-A2,
+                (   member(A,Axioms),
+                    debug(popl_detail,'  axiom: ~w',[A]),
+                    axiom_rewrite_list(A,X,A2),
+                    A2\=[A],
+                    A2\=[],
+                    debug(popl_detail,'    REWRITE: ~w',[A2])
+                    ),
+                Pairs),
+        replace_pairs(Pairs, Opts).
 
+replace_pairs([],_) :- !.
+replace_pairs([P|Ps],Opts) :-
+        P = A-A2,
+        debug(popl,'~w ==> ~w',[A,A2]),
+        replace_pair(P,Opts),
+        replace_pairs(Ps,Opts).
 
-%% replace_axiom(+AxOld,+AxNew,+Opts:list) is det
-% retract old axiom and replace it with new.
-% if Opts contains copy(true) then a copy of the old
-% one is retained.
-% if Opts contains syntax(plsyn) then plsyn may be used.
-replace_axiom(Ax,Ax,[]) :- !. % null replacement - do nothing
-replace_axiom(Ax1a,Ax2a,Opts) :-
-        select(syntax(plsyn),Opts,Opts2),
+replace_pair(A-L,Opts) :-
+        member(replacement_ontology(O),Opts),
         !,
-        plsyn_owl(Ax1a,Ax1),
-        plsyn_owl(Ax2a,Ax2),
-        replace_axiom(Ax1,Ax2,Opts2).
-replace_axiom(true,Ax2,_Opts) :-
+        retract_axiom(A),
+        forall(member(A2,L),
+               assert_axiom(A2,O)).
+replace_pair(A-L,_Opts) :-
+        setof(O,ontologyAxiom(O,A),Os),
         !,
-        assert_axiom(Ax2).
-replace_axiom(Ax1,Ax2,Opts) :-
+        retract_axiom(A),
+        forall((member(A2,L),member(O,Os)),
+               assert_axiom(A2,O)).
+replace_pair(A-L,_Opts) :-
+        % no ontology - orphan
+        retract_axiom(A),
         !,
-        % do this prior to retraction;
-        % this predicate should be in the same place as retract axiom..
-        findall(ontologyAxiom(O,Ax2),
-                ontologyAxiom(O,Ax1),
-                NewOntAxioms),
-        (   member(copy(true),Opts)
-        ->  true
-        ;   retract_axiom(Ax1)),
-        debug(popl,'Replacing ~w ==> ~w',[Ax1,Ax2]),
-        assert_axiom(Ax2),
-        % TODO - make optional
-        maplist(assert_axiom,NewOntAxioms),
-        debug(popl,'  Done',[]).
+        forall(member(A2,L),
+               assert_axiom(A2)).
 
-
-
-
-%% replace_axiom(+AxOld,+AxNew) is det
-% as replace_axiom/3, default options
-replace_axiom(Ax1,Ax2) :-
-        replace_axiom(Ax1,Ax2,[]).
-
-%% replace_expression_in_all_axioms(+TemplateIn,+TemplateOut)
-% as replace_expression_in_all_axioms/3, default options
-replace_expression_in_all_axioms(T1,T2) :-
-        replace_expression_in_all_axioms(T1,T2,[]).
-
-%% replace_expression_in_all_axioms(+TemplateIn,+TemplateOut,+Opts:list)
-%
-% rewrite the owl2_model database TemplateIn->TemplateOut.
-%
-% e.g.
-% ==
-% replace_expression_in_all_axioms(allValuesFrom(partOf,X),someValuesFrom(partOf,X),[])
-% ==
-%
-% see replace_axiom/3 for Opts
-replace_expression_in_all_axioms(T1,T2,Opts) :-
-        replace_expression_in_all_axioms_where(T1,T2,true,Opts).
-
-
-%% replace_expression_in_all_axioms_where(+TemplateIn,+TemplateOut,+WhereGoal,Opts)
-replace_expression_in_all_axioms_where(T1a,T2a,Ga,Opts) :-
-        select(syntax(plsyn),Opts,Opts2),
-        !,
-        plsyn_owl(T1a,T1),
-        plsyn_owl(T2a,T2),
-        plsyn_owl(Ga,G),
-        replace_expression_in_all_axioms_where(T1,T2,G,Opts2).
-replace_expression_in_all_axioms_where(T1,T2,G,Opts) :-
-        member(ontology(Ont),Opts),
-        !,
-        normalize_term(T1,T1_Norm),
-        findall(Ax-Ax2,
-                (   G,
-                    ontologyAxiom(Ont,Ax),
-                    debug(popl,'testing: ~w ',[Ax]),
-                    replace_expression_in_axiom_term(T1_Norm,T2,Ax,Ax2),
-                    Ax2\=Ax,
-                    debug(popl,'  scheduling: ~w ==> ~w',[Ax,Ax2])),
-                Replacements),
-        forall(member(Ax-Ax2,Replacements),
-               replace_axiom(Ax,Ax2,Opts)).
-replace_expression_in_all_axioms_where(T1,T2,G,Opts) :-
-        normalize_term(T1,T1_Norm),
-        findall(Ax-Ax2,
-                (   G,
-                    axiom(Ax),
-                    replace_expression_in_axiom_term(T1_Norm,T2,Ax,Ax2),
-                    Ax2\=Ax,
-                    debug(popl,'scheduling: ~w ==> ~w',[Ax,Ax2])),
-                Replacements),
-        forall(member(Ax-Ax2,Replacements),
-               replace_axiom(Ax,Ax2,Opts)).
 
 
 % DEPRECATED
-replace_expression_in_axiom(T1,T2,Ax,Opts) :-
-        %debug(popl,'TEST Replacing ~w ==> ~w for ~w',[T1,T2,Ax]),
-        replace_expression_in_axiom_term(T1,T2,Ax,Ax2),
-        replace_axiom(Ax,Ax2,Opts),
-        debug(popl,'DONE Replaced ~w ==> ~w for macro ~w ==> ~w',[Ax,Ax2,T1,T2]).
-
-%% replace_expression_in_axiom_term(+T1,+T2,+Ax1,?Ax2)
-% Ax2 is the same as Ax1 with all instances of T1 replaced with T2.
-% T1 is replaced no matter how deep it is within the expression
-replace_expression_in_axiom_term(T1,T2,Ax1,Ax2) :-
-        % this clause tests for a match
-        nonvar(Ax1),
-        normalize_term(Ax1,Ax1_Norm),
-        expression_matches(T1,Ax1_Norm),
-        Ax2=T2,                 % replace
-        !.
-replace_expression_in_axiom_term(T1,T2,Ax1,Ax2) :-
-        % traverse down expression structure
-        axiom(Ax1),
-        normalize_term(Ax1,Ax1_Norm),
-        debug(popl_detail,'IN ~w ==> ~w :: ~w',[T1,T2,Ax1_Norm]),
-        Ax1_Norm =.. [P|Args1],
-        maplist(replace_expression(T1,T2),Args1,Args2),
-        debug(popl_detail,'  OUT: ~w',[Args2]),
-        Ax2 =.. [P|Args2].
-        %debug(popl,'OUT ~w ==> ~w :: ~w',[T1,T2,Ax2]).
-
-expression_matches(X / partial, X) :- !.
-expression_matches(X / partial, Y) :-
-        X =.. [P|ArgsX],
-        Y =.. [P|ArgsY],
-        forall(member(ArgX,ArgsX),
-               (   member(ArgY,ArgsY),
-                   expression_matches(ArgX,ArgY))),
-        !.
-expression_matches(X, X).
-
-%% replace_expression(+T1,+T2,+Expr1,?Expr2)
-% Expr2 is the same as Expr1 with all instances of T1 replaced with T2.
-% T1 is replaced no matter how deep it is placed.
-replace_expression(_,_,X,X) :- var(X),!. % allow expressions with variables
-replace_expression(T1,T2,X1,X2) :-
-        debug(popl_detail,'attempting_match(~w == ~w)',[T1-T2,X1-X2]),
-        copy_term(T1-T2,T1_Copy-X2), % copy and match
-        expression_matches(T1_Copy,X1),
-        debug(popl,'repl(~w ==> ~w)',[X1,X2]),
-        !. % do not recurse below
-replace_expression(T1,T2,X1,X2) :-
-        is_list(X1),
-        !,
-        maplist(replace_expression(T1,T2),X1,X2).
-replace_expression(T1,T2,X1,X2) :-
-        X1 =.. [F|Args1],
-        Args1\=[],
-        !,
-        maplist(replace_expression(T1,T2),Args1,Args2),
-        X2 =.. [F|Args2].
-replace_expression(_,_,X,X).
-
 normalize_term(X,X) :- var(X),!.
 normalize_term(X,X) :- atom(X),!.
 normalize_term([],[]) :- !.
