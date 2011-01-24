@@ -114,15 +114,19 @@ xml_axiom(Ont,Elt,_) :-
 % if axiom argument is a class expression then call the
 % desc_xml
 % VV 18/12/2009 for OWLlink individual support
-axiom_xml_arg(ParentAxiom,c(Arg),Element) :-
+axiom_xml_arg(ParentAxiom,Element,c(Arg)) :-
 	desc_xml(ParentAxiom,Arg,Element),!.
 
 % everything else return the argument itself eg. property, individual
 %
-axiom_xml_arg(_ParentAxiom,element('http://www.w3.org/2006/12/owl2-xml#':'NamedIndividual',['URI'=IRI],[]),i(IRI)) :- !.
-axiom_xml_arg(_ParentAxiom,element('http://www.w3.org/2006/12/owl2-xml#':'ObjectProperty',['URI'=IRI],[]),op(IRI)) :- !.
-axiom_xml_arg(_ParentAxiom,element('http://www.w3.org/2006/12/owl2-xml#':'DataProperty',['URI'=IRI],[]),dp(IRI)) :- !.
-axiom_xml_arg(_ParentAxiom,element('http://www.w3.org/2006/12/owl2-xml#':'AnnotationProperty',['URI'=IRI],[]),ap(IRI)) :- !.
+axiom_xml_arg(_ParentAxiom,element(OWL_NS:'NamedIndividual',Atts,[]),i(IRI)) :-
+	iri_att(IRIAtt),member(IRIAtt=IRI,Atts),owl_ns(OWL_NS),!.
+axiom_xml_arg(_ParentAxiom,element('http://www.w3.org/2006/12/owl2-xml#':'ObjectProperty',Atts,[]),op(IRI)) :-
+	iri_att(IRIAtt),member(IRIAtt=IRI,Atts),!.
+axiom_xml_arg(_ParentAxiom,element('http://www.w3.org/2006/12/owl2-xml#':'DataProperty',Atts,[]),dp(IRI)) :-
+	iri_att(IRIAtt),member(IRIAtt=IRI,Atts),!.
+axiom_xml_arg(_ParentAxiom,element('http://www.w3.org/2006/12/owl2-xml#':'AnnotationProperty',Atts,[]),ap(IRI)) :-
+	iri_att(IRIAtt),member(IRIAtt=IRI,Atts),!.
 axiom_xml_arg(_ParentAxiom,X,X) :- !.
 
 %% xml_desc(+ParentElementName, +XML, ?Description)
@@ -194,7 +198,10 @@ iri_att('IRI'). % VV add 15/10 for OWLLink support
 % GENERATING XML
 % ----------------------------------------
 
-%:- rdf_register_ns(owlx,'http://www.w3.org/2006/12/owl2-xml#').
+:- rdf_register_ns(owlx,'http://www.w3.org/2006/12/owl2-xml#').
+
+owl_ns(OWL_NS) :- rdf_db:ns(owl,OWL_NS),!.
+owl_ns(OWL_NS) :- rdf_db:ns(owlx,OWL_NS),!.
 
 
 :- multifile owl2_io:save_axioms_hook/3.
@@ -222,7 +229,8 @@ owl_generate_xml(File,_Opts) :-
 owl_generate_xml(File,_) :-
         throw(no_generate(File)).
 
-ontology_xml(O,Axioms,element('http://www.w3.org/2006/12/owl2-xml#':'Ontology',['URI'=O],Elts)) :-
+ontology_xml(O,Axioms,element(OWL_NS:'Ontology',Atts,Elts)) :-
+	iri_att(IRIAtt),member(IRIAtt=O,Atts),owl_ns(OWL_NS),!,
         debug(owl_exporter,'Writing ~w',[O]),
         axioms_elts(O,Axioms,Elts).
 
@@ -245,8 +253,8 @@ axiom_xml(_Ont,Axiom,XML) :-
 	axiom_arg_xml(Axiom,Arg,XML),!.
 
 % translate full axiom to XML, translating description arguments also
-axiom_xml(_Ont,Axiom,element('http://www.w3.org/2006/12/owl2-xml#':Name,[],Subs)) :-
-        xmle_axiom(Name,Axiom,Args),
+axiom_xml(_Ont,Axiom,element(OWL_NS,[],Subs)) :-
+        xmle_axiom(Name,Axiom,Args),owl_ns(OWL_NS),
         !,
         debug(owl_exporter,'Axiom: ~w',[Axiom]),
         maplist(axiom_arg_xml(Name),Args,Subs).
@@ -261,23 +269,41 @@ axiom_arg_xml(ParentAxiom,c(Arg),Element) :-
 
 % everything else return the argument itself eg. property, individual
 %
-axiom_arg_xml(_ParentAxiom,c(IRI),element('http://www.w3.org/2006/12/owl2-xml#':'Class',['URI'=IRI],[])) :- !.
-axiom_arg_xml(_ParentAxiom,i(IRI),element('http://www.w3.org/2006/12/owl2-xml#':'NamedIndividual',['URI'=IRI],[])) :- !.
-axiom_arg_xml(_ParentAxiom,i(IRI),element('http://www.w3.org/2006/12/owl2-xml#':'Individual',['URI'=IRI],[])) :- !.
-axiom_arg_xml(_ParentAxiom,op(IRI),element('http://www.w3.org/2006/12/owl2-xml#':'ObjectProperty',['URI'=IRI],[])) :- !.
-axiom_arg_xml(_ParentAxiom,dp(IRI),element('http://www.w3.org/2006/12/owl2-xml#':'DataProperty',['URI'=IRI],[])) :- !.
-axiom_arg_xml(_ParentAxiom,ap(IRI),element('http://www.w3.org/2006/12/owl2-xml#':'AnnotationProperty',['URI'=IRI],[])) :- !.
+axiom_arg_xml(_ParentAxiom,c(IRI),element(OWL_NS:'Class',Atts,[])) :-
+	iri_att(IRIAtt),member(IRIAtt=IRI,Atts),owl_ns(OWL_NS),!.
+axiom_arg_xml(_ParentAxiom,i(IRI),element(OWL_NS:'NamedIndividual',Atts,[])) :-
+	iri_att(IRIAtt),member(IRIAtt=IRI,Atts),owl_ns(OWL_NS),!.
+axiom_arg_xml(_ParentAxiom,i(IRI),element(OWL_NS:'Individual',Atts,[])) :-
+	iri_att(IRIAtt),member(IRIAtt=IRI,Atts),owl_ns(OWL_NS),!.
+axiom_arg_xml(_ParentAxiom,op(IRI),element(OWL_NS:'ObjectProperty',Atts,[])) :-
+	iri_att(IRIAtt),member(IRIAtt=IRI,Atts),owl_ns(OWL_NS),!.
+axiom_arg_xml(_ParentAxiom,dp(IRI),element(OWL_NS:'DataProperty',Atts,[])) :-
+	iri_att(IRIAtt),member(IRIAtt=IRI,Atts),owl_ns(OWL_NS),!.
+axiom_arg_xml(_ParentAxiom,ap(IRI),element(OWL_NS:'AnnotationProperty',Atts,[])) :-
+	iri_att(IRIAtt),member(IRIAtt=IRI,Atts),owl_ns(OWL_NS),!.
 axiom_arg_xml(_ParentAxiom,X,X) :- !.
 
 
+
+
 % property chains
-desc_xml(_Parent,propertyChain(PL),element('http://www.w3.org/2006/12/owl2-xml#':'ObjectPropertyChain',_,Elts)) :-
-        !,
+desc_xml(_Parent,propertyChain(PL),element(OWL_NS:'ObjectPropertyChain',_,Elts)) :-
+	owl_ns(OWL_NS),!,
         maplist(desc_xml('ObjectPropertyChain'),PL,Elts).
 
+
+	% TODO!!! this is just guessing
+% see wine.owl, if we do not follow imports, cannot determine what PotableLiquid is,
+% except by guesswork
+desc_xml(_Parent,IRI,element(OWL_NS:'Class',Atts,[])) :-
+	iri_att(IRIAtt),member(IRIAtt=IRI,Atts),owl_ns(OWL_NS),
+        atom(IRI),
+	!.
+
 % eg unionOf
-desc_xml(_Parent,Desc,element('http://www.w3.org/2006/12/owl2-xml#':Name,_Atts,Elts)) :-
+desc_xml(_Parent,Desc,element(OWL_NS:Name,_Atts,Elts)) :-
         % e.g. someValuesFrom(P,D)
+	owl_ns(OWL_NS),
         Desc=..[Pred,Args],
         is_list(Args),
         owlpredicate_typed(Pred,TypedPred),
@@ -289,8 +315,9 @@ desc_xml(_Parent,Desc,element('http://www.w3.org/2006/12/owl2-xml#':Name,_Atts,E
         maplist(desc_xml(Name),Args,Elts).
 
 % translate object property expressions, eg
-desc_xml(_Parent,Desc,element('http://www.w3.org/2006/12/owl2-xml#':Name,_Atts,Elts)) :-
+desc_xml(_Parent,Desc,element(OWL_NS:Name,_Atts,Elts)) :-
         % e.g. someValuesFrom(P,D)
+	owl_ns(OWL_NS),
         Desc=..[Pred|Args],
         owlpredicate_typed(Pred,TypedPred),
         xmle_PEdescription(Name,TypedPred),
@@ -301,8 +328,9 @@ desc_xml(_Parent,Desc,element('http://www.w3.org/2006/12/owl2-xml#':Name,_Atts,E
         maplist(desc_xml(Name),Args,Elts).
 
 % eg minCardinality(Card,PE,X)
-desc_xml(_Parent,Desc,element('http://www.w3.org/2006/12/owl2-xml#':Name,[cardinality=Card],Elts)) :-
+desc_xml(_Parent,Desc,element(OWL_NS:Name,[cardinality=Card],Elts)) :-
         % e.g. unionOf(L)
+	owl_ns(OWL_NS),
         Desc=..[Pred,Card|Args],
         owlpredicate_typed(Pred,TypedPred),
         xmle_functor(Name,TypedPred),
@@ -312,7 +340,8 @@ desc_xml(_Parent,Desc,element('http://www.w3.org/2006/12/owl2-xml#':Name,[cardin
         maplist(desc_xml(Name),Args,Elts).
 
 % eg intersectionOf(L)
-desc_xml(_Parent,Desc,element('http://www.w3.org/2006/12/owl2-xml#':Name,[],Elts)) :-
+desc_xml(_Parent,Desc,element(OWL_NS:Name,[],Elts)) :-
+	owl_ns(OWL_NS),
         Desc=..[Pred|Fillers],
         xmle_functor(Name,Pred),
         !,
@@ -321,17 +350,12 @@ desc_xml(_Parent,Desc,element('http://www.w3.org/2006/12/owl2-xml#':Name,[],Elts
 
 % eg OWLClass
 % TODO: counts as declaration?
-desc_xml(_Parent,IRI,element('http://www.w3.org/2006/12/owl2-xml#':Name,['URI'=IRI],[])) :-
+desc_xml(_Parent,IRI,element(OWL_NS:Name,Atts,[])) :-
+	owl_ns(OWL_NS),
+	iri_att(IRIAtt),member(IRIAtt=IRI,Atts),
         atom(IRI),
         xmle_entity(Name,Goal,[IRI]),
         Goal,
-        !.
-
-% TODO!!! this is just guessing
-% see wine.owl, if we do not follow imports, cannot determine what PotableLiquid is,
-% except by guesswork
-desc_xml(_Parent,IRI,element('http://www.w3.org/2006/12/owl2-xml#':'Class',['URI'=IRI],[])) :-
-        atom(IRI),
         !.
 
 desc_xml(_Ont,Desc,_) :-
