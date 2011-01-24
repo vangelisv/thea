@@ -9,7 +9,7 @@
 	   reasoner_ask/3,
 	   reasoner_ask/2,
            reasoner_ask/1,
-	   reasoner_check_consistency/1,
+	   reasoner_check_consistency/2,
            reasoner_cache_to_file/3
           ]).
 
@@ -20,6 +20,8 @@
 :- multifile owl2_reasoner:reasoner_tell_all_hook/1.
 :- multifile owl2_reasoner:reasoner_ask_hook/2. % (R,Q)
 :- multifile owl2_reasoner:reasoner_ask_hook/3. % (R,Q,IsDirect)
+:- multifile owl2_reasoner:reasoner_check_consistency_hook/2. % (R,IsConsistent)
+:- multifile owl2_reasoner:reasoner_unsatisfiable_class_hook/2. % (R,IsConsistent)
 
 :- multifile owl2_reasoner:cached_subClassOf/2.
 :- multifile owl2_reasoner:cached_classAssertion/2.
@@ -83,6 +85,8 @@ reasoner_ask(Reasoner,Axiom,IsDirect) :-  % experimental
 % some reasoners may be able to give results for class expressions
 % that contain variables.
 % TODO - isConsistent
+reasoner_ask(Reasoner,unsatisfiable(X)) :-
+        reasoner_unsatisfiable_class(Reasoner,X).
 reasoner_ask(Reasoner,reflexiveSubClassOf(X,Y)) :-
         reasoner_ask(Reasoner,subClassOf(X,Y)).
 reasoner_ask(_,reflexiveSubClassOf(X,X)) :-
@@ -114,8 +118,14 @@ reasoner_ask(Axiom) :-
 
 
 %% reasoner_check_consistency(+Reasoner)
+%% reasoner_check_consistency(+Reasoner, ?IsConsistent:boolean)
 reasoner_check_consistency(Reasoner) :- 
-	reasoner_check_consistency_hook(Reasoner).
+        reasoner_check_consistency(Reasoner,true).
+reasoner_check_consistency(Reasoner,V) :- 
+	reasoner_check_consistency_hook(Reasoner,V).
+
+reasoner_unsatisfiable_class(Reasoner,C) :- 
+	reasoner_unsatisfiable_class_hook(Reasoner,C).
 
 %% reasoner_cache_to_file(+Reasoner,+AxiomTemplate,+File)
 % caches the results of the AxiomTemplate query

@@ -239,6 +239,7 @@ arg_info(debug,atom,'(developers) debug target').
 
 parse_arg(['--prolog'|L],L,prolog(true)).
 arg_info(prolog,-,'start prolog shell after loading owl files').
+parse_arg(['--shell'|L],L,prolog(true)) :- ensure_loaded(library(thea2/owl2_shell)).
 
 parse_arg(['--no_uri_expansion'|L],L,settings(uri_translation(none))).
 

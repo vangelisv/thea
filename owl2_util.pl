@@ -26,6 +26,7 @@
            translate_IRIs/2,
            map_IRIs/3,
            assume_entity_declarations/0,
+           collect_orphan_axioms/1,
            use_class_labels_as_synonyms/1,
            class_label_synonym_axiom/2,
 	   any_axiom_template/1,
@@ -256,6 +257,7 @@ use_label_as_IRI(IRI,X) :-
         !.
 use_label_as_IRI(X,X).
 
+get_IRI_from_label(X,X) :- var(X),!.
 get_IRI_from_label(X,IRI) :- labelAnnotation_value(IRI,X),!.
 get_IRI_from_label(X,X).
 
@@ -311,6 +313,7 @@ translate_IRIs(Goal,Ontology):-
 
 %% map_IRIs(+MapGoal,+AxiomIn,?AxiomOut)
 :- module_transparent map_IRIs/3.
+map_IRIs(_,X,X) :- var(X),!.
 map_IRIs(_,[],[]) :- !.
 map_IRIs(G,[X|Xs],[X2|X2s]) :-
         !,
@@ -385,7 +388,14 @@ assume_entity_declarations :-
         forall(inferred_declaration(A),
                assert_axiom(A)).
 
+collect_orphan_axioms(Ont) :-
+        (   \+ ontology(Ont)
+        ->  assert_axiom(ontology(Ont))
+        ;   true),
+        forall((axiom(A),\+ontologyAxiom(_,A)),
+               assert_axiom(A,Ont)).
 
+               
                
         
 

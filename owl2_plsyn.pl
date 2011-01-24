@@ -7,17 +7,18 @@
                       plsyn_owl/2,
                       plsyn_owl/3,
                       
-                      op(1180,xfy,(--)),
-                      op(1150,xfy,\^), % disjoint classes
-                      %op(1150,fx,class),
-                      op(1150,fx,individual),
-                      op(1150,xfy,disjointUnion),
-                      op(1150,fx,functional),
-                      op(1150,fx,transitive),
-                      op(1150,fx,symmetric),
-                      op(1150,fx,asymmetric),
-                      op(1150,fx,reflexive),
-                      op(1150,fx,irreflexive),
+                      op(980,xfy,(--)),
+                      op(950,xfy,\^), % disjoint classes
+                      %op(950,fx,class),
+                      op(950,fx,individual),
+                      op(950,xfy,disjointUnion),
+                      op(950,fx,class),
+                      op(950,fx,functional),
+                      op(950,fx,transitive),
+                      op(950,fx,symmetric),
+                      op(950,fx,asymmetric),
+                      op(950,fx,reflexive),
+                      op(950,fx,irreflexive),
                                 % 700 <
                                 % 700 =
                       op(700,xfy,inverseOf),
@@ -42,19 +43,20 @@
 :- use_module(swrl).
 :- use_module(library(readutil)).
 
-:- op(1180,xfy,(--)).
-:- op(1150,fx,individual).
+:- op(980,xfy,(--)).
+:- op(950,fx,individual).
 
-:- op(1150,xfy,disjointUnion).
+:- op(950,xfy,disjointUnion).
 
-:- op(1150,xfy,\^). % disjoint classes
+:- op(950,xfy,\^). % disjoint classes
 
-:- op(1150,fx,functional).
-:- op(1150,fx,transitive).
-:- op(1150,fx,symmetric).
-:- op(1150,fx,asymmetric).
-:- op(1150,fx,reflexive).
-:- op(1150,fx,irreflexive).
+:- op(950,fx,class).
+:- op(950,fx,functional).
+:- op(950,fx,transitive).
+:- op(950,fx,symmetric).
+:- op(950,fx,asymmetric).
+:- op(950,fx,reflexive).
+:- op(950,fx,irreflexive).
 % 700 <
 % 700 =
 :- op(700,xfy,inverseOf).
@@ -184,7 +186,6 @@ plsyn2owl(Ax--Comments,[PlAx,axiomAnnotation('rdfs:comment',literal(Comments))])
         !,
         plsyn2owl(Ax,PlAx).
 
-
 % we can chain over a=b=c=d as equivalent/sameAs is transitive
 % (note we cannot do this for different/disjoint)
 plsyn2owl(A=B,sameIndividual(ECs)) :-
@@ -205,6 +206,13 @@ plsyn2owl(A \^ B,disjointClasses(ECs)) :-
 plsyn2owl(A or B,unionOf(ECs)) :-
         !,
         plsyn2owl_ec(A or B,or,ECs).
+plsyn2owl(Pl,Owl) :-
+        % Assume OwlPred is valid, translate sub-args
+        Pl=..[OwlPred|Args],
+        Args\=[],
+        !,
+        maplist(plsyn2owl,Args,Args2),
+        Owl=..[OwlPred|Args2].
 plsyn2owl(X,X) :- !.
 
 
