@@ -41,7 +41,7 @@ owlpredicate_typed(functionalProperty,functionalDataProperty).
 
 owlpredicate_typed(subPropertyOf,subObjectPropertyOf).
 owlpredicate_typed(subPropertyOf,subDataPropertyOf).
-owlpredicate_typed(subPropertyOf, subAnnotationPropertyOf).
+owlpredicate_typed(subPropertyOf,subAnnotationPropertyOf).
 
 owlpredicate_typed(disjointProperties,disjointObjectProperties).
 owlpredicate_typed(disjointProperties,disjointDataProperties).
@@ -110,7 +110,11 @@ owlpredicate_arguments(dataPropertyDomain,[dataPropertyExpression, classExpressi
 owlpredicate_arguments(objectPropertyDomain,[objectPropertyExpression, classExpression]).
 owlpredicate_arguments(dataPropertyRange,[dataPropertyExpression, dataRange]).
 owlpredicate_arguments(objectPropertyRange,[objectPropertyExpression, classExpression]).
+owlpredicate_arguments(inverseProperties,[objectPropertyExpression, objectPropertyExpression]).
 
+owlpredicate_arguments(equivalentClasses,[set(classExpression)]).
+owlpredicate_arguments(classAssertion,[classExpression,individual]).
+owlpredicate_arguments(subClassOf,[classExpression,classExpression]).
 owlpredicate_arguments(subObjectPropertyOf,[objectPropertyExpressionOrChain, objectPropertyExpression]).
 owlpredicate_arguments(subDataPropertyOf,[dataPropertyExpression, dataPropertyExpression]).
 owlpredicate_arguments(subAnnotationPropertyOf, [annotationProperty, annotationProperty]).
