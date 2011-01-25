@@ -303,7 +303,8 @@ settings :- Query=settings(_,_),forall(Query,show(Query)).
 
 
 %tr(In,Out) :- plsyn_owl(In,Out),!.
-tr(In,Out) :- plsyn_owl(In,X),map_IRIs(get_IRI_from_label,X,Out).
+%tr(In,Out) :- plsyn_owl(In,X),map_IRIs(get_IRI_from_label,X,Out).
+tr(In,Out) :- plsyn_owl(In,X),map_IRIs(label2iri,X,Out).
 
 :- multifile settings/2.
 :- dynamic settings/2.
@@ -331,6 +332,7 @@ set_current_ontology(Ont) :-
         print_message(informational,shell('Set ontology to ~w'-[Ont])).
 
 label2iri(Label,Obj) :- labelAnnotation_value(Obj,Label),!.
+label2iri(Label,Obj) :- entity(Obj),atomic_list_concat([_,Label],'#',Obj).
 label2iri(X,X).
 
 
