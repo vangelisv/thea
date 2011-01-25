@@ -10,6 +10,7 @@
            ]).
 
 :- use_module(owl2_model).
+:- use_module(owl2_plsyn).
 :- use_module(util/dot).
 
 :- multifile user:parse_arg_hook/3.
@@ -110,8 +111,7 @@ edge_to_dotedge_1(E,edge(S,T,Props),Opts) :-
         E=edge(S,T,_R),
         findall(P=V,edge_prop(E,P,V,Opts),Props).
 
-edge_prop(edge(_,_,R),label,Label,_) :- labelAnnotation_value(R,Label).
-edge_prop(edge(_,_,R),label,R,_) :- atom(R),\+labelAnnotation_value(R,_).
+edge_prop(edge(_,_,R),label,Label,_) :- entity_to_label(R,Label).
 
 obj_to_dotnode(X,node(X2,Props),Opts) :-
         obj_to_dotnode_1(X,node(X,Props),Opts),
@@ -120,13 +120,20 @@ obj_to_dotnode(X,node(X2,Props),Opts) :-
 obj_to_dotnode_1(X,node(X,Props),Opts) :-
         findall(P=V,node_prop(X,P,V,Opts),Props).
 
-node_prop(X,label,Label,_) :- labelAnnotation_value(X,Label).
-node_prop(X,label,X,_) :- atom(X), \+ labelAnnotation_value(X,_).
-node_prop(X,label,'',_) :- \+ atom(X).
+node_prop(X,label,Label,_) :- entity_to_label(X,Label).
 node_prop(X,shape,box,_) :- class(X).
-node_prop(X,shape,box,_) :- \+ atom(X).
+node_prop(X,shape,octagon,_) :- namedIndividual(X).
+node_prop(X,shape,diamond,_) :- \+ atom(X).
 
 safe(X,X) :- atom(X),!.
 safe(X,Y) :- term_to_atom(X,Y).
+
+entity_to_label(X,Label) :- labelAnnotation_value(X,Label),!.
+entity_to_label(X,Label) :- atom(X),atomic_list_concat([_,Label],'#',X),!.
+entity_to_label(X,X) :- atom(X),!.
+entity_to_label(X,Label) :- plsyn_owl(X2,X,[use_labels]),term_to_atom(X2,Label).
+
+
+
 
 
