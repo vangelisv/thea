@@ -384,17 +384,42 @@ uniqify([H|L],[H|L2]) :-
 
 
 % INCOMPLETE!
-inferred_declaration(O,class(C)) :- ontologyAxiom(O,classAssertion(C,_)),atom(C).
-inferred_declaration(O,class(C)) :- ontologyAxiom(O,subClassOf(C,_)),atom(C).
-inferred_declaration(O,class(C)) :- ontologyAxiom(O,subClassOf(_,C)),atom(C).
-inferred_declaration(O,class(C)) :- ontologyAxiom(O,equivalentClasses(L)),member(C,L),atom(C).
-inferred_declaration(O,namedIndividual(I)) :- ontologyAxiom(O,classAssertion(_,I)).
-inferred_declaration(O,namedIndividual(I)) :- ontologyAxiom(O,propertyAssertion(_,I,_)).
-inferred_declaration(O,namedIndividual(I)) :- ontologyAxiom(O,propertyAssertion(_,_,I)).
-inferred_declaration(O,objectProperty(P)) :- ontologyAxiom(O,subPropertyOf(P,_)),atom(P).
-inferred_declaration(O,objectProperty(P)) :- ontologyAxiom(O,subPropertyOf(_,P)),atom(P).
-inferred_declaration(O,objectProperty(P)) :- ontologyAxiom(O,inverseProperties(P,_)),atom(P).
-inferred_declaration(O,objectProperty(P)) :- ontologyAxiom(O,inverseProperties(_,P)),atom(P).
+
+
+inferred_declaration(O,Decl) :-
+        ontologyAxiom(O,Axiom),
+        term_implicit_declaration(Axiom,Decl).
+
+term_implicit_declaration(Axiom,Decl) :-        
+        Axiom=..[P|Args],
+        (   owlpredicate_typed(P,PT)
+        ->  owlpredicate_arguments(PT,ArgTypes)
+        ;   owlpredicate_arguments(P,ArgTypes)),
+        nth1(Index,Args,Arg),
+        nth1(Index,ArgTypes,ArgType),
+        inferred_declaration(Arg,ArgType,Decl).
+
+inferred_declaration(Arg,ArgType,Decl) :-
+        atom(Arg),
+        ArgType=classExpression,
+        !,
+        Decl=class(Arg).
+inferred_declaration(Arg,ArgType,Decl) :-
+        atom(Arg),
+        ArgType=individual,
+        !,
+        Decl=namedIndividual(Arg).
+inferred_declaration(Arg,ArgType,Decl) :-
+        atom(Arg),
+        ArgType=objectPropertyExpression,
+        !,
+        Decl=objectProperty(Arg).
+inferred_declaration(ArgSet,set(ArgType),Decl) :-
+        member(Arg,ArgSet),
+        inferred_declaration(Arg,ArgType,Decl).
+inferred_declaration(Arg,_ArgType,Decl) :-
+        \+ atom(Arg),
+        term_implicit_declaration(Arg,Decl).
 
 
 
