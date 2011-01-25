@@ -208,13 +208,13 @@ owl_canonical_parse_3([IRI|Rest]) :-
 
 	% First parse the Ontology axiom
         owl_parse_annotated_axioms(ontology/1),
-        
+
         debug(owl_parser,'Replacing patterns [see table 5]',[]),
 	% remove triples based on pattern match (Table 5)
 	forall((triple_remove(Pattern,Remove), test_use_owl(Pattern)),
 	        forall(member(owl(S,P,O),Remove),use_owl(S,P,O,removed))),
 
-        
+
         % temporary fix to make up for bug in rdf parsing
         % see email to JanW July-1-2009
         forall((test_use_owl(S,P,BNode),
@@ -243,7 +243,7 @@ owl_canonical_parse_3([IRI|Rest]) :-
                              (   expand_and_assert(S,P,O),
                                  debug(owl_parser,'Replacing ~w ==> ~w [see table 6]',[Pattern,owl(S,P,O)]))))),
         */
-                    
+
 	% continue with parsing using the rules...
 	% Table 8, get the set of RIND - anonymous individuals in reification
 	findall(X, (member(Y,['owl:Axiom','owl:Annotation',
@@ -312,7 +312,7 @@ owl_parse_annotated_axioms(Pred/Arity) :-
 	       (   assert_axiom(Head),
                    debug(owl_parser_detail_anns,' parsed: ~w : anns: ~w',[Head,Annotations]),
 		   forall(member(X,Annotations),
-			  forall(annotation(X,AP,AV),
+			  forall(aNN(X,AP,AV),
 				 assert_axiom(annotation(Head,AP,AV)))
 			 )
 	       )
@@ -1275,8 +1275,9 @@ parse_annotation_assertions :-
 			 )
 	       )
 	      ),
-	forall(aNN(X,Y,Z),assert(annotation(X,Y,Z))),
-	retractall(aNN(X,Y,Z)).
+	% forall(aNN(X,Y,Z),assert(annotation(X,Y,Z))), VV remove 25/1/11
+	% annotation/3 axioms created already during owl_parse_annotated_axioms/1
+	retractall(aNN(_,_,_)).
 
 % Table 18. Parsing of Axioms for Compatibility with OWL DL
 

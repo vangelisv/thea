@@ -6,10 +6,10 @@
 % Change Log:
 %         Feb 09: Ported to Thea2 [CJM]
 %	  Mar 07: Version 0.5.5: Changes to the use_module and
-%	  definitions for Thea 0.5.5 release. 
+%	  definitions for Thea 0.5.5 release.
 %         Sep 05: Initial release 0.4 (as part of Thea OWL
-%	  Prolog library) 
-%             
+%	  Prolog library)
+%
 % **********************************************************************
 
 :- module(owl2_export_rdf,
@@ -18,7 +18,7 @@
            owl_generate_rdf/4, % Ontology,FileName, RDF_Load_Mode (complete/not), Opts
            owl_synchronize_to_rdf/0,
            owl_synchronize_to_rdf/1,
-           owl_rdf2n3/0 		    
+           owl_rdf2n3/0
 	  ]).
 
 :- use_module(owl2_model).
@@ -45,7 +45,7 @@ owl2_io:save_axioms_hook(File,owl,Opts) :-
         %  user can select this to indicate that
         %  all axioms should be treated as belonging to the
         %  same ontology.
-        % 
+        %
         % bind Merge only if user selects this option
         (   member(merge(Merge),Opts)
         ->  true
@@ -99,7 +99,7 @@ owl_generate_rdf(FileName,RDF_Load_Mode) :-
 %% owl_generate_rdf(+Ontology,+FileName,+RDF_Load_Mode) is det
 %
 % as owl_generate_rdf/4, default Opts
-owl_generate_rdf(Ontology,FileName,RDF_Load_Mode) :- 
+owl_generate_rdf(Ontology,FileName,RDF_Load_Mode) :-
         owl_generate_rdf(Ontology,FileName,RDF_Load_Mode,[]).
 
 
@@ -113,13 +113,13 @@ owl_generate_rdf(Ontology,FileName,RDF_Load_Mode) :-
 % @param Ontology - IRI
 % @param FileName - path to save
 % @param RDF_Load_Mode (complete/not)
-owl_generate_rdf(Ontology,FileName,RDF_Load_Mode,Opts) :- 
+owl_generate_rdf(Ontology,FileName,RDF_Load_Mode,Opts) :-
         owl_generate_rdf_in_memory(Ontology,RDF_Load_Mode,Opts),
         (   member(rdf_syntax(ttl),Opts) % TODO - use rdf_db hooks
         ->  rdf_save_turtle(FileName,Opts)
 	;   rdf_db:rdf_save(FileName)).
 
-owl_generate_rdf_in_memory(Ontology,RDF_Load_Mode,Opts) :- 
+owl_generate_rdf_in_memory(Ontology,RDF_Load_Mode,Opts) :-
 	(   RDF_Load_Mode=complete -> rdf_retractall(_,_,_); true),
 	retractall(blanknode_gen(_,_)),retractall(blanknode(_,_,_)),
         % export a fake ontology directive if none specified
@@ -174,9 +174,9 @@ owl_synchronize_to_rdf(Ont) :-
 
 /*
 owl_rdf2n3
-     Prints out the RDF triples in N3 notation.   
+     Prints out the RDF triples in N3 notation.
 */
-owl_rdf2n3 :-	
+owl_rdf2n3 :-
     rdf_db:rdf(S,P,O),
     collapse_ns(S,S1,':',[]),collapse_ns(P,P1,':',[]),collapse_ns(O,O1,':',[]),
     write(S1), write(' '), write(P1), write(' '), write(O1), write(' .'),nl,
@@ -311,9 +311,9 @@ owl2_export_axiom(hasKey([C|Rest]),main_triple(Tc,'owl:hasKey',LNode)) :-
 	owl2_export_list(Rest,LNode),
 	owl_rdf_assert(Tc,'owl:hasKey',LNode),!.
 
-% 
+%
 % Individuals
-% 
+%
 
 owl2_export_axiom(sameIndividual([X,Y]),main_triple(Tx,'owl:sameAs',Ty)) :-
 	owl2_export_axiom(X,main_triple(Tx,_,_)),
@@ -364,7 +364,7 @@ owl2_export_axiom(negativePropertyAssertion(P,A1,A2),main_triple(BNode,'rdf:type
 % AnnotationAssestions
 %
 
-owl2_export_axiom(annotationAssertion(AP,As,Av),main_triple(TAs,AP,TAv)) :- 
+owl2_export_axiom(annotationAssertion(AP,As,Av),main_triple(TAs,AP,TAv)) :-
         atom(As), % TODO: see issue#8. axiom annotations result is As=annotation(_,_,_)
         !,
 	owl2_export_axiom(As,main_triple(TAs,_,_)),
@@ -401,7 +401,7 @@ owl2_export_axiom(unionOf([E|Rest]),main_triple(BNode,'rdf:type',Type)) :-
 	owl2_export_list([E|Rest],LNode),
 	(   classExpression(E) -> Type = 'owl:Class'; Type = 'owl:Datatype'),
 	owl_rdf_assert(BNode,'rdf:type',Type),
-	owl_rdf_assert(BNode,'owl:unionOf', LNode),!.	  
+	owl_rdf_assert(BNode,'owl:unionOf', LNode),!.
 
 owl2_export_axiom(oneOf([E|Rest]),main_triple(BNode,'rdf:type',Type)) :-
 	as2rdf_bnode(oneOf([E|Rest]),BNode),
@@ -410,7 +410,7 @@ owl2_export_axiom(oneOf([E|Rest]),main_triple(BNode,'rdf:type',Type)) :-
         ->  Type = 'owl:Class'
         ;   Type = 'owl:Datatype'),
 	owl_rdf_assert(BNode,'rdf:type',Type),
-	owl_rdf_assert(BNode,'owl:oneOf', LNode),!.	  
+	owl_rdf_assert(BNode,'owl:oneOf', LNode),!.
 
 owl2_export_axiom(datatypeRestriction(DT,FVs),main_triple(BNode,'rdf:type','rdfs:Datatype')) :-
 	as2rdf_bnode(datatypeRestriction(DT,FVs),BNode),
@@ -430,7 +430,7 @@ owl2_export_axiom(complementOf(E),main_triple(BNode,'rdf:type',Type)) :-
 	as2rdf_bnode(complementOf(E),BNode),
 	owl2_export_axiom(E,main_triple(Te,_,_)),
 	(   classExpression(E) -> Type = 'owl:complementOf'; Type = 'owl:datatypeComplementOf'),
-	owl_rdf_assert(BNode,'owl:complementOf', Te),!.	  
+	owl_rdf_assert(BNode,'owl:complementOf', Te),!.
 
 
 
@@ -471,7 +471,7 @@ owl2_export_axiom(minCardinality(N,OPE,CEorDR),main_triple(BNode,'rdf:type','owl
 	owl_rdf_assert(BNode,'rdf:type','owl:Restriction'),
 	owl_rdf_assert(BNode,'owl:minQualifiedCardinality',literal(type('http://www.w3.org/2001/XMLSchema#nonNegativeInteger',N))),
 	owl2_export_axiom(OPE,main_triple(Tope,_,_)),owl_rdf_assert(BNode,'owl:onProperty',Tope),
-	owl2_export_axiom(CEorDR,main_triple(Tce,_,_)),	
+	owl2_export_axiom(CEorDR,main_triple(Tce,_,_)),
 	(   classExpression(CEorDR) -> owl_rdf_assert(BNode,'owl:onClass',Tce); owl_rdf_assert(BNode,'owl:onDataRange',Tce)),!.
 
 
@@ -486,7 +486,7 @@ owl2_export_axiom(maxCardinality(N,OPE,CEorDR),main_triple(BNode,'rdf:type','owl
 	owl_rdf_assert(BNode,'rdf:type','owl:Restriction'),
 	owl_rdf_assert(BNode,'owl:maxQualifiedCardinality',literal(type('http://www.w3.org/2001/XMLSchema#nonNegativeInteger',N))),
 	owl2_export_axiom(OPE,main_triple(Tope,_,_)),owl_rdf_assert(BNode,'owl:onProperty',Tope),
-	owl2_export_axiom(CEorDR,main_triple(Tce,_,_)),	
+	owl2_export_axiom(CEorDR,main_triple(Tce,_,_)),
 	(   classExpression(CEorDR) -> owl_rdf_assert(BNode,'owl:onClass',Tce); owl_rdf_assert(BNode,'owl:onDataRange',Tce)),!.
 
 
@@ -504,7 +504,7 @@ owl2_export_axiom(exactCardinality(N,OPE,CEorDR),main_triple(BNode,'rdf:type','o
 	owl2_export_axiom(CEorDR,main_triple(Tce,_,_)),
 	(   classExpression(CEorDR) -> owl_rdf_assert(BNode,'owl:onClass',Tce); owl_rdf_assert(BNode,'owl:onDataRange',Tce)),!.
 
-% 
+%
 % SWRL
 % (this may eventually end up in a separate hooks file?)
 
@@ -522,7 +522,7 @@ owl2_export_axiom(implies(AL,CL),main_triple(RuleNode,'rdf:type','swrl:Imp')) :-
 
 
 :- multifile translate_iri_hook/2.
-owl2_export_axiom(IRI,main_triple(T,_,_)) :- translate_iri_hook(IRI,T), !. 
+owl2_export_axiom(IRI,main_triple(T,_,_)) :- translate_iri_hook(IRI,T), !.
 
 owl2_export_axiom(IRI,main_triple(IRI,_,_)) :- atom(IRI),!. % better iri(IRI).
 owl2_export_axiom(X,main_triple(X,_,_)) :- X=literal(_),!. % better iri(IRI).
@@ -536,7 +536,7 @@ translate_iri(X,X).
 /*
 owl2_export_annotation(Parent)
  Parent can be an axiom or an annotation itself (nested annotations)
-*/    
+*/
 
 
 owl2_export_annotation(annotation(_,_,_),_,S,_,_) :-
@@ -548,7 +548,7 @@ owl2_export_annotation(Parent,ParentType,S,ParentP,ParentO) :-
             O = ParentAV,
 	    owl_rdf_assert(S,P,O)
         ;   P = ParentP, O = ParentO),
-	findall(AP-AV,annotation(Parent,AP,AV),ANNs),
+	findall(annotation(Parent,AP,AV),annotation(Parent,AP,AV),ANNs),
 	(   ANNs = [_|_]
         ->  as2rdf_bnode(Parent,BNode),
 	    reify(BNode,'rdf:type',ParentType,S,P,O),
@@ -564,11 +564,11 @@ reify(SNode,PTerm,OTerm,S,P,O) :-
 
 
 /*
-owl2_export_list(+List, -Node).  
+owl2_export_list(+List, -Node).
         Generates RDF triples for the List of construct based on
-	Abstract Syntax list transformation rules. Node represents the 
+	Abstract Syntax list transformation rules. Node represents the
 	List in the resulting RDF graph
-*/   
+*/
 
 owl2_export_list([],'rdf:nil').
 
@@ -578,8 +578,8 @@ owl2_export_list([S|Rest],Node) :-
         % this is to circumvent a bug in list writing:
         (   S=literal(_)
         ->  true
-        ;   owl_rdf_assert(Node,'rdf:type', 'rdf:List')),	
-	owl_rdf_assert(Node,'rdf:first', Ts),	
+        ;   owl_rdf_assert(Node,'rdf:type', 'rdf:List')),
+	owl_rdf_assert(Node,'rdf:first', Ts),
 	owl2_export_list(Rest,Node2),
 	owl_rdf_assert(Node,'rdf:rest',Node2).
 
@@ -588,9 +588,9 @@ swrl_export_atom_list([],'rdf:nil').
 swrl_export_atom_list([S|Rest],Node) :-
 	as2rdf_bnode([S|Rest],Node),
 	swrl_export_atom(S,main_triple(Ts,_,_)),
-	%owl_rdf_assert(Node,'rdf:type', 'swrl:AtomList'),	
-	owl_rdf_assert(Node,'rdf:type', 'rdf:List'),	
-	owl_rdf_assert(Node,'rdf:first', Ts),	
+	%owl_rdf_assert(Node,'rdf:type', 'swrl:AtomList'),
+	owl_rdf_assert(Node,'rdf:type', 'rdf:List'),
+	owl_rdf_assert(Node,'rdf:first', Ts),
 	swrl_export_atom_list(Rest,Node2),
 	owl_rdf_assert(Node,'rdf:rest',Node2).
 
@@ -605,8 +605,8 @@ swrl_export_argument_list([],'rdf:nil').
 swrl_export_argument_list([S|Rest],Node) :-
 	as2rdf_bnode([S|Rest],Node),
 	swrl_export_argument(S,main_triple(Ts,_,_)),
-	owl_rdf_assert(Node,'rdf:type', 'swrl:ArgumentList'),	
-	owl_rdf_assert(Node,'rdf:first', Ts),	
+	owl_rdf_assert(Node,'rdf:type', 'swrl:ArgumentList'),
+	owl_rdf_assert(Node,'rdf:first', Ts),
 	swrl_export_argument_list(Rest,Node2),
 	owl_rdf_assert(Node,'rdf:rest',Node2).
 
@@ -686,20 +686,20 @@ swrl_export_argument(V,T) :- owl2_export_axiom(V,T).
 
 
 /*
-owl_rdf_assert(S,P,O).  
+owl_rdf_assert(S,P,O).
         Expands the NS the S, P, O terms and asserts into the RDF
 	database
-*/   
+*/
 owl_rdf_assert(S,P,O) :-
 	expand_ns(S,S1),expand_ns(P,P1),expand_ns(O,O1),
         debug(rdf_assert,'assert: ~w ~w ~w.',[S,P,O]),
 	rdf_db:rdf_assert(S1,P1,O1), !.
 
 /*
-as2rdf_bnode(+X,-Node).  
+as2rdf_bnode(+X,-Node).
         It generates a bnode Node for construct X in case it does not
 	exist already as a blanknode/3 clause.
-*/   
+*/
 as2rdf_bnode(X,Node) :-
 	blanknode_gen(Node,X),
         debug(bnode,'bnode REUSE ~w ==> ~w',[X,Node]),
