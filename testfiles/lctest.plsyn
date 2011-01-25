@@ -96,12 +96,16 @@ dopmainergic_neuron == neuron and outputs some dopamine.
 foo_transmitting_neuron == neuron and transmits some foo.
 foo_receiving_neuron == neuron and receives some foo.
 dopamine < neurotransmitter.
+foo < neurotransmitter.
 lewy_body < inclusion.
 lewy_body < has_part some alpha_syn.
 lewy_body < has_part some ubq.
 pick_body < inclusion.
 pick_body < has_part some alpha_syn.
 pick_body < has_part some ubq.
+
+alpha_syn < protein.
+ubq < protein.
 
 left_ear == ear and has_laterality some left.
 right_ear == ear and has_laterality some right.
@@ -128,6 +132,8 @@ red < color.
 color < quality.
 volume < physical_quality.
 physical_quality < quality.
+decreased < relative_quantity.
+increased < relative_quantity.
 
 left < laterality.
 right < laterality.
