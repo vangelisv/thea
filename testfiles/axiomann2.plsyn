@@ -1,0 +1,4 @@
+ontology('http://x.org').
+
+x < partOf some y.
+annotation( x < partOf some y, comment, literal(foo)).
