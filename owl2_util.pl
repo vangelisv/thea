@@ -13,6 +13,7 @@
            expand_namespaces/0,
            remove_namespaces/0,
            contract_namespaces/0,
+           oboid_uri/2,
            translate_IRIs_from_obo_ids/0,
            remove_ns/2,
            replace_ns_prefix/4,

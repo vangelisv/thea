@@ -285,6 +285,9 @@ init RN :-
         findall(Opt,settings(reasoner_opt,Opt),Opts),
         init(RN with Opts).
 
+clio :-
+        ensure_loaded(library(thea2/bin/thea_clio_startup)),
+        cp_server.
 
 
 % HELP

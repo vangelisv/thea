@@ -218,6 +218,22 @@ lookup(N,_) :-
         throw(error(cannot_find(N))).
 
 
+% ----------------------------------------
+% FILE READING
+% ----------------------------------------
+read_file_to_facts(File,Pred) :-
+        open(File,read,IO,[]),
+        repeat,
+        read_line_to_codes(IO,Codes),
+        (   Codes=end_of_file
+        ->  !
+        ;   codes_to_fact(Codes,Pred),
+            fail),
+        close(IO).
+codes_to_fact(Codes,Pred) :-
+        atom_codes(A,Codes),
+        Fact =.. [Pred,A],
+        user:assert(Fact).
 
 % ----------------------------------------
 % OPTION PROCESSING
@@ -276,6 +292,8 @@ parse_arg(['--ensure-loaded',MA|L],L,ensure_loaded(M)) :- atom_to_term(MA,M,_).
 parse_arg(['--load-app',MA|L],L,null) :- atom_to_term(MA,M,_), ensure_loaded(library(thea2/apps/M)).
 %parse_arg(['--load-mod',MA|L],L,ensure_loaded(library(thea2/M))) :- atom_to_term(MA,M,_).
 parse_arg(['--load-mod',MA|L],L,null) :- atom_to_term(MA,M,_),ensure_loaded(library(thea2/M)).
+
+parse_arg(['--read-atoms',F|L],L,null) :- read_file_to_facts(F,input).
 
 parse_arg(['--jvm-opt',A|L],L,null) :-
         (   jpl_set_default_jvm_opts([A])

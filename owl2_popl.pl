@@ -10,12 +10,14 @@
            
            op(1100,xfy,===>),
            op(1000,xfy,where),
+           op(1000,xfy,forall),
            op(990,fx,add)
 
           ]).
 
 :- op(1100,xfy,===>).
 :- op(1000,xfy,where).
+:- op(1000,xfy,forall).
 :- op(990,fx,add).
 
 :- use_module(owl2_model).
@@ -61,6 +63,11 @@ preprocess_directives(L,L2,Opts) :-
 preprocess_directives(X,X2,Opts) :-
         preprocess_directive(X,X2,Opts).
 
+preprocess_directive( D forall G, Tr, Opts) :-
+        !,
+        G,
+        preprocess_directive(D where true, Tr, Opts).
+              
 preprocess_directive( In ===> +(Out) where G, tr(_,In2,(In2,Out2),G2,Opts), Opts) :-
         !,
         preprocess_term(In,In2,Opts),
