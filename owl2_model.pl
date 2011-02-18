@@ -85,7 +85,7 @@
            dataMinCardinality/1, dataMaxCardinality/1, dataExactCardinality/1,
 
            objectPropertyExpression/1,
-           
+
            dataRange/1,
            dataIntersectionOf/1,
            dataUnionOf/1,
@@ -107,7 +107,7 @@
            axiom_contains_expression/2,
            axiom_contains_expression/3,
            referenced_description/1,
-           
+
            assert_axiom/1,
            assert_axiom/2,
            retract_axiom/1,
@@ -116,7 +116,7 @@
 	   owl2_model_init/0,
            consult_axioms/1,
            axiom_type/2,
-           
+
            valid_axiom/1,
            is_valid_axiom/1
 
@@ -267,7 +267,8 @@ axiom(A) :- propertyAxiom(A).
 axiom(hasKey(A,B)) :- hasKey(A,B).
 axiom(A) :- fact(A).
 axiom(A) :- declarationAxiom(A).
-%axiom(annotation(A,B,C)) :- annotation(A,B,C). % CJM - treat annotations as axioms
+%axiom(annotation(A,B,C)) :-
+%	annotation(A,B,C). % CJM-treat annotations as axioms
 axiom_arguments(axiom,[axiom]).
 valid_axiom(axiom(A)) :- subsumed_by([A],[axiom]).
 

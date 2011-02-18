@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl 'http://www.w3.org/2002/07/owl#'>
+    <!ENTITY rdf 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+    <!ENTITY rdfs 'http://www.w3.org/2000/01/rdf-schema#'>
+]>
+
+<rdf:RDF
+    xmlns:owl="&owl;"
+    xmlns:rdf="&rdf;"
+    xmlns:rdfs="&rdfs;"
+	xmlns:ns1="&ns1;"
+>
+<owl:Ontology rdf:about="http://example.org"/>
+
+<rdf:Description rdf:about="&ns1;Lion1">
+  <ns1:preys_on rdf:resource="&ns1;Zebra1"/>
+</rdf:Description>
+
+<owl:Axiom
+    rdfs:comment="Comment on the preys_on property between Lion and Zebra">
+  <owl:annotatedProperty rdf:resource="&ns1;preys_on"/>
+  <owl:annotatedSource rdf:resource="&ns1;Lion1"/>
+  <owl:annotatedTarget rdf:resource="&ns1;Zebra1"/>
+</owl:Axiom>
+
+<ns1:Lion rdf:about="&ns1;Animal">
+  <rdf:type rdf:resource="&ns1;Zebra"/>
+  <rdf:type rdf:resource="&owl;Class"/>
+</ns1:Lion>
+
+<owl:NamedIndividual rdf:about="&ns1;Lion"/>
+
+<owl:NamedIndividual rdf:about="&ns1;Zebra"/>
+
+<owl:ObjectProperty rdf:about="&ns1;preys_on"/>
+
+</rdf:RDF>
