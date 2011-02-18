@@ -29,9 +29,9 @@ convert(T,V,typed_value(T,V)).
 
 
 rdf_2_owl(Base,Ont) :-
-	debug(owl_parser, 'Removing existing owl triples',[]),
-	retractall(owl(_,_,_,Ont)),
-	debug(owl_parser,'Copying RDF triples to OWL triples',[]),
+%	debug(owl_parser, 'Removing existing owl triples',[]),
+%	retractall(owl(_,_,_,Ont)),
+	debug(owl_parser,'Copying RDF triples to OWL triples for Ontology ~w',[Ont]),
 	rdf(X,Y,Z,Base:_),
 %	owl_fix_no(X,X1), owl_fix_no(Y,Y1), owl_fix_no(Z,Z1),
 	assert(owl(X,Y,Z,Ont)), fail.
