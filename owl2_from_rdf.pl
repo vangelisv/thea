@@ -580,11 +580,9 @@ ann(X,Y) :-
 	ann(X,X,Y).
 
 
-
 ann(X,X1, annotation(X1,Y,Z)) :-
-	annotationProperty(Y),
-        debug(owl_parser_detail,'annotation property: ~w',[Y]),
         owl(X,Y,Z,not_used),
+	annotationProperty(Y),
         use_owl(X,Y,Z,annotationProperty(Y)),
 	u_assert(aNN(X1,Y,Z)),
 	ann2(X,Y,Z,X1).
@@ -914,6 +912,7 @@ owl_restriction_type(E, P, maxCardinality(N,PX,DX)) :-
 % valid_axiom_annotation_mode: add clauses for the disjoint etc ....
 
 collect_r_nodes :-
+        debug(owl_parser,collect_r_nodes,[]),
 	retractall(axiom_r_node(_,_,_,_)),
 	forall(( test_use_owl(Node,'rdf:type','owl:Axiom'),
 		 test_use_owl(Node,'owl:annotatedSource',S),
@@ -1220,6 +1219,11 @@ owl_parse_axiom(annotationAssertion(P,A,B),AnnMode,List) :-
 
 dothislater(classAssertion/2).
 owl_parse_axiom(classAssertion(CX,X),AnnMode,List) :-
+        % HACK -- CJM 2011-02-10 -- parsed out from namedIndividual nodes first.
+        % see issue#23
+        (   namedIndividual(X)
+        *-> true
+        ;   true),
 	test_use_owl(X,'rdf:type',C),
         C\='http://www.w3.org/2002/07/owl#DeprecatedClass',
 	% note: some ontologies may include a rdf:type with no

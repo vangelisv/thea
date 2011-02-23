@@ -30,7 +30,7 @@
 %% popl_translate(+Directive) is det
 % see popl_translate/2
 popl_translate(T) :-
-        popl_translate(T, []).
+        popl_translate(T, [translate(labels)]).
 
 %% popl_translate(+Directive,+Opts:list) is det
 %

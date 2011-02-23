@@ -69,11 +69,9 @@ main :-
         GoalTime is T3-T2,
         debug(bench,'goal_time: ~w',[GoalTime]),
 
-        /*
-        forall(diff(F1,F2),
+        forall(member(diff(F1,F2),Opts),
                (   owl2_diff_files(F1,F2,Diffs),
                    maplist(writeln(Diffs)))),
-          */
         
 	% QUERIES
         forall(member(reasonerquery(T,G),Opts),
