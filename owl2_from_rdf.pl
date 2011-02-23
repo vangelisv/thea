@@ -276,7 +276,9 @@ owl_canonical_parse_3([IRI|Rest]) :-
         forall((axiompred(PredSpec),dothislater(PredSpec),\+omitthis(PredSpec)),
                owl_parse_nonannotated_axioms(PredSpec)),!,
 	% annotation Assertion
+        debug(owl_parser_detail,'Parsing annotation assertions',[]),
 	parse_annotation_assertions,
+        debug(owl_parser_detail,'Parsing compatibility_DL',[]),
 	forall(owl_parse_compatibility_DL(Axiom),assert_axiom(Axiom)),
 	owl_canonical_parse_3(Rest).
 
@@ -546,7 +548,7 @@ owl_parse_axiom(annotationProperty(D), AnnMode, List) :-
 % TODO: check this. do we need to assert individual axioms if all we have is an rdf:type?
 owl_parse_axiom(namedIndividual(D), AnnMode, List) :-
         test_use_owl(D,'rdf:type','owl:NamedIndividual'),
-        valid_axiom_annotation_mode(AnnMode,D,'rdf:type','rdf:NamedIndividual',List),
+        valid_axiom_annotation_mode(AnnMode,D,'rdf:type','owl:NamedIndividual',List),
         use_owl(D,'rdf:type','owl:NamedIndividual',namedIndividual(D)).
 
 
