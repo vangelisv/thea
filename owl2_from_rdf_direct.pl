@@ -2,6 +2,8 @@
 
 :- module(owl2_from_rdf_direct,
           [
+           nc2owl/2,
+           transitive_nc2owl/2
            ]).
 
 :- use_module(owl2_model).
@@ -43,6 +45,12 @@
   ==
 
   See inline docs for details (e.g. triple//3).
+
+  ---+ GLOBALS
+
+  the nb variable rdf_result_set is used to store a list of rdf(S,P,O) terms.
+  this is used when constructing the model.
+  useful when generating OWL axioms from SPARQL DESCRIBE queries
   
   */
 
@@ -72,6 +80,9 @@ owl2_io:load_axioms_hook(File,rdf,Opts) :-
 % 
 % generates a single triple, if that triple is in the database
 triple(S,P,O) --> {rdf(S,P,O),\+consumed(S,P,O)},[rdf(S,P,O,_)].
+triple(S,P,O,Triples,_) :- nb_current(rdf_result_set,Triples),member(rdf(S,P,O),Triples).
+
+%triple(S,P,O,Triples,_) :- ground(Triples),member(rdf(S,P,O),Triples).
 
 % ----------------------------------------
 % MATERIALIZATION
@@ -157,9 +168,14 @@ owl_axiom(namedIndividual(A)) --> triple(A,rdf:type,owl:'NamedIndividual').
 % -- CLASS AXIOMS --
 % these typically generate multiple triples, where arguments are compound terms generated from bNodes
 owl_axiom(subClassOf(A,B)) --> triple(Ax,rdfs:subClassOf,Bx),owl_description(Ax,A),owl_description(Bx,B).
-owl_axiom(equivalentClasses(L)) -->
-        asserted_equivalent_to(A,B), % TODO - DOES NOT HAVE MAIN TRIPLE!! NEED A GENERIC WAY OF HANDLING THESE
-        maximal_equivalence_set(L,[A,B]). % todo - eliminate duplicates
+
+owl_axiom(equivalentClasses([A,B])) -->
+%        {trace},
+        triple(Ax,owl:equivalentClass,Bx),owl_description(Ax,A),owl_description(Bx,B). % TODO
+%owl_axiom(equivalentClasses(L)) -->
+%        asserted_equivalent_to(A,B), % TODO - DOES NOT HAVE MAIN TRIPLE!! NEED A GENERIC WAY OF HANDLING THESE
+%        maximal_equivalence_set(L,[A,B]). % todo - eliminate duplicates
+
 owl_axiom(disjointClasses(A,B)) --> triple(Ax,owl:disjointWith,Bx),owl_description(Ax,A),owl_description(Bx,B).
 % TODO owl:AllDisjointClasses
 % TODO owl:disjointUnion
@@ -170,9 +186,25 @@ owl_axiom(subPropertyOf(A,B)) --> triple(A,rdfs:subPropertyOf,B).
 % TODO - everything else
 
 % -- ANNOTATION AXIOMS --
-owl_axiom(annotationAssertion(P,A,B)) --> triple(A,P,B),{annotationProperty(P)}.
+owl_axiom(annotationAssertion(P,A,B)) --> triple(A,P,B),{is_annotationProperty(P)}.
 
-asserted_equivalent_to(A,B) --> triple(Ax,owl:equivalentTo,Bx),owl_description(Ax,A),owl_description(Bx,B).
+% TODO
+owl_axiom(propertyAssertion(PX,A,B)) -->
+        triple(A,P,B),{\+annotationProperty(P),\+rdf_is_bnode(A),\+rdf_is_bnode(B)},
+        owl_property_expression(P, PX),
+        {\+ builtin(PX)}.
+
+:- rdf_meta builtin(r).
+builtin(rdfs:subClassOf).
+builtin(rdf:type).
+
+:- rdf_meta is_annotationProperty(r).
+is_annotationProperty(rdfs:label).
+is_annotationProperty(rdfs:comment).
+is_annotationProperty(P) :- annotationProperty(P).
+
+
+asserted_equivalent_to(A,B) --> triple(Ax,owl:equivalentClass,Bx),owl_description(Ax,A),owl_description(Bx,B).
 maximal_equivalence_set(EqL,SeedL) --> {member(A,SeedL)},(asserted_equivalent_to(A,B);asserted_equivalent_to(B,A)),{\+member(B,SeedL)},!,maximal_equivalence_set(EqL,[B|SeedL]).
 maximal_equivalence_set(EqSet,EqL) --> {sort(EqL,EqSet)},[]. % impossible to add more members; this is the maximal set
 
@@ -320,7 +352,7 @@ owl_property_expression(P,inverseOf(Q)) -->
 owl_property_expression(P,P) --> [].
 
 
-owl_description_list(rdf:nil,[]) --> [],!.
+owl_description_list('http://www.w3.org/1999/02/22-rdf-syntax-ns#nil',[]) --> [],!.
 
 owl_description_list(X,[F|R]) -->
 	% triple(X,'rdf:type','rdf:List',list), % this is now removed from graph - TODO - MAKE OPTIONAL
@@ -336,3 +368,63 @@ owl_description_list(X,[F|R]) -->
 
 literal_integer(literal(type,A),N) :- atom_number(A,N).
 literal_integer(literal(type(_,A)),N) :- atom_number(A,N).
+
+% ----------------------------------------
+% TEST
+% ----------------------------------------
+
+% this will move into another module - just for demo purposes
+% we can dynamically project owl axioms from an external triplestore.
+
+% query NC Virtuoso triplestore and turn DESCRIBE triples into OWL ontology
+% e.g. nc2owl('GO_0009245',Axiom)
+nc2owl(ID,Axiom) :-
+        ensure_loaded(semweb(sparql_client)),
+        (   sub_atom(ID,_,_,_,:)
+        ->  URI=ID
+        ;   atom_concat('http://purl.obolibrary.org/obo/',ID,URI)),
+        sparql_set_server([host('sparql.obodev.neurocommons.org'),port(80),path('/sparql/')]),
+        concat_atom(['DEFINE sql:describe-mode "CBD"\nDESCRIBE',' ','<',URI,'>'],Q),
+        debug(sparql,'QUERY: ~w',[Q]),
+        findall(R,
+                sparql_query(Q,R,[search([format='application/rdf+xml'])]),
+                Triples),
+        triples_to_owl_axiom(Triples,Axiom).
+
+transitive_nc2owl(URI,Axiom) :-
+        transitive_nc2owl([URI],Axioms,[]),
+        member(Axiom,Axioms).
+transitive_nc2owl([URI|URIs],AllAxioms,Visited) :-
+        findall(Axiom,nc2owl(URI,Axiom),Axioms),
+        findall(P,(member(subClassOf(_,P),Axioms),
+                   \+ member(P,Visited)),
+                Ps),
+        append(Ps,URIs,NextURIs),
+        sort(NextURIs,NextURIsUnique),
+        transitive_nc2owl(NextURIsUnique,Axioms2,[URI|Visited]),
+        append(Axioms,Axioms2,AllAxioms).
+transitive_nc2owl([],[],_).
+
+/*
+nc2owl_closure(ID,Axiom) :-
+        ensure_loaded(semweb(sparql_client)),
+        (   sub_atom(ID,_,_,_,:)
+        ->  URI=ID
+        ;   atom_concat('http://purl.obolibrary.org/obo/',ID,URI)),
+        sparql_set_server([host('sparql.obodev.neurocommons.org'),port(80),path('/sparql/')]),
+        concat_atom(['DEFINE sql:describe-mode "CBD"\nDESCRIBE ?x WHERE {<',URI,'> rdfs:subClassOf ?x } '],Q),
+        debug(sparql,'QUERY: ~w',[Q]),
+        findall(R,
+                sparql_query(Q,R,[search([format='application/rdf+xml'])]),
+                Triples),
+        triples_to_owl_axiom(Triples,Axiom).
+*/
+
+
+
+triples_to_owl_axiom(Triples,A) :-
+        nb_setval(rdf_result_set,Triples),
+        %writeln(triples=Triples),
+        phrase(owl_axiom(A),_).
+
+
