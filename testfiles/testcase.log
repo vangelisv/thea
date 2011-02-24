@@ -1,0 +1,170 @@
+% library(win_menu) compiled into win_menu 0.00 sec, 21,016 bytes
+% library(swi_hooks) compiled into pce_swi_hooks 0.00 sec, 3,784 bytes
+% The graphical front-end will be used for subsequent tracing
+% c:/users/thiago/appdata/roaming/swi-prolog/pl.ini compiled 0.11 sec, 1,507,968 bytes
+%  library(thea2/owl2_model) compiled into owl2_model 0.02 sec, 116,816 bytes
+%  library(thea2/owl2_io) compiled into owl2_io 0.00 sec, 19,208 bytes
+% d:/SVNs/svn.gprt.ufpe.br/ascman/src/prolog/PrologDiscovery/testcase.pl compiled 0.02 sec, 140,584 bytes
+XPCE 6.6.66, July 2009 for Win64: XP 64-bit edition
+Copyright (C) 1993-2009 University of Amsterdam.
+XPCE comes with ABSOLUTELY NO WARRANTY. This is free software,
+and you are welcome to redistribute it under certain conditions.
+The host-language is SWI-Prolog version 5.11.13
+
+For HELP on prolog, please type help. or apropos(topic).
+         on xpce, please type manpce.
+
+1 ?- load_1st.
+%     library(option) compiled into swi_option 0.00 sec, 14,240 bytes
+%    library(sgml) compiled into sgml 0.02 sec, 53,704 bytes
+%     rewrite compiled into rewrite 0.00 sec, 12,352 bytes
+%     library(uri) compiled into uri 0.00 sec, 13,984 bytes
+%     library(record) compiled into record 0.02 sec, 30,232 bytes
+%    rdf_parser compiled into rdf_parser 0.02 sec, 122,864 bytes
+%     library(gensym) compiled into gensym 0.00 sec, 4,600 bytes
+%    rdf_triple compiled into rdf_triple 0.00 sec, 36,656 bytes
+%   library(rdf) compiled into rdf 0.05 sec, 246,560 bytes
+%    library(assoc) compiled into assoc 0.00 sec, 35,776 bytes
+%   library(sgml_write) compiled into sgml_write 0.02 sec, 95,248 bytes
+%   library(nb_set) compiled into nb_set 0.00 sec, 6,184 bytes
+%    library(filesex) compiled into files_ex 0.00 sec, 10,880 bytes
+%   rdf_cache compiled into rdf_cache 0.02 sec, 30,360 bytes
+%  library(semweb/rdf_db) compiled into rdf_db 0.09 sec, 586,008 bytes
+%  library(semweb/rdf_edit) compiled into rdf_edit 0.00 sec, 78,016 bytes
+%  library(semweb/rdfs) compiled into rdfs 0.02 sec, 29,192 bytes
+%   library(utf8) compiled into utf8 0.00 sec, 13,808 bytes
+%  library(url) compiled into url 0.02 sec, 123,664 bytes
+%   library(readutil) compiled into read_util 0.02 sec, 16,808 bytes
+%   library(socket) compiled into socket 0.00 sec, 11,384 bytes
+%   library(base64) compiled into base64 0.02 sec, 17,688 bytes
+%  library(http/http_open) compiled into http_open 0.03 sec, 104,504 bytes
+% library(thea2/owl2_from_rdf) compiled into owl2_from_rdf 0.17 sec, 1,047,096 bytes
+% Parsed "booktopublisherservice.owl" in 0.02 sec; 0 triples
+% Parsed "service.owl" in 0.02 sec; 0 triples
+% Parsed "process.owl" in 0.03 sec; 0 triples
+% Parsed "expression.owl" in 0.02 sec; 0 triples
+% Parsed "objectlist.owl" in 0.00 sec; 0 triples
+% Parsed "profile.owl" in 0.03 sec; 0 triples
+% Parsed "grounding.owl" in 0.02 sec; 0 triples
+% Parsed "books.owl" in 0.00 sec; 0 triples
+% Parsed "simplified_sumo.owl" in 0.02 sec; 0 triples
+true.
+
+------------------------------------------
+
+% library(win_menu) compiled into win_menu 0.00 sec, 21,016 bytes
+% library(swi_hooks) compiled into pce_swi_hooks 0.00 sec, 3,784 bytes
+% The graphical front-end will be used for subsequent tracing
+% c:/users/thiago/appdata/roaming/swi-prolog/pl.ini compiled 0.12 sec, 1,507,968 bytes
+%  library(thea2/owl2_model) compiled into owl2_model 0.02 sec, 116,816 bytes
+%  library(thea2/owl2_io) compiled into owl2_io 0.00 sec, 19,208 bytes
+% d:/SVNs/svn.gprt.ufpe.br/ascman/src/prolog/PrologDiscovery/testcase.pl compiled 0.02 sec, 140,584 bytes
+XPCE 6.6.66, July 2009 for Win64: XP 64-bit edition
+Copyright (C) 1993-2009 University of Amsterdam.
+XPCE comes with ABSOLUTELY NO WARRANTY. This is free software,
+and you are welcome to redistribute it under certain conditions.
+The host-language is SWI-Prolog version 5.11.13
+
+For HELP on prolog, please type help. or apropos(topic).
+         on xpce, please type manpce.
+
+1 ?- load_2nd.
+%     library(option) compiled into swi_option 0.00 sec, 14,240 bytes
+%    library(sgml) compiled into sgml 0.03 sec, 53,704 bytes
+%     rewrite compiled into rewrite 0.00 sec, 12,352 bytes
+%     library(uri) compiled into uri 0.00 sec, 13,984 bytes
+%     library(record) compiled into record 0.00 sec, 30,232 bytes
+%    rdf_parser compiled into rdf_parser 0.02 sec, 122,864 bytes
+%     library(gensym) compiled into gensym 0.00 sec, 4,600 bytes
+%    rdf_triple compiled into rdf_triple 0.00 sec, 36,656 bytes
+%   library(rdf) compiled into rdf 0.06 sec, 246,560 bytes
+%    library(assoc) compiled into assoc 0.00 sec, 35,776 bytes
+%   library(sgml_write) compiled into sgml_write 0.02 sec, 95,248 bytes
+%   library(nb_set) compiled into nb_set 0.00 sec, 6,184 bytes
+%    library(filesex) compiled into files_ex 0.00 sec, 10,880 bytes
+%   rdf_cache compiled into rdf_cache 0.00 sec, 30,360 bytes
+%  library(semweb/rdf_db) compiled into rdf_db 0.09 sec, 586,008 bytes
+%  library(semweb/rdf_edit) compiled into rdf_edit 0.02 sec, 78,016 bytes
+%  library(semweb/rdfs) compiled into rdfs 0.00 sec, 29,192 bytes
+%   library(utf8) compiled into utf8 0.00 sec, 13,808 bytes
+%  library(url) compiled into url 0.00 sec, 123,664 bytes
+%   library(readutil) compiled into read_util 0.00 sec, 16,808 bytes
+%   library(socket) compiled into socket 0.00 sec, 11,384 bytes
+%   library(base64) compiled into base64 0.00 sec, 17,688 bytes
+%  library(http/http_open) compiled into http_open 0.00 sec, 104,504 bytes
+% library(thea2/owl2_from_rdf) compiled into owl2_from_rdf 0.14 sec, 1,047,096 bytes
+% Parsed "waysoforderservice.owl" in 0.00 sec; 0 triples
+% Parsed "service.owl" in 0.00 sec; 0 triples
+% Parsed "process.owl" in 0.05 sec; 0 triples
+% Parsed "expression.owl" in 0.02 sec; 0 triples
+% Parsed "objectlist.owl" in 0.00 sec; 0 triples
+% Parsed "profile.owl" in 0.02 sec; 0 triples
+% Parsed "grounding.owl" in 0.02 sec; 0 triples
+% Parsed "books.owl" in 0.03 sec; 0 triples
+% Parsed "simplified_sumo.owl" in 0.06 sec; 0 triples
+% Parsed "finance_th_web.owl" in 0.06 sec; 0 triples
+true.
+
+------------------------------------------
+
+% library(win_menu) compiled into win_menu 0.00 sec, 21,016 bytes
+% library(swi_hooks) compiled into pce_swi_hooks 0.00 sec, 3,784 bytes
+% The graphical front-end will be used for subsequent tracing
+% c:/users/thiago/appdata/roaming/swi-prolog/pl.ini compiled 0.11 sec, 1,507,968 bytes
+%  library(thea2/owl2_model) compiled into owl2_model 0.02 sec, 116,816 bytes
+%  library(thea2/owl2_io) compiled into owl2_io 0.00 sec, 19,208 bytes
+% d:/SVNs/svn.gprt.ufpe.br/ascman/src/prolog/PrologDiscovery/testcase.pl compiled 0.02 sec, 140,584 bytes
+XPCE 6.6.66, July 2009 for Win64: XP 64-bit edition
+Copyright (C) 1993-2009 University of Amsterdam.
+XPCE comes with ABSOLUTELY NO WARRANTY. This is free software,
+and you are welcome to redistribute it under certain conditions.
+The host-language is SWI-Prolog version 5.11.13
+
+For HELP on prolog, please type help. or apropos(topic).
+         on xpce, please type manpce.
+
+1 ?- load_both.
+%     library(option) compiled into swi_option 0.00 sec, 14,240 bytes
+%    library(sgml) compiled into sgml 0.02 sec, 53,704 bytes
+%     rewrite compiled into rewrite 0.00 sec, 12,352 bytes
+%     library(uri) compiled into uri 0.02 sec, 13,984 bytes
+%     library(record) compiled into record 0.00 sec, 30,232 bytes
+%    rdf_parser compiled into rdf_parser 0.02 sec, 122,864 bytes
+%     library(gensym) compiled into gensym 0.00 sec, 4,600 bytes
+%    rdf_triple compiled into rdf_triple 0.02 sec, 36,656 bytes
+%   library(rdf) compiled into rdf 0.05 sec, 246,560 bytes
+%    library(assoc) compiled into assoc 0.02 sec, 35,776 bytes
+%   library(sgml_write) compiled into sgml_write 0.02 sec, 95,248 bytes
+%   library(nb_set) compiled into nb_set 0.00 sec, 6,184 bytes
+%    library(filesex) compiled into files_ex 0.00 sec, 10,880 bytes
+%   rdf_cache compiled into rdf_cache 0.00 sec, 30,360 bytes
+%  library(semweb/rdf_db) compiled into rdf_db 0.09 sec, 586,008 bytes
+%  library(semweb/rdf_edit) compiled into rdf_edit 0.00 sec, 78,016 bytes
+%  library(semweb/rdfs) compiled into rdfs 0.00 sec, 29,192 bytes
+%   library(utf8) compiled into utf8 0.00 sec, 13,808 bytes
+%  library(url) compiled into url 0.00 sec, 123,664 bytes
+%   library(readutil) compiled into read_util 0.00 sec, 16,808 bytes
+%   library(socket) compiled into socket 0.00 sec, 11,384 bytes
+%   library(base64) compiled into base64 0.00 sec, 17,688 bytes
+%  library(http/http_open) compiled into http_open 0.02 sec, 104,504 bytes
+% library(thea2/owl2_from_rdf) compiled into owl2_from_rdf 0.12 sec, 1,047,096 bytes
+% Parsed "booktopublisherservice.owl" in 0.00 sec; 0 triples
+% Parsed "service.owl" in 0.00 sec; 0 triples
+% Parsed "process.owl" in 0.08 sec; 0 triples
+% Parsed "expression.owl" in 0.02 sec; 0 triples
+% Parsed "objectlist.owl" in 0.00 sec; 0 triples
+% Parsed "profile.owl" in 0.00 sec; 0 triples
+% Parsed "grounding.owl" in 0.03 sec; 0 triples
+% Parsed "books.owl" in 0.05 sec; 0 triples
+% Parsed "simplified_sumo.owl" in 0.02 sec; 0 triples
+% Parsed "waysoforderservice.owl" in 0.00 sec; 0 triples
+% Parsed "service.owl" in 0.00 sec; 0 triples
+% Parsed "process.owl" in 0.00 sec; 0 triples
+% Parsed "expression.owl" in 0.00 sec; 0 triples
+% Parsed "objectlist.owl" in 0.00 sec; 0 triples
+% Parsed "profile.owl" in 0.00 sec; 0 triples
+% Parsed "grounding.owl" in 0.00 sec; 0 triples
+% Parsed "books.owl" in 0.02 sec; 0 triples
+% Parsed "simplified_sumo.owl" in 0.06 sec; 0 triples
+% Parsed "finance_th_web.owl" in 0.06 sec; 0 triples
+ERROR: Unhandled exception: Unknown message: owl2_io(cannot parse fmt for,http://testbed1.gprt.ufpe.br/~ascman/owls-tc4-swrl/services/1.2/WaysOfOrderService.owl,owl,[imports(true)])

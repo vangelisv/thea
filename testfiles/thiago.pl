@@ -74,6 +74,7 @@ Start = 60 ;
 X = 'http://testbed1.gprt.ufpe.br/~ascman/owls-tc4-swrl/ontology/books.owl#B',
 Start = 60 .
 */
+
 % :- assert(library_directory('C:/SW/Development/PL/')).
 
 :- use_module(library(thea2/owl2_model)).
