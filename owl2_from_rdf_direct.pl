@@ -3,7 +3,8 @@
 :- module(owl2_from_rdf_direct,
           [
            nc2owl/2,
-           transitive_nc2owl/2
+           transitive_nc2owl/2,
+           nc2owl_closure/2
            ]).
 
 :- use_module(owl2_model).
@@ -63,7 +64,16 @@
 
 owl2_io:load_axioms_hook(File,rdf,Opts) :-
         debug(owl,'loading: ~w',[File]),
-        rdf_load(File,Opts).
+        rdf_load(File,Opts),
+        !.
+
+owl2_io:load_axioms_hook(File,rdf_direct,_Opts) :-
+        debug(owl,'loading: ~w',[File]),
+        rdf_load(File,[]),
+        debug(owl,'loaded: ~w',[File]),
+        !.
+
+
 
 % ----------------------------------------
 % BRIDGE TO SEMWEB
@@ -405,7 +415,9 @@ transitive_nc2owl([URI|URIs],AllAxioms,Visited) :-
         append(Axioms,Axioms2,AllAxioms).
 transitive_nc2owl([],[],_).
 
-/*
+% assume closure of subclassof has been calculated in triplestore
+nc2owl_closure(ID,Axiom) :-
+        nc2owl(ID,Axiom).
 nc2owl_closure(ID,Axiom) :-
         ensure_loaded(semweb(sparql_client)),
         (   sub_atom(ID,_,_,_,:)
@@ -417,12 +429,18 @@ nc2owl_closure(ID,Axiom) :-
         findall(R,
                 sparql_query(Q,R,[search([format='application/rdf+xml'])]),
                 Triples),
-        triples_to_owl_axiom(Triples,Axiom).
-*/
+        add_triples_to_owl_axiom(Triples,Axiom).
 
 
 
 triples_to_owl_axiom(Triples,A) :-
+        nb_setval(rdf_result_set,Triples),
+        %writeln(triples=Triples),
+        phrase(owl_axiom(A),_).
+
+add_triples_to_owl_axiom(Triples1,A) :-
+        nb_getval(rdf_result_set,Triples2),
+        append(Triples1,Triples2,Triples),
         nb_setval(rdf_result_set,Triples),
         %writeln(triples=Triples),
         phrase(owl_axiom(A),_).

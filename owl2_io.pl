@@ -55,7 +55,7 @@ load_axioms(File,Fmt,Opts) :-
 load_axioms(File,Fmt,Opts) :-
         load_handler(read,Fmt),
         load_axioms_hook(File,Fmt,Opts),
-        debug(load,'no hook for: ~w',[Fmt]),
+        debug(load,'used hook for: ~w',[Fmt]),
         !.
 load_axioms(File,Fmt,Opts) :-
         throw(owl2_io('cannot parse fmt for',File,Fmt,Opts)).
@@ -150,8 +150,17 @@ convert_axioms(FileIn,FmtIn,FileOut,FmtOut,Opts) :-
 
 % TODO - check if this is the best way of doing this
 load_handler(Dir,Fmt) :-
-        forall(format_module(Dir,Fmt,Mod),
-	       ensure_loaded(library(thea2/Mod))).
+        findall(Mod,format_module(Dir,Fmt,Mod),Mods),
+        load_thea_modules(Mods),
+        debug(load,'loaded handlers: ~w',[Mods]).
+
+load_thea_modules([]).
+load_thea_modules([Mod|Mods]) :- 
+        ensure_loaded(library(thea2/Mod)),
+        load_thea_modules(Mods).
+
+        
+
 
 guess_format(File,Fmt,_Opts) :-
         atomic_list_concat(Toks,'.',File),
@@ -179,6 +188,7 @@ format_module(read,rdf,owl2_from_rdf).
 format_module(read,owl,owl2_from_rdf).
 format_module(read,owl2,owl2_from_rdf).
 format_module(read,ttl,owl2_from_rdf).
+format_module(read,rdf_direct,owl2_from_rdf_direct).
 format_module(read,xml,owl2_xml).
 format_module(read,owlx,owl2_xml).
 format_module(read,owlms,owl2_manchester_parser).
