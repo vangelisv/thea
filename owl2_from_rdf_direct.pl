@@ -4,7 +4,8 @@
           [
            nc2owl/2,
            transitive_nc2owl/2,
-           nc2owl_closure/2
+           nc2owl_closure/2,
+           materialize_owl_from_rdf
            ]).
 
 :- use_module(owl2_model).
@@ -31,7 +32,7 @@
   from the graph. It remains to be seen how best to deal with this. One option is to have the direct
   mapping have an OWL2-Full flavour, and include all triples as propertyAssertion/3 facts.
   Another option is to use the same code for both materialization and dynamic projection.
-  See materialize_owl_model/0 for materialization, as in the current Thea rdf module.
+  See materialize_owl_from_rdf/0 for materialization, as in the current Thea rdf module.
 
   To obtain a more declarative flavour, this module makes use of term expansion.
   See inline docs for more details.
@@ -99,13 +100,13 @@ triple(S,P,O,Triples,_) :- nb_current(rdf_result_set,Triples),member(rdf(S,P,O),
 % ----------------------------------------
 
 
-%% materialize_owl_model
+%% materialize_owl_from_rdf
 %
 % consume all triples and populate an owl2_model.
 % an rdf_db instance must be loaded.
 % analagous to current behavior in Thea.
 % TODO - optionally abolish preds before materializing
-materialize_owl_model :-
+materialize_owl_from_rdf :-
         forall(owl_ontology_axiom_triples(Ont,Ax,Triples),
                materialize_owl_axiom(Ont,Ax,Triples)).
 
