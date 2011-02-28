@@ -1,6 +1,6 @@
-:- use_module(library('thea2/owl2_model')).
-:- use_module(library('thea2/owl2_io')).
-:- use_module(library('thea2/owl2_basic_reasoner')).
+:- use_module(library(thea2/owl2_model)).
+:- use_module(library(thea2/owl2_io)).
+:- use_module(library(thea2/owl2_graph_reasoner)).
 
 %% ontology_references_class_in(?O,?C,?O2)
 % true of O contains an axiom that references C, and C is declared in O2
@@ -14,7 +14,7 @@ ontology_references_class_in(O,C,O2) :-
         O2\=O.
 
 %% mireot(LocalOnt,ExtOnt,Strategy)
-% bring in all referenced classes from O2 into O
+% bring in all referenced classes from ExtOnt into LocalOnt
 mireot(O,O2,Strategy) :-
         setof(ref(O,C,O2),
               ontology_references_class_in(O,C,O2),
@@ -33,9 +33,9 @@ mireot_extend_refs(O,O2,Refs,CA,lca) :-
         member(O-C1-O2,Refs),
         member(O-C2-O2,Refs),
         least_common_ancestor(C1,C2,CA).
-mireot_extend_refs(O,O2,Refs,CA,ancestor) :-
-        member(O-C-O2,Refs),
-        entailed(subClassOf(X,A)).
+%mireot_extend_refs(O,O2,Refs,CA,ancestor) :-
+%        member(O-C-O2,Refs),
+%        entailed(subClassOf(X,A)).
 
 mireot_class(O,C,O2) :-
         assert_axiom(class(C),O),
@@ -71,6 +71,19 @@ least_common_ancestor(X,Y,A) :-
        A2\=A,
        entailed(subClassOf(A2,A)))).
 
+extract_ontology_subset(Obj,Ont) :-
+        debug(mireot,'getting subset',[]),
+        findall(P,class_ancestor(Obj,P),Set),
+        debug(mireot,'finding axioms',[]),
+        findall(Ax,(member(P,Set),
+                    axiom_directly_about(Ax,P),
+                    debug(mireot,'  checking: ~w',[Ax]),
+                    forall((axiom_references(Ax,P2),class(P2)),
+                           member(P2,Set))),
+               Axs),
+        debug(mireot,'asserting axioms',[]),
+        forall(member(Ax,Axs),
+               assert_axiom(Ax,Ont)).
 
 /** <module> referencing external ontology terms
 

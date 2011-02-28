@@ -223,6 +223,11 @@ owl2_export_axiom(equivalentClasses([X,Y]),main_triple(Tx,'owl:equivalentClass',
 	owl2_export_axiom(Y,main_triple(Ty,_,_)),!,
 	owl_rdf_assert(Tx,'owl:equivalentClass',Ty).
 
+owl2_export_axiom(equivalentClasses(L),main_triple(Tx,'owl:equivalentClass',Ty)) :-
+	owl2_export_axiom(X,main_triple(Tx,_,_)),
+	owl2_export_axiom(Y,main_triple(Ty,_,_)),!,
+	owl_rdf_assert(Tx,'owl:equivalentClass',Ty).
+
 owl2_export_axiom(disjointClasses([X,Y]),main_triple(Tx,'owl:disjointWith',Ty)) :-
 	owl2_export_axiom(X,main_triple(Tx,_,_)),
 	owl2_export_axiom(Y,main_triple(Ty,_,_)),!,

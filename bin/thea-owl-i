@@ -344,6 +344,8 @@ arg_info(popl-file,file,'file containing POPL directives').
 
 parse_arg(['--mireot',Ext,into,Local|L],L,mireot(Local,Ext)) :-
         ensure_loaded(library(thea2/apps/mireot)).
+parse_arg(['--extract-subset',Obj,into,Ont|L],L,goal(extract_ontology_subset(Obj,Ont))) :-
+        consult(library(thea2/apps/mireot/mireot)).
 
 parse_arg(['--query',select,TA,where,GA|L],L,query(T,G)) :- sformat(A,'q((~w),(~w))',[TA,GA]),atom_to_term(A,q(T,G),_).
 parse_arg(['--query',GA|L],L,query(T,G)) :- atom_to_term(GA,G-T,_).

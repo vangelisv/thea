@@ -335,11 +335,13 @@ translate_conn_to_class_expression(value-Prop,Parent,hasValue(Prop,Parent)) :- !
 % a time, finding the parents of this node, and putting the resulting edge in the list of accumulated results,
 % and adding the parents to the list of scheduled nodes.
 entities_ancestors([Class-Conns|ScheduledCCPairs],Visisted,ResultCCPairs,FinalCCPairs) :-
+	debug(graph_reasoner,'  finding_ancs(~w)',[Class]),
 	setof(Parent-NewConns,
               (   entity_parent_chain(Class,Parent,Conns,NewConns),
                   \+ord_memberchk(Parent,Visisted)),
               NextCCPairs),
 	!,
+	debug(graph_reasoner,'  DONE: finding_ancs(~w)',[Class]),
 	ord_union(ResultCCPairs,NextCCPairs,ResultCCPairsNew),
         ord_union(ScheduledCCPairs,NextCCPairs,NewScheduledCCPairs),
 	entities_ancestors(NewScheduledCCPairs,[Class|Visisted],ResultCCPairsNew,FinalCCPairs).

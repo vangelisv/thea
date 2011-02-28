@@ -214,6 +214,34 @@ object_tree_link(allValuesFrom(P,Y),Y,only-P).
 object_tree_link(X,Y,P) :- propertyAssertion(P,X,Y),atom(Y). % config?
 object_tree_link(X,Y,inst) :- classAssertion(Y,X),\+builtin_class(Y).
 
+% ----------------------------------------
+% MESSAGES
+% ----------------------------------------
+
+:- multifile prolog:message//1.
+prolog:message(owlfmt(Fmt,Args)) -->
+        {findall(Arg2,(member(Arg,Args),
+                     owlpp(Arg,[],Toks,[]),
+                     atomic_list_concat(Toks,Arg2)),
+                 Args2),
+         sformat(Out,Fmt,Args2)},
+         [Out].
+
+prolog:message(owlpp(A)) --> owlpp(A,[]).
+prolog:message(owlpp(A,Opts)) --> owlpp(A,Opts).
+
+owlpp(A,Opts) --> {\+atom(A),A=..[P,Arg],!},owlpp(P,Opts),spc,owlpp(Arg,Opts).
+owlpp(A,Opts) --> {\+atom(A),A=..[P|Args],!},owlpp_args(P,Args,Opts).
+owlpp(A,_Opts) --> {atom(A),labelAnnotation_value(A,V)},!,owlpp_iri(A),spc,owlpp_qt(V).
+owlpp(A,_Opts) --> [A].
+
+owlpp_args(_,[],_) --> !,[].
+owlpp_args(_,[A],Opts) --> !,owlpp(A,Opts).
+owlpp_args(P,[A|Args],Opts) --> !,owlpp(A,Opts),spc,owlpp(P,Opts),spc,owlpp_args(P,Args,Opts).
+
+owlpp_iri(A) --> ['<',A,'>'].
+owlpp_qt(A) --> ['\'',A,'\''].
+spc --> [' '].
 
 
 
@@ -221,5 +249,5 @@ object_tree_link(X,Y,inst) :- classAssertion(Y,X),\+builtin_class(Y).
 
 
 
-        
+
 

@@ -53,6 +53,7 @@
            transitiveProperty/1,
            hasKey/2,
            fact/1,
+           individualAxiom/1,
            sameIndividual/1,
            differentIndividuals/1,
            classAssertion/2,
@@ -568,6 +569,14 @@ fact(sameIndividual(A)) :- sameIndividual(A).
 fact(classAssertion(A, B)) :- classAssertion(A, B).
 axiom_arguments(fact,[axiom]).
 valid_axiom(fact(A)) :- subsumed_by([A],[axiom]).
+
+%% individualAxiom(?Axiom)
+individualAxiom(differentIndividuals(A)) :- differentIndividuals(A).
+individualAxiom(negativePropertyAssertion(A, B, C)) :- negativePropertyAssertion(A, B, C).
+individualAxiom(propertyAssertion(A, B, C)) :- propertyAssertion(A, B, C).
+individualAxiom(sameIndividual(A)) :- sameIndividual(A).
+individualAxiom(classAssertion(A, B)) :- classAssertion(A, B).
+
 
 %% sameIndividual(?Individuals:set(Individual))
 % An individual equality axiom SameIndividual( a1 ... an ) states that all of the individuals ai, 1 <= i <= n, are equal to each other.

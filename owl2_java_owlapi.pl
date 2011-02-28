@@ -103,6 +103,7 @@ build_ontology(Man,Fac,Ont,Opts) :-
                add_axiom(Man,Fac,Ont,Ax,_)),
         debug(owl2,'Built ontology',[]).
 build_ontology(Man,Fac,Ont,Opts) :-
+        % example: filter(Axiom,axiom_profile(Axiom,owl2_EL))
         memberchk(filter(Ax,FilterGoal),Opts),
         !,
         require_manager(Man),
@@ -269,6 +270,13 @@ nodeset_entity(NodeSet,E) :-
         ->  fail
         ;   maplist(java_namedentity,Es,PEs),
             E=equivalentClasses(PEs)).
+
+node_entity(Node,E) :-
+        jpl_call(Node,getEntities,[],ESet),
+        jpl_call(ESet,toArray,[],EArr),
+        jpl_array_to_list(EArr,JEs),
+        member(JE,JEs),
+        java_namedentity(JE,E).
 
 %% ecsets_class(+JPSetSet,?P) is nondet
 % Set<Set<OWLClass>> --> class expression
@@ -467,9 +475,8 @@ reasoner_equivalent_to(R,Fac,C,P) :-
         ->  is_class(C)
         ;   true),
         owlterm_java(Fac,_,class(C),JC),
-        jpl_call(R,getEquivalentClasses,[JC],JPSet),
-        jset_member(JPSet,JP),
-        java_namedentity(JP,P).
+        jpl_call(R,getEquivalentClasses,[JC],JP),
+        node_entity(JP,P).
 
 %% add_axiom(+Manager,+Factory,+Ont,+Axiom,?Obj) is det
 % adds an axiom to Ont from the prolog databases
@@ -485,6 +492,8 @@ add_axiom(Manager,Factory,Ont,Axiom,JAx) :-
             jpl_call(Manager,applyChange,[AddAxiom],_)),
         debug(owl2,' added axiom ~w = ~w',[Axiom,JAx]),
         !.
+add_axiom(_,_,_,Axiom,_) :-
+        throw(error(add_axiom(Axiom))).
 
 
 %% owlterm_java(+Factory,?Type,+OWLTerm,?Obj) is det
@@ -813,6 +822,7 @@ decl_method(annotationProperty,getOWLAnnotationProperty,iri).
 decl_method(dataType,getOWLDatatype,datatype).
 decl_method(dataProperty,getOWLDataProperty,_).
 decl_method(individual,getOWLNamedIndividual,_). % anonymous individuals?
+decl_method(namedIndividual,getOWLNamedIndividual,_). % anonymous individuals?
 decl_method(entity,getOWLNamedIndividual,_). % anonymous individuals?
 
 :- discontiguous axiom_method/2,axiom_method/4.
@@ -964,6 +974,10 @@ owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),subClassOf(A,B),IsD
 
 owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),directSubClassOf(A,B)) :-
 	reasoner_subClassOf(R,Fac,A,B,true),
+        \+ nothing(A).
+
+owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),equivalentClasses([A,B])) :-
+	reasoner_equivalent_to(R,Fac,A,B),
         \+ nothing(A).
 
 owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),classAssertion(C,I)) :-

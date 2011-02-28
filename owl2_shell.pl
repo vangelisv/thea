@@ -342,6 +342,11 @@ label2iri(X,X).
 shcol(Num) :-  format('\033['),write(Num),write(m).
 shnocol :- shcol(0).
 
+% ----------------------------------------
+% MESSAGES
+% ----------------------------------------
+
+:- multifile prolog:message//1.
 prolog:message(thea_shell_welcome) -->
                ['%  ::: Welcome to Posh, the Prolog OWL Shell :::'].
 
