@@ -184,11 +184,11 @@ suffix_format(owlapi,owlapi).
 suffix_format(obo,obo).
 
 :- multifile format_module/3.
-format_module(read,rdf,owl2_from_rdf).
+format_module(read,rdf,owl2_rdf). % NEW - experimental
 format_module(read,owl,owl2_from_rdf).
 format_module(read,owl2,owl2_from_rdf).
 format_module(read,ttl,owl2_from_rdf).
-format_module(read,rdf_direct,owl2_from_rdf_direct).
+format_module(read,rdf_direct,owl2_rdf).
 format_module(read,xml,owl2_xml).
 format_module(read,owlx,owl2_xml).
 format_module(read,owlms,owl2_manchester_parser).
@@ -199,6 +199,8 @@ format_module(read,owlapi,owl2_java_owlapi).
 format_module(read,owlapi(_),owl2_java_owlapi).
 format_module(read,obo,owl2_obo_parser).
 
+format_module(write,rdf,owl2_rdf). % NEW - experimental
+format_module(write,rdf_direct,owl2_rdf).
 format_module(write,owl,owl2_export_rdf).
 format_module(write,owlx,owl2_xml).
 format_module(write,ttl,owl2_export_rdf).

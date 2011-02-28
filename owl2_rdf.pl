@@ -1,6 +1,6 @@
 % * -*- Mode: Prolog -*- */
 
-:- module(owl2_from_rdf_direct,
+:- module(owl2_rdf,
           [
            owl_axiom_to_triples/2,
            materialize_owl_from_rdf,
@@ -77,9 +77,9 @@
 
 :- multifile owl_parse_axiom_hook/3.
 
-owl2_io:load_axioms_hook(File,rdf,Opts) :-
+owl2_io:load_axioms_hook(File,rdf,_Opts) :-
         debug(owl,'loading (rdf direct): ~w',[File]),
-        rdf_load(File,Opts),
+        rdf_load(File,[]),
         debug(owl,'loaded: ~w',[File]),
         !.
 
@@ -103,8 +103,8 @@ owl2_io:load_axioms_hook(File,rdf_direct,_Opts) :-
 %% triple//4
 % 
 % generates a single triple, if that triple is in the database
-triple(S,P,O,in) --> {rdf(S,P,O),\+consumed(S,P,O)},[rdf(S,P,O,_)].
-triple(S,P,O,out(Src)) --> [rdf(S,P,O,Src)].
+triple(S,P,O,in) --> {rdf(S,P,O),\+consumed(S,P,O)},[rdf(S,P,O)].
+triple(S,P,O,out(_Src)) --> [rdf(S,P,O)].
 
 % hacky way to temporily project triples - e.g. from sparql results
 triple(S,P,O,in,Triples,_) :- nb_current(rdf_result_set,Triples),member(rdf(S,P,O),Triples).
@@ -116,7 +116,6 @@ optional_triple(_,_,_,_) --> [].
 % ----------------------------------------
 % MATERIALIZATION
 % ----------------------------------------
-
 
 %% materialize_owl_from_rdf
 %
@@ -133,7 +132,7 @@ materialize_owl_axiom(Ont,Ax,Triples) :-
         mark_consumed(Triples).
 
 mark_consumed([]) :- !.
-mark_consumed([rdf(S,P,O,_)|T]) :-
+mark_consumed([rdf(S,P,O)|T]) :-
         mark_consumed(S,P,O),
         mark_consumed(T).
 mark_consumed(S,P,O) :- assert(consumed(S,P,O)).
@@ -143,7 +142,6 @@ mark_consumed(S,P,O) :- assert(consumed(S,P,O)).
 % ----------------------------------------
 
 owl_axiom_to_triples(Axiom,Triples) :- phrase(owl_axiom(Axiom,out(x)),Triples).
-
 
 % ----------------------------------------
 % MAPPING OF AXIOMS
@@ -200,6 +198,19 @@ owl_axiom(objectProperty(A),M) --> triple(A,rdf:type,owl:'ObjectProperty',M).
 owl_axiom(dataProperty(A),M) --> triple(A,rdf:type,owl:'DataProperty',M).
 owl_axiom(annotationProperty(A),M) --> triple(A,rdf:type,owl:'AnnotationProperty',M).
 owl_axiom(namedIndividual(A),M) --> triple(A,rdf:type,owl:'NamedIndividual',M).
+
+% 3.1 Extracting Declarations and the IRIs of the Directly Imported Ontology Documents
+% This section specifies the result of step CP-2.2 of the canonical parsing process on an RDF graph G
+
+
+% 3.1.2 Parsing of the Ontology Header and Declarations
+
+%  Table 4.
+owl_axiom(ontology(O),M) -->                triple(O,rdf:type,owl:'Ontology',M).
+owl_axiom(ontologyImport(O,IRI),M) -->      triple(O,owl:imports,IRI,M).
+owl_axiom(ontologyVersionInfo(O,IRI),M) --> triple(O,owl:versionInfo,IRI,M).
+
+
 
 % -- CLASS AXIOMS --
 % these typically generate multiple triples, where arguments are compound terms generated from bNodes
@@ -301,7 +312,7 @@ owl_axiom(propertyAssertion(PX,A,B),M) -->
         owl_property_expression(P, PX,M),
         {\+ builtin(PX)}.
 
-owl_parse_axiom(negativePropertyAssertion(PX,A,B),M) -->
+owl_axiom(negativePropertyAssertion(PX,A,B),M) -->
         triple(X,rdf:type,owl:'NegativePropertyAssertion',M),
         triple(X,owl:sourceIndividual,A,M),
         triple(X,owl:assertionProperty,P,M),
