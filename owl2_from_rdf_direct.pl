@@ -74,8 +74,6 @@ owl2_io:load_axioms_hook(File,rdf_direct,_Opts) :-
         debug(owl,'loaded: ~w',[File]),
         !.
 
-
-
 % ----------------------------------------
 % BRIDGE TO SEMWEB
 % ----------------------------------------
@@ -91,7 +89,13 @@ owl2_io:load_axioms_hook(File,rdf_direct,_Opts) :-
 % 
 % generates a single triple, if that triple is in the database
 triple(S,P,O) --> {rdf(S,P,O),\+consumed(S,P,O)},[rdf(S,P,O,_)].
+
+% hacky way to temporily project triples - e.g. from sparql results
 triple(S,P,O,Triples,_) :- nb_current(rdf_result_set,Triples),member(rdf(S,P,O),Triples).
+
+optional_triple(S,P,O) --> triple(S,P,O),!.
+optional_triple(_,_,_) --> [].
+
 
 %triple(S,P,O,Triples,_) :- ground(Triples),member(rdf(S,P,O),Triples).
 
@@ -178,25 +182,96 @@ owl_axiom(namedIndividual(A)) --> triple(A,rdf:type,owl:'NamedIndividual').
 
 % -- CLASS AXIOMS --
 % these typically generate multiple triples, where arguments are compound terms generated from bNodes
-owl_axiom(subClassOf(A,B)) --> triple(Ax,rdfs:subClassOf,Bx),owl_description(Ax,A),owl_description(Bx,B).
+owl_axiom(subClassOf(AX,BX)) --> triple(A,rdfs:subClassOf,B),owl_description(A,AX),owl_description(B,BX).
 
-owl_axiom(equivalentClasses([A,B])) -->
-%        {trace},
-        triple(Ax,owl:equivalentClass,Bx),owl_description(Ax,A),owl_description(Bx,B). % TODO
-%owl_axiom(equivalentClasses(L)) -->
-%        asserted_equivalent_to(A,B), % TODO - DOES NOT HAVE MAIN TRIPLE!! NEED A GENERIC WAY OF HANDLING THESE
-%        maximal_equivalence_set(L,[A,B]). % todo - eliminate duplicates
+owl_axiom(equivalentClasses([AX,BX])) -->
+        % always make pairwise axioms: in future we can add a collection capability
+        triple(A,owl:equivalentClass,B),owl_description(A,AX),owl_description(B,BX). % TODO
 
-owl_axiom(disjointClasses(A,B)) --> triple(Ax,owl:disjointWith,Bx),owl_description(Ax,A),owl_description(Bx,B).
-% TODO owl:AllDisjointClasses
-% TODO owl:disjointUnion
+owl_axiom(disjointClasses([AX,BX])) -->
+        % TODO - collapse
+        triple(A,owl:disjointWith,B),owl_description(A,AX),owl_description(B,BX).
+owl_axiom(disjointUnion(AX,LX)) -->
+        triple(A,owl:disjointUnionOf,L),
+        owl_description(A,AX),owl_description_list(L,LX).
 
 % -- PROPERTY AXIOMS --
-owl_axiom(subPropertyOf(A,B)) --> triple(A,rdfs:subPropertyOf,B).
-% TODO owl:propertyChainAxiom
+owl_axiom(subPropertyOf(PX,QX)) -->
+        triple(P,rdfs:subPropertyOf,Q),
+        owl_property_expression(P,PX),
+        owl_property_expression(Q,QX).
+
+owl_axiom(subPropertyOf(propertyChain(PL),QX)) -->
+	triples(Q,owl:propertyChainAxiom,L1),
+	owl_property_list(L1,PL),
+        owl_property_expression(Q,QX).
+
+owl_axiom(disjointProperties([PX,QX])) -->
+        % TODO - check previous module
+        triple(P,owl:propertyDisjointWith,Q),
+        owl_property_expression(P,PX),
+        owl_property_expression(Q,QX).
+
+owl_axiom(disjointProperties(L)) -->
+        triple(P,rdf:type,owl:'AllDisjointProperties'),
+        triple(P,owl:members,L1),
+        owl_property_list(L1,L).
+
+owl_axiom(propertyDomain(PX,CX)) -->
+        triple(P,rdfs:domain,Q),
+        owl_property_expression(P,PX),
+        owl_description(C,CX).
+
+owl_axiom(propertyRange(PX,CX)) -->
+        triple(P,rdfs:range,Q),
+        owl_property_expression(P,PX),
+        owl_description(C,CX).
+
+owl_axiom(inverseProperties(PX,QX)) -->
+        % TODO - check previous module
+        triple(P,owl:inverseOf,Q),
+        owl_property_expression(P,PX),
+        owl_property_expression(Q,QX).
+
+owl_axiom(functionalProperty(P)) --> triple(P,rdf:type,owl:'FunctionalProperty').
+owl_axiom(inverseFunctionalProperty(P)) --> triple(P,rdf:type,owl:'InverseFunctionalProperty').
+owl_axiom(reflexiveProperty(P)) --> triple(P,rdf:type,owl:'ReflexiveProperty').
+owl_axiom(irreflexiveProperty(P)) --> triple(P,rdf:type,owl:'IrreflexiveProperty').
+owl_axiom(symmetricProperty(P)) --> triple(P,rdf:type,owl:'SymmetricProperty').
+owl_axiom(asymmetricProperty(P)) --> triple(P,rdf:type,owl:'AsymmetricProperty').
+owl_axiom(transitiveProperty(P)) --> triple(P,rdf:type,owl:'TransitiveProperty').
+
+owl_axiom(hasKey(CX,L)) -->
+	triple(C,owl:hasKey,L1),
+	owl_description(C,CX),
+        L1 = [_,_|_],           % length >= 2
+        owl_property_list(L1,L).
+
+% --- Individual Axioms ---
+
+owl_axiom(sameIndividual([X,Y])) -->        triple(X,owl:sameAs,Y).
+
+
+owl_axiom(differentIndividuals([X,Y])) --> triple(X,owl:differentFrom,Y).
+
+owl_axiom(differentIndividuals(L)) -->
+	triple(X,rdf:type,owl:'AllDifferent'),
+	triple(X,owl:distinctMembers,L1), % todo - check if variant deprecated
+        owl_individual_list(L1,L).
+
+owl_axiom(differentIndividuals(L)) -->
+	triple(X,rdf:type,owl:'AllDifferent'),
+	triple(X,owl:members,L1), % todo - check if variant deprecated
+        owl_individual_list(L1,L).
+
+
+
 % TODO - everything else
 
-% -- ANNOTATION AXIOMS --
+% ----------------------------------------
+% Table 17. Parsing of Annotated Axioms
+% ----------------------------------------
+
 owl_axiom(annotationAssertion(P,A,B)) --> triple(A,P,B),{is_annotationProperty(P)}.
 
 % TODO
@@ -205,17 +280,35 @@ owl_axiom(propertyAssertion(PX,A,B)) -->
         owl_property_expression(P, PX),
         {\+ builtin(PX)}.
 
+owl_parse_axiom(negativePropertyAssertion(PX,A,B)) -->
+        triple(X,rdf:type,owl:'NegativePropertyAssertion'),
+        triple(X,owl:sourceIndividual,A),
+        triple(X,owl:assertionProperty,P),
+        triple(X,owl:targetValue,B),
+        owl_property_expression(P,PX).
+
+owl_axiom(classAssertion(CX,I)) -->
+        triple(I,rdf:type,C),
+        {\+ builtin(CX)}.
+
 :- rdf_meta builtin(r).
 builtin(rdfs:subClassOf).
 builtin(rdf:type).
+builtin(X) :- rdf_global_id(rdf:_.X).
+builtin(X) :- rdf_global_id(rdfs:_.X).
+builtin(X) :- rdf_global_id(owl:_.X).
+
 
 :- rdf_meta is_annotationProperty(r).
 is_annotationProperty(rdfs:label).
 is_annotationProperty(rdfs:comment).
 is_annotationProperty(P) :- annotationProperty(P).
 
+% Parsing annotationAssertions - TODO
 
-asserted_equivalent_to(A,B) --> triple(Ax,owl:equivalentClass,Bx),owl_description(Ax,A),owl_description(Bx,B).
+% Table 18. Parsing of Axioms for Compatibility with OWL DL - TODO
+
+asserted_equivalent_to(AX,BX) --> triple(A,owl:equivalentClass,B),owl_description(A,AX),owl_description(B,BX).
 maximal_equivalence_set(EqL,SeedL) --> {member(A,SeedL)},(asserted_equivalent_to(A,B);asserted_equivalent_to(B,A)),{\+member(B,SeedL)},!,maximal_equivalence_set(EqL,[B|SeedL]).
 maximal_equivalence_set(EqSet,EqL) --> {sort(EqL,EqSet)},[]. % impossible to add more members; this is the maximal set
 
@@ -267,17 +360,44 @@ owl2_model:axiomAnnotation(Ax,AP,AV) :-
 
 owl_description(X,X) --> {\+rdf_is_bnode(X)},!,[].
 
+% Table 12. Parsing of Data Ranges
+% TODO
+
+% ----------------------------------------
+% Table 13. Parsing of Class Expressions
+% ----------------------------------------
+
 owl_description(D,intersectionOf(L)) -->
 	triple(D,owl:intersectionOf,L1),
 	owl_description_list(L1,L),
 	{\+L = []}.
+owl_description(D,unionOf(L)) -->
+	triple(D,owl:unionOf,L1),
+	owl_description_list(L1,L),
+	{\+L = []}.
+owl_description(D,complementOf(Y)) -->
+	triple(D,owl:complementOf,X),
+	owl_description(X,Y),
+owl_description(D,oneOf(L)) -->
+	triple(D,owl:oneOf,L1),
+	optional_triple(D,rdf:type,owl:'Class'),
+	owl_individual_list(L1,L).
 
+owl_description(D,datatypeRestriction(DY,L)) :-
+	triple(D,rdf:type,rdfs:Datatype),
+	triple(D,owl:onDatatype,Y),
+	owl_datarange(Y,DY),
+	triple(D,owl:withRestrictions,L1,),
+	owl_datatype_restriction_list(L1,L).
+
+% Restrictions
 owl_description(D,Restriction) -->
 	owl_restriction(D, Restriction).
 
 owl_restriction(Element,Restriction) -->
 	triple(Element,rdf:type,owl:'Restriction'),
 	triple(Element,owl:onProperty,PropertyID),
+        % todo: need onProperties? see from_rdf.pl
 	owl_restriction_type(Element,PropertyID, Restriction).
 
 owl_restriction_type(E, P, someValuesFrom(PX, DX)) -->
@@ -290,7 +410,6 @@ owl_restriction_type(E, P, allValuesFrom(PX,DX)) -->
 	owl_description(D, DX),
         owl_property_expression(P, PX).
 
-
 % changed from thea value-->hasValue
 owl_restriction_type(E, P, hasValue(PX,Value)) -->
 	triple(E, owl:hasValue,Value),
@@ -302,6 +421,8 @@ owl_restriction_type(E, P, hasSelf(PX)) -->
 	triple(E, owl:hasSelf, true),
         owl_property_expression(P, PX).
 
+% --- Cardinality
+% TODO: check if we still need unsupported QCRs
 owl_restriction_type(E, P,exactCardinality(N,PX)) -->
 	triple(E, owl:cardinality,Lit),
         {literal_integer(Lit,N)},
@@ -310,8 +431,10 @@ owl_restriction_type(E, P,exactCardinality(N,PX)) -->
 owl_restriction_type(E, P,exactCardinality(N,PX,DX)) -->
 	triple(E, owl:qualifiedCardinality,Lit),
         {literal_integer(Lit,N)},
-	(   onClass(E,D),owl_description(D, DX)
-        ;   onDataRange(E,D), owl_datarange(D,DX)
+	(   onClass(E,D),
+            owl_description(D, DX)
+        ;   triple(E, owl:onDataRange,D),
+            owl_datarange(D,DX)
 	),
         owl_property_expression(P, PX).
 
@@ -324,9 +447,11 @@ owl_restriction_type(E, P, minCardinality(N,PX)) -->
 owl_restriction_type(E, P, minCardinality(N,PX,DX)) -->
 	triple(E, owl:minQualifiedCardinality,Lit),
         {literal_integer(Lit,N)},
-	(   onClass(E,D),owl_description(D, DX)
+	(   onClass(E,D),
+            owl_description(D, DX)
         ;   
-	    onDataRange(E,D), owl_datarange(D,DX)
+	    triple(E, owl:onDataRange,D),
+            owl_datarange(D,DX)
 	),
         owl_property_expression(P, PX).
 
@@ -339,23 +464,31 @@ owl_restriction_type(E, P, maxCardinality(N,PX)) -->
 owl_restriction_type(E, P, maxCardinality(N,PX,DX)) -->
 	triple(E, owl:maxQualifiedCardinality,Lit),
 	{literal_integer(Lit,N)},
-	(   onClass(E,D),owl_description(D, DX);
-	    onDataRange(E,D), owl_datarange(D,DX)),
+	(   onClass(E,D),
+            owl_description(D, DX)
+        ;   triple(E, owl:onDataRange,D),
+            owl_datarange(D,DX)),
         owl_property_expression(P, PX).
 
 owl_restriction_type(E, P, maxCardinality(N,PX,DX)) -->
 	triple(E, owl:maxQualifiedCardinality,Lit),
 	{literal_integer(Lit,N)},
-	(   onClass(E,D),owl_description(D, DX);
-	    onDataRange(E,D), owl_datarange(D,DX)),
+	(   onClass(E,D),
+            owl_description(D, DX)
+        ;   triple(E, owl:onDataRange,D),
+            owl_datarange(D,DX)),
         owl_property_expression(P, PX).
 
 
 % support older deprecated versions of OWL2 spec. See for example hydrology.owl
+% TODO: drop support for these?
 onClass(E,D) --> triple(E,'http://www.w3.org/2006/12/owl2#onClass',D).
 onClass(E,D) --> triple(E,owl:onClass,D).
 
 onDataRange(E,D) --> triple(E, owl:onDataRange,D).
+
+% --- End of Cardinality ---
+
 
 owl_property_expression(P,inverseOf(Q)) -->
         triple(P,owl:inverseOf,Q),
