@@ -103,7 +103,7 @@ owl2_io:load_axioms_hook(File,rdf_direct,_Opts) :-
 %% triple//4
 % 
 % generates a single triple, if that triple is in the database
-triple(S,P,O,in) --> {rdf(S,P,O),\+consumed(S,P,O)},[rdf(S,P,O)].
+triple(S,P,O,in) --> {\+compound(S),\+compound(P),\+compound(O),rdf(S,P,O),\+consumed(S,P,O)},[rdf(S,P,O)].
 triple(S,P,O,out(_Src)) --> [rdf(S,P,O)].
 
 % hacky way to temporily project triples - e.g. from sparql results
