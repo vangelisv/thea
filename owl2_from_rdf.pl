@@ -823,7 +823,7 @@ owl_restriction_type(E, P, hasSelf(PX)) :-
 
 % Support of deprecated translations:
 % in the OWL2 RDF mapping, unqualified CRs use owl:{min,max}Cardinality
-% and QCQs use owl:{min,ax}QualifiedCardinality
+% and QCQs use owl:{min,max}QualifiedCardinality
 %
 % however, there appear to be some ontologies; e.g. Hydrology.owl.
 % that use an older mapping, where the same properties are used
