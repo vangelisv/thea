@@ -260,6 +260,8 @@ nodeset_entity(NodeSet,E) :-
         jpl_call(NodeSetG,'toArray',[],NodeArr),
         jpl_array_to_list(NodeArr,Nodes),
         member(Node,Nodes),
+        node_entity(Node,E).
+/*
         jpl_call(Node,getEntities,[],ESet),
         jpl_call(ESet,toArray,[],EArr),
         jpl_array_to_list(EArr,Es),
@@ -270,6 +272,7 @@ nodeset_entity(NodeSet,E) :-
         ->  fail
         ;   maplist(java_namedentity,Es,PEs),
             E=equivalentClasses(PEs)).
+*/
 
 node_entity(Node,E) :-
         jpl_call(Node,getEntities,[],ESet),
