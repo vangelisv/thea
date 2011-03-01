@@ -78,7 +78,7 @@ extract_ontology_subset(Obj,Ont) :-
         findall(Ax,(member(P,Set),
                     axiom_directly_about(Ax,P),
                     debug(mireot,'  checking: ~w',[Ax]),
-                    forall((axiom_references(Ax,P2),class(P2)),
+                    forall((axiom_directly_references(Ax,P2),class(P2)),
                            member(P2,Set))),
                Axs),
         debug(mireot,'asserting axioms',[]),

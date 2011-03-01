@@ -230,6 +230,8 @@ prolog:message(owlfmt(Fmt,Args)) -->
 prolog:message(owlpp(A)) --> owlpp(A,[]).
 prolog:message(owlpp(A,Opts)) --> owlpp(A,Opts).
 
+owlpp(literal(type(_,V)),Opts) --> {atom(V)},!,[V].
+owlpp(literal(V),Opts) --> {atom(V)},!,[V].
 owlpp(A,Opts) --> {\+atom(A),A=..[P,Arg],!},owlpp(P,Opts),spc,owlpp(Arg,Opts).
 owlpp(A,Opts) --> {\+atom(A),A=..[P|Args],!},owlpp_args(P,Args,Opts).
 owlpp(A,_Opts) --> {atom(A),labelAnnotation_value(A,V)},!,owlpp_iri(A),spc,owlpp_qt(V).
