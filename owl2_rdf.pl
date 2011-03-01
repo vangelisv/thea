@@ -404,7 +404,15 @@ asserted_equivalent_to(AX,BX,M) --> triple(A,owl:equivalentClass,B,M),owl_descri
 maximal_equivalence_set(EqL,SeedL,in) --> {member(A,SeedL)},(asserted_equivalent_to(A,B,M);asserted_equivalent_to(B,A,M)),{\+member(B,SeedL)},!,maximal_equivalence_set(EqL,[B|SeedL]).
 maximal_equivalence_set(EqSet,EqL,in) --> {sort(EqL,EqSet)},[]. % impossible to add more members; this is the maximal set
 
+% v. slow for bound Ont..
 owl_ontology_axiom_triples(Ont,A,Triples) :-
+        nonvar(Ont),
+        rdf(Ont,rdf:type,owl:'Ontology',Src:_),
+        rdf(S,P,O,Src:_),
+        Triples=[rdf(S,P,O)|_],
+        phrase(owl_axiom(A,in),Triples).
+owl_ontology_axiom_triples(Ont,A,Triples) :-
+        var(Ont),
         phrase(owl_axiom(A,in),Triples),
         Triples=[rdf(S,P,O)|_],
         rdf(S,P,O,Src:_),
