@@ -89,6 +89,69 @@ owl2_io:load_axioms_hook(File,rdf_direct,_Opts) :-
         debug(owl,'loaded: ~w',[File]),
         !.
 
+owl2_io:save_axioms_hook(File,rdf_direct,Opts) :-
+        debug(owl,'asserting triples to ~w [rdf_direct] Opts: ~w',[File,Opts]),
+        rdf_transaction(assert_triples(Opts,DB)),
+        debug(owl,'saving to ~w [rdf_direct] DB: ~w',[File,DB]),
+        (   var(File)
+        ->  tmp_file(owl,File),
+            IsTemp=true
+        ;   IsTemp=false),
+        rdf_save(File,[graph(DB)]),
+        debug(owl,'saved: ~w',[File]),
+                % hack to allow 'saving' to standard output
+        (   IsTemp
+        ->  sformat(Cmd,'cat ~w',[File]),
+            shell(Cmd)
+        ;   true),
+        !.
+
+% ----------------------------------------
+% CONVENIENCE PREDICATES
+% ----------------------------------------
+
+owl_axiom_to_triples(Axiom,Triples) :-
+        owl_axiom_to_triples_withvars(Axiom,Triples),
+        !,
+        term_variables(Triples,BNodeVars),
+        unify_bnode_vars(BNodeVars).
+
+unify_bnode_vars([]).
+unify_bnode_vars([N|Ns]) :-
+        rdf_bnode(N),
+        unify_bnode_vars(Ns).
+
+
+
+
+% bnodes are variables
+owl_axiom_to_triples_withvars(Axiom,Triples) :- phrase(owl_axiom(Axiom,out(x)),Triples),!.
+
+assert_triples(Opts,Ont) :-
+        member(ontology(Ont),Opts),
+        !,
+        % todo - only do this if owl axioms are asserted
+        rdf_retractall(_,_,_,Ont),
+        forall((ontologyAxiom(Ont,Ax),
+                owl_axiom_to_triples(Ax,Triples),
+                member(rdf(S,P,O),Triples)),
+               rdf_assert(S,P,O,Ont)),
+        rdf_retractall(_,_,_,Ont).
+
+
+assert_triples(_Opts,Ont) :-
+        Ont=user,
+        rdf_retractall(_,_,_,Ont),
+        forall((axiom(Ax),
+                owl_axiom_to_triples(Ax,Triples),
+                member(rdf(S,P,O),Triples),
+                debug(owl,'assert: (~w,~w,~w)',[S,P,O])
+                ),
+               rdf_assert(S,P,O,Ont)),
+        rdf_retractall(_,_,_,Ont).
+
+
+
 % ----------------------------------------
 % BRIDGE TO SEMWEB
 % ----------------------------------------
@@ -137,11 +200,7 @@ mark_consumed([rdf(S,P,O)|T]) :-
         mark_consumed(T).
 mark_consumed(S,P,O) :- assert(consumed(S,P,O)).
 
-% ----------------------------------------
-% CONVENIENCE PREDICATES
-% ----------------------------------------
 
-owl_axiom_to_triples(Axiom,Triples) :- phrase(owl_axiom(Axiom,out(x)),Triples).
 
 % ----------------------------------------
 % MAPPING OF AXIOMS
@@ -192,7 +251,7 @@ term_expansion((owl_axiom(Ax,M) --> Goal),
 
 % -- DECLARATIONS --
 % each of these matches a single triple and generates a single triple
-owl_axiom(datatyoe(A),M) --> triple(A,rdf:type,rdfs:'Datatype',M).
+owl_axiom(datatype(A),M) --> triple(A,rdf:type,rdfs:'Datatype',M).
 owl_axiom(class(A),M) --> triple(A,rdf:type,owl:'Class',M).
 owl_axiom(objectProperty(A),M) --> triple(A,rdf:type,owl:'ObjectProperty',M).
 owl_axiom(dataProperty(A),M) --> triple(A,rdf:type,owl:'DataProperty',M).
