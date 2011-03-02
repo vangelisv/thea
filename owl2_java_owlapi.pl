@@ -890,7 +890,7 @@ expr_method(dataUnionOf,getOWLDataUnionOf).
 expr_method(objectOneOf,getOWLObjectOneOf).
 expr_method(dataOneOf,getOWLDataOneOf).
 
-expr_method(inverseOf,getOWLObjectPropertyInverse).
+expr_method(inverseOf,getOWLObjectInverseOf).
 
 % TODO: is this still required? holdover from owlapi<3, when args were not in same order
 expr_method(objectMinCardinality,getOWLObjectMinCardinality,[N,P,CE],[N,P,CE]).
