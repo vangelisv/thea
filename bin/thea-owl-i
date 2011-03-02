@@ -297,6 +297,7 @@ parse_arg(['--jvm-opt',A|L],L,null) :-
         (   jpl_set_default_jvm_opts([A])
         ->  true
         ;   throw(error(jvm('Cannot set jvm opts (must be called BEFORE jpl is loaded)')))).
+arg_info(jvm-opt,atom,'passes option to JVM, for use with jpl. e.g. --jvm-opt -Xmx4G').
 
 
 parse_arg(['--convert',X|L],L,convert(X)).
