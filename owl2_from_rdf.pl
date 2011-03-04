@@ -211,8 +211,8 @@ owl_canonical_parse_3([IRI|Rest]) :-
 
         debug(owl_parser,'Replacing patterns [see table 5]',[]),
 	% remove triples based on pattern match (Table 5)
-	forall((triple_remove(Pattern,Remove), test_use_owl(Pattern)),
-	        forall(member(owl(S,P,O),Remove),use_owl(S,P,O,removed))),
+	(   forall((triple_remove(Pattern,Remove), test_use_owl(Pattern)),
+	        forall(member(owl(S,P,O),Remove),use_owl(S,P,O,removed))) -> true ; true),
 
 
         % temporary fix to make up for bug in rdf parsing
