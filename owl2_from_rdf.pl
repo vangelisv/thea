@@ -610,10 +610,13 @@ is_bnode(C) :-
 	atom(C),
 	sub_atom(C,0,2,_,'__').
 
-% Table 11. Parsing Object Property Expressions
 
+	% Table 11. Parsing Object Property Expressions
 owl_property_expression(C,C) :-
 	not(is_bnode(C)), % better: IRI(C).
+	% VV added 10/3/2011
+	not(C='http://www.w3.org/1999/02/22-rdf-syntax-ns#first'),
+	not(C='http://www.w3.org/1999/02/22-rdf-syntax-ns#rest'),
         !.
 
 owl_property_expression(C,D) :-
@@ -1236,7 +1239,7 @@ owl_parse_axiom(classAssertion(CX,X),AnnMode,List) :-
         owl_description(C,CX).
 
 dothislater(propertyAssertion/3).
-owl_parse_axiom(propertyAssertion(PX,A,B),AnnMode,List) :-
+owl_parse_axiom(propertyAssertion(PX,A,BX),AnnMode,List) :-
         test_use_owl(A,P,B), % B can be literal or individual
         P\='http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
 	% note: some ontologies may include a triples with no
@@ -1244,8 +1247,10 @@ owl_parse_axiom(propertyAssertion(PX,A,B),AnnMode,List) :-
 	%property(P),
 	valid_axiom_annotation_mode(AnnMode,A,P,B,List),
         \+ annotationProperty(P), % these triples should have been removed before, during ann parsing
-        use_owl(A,P,B,propertyAssertion(PX,A,B)),
-        owl_property_expression(P,PX). % can also be inverse
+	owl_property_expression(P,PX), % can also be inverse
+	% next line added by VV 9/3/2011 for Jochem Liem to support ID-lists as PA objects
+	(   owl_individual_list(B,BX) -> true ; BX = B),
+        use_owl(A,P,B,propertyAssertion(PX,A,BX)).
 
 
 owl_parse_axiom(negativePropertyAssertion(PX,A,B),_,X) :-
