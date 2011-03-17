@@ -69,15 +69,19 @@ preprocess_directive( D forall G, Tr, Opts) :-
         preprocess_directive(D where true, Tr, Opts).
               
 preprocess_directive( In ===> +(Out) where G, tr(_,In2,(In2,Out2),G2,Opts), Opts) :-
+        nonvar(Out),
+        nonvar(G),
         !,
         preprocess_term(In,In2,Opts),
         preprocess_term(Out,Out2,Opts),
         preprocess_term(G,G2,Opts).
 preprocess_directive( In ===> +(Out), tr(_,In2,(In2,Out2),true,Opts), Opts) :-
+        nonvar(Out),
         !,
         preprocess_term(In,In2,Opts),
         preprocess_term(Out,Out2,Opts).
 preprocess_directive( In ===> Out where G, tr(_,In2,Out2,G2,Opts), Opts) :-
+        nonvar(G),
         !,
         preprocess_term(In,In2,Opts),
         preprocess_term(Out,Out2,Opts),
