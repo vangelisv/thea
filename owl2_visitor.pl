@@ -98,13 +98,12 @@ rewrite_axiom(Axiom,Rules,NewAxiom) :-
 rewrite_axiom(Axiom,Rule,NewAxiom) :-
         debug(visitor,'testing ~w using ~w',[Axiom,Rule]),
         rule_axiom_template(Rule,ConditionalGoal,AxiomTemplate,TrAxiom),
-        findall(TrAxiom,(smatch(Axiom,AxiomTemplate),once(ConditionalGoal)),[A1]),
-        !,
+        findall(TrAxiom,(smatch(Axiom,AxiomTemplate),ConditionalGoal),A1L),
+        %findall(TrAxiom,(smatch(Axiom,AxiomTemplate),once(ConditionalGoal)),[A1]),
+        %!,
+        member(A1,A1L),
         member_or_identity(A1x,A1),
         debug(visitor,'  rewriting ~q ===> ~q',[Axiom,A1x]),
-        (   Axiom=zequivalentClasses(['http://purl.obolibrary.org/obo/MP_0000057',intersectionOf([someValuesFrom('http://purl.obolibrary.org/obo/BFO_0000052',unionOf(['http://purl.obolibrary.org/obo/GO_0001503',someValuesFrom('http://purl.obolibrary.org/obo/BFO_0000050','http://purl.obolibrary.org/obo/GO_0001503')])),'http://purl.obolibrary.org/obo/PATO_0000001',someValuesFrom('http://purl.obolibrary.org/obo/test_qualifier','http://purl.obolibrary.org/obo/PATO_0000460')])])
-        ->  trace
-        ;   true),
         A1x =.. [Pred|Args],
         rewrite_args(Axiom,Args,Rule,Args2),
         debug(visitor,'  rewrote ~w ===> ~w',[Args,Args2]),
