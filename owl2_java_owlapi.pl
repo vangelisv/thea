@@ -525,6 +525,8 @@ owlterm_java(_,_,annotationAssertion(_,Sub,_),ignore) :-
 % todo:
 owlterm_java(_,_,annotation(_),ignore) :-
         !.
+owlterm_java(_,_,annotation(_,_,_),ignore) :-
+        !.
 
 % disable this for now whilst we figure out owlapi3
 % (not required for reasoning anyway)
