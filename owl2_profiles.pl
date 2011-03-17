@@ -209,8 +209,6 @@ axiom_profile(sameIndividuals(_,_),owl2_QL,false).
 
 
 
-
-
 /** <module> Tests/generates profiles for axioms
 
 ---+ Synopsis
