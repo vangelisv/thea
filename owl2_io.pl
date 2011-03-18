@@ -119,21 +119,7 @@ save_axioms(File,Fmt,Opts) :-
         (   nonvar(File)
         ->  tell(File)
         ;   true),
-        option(ontology(Ont),Opts,_),
-        forall(ontologyAxiom(Ont,A),
-               (   A=implies(_,_)
-               ->  format('swrl:~q.~n',[A]) % ugly hack - assume owl2_model module for everything except this
-               ;   format('~q.~n',[A]))),
-        % write orphans
-        (   var(Ont)
-        ->  forall((axiom(A),\+ontologyAxiom(_,A)),
-                   format('~q.~n',[A]))
-        ;   true),
-        % write ontologyAxiom/2
-	(   member(exclude(ontologyAxiom),Opts)
-	->  true
-	;   forall(owl2_model:ontologyAxiom(Ont,A),
-		   format('~q.~n',[ontologyAxiom(Ont,A)]))),
+        save_axioms_as_owlpl(Opts),
         told.
 save_axioms(File,Fmt,Opts) :-
         load_handler(write,Fmt),
@@ -160,7 +146,40 @@ load_thea_modules([Mod|Mods]) :-
         load_thea_modules(Mods).
 
         
+%% save_axioms_as_owlpl(+Opts)
+%
+% write all axioms in db as prolog facts to output stream.
+%
+% Opts:
+%  ontology(Ont) -- only write axioms in this ontology
+%  exclude(ontologyAxiom) -- don't write any ontologyAxiom/2 facts
+save_axioms_as_owlpl(Opts) :-
+        member(ontology(Ont),Opts),
+        !,
+        forall(ontologyAxiom(Ont,A),
+               (   write_axiom_as_owlpl(ontologyAxiom(Ont,A),Opts),
+                   write_axiom_as_owlpl(A,Opts))).
+save_axioms_as_owlpl(Opts) :-
+        % no ontology specified - write entire contents of prolog db
+        forall(axiom(A),
+               write_axiom_as_owlpl(A,Opts)),
+        forall(ontologyAxiom(O,A),
+               write_axiom_as_owlpl(ontologyAxiom(O,A),Opts)).
 
+%% write_axiom_as_owlpl(+A,+Opts:list)
+% writes an axiom as prolog fact to output stream
+write_axiom_as_owlpl(implies(A,B),_) :-
+        !,
+        % ugly hack - assume owl2_model module for everything except this
+        format('swrl:~q.~n',[implies(A,B)]).
+
+write_axiom_as_owlpl(ontologyAxiom(_,_),Opts) :-
+        member(exclude(ontologyAxiom),Opts),
+        !.
+write_axiom_as_owlpl(A,_) :-
+        format('~q.~n',[A]).
+
+        
 
 guess_format(File,Fmt,_Opts) :-
         atomic_list_concat(Toks,'.',File),
