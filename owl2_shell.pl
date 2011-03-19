@@ -283,7 +283,8 @@ set (P to V) :- !,unset(P), assert(settings(P,V)),save_settings.
 set P + V :- !,assert(settings(P,V)),save_settings.
 set P - V :- !,retractall(settings(P,V)),save_settings.
 unset P :- retractall(settings(P,_)),save_settings.
-settings :- q(settings(_,_)).
+settings :- forall(settings(P,V),writeln(P=V)).
+
 
 
 %tr(In,Out) :- plsyn_owl(In,Out),!.
