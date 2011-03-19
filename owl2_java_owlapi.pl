@@ -85,7 +85,7 @@ create_ontology(Manager,Name,Ont) :-
 build_ontology(Ont) :-
         create_factory(Man,Fac),
         build_ontology(Man,Fac,Ont).
-        
+
 %% build_ontology(+Man,+Fac,?Ont)
 % create an ontology from the current prolog db
 build_ontology(Man,Fac,Ont) :-
