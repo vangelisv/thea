@@ -1046,11 +1046,11 @@ anyPropertyAssertion(P,E,V) :- annotationAssertion(P,E,V).
 
 %% labelAnnotation_value(?X,?Val)
 labelAnnotation_value(X,Val) :-
-        anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(type(_,Val))),atom(Val).
+        anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, Y),Y=literal(type(_,Val)),atom(Val).
 labelAnnotation_value(X,Val) :-
-        anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(lang(_,Val))),atom(Val).
+        anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, Y),Y=literal(lang(_,Val)),atom(Val).
 labelAnnotation_value(X,Val) :-
-        anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, literal(Val)),atom(Val).
+        anyPropertyAssertion('http://www.w3.org/2000/01/rdf-schema#label', X, Y),Y=literal(Val),atom(Val).
 
 rdf_literal_to_atom(literal(type(_,Val)), Val) :-
         atom(Val),!.

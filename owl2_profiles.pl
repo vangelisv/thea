@@ -8,7 +8,8 @@
            trim_axioms_by_profile/2,
            owl2_profile/1,
            axiom_profile/2,
-           axiom_profile/3
+           axiom_profile/3,
+           expression_profile/3
           ]).
 
 :- use_module(owl2_model).
