@@ -80,6 +80,12 @@ create_ontology(Manager,Name,Ont) :-
         atom_javaIRI(Name,IRI),
         jpl_call(Manager,createOntology,[IRI],Ont).
 
+% example: filter(Axiom,axiom_profile(Axiom,owl2_EL))
+get_axiom_filter(Opts,A,G) :-
+        memberchk(filter(A,G),Opts),
+        !.
+get_axiom_filter(_,_,true).
+
 %% build_ontology(?Ont)
 % create an ontology from the current prolog db
 build_ontology(Ont) :-
@@ -93,19 +99,20 @@ build_ontology(Man,Fac,Ont) :-
 build_ontology(Man,Fac,Ont,Opts) :-
         setof(OntIRI,member(ontology(OntIRI),Opts),OntIRIs),
         !,
+        get_axiom_filter(Opts,Ax,FilterGoal),
         require_manager(Man),
         (   ontology(OntName)
         ->  true
         ;   OntName='http://example.org'),
         create_ontology(Man,OntName,Ont),
         forall((member(OntIRI,OntIRIs),
-                ontologyAxiom(OntIRI,Ax)),
+                ontologyAxiom(OntIRI,Ax),
+                valid_axiom(Ax),
+                FilterGoal),
                add_axiom(Man,Fac,Ont,Ax,_)),
         debug(owl2,'Built ontology',[]).
 build_ontology(Man,Fac,Ont,Opts) :-
-        % example: filter(Axiom,axiom_profile(Axiom,owl2_EL))
-        memberchk(filter(Ax,FilterGoal),Opts),
-        !,
+        get_axiom_filter(Opts,Ax,FilterGoal),
         require_manager(Man),
         (   ontology(OntName)
         ->  true
@@ -113,9 +120,11 @@ build_ontology(Man,Fac,Ont,Opts) :-
         create_ontology(Man,OntName,Ont),
         forall((axiom(Ax),
                 debug(owl2,'Testing axiom against filter: ~w',[Ax]),
+                valid_axiom(Ax),
                 FilterGoal),
                add_axiom(Man,Fac,Ont,Ax,_)),
         debug(owl2,'Built ontology',[]).
+/*
 build_ontology(Man,Fac,Ont,_Opts) :-
         require_manager(Man),
         (   ontology(OntName)
@@ -125,6 +134,7 @@ build_ontology(Man,Fac,Ont,_Opts) :-
         forall(axiom(Ax),
                add_axiom(Man,Fac,Ont,Ax,_)),
         debug(owl2,'Built ontology',[]).
+*/
 
 build_single_ontology(Man,Fac,OntIRI,Ont) :-
         require_manager(Man),

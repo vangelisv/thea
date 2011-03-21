@@ -43,7 +43,8 @@ main :-
         debug(bench,'load_time: ~w',[LoadTime]),
         (   member(reasonername(RN),Opts)
         ->  ensure_loaded(library(thea2/owl2_reasoner)),
-            initialize_reasoner(RN,Reasoner),
+            findall(ROpt,member(reasoneropt(ROpt),Opts),ROpts),
+            initialize_reasoner(RN,Reasoner,ROpts),
             nb_setval(reasoner,Reasoner),
             (   member(check_consistency,Opts)
             ->  (   reasoner_check_consistency(Reasoner)
@@ -353,14 +354,15 @@ parse_arg(['--query',GA|L],L,query(T,G)) :- atom_to_term(GA,G-T,_).
 parse_arg(['--query',GA|L],L,query(G,G)) :- atom_to_term(GA,G,_).
 arg_info(query,goal,'execute prolog query').
 
-parse_arg(['--reasoner',A|L],L,reasonername(RN)) :-
-        atom_to_term(A,RN,_).
 
 parse_arg(['--consult',F|L],L,null) :- consult(F).
 parse_arg(['--prefix-with',X|L],L,goal(prefix_IRIs(X))).
 
-
 parse_arg(['--check-consistency'|L],L,check_consistency).
+
+parse_arg(['--reasoner',A|L],L,reasonername(RN)) :-
+        atom_to_term(A,RN,_).
+parse_arg(['--reasoner-opt',OptA|L],L,reasoneropt(Opt)) :- atom_to_term(OptA,Opt,_).
 
 parse_arg(['--reasoner-query',select,TA,where,GA|L],L,reasonerquery( T, G)) :- sformat(A,'q((~w),(~w))',[TA,GA]),atom_to_term(A,q(T,G),_).
 parse_arg(['--reasoner-ask',GA|L],L,reasonerquery( T, G)) :- atom_to_term(GA,G-T,_).
