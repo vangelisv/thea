@@ -594,7 +594,7 @@ onDataRange(E,D,M) --> triple(E, owl:onDataRange,D,M).
 
 
 owl_property_expression(P,inverseOf(Q),M) -->
-        is_anonymous(P,M),
+        {is_anonymous(P,M)},
         triple(P,owl:inverseOf,Q,M),
         !.
 owl_property_expression(P,P,_) --> [].
