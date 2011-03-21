@@ -392,9 +392,9 @@ builtin(X) :- rdf_global_id(owl:_,X).
 
 
 :- rdf_meta is_annotationProperty(r).
-is_annotationProperty(rdfs:label).
-is_annotationProperty(rdfs:comment).
-is_annotationProperty(P) :- annotationProperty(P).
+is_annotationProperty(rdfs:label) :- !.
+is_annotationProperty(rdfs:comment) :- !.
+is_annotationProperty(P) :- annotationProperty(P),!.
 
 % Parsing annotationAssertions - TODO
 
