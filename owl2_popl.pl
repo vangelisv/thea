@@ -90,14 +90,12 @@ preprocess_directive( In ===> Out , tr(_,In2,Out2,true,Opts), Opts) :-
         !,
         preprocess_term(In,In2,Opts),
         preprocess_term(Out,Out2,Opts).
-preprocess_directive( add Out where G, _, Opts) :-
+preprocess_directive( add Out where G, null, Opts) :-
         % todo
         !,
         preprocess_term(Out,Out2,Opts),
         preprocess_term(G,G2,Opts),
-        forall(G2,
-               replace_pair(null-[Out2],Opts)),
-        fail.
+        forall(G2,perform_directive(add, Out2,Opts)).
 preprocess_directive( Term, _, _) :-
         print_message(error,invalid(Term)),
         fail.
@@ -113,9 +111,41 @@ preprocess_term(T,T3,Opts) :-
         !,
         map_IRIs(get_IRI_from_label,T,T2),
         preprocess_term(T2,T3,Opts2).
+preprocess_term(T,T3,Opts) :-
+        select(translate(TG),Opts,Opts2),
+        !,
+        map_IRIs(TG,T,T2),
+        preprocess_term(T2,T3,Opts2).
 
 preprocess_term(T,T,_) :- !.
-        
+
+perform_directive(add, [],_) :- !.
+perform_directive(add, [H|T],Opts) :-
+        !, 
+        perform_directive(add, H,Opts),
+        perform_directive(add, T,Opts).
+perform_directive(add, (H,T),Opts) :-
+        !,
+        perform_directive(add, H,Opts),
+        perform_directive(add, T,Opts).
+perform_directive(add, A, Opts) :-
+        !,
+        assert_axiom_wrap(A,Opts).
+
+assert_axiom_wrap(A,Opts) :-
+        select(post_translate(TG),Opts,Opts2),
+        !,
+        map_IRIs(TG,A,A2),
+        assert_axiom_wrap(A2,Opts2).
+assert_axiom_wrap(A,_) :-
+        plsyn_owl(A,A2),
+        assert_axiom(A2).
+
+
+
+
+
+
 
 %% execute_popl_file(+File)
 % see execute_popl_file/2,
@@ -138,6 +168,7 @@ execute_popl_file(F, Opts) :-
 
 
 
+perform_translation(null, _) :- !. % add directives are handled up-front
 perform_translation(X, Opts) :-
         memberchk(filter(AxiomTemplate,Goal),Opts),
         !,

@@ -8,6 +8,7 @@
 :- use_module(library('thea2/owl2_io')).
 :- use_module(library('thea2/owl2_catalog')).
 :- use_module(library('thea2/owl2_plsyn')).
+:- use_module(library('thea2/owl2_profiles')).
 
 :- multifile user:parse_arg_hook/3.
 :- multifile user:arg_info_hook/3.
@@ -62,7 +63,7 @@ main :-
         forall(member(popl_file(F),Opts),
                execute_popl_file(F,[syntax(plsyn),translate(labels)|PoplOpts])),
         forall(member(popl(G),Opts),
-               popl_translate(G,[syntax(plsyn)|PoplOpts])),
+               popl_translate(G,[syntax(plsyn),translate(labels)|PoplOpts])),
         (   member(statistics(true),Opts)
         ->  statistics
         ;   true),

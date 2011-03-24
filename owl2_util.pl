@@ -271,8 +271,17 @@ get_IRI_from_label(X,X).
 oboid_uri(X,U) :-
         concat_atom([S,A],':',X),
         S\=http,
+        \+ sub_atom(S,_,_,_,' '),
         !,
         concat_atom(['http://purl.obolibrary.org/obo/',S,'_',A],U).
+oboid_uri(X,U) :-
+        concat_atom(Toks,':',X),
+        Toks=[_,_|_],
+        Toks\=[http|_],
+        \+ sub_atom(X,_,_,_,' '),
+        !,
+        concat_atom(Toks,'_',Suffix),
+        atom_concat('http://purl.obolibrary.org/obo/',Suffix,U).
 oboid_uri(U,U).
 
 

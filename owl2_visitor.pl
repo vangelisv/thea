@@ -82,6 +82,9 @@ visitor_expression_template(expression_visitor(G,AT,ET,R),G,AT,ET,R) :- !.
 % axiom rewriting
 % ----------------------------------------
 
+%% axiom_rewrite_list(+Axiom,+Rule,?NewAxioms:list)
+%
+% given a ground axiom, calculate any rewrites
 axiom_rewrite_list(Axiom,Rule,NewAxioms) :-
         setof(NewAxiom,rewrite_axiom(Axiom,Rule,NewAxiom),NewAxioms).
 
