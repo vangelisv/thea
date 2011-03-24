@@ -209,7 +209,8 @@ l N :-
         fail.
 l _.
 
-%q :- tr(Query,Axiom), q(_).
+%% trshow(+Term) is det
+%% show(+Term) is det
 trshow(XIn) :- tr(XIn,X),show(X).
 show(X) :- current_opts(Opts),display_term(X,Opts).
 v ObjIn :- tr(ObjIn,Obj),current_opts(Opts),visualize_obj(Obj,Opts).
@@ -261,6 +262,8 @@ cmd_doc(query,gi,[axiom],'Entailment query - translates Axiom to native prolog a
 cmd_doc(query,g,[axiom],'Assertion query - translates Axiom to prolog goal and calls directly. As q/1 with no result mapping.').
 gi(AxiomIn) :- tr(AxiomIn,Axiom),reasoner_ask(Axiom).
 g(AxiomIn) :- tr(AxiomIn,Axiom),Axiom.
+{AxiomIn} :- tr(AxiomIn,Axiom),reasoner_ask(Axiom).
+
 
 % select from asserted database
 q SelectIn where QueryIn :- !,tr(QueryIn,Query),tr(SelectIn,Select), forall(Query,show(Select)).

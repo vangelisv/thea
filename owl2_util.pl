@@ -255,6 +255,10 @@ use_safe_label_as_IRI(IRI,X) :-
         atom_chars(X,Chars2),
         !.
 
+use_label_as_IRI(N,X) :-
+        number(N),
+        atom_number(X,N),
+        !.
 use_label_as_IRI(IRI,X) :-
         labelAnnotation_value(IRI,X),
         !.

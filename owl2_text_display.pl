@@ -49,6 +49,10 @@ display_term(T,Opts) :-
         member(display(prolog),Opts),
         !,
         format('~q.~n',[T]).
+display_term(T,_Opts) :-
+        number(T),
+        !,
+        write(T).
 display_term(T,Opts) :-
         member(display(plsyn),Opts),
         member(display(labels),Opts),
