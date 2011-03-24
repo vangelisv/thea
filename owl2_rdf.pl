@@ -13,6 +13,7 @@
 
 :- use_module(owl2_model).
 :- use_module(library(semweb/rdf_db)).
+:- use_module(library(http/http_open)).
 
 /** <module> RDF direct mapping to owl2_model
 
@@ -77,15 +78,17 @@
 
 :- multifile owl_parse_axiom_hook/3.
 
-owl2_io:load_axioms_hook(File,rdf,_Opts) :-
-        debug(owl,'loading (rdf direct): ~w',[File]),
-        rdf_load(File,[]),
-        debug(owl,'loaded: ~w',[File]),
+owl2_io:load_axioms_hook(File,rdf,Opts) :-
+        owl2_io:load_axioms_hook(File,rdf_direct,Opts),
         !.
 
 owl2_io:load_axioms_hook(File,rdf_direct,_Opts) :-
         debug(owl,'loading (rdf_direct): ~w',[File]),
-        rdf_load(File,[]),
+        (   sub_atom(File,0,4,_,'http')
+        ->  http_open(File,RDF_Stream,[]),
+            rdf_load(RDF_Stream,[if(true),base_uri(File),register_namespaces(true)]),
+            close(RDF_Stream)
+        ;   rdf_load(File,[])),
         debug(owl,'loaded: ~w',[File]),
         !.
 
