@@ -209,9 +209,18 @@ create_factory(Manager,Fac) :-
 % @param Type - factpp or pellet
 create_reasoner(Ont,RN,Reasoner) :-
         reasoner_factory(RN,RFacClass),
+        !,
         jpl_new(RFacClass,[],RFac),
         debug(owl2,'got reasoner factory: ~w',[RFac]),
         jpl_call(RFac,createReasoner,[Ont],Reasoner).
+create_reasoner(Ont,jcel,Reasoner) :-
+        !,
+        jpl_new('de.tudresden.inf.lat.jcel.owlapi.main.JcelReasoner',[Ont],Reasoner),
+        jpl_get('org.semanticweb.owlapi.reasoner.InferenceType','CLASS_HIERARCHY',InfType),
+        jpl_datums_to_array([InfType],InfTypeArr),
+        jpl_call(Reasoner,precomputeInferences,[InfTypeArr],_).
+
+
 
 reasoner_factory(pellet,'com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory').
 reasoner_factory(hermit,'org.semanticweb.HermiT.Reasoner$ReasonerFactory').
@@ -949,6 +958,7 @@ new_incremental_classifier(pellet_incremental(R)) :-
 wrapped_reasoner(pellet).
 wrapped_reasoner(hermit).
 wrapped_reasoner(factpp).
+wrapped_reasoner(jcel).
 
 owl2_reasoner:initialize_reasoner_hook(Type,R,Opts) :-
 	wrapped_reasoner(Type), % choose arbitrary if not defined
