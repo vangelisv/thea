@@ -49,8 +49,9 @@ initialize_reasoner(Type,Reasoner) :-
 % ==
 initialize_reasoner(Type,Reasoner,Opts) :-
         load_handler(Type,Opts),
+        debug(reasoner,'Initializing reasoner: ~w opts: ~w',[Type,Opts]),
 	initialize_reasoner_hook(Type,Reasoner,Opts),
-        debug(reasoner,'Initialized reasoner: ~w opts: ~w',[Reasoner,Opts]),
+        debug(reasoner,'Initialized reasoner: ~w',[Reasoner]),
         nb_setval(reasoner,Reasoner),
         !.
 initialize_reasoner(null,null,_) :- !.
@@ -59,7 +60,31 @@ initialize_reasoner(cached(File),cached(File),_) :-
         load_files([File],[qcompile(large)]).
 initialize_reasoner(Type,_,Opts) :- 
         throw(error(initialize_reasoner(Type,Opts))).
-	
+
+% ----------------------------------------
+% Projects named classes for patterns of class expressions
+% ----------------------------------------
+% consider moving to separate module..
+project_expression(Ax) :-
+        class(C),
+        objectProperty(P),
+        gensym(ex,XFrag),
+        atom_concat('http:/x.org/tempclass#',XFrag,CXN),
+        Ax=equivalentClasses([CXN,someValuesFrom(P,C)]),
+        debug(proj,'ax=~w',[Ax]).
+
+initialize_reasoner_hook(path(Type),path(Reasoner),Opts) :-
+        initialize_reasoner(Type,Reasoner,[adder(Ax,owl2_reasoner:project_expression(Ax))|Opts]).
+reasoner_tell_hook(path(R),Ax,IsD) :-
+        reasoner_tell(R,Ax,IsD).
+reasoner_ask_hook(path(R),Ax,IsD) :-
+        reasoner_ask(R,Ax,IsD).
+reasoner_ask_hook(path(R),Ax) :-
+        reasoner_ask(R,Ax).
+
+% ----------------------------------------
+
+
 %% reasoner_tell(+Reasoner,+Axiom)
 % feed an axiom to the reasoner
 reasoner_tell(Reasoner,Axiom) :- 
@@ -75,7 +100,7 @@ reasoner_tell_all(Reasoner) :-
 
 
 %% reasoner_ask(+Reasoner,?Axiom,+IsDirect)
-reasoner_ask(Reasoner,Axiom,IsDirect) :-  % experimental
+reasoner_ask(Reasoner,Axiom,IsDirect) :-  
         debug(reasoner,'Reasoner query: ~w',[Axiom]),
 	reasoner_ask_hook(Reasoner,Axiom,IsDirect).
 
@@ -162,6 +187,8 @@ reasoner_module(pellet,owl2_java_owlapi).
 reasoner_module(factpp,owl2_java_owlapi).
 reasoner_module(hermit,owl2_java_owlapi).
 reasoner_module(jcel,owl2_java_owlapi).
+reasoner_module(cb,owl2_java_owlapi).
+reasoner_module(jagr,owl2_java_owlapi).  % owltools java graph reasoner
 reasoner_module(owlapi(_),owl2_java_owlapi).
 reasoner_module(graph_reasoner,owl2_graph_reasoner).
 reasoner_module(rl_rules,owl2_rl_rules).
