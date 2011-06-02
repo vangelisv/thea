@@ -23,6 +23,7 @@
                                 % 700 =
                       op(700,xfy,inverseOf),
                       op(700,xfy,sameAs),
+                      op(700,xfy,label),
                       %op(700,xfy,(->)),
                       op(650,xfy,(::)),
                       op(600,fx,not),
@@ -62,6 +63,7 @@
 % 700 =
 :- op(700,xfy,inverseOf).
 :- op(700,xfy,sameAs).
+:- op(700,xfy,label).
 %:- op(700,xfy,(->)).
 :- op(650,xfy,(::)).
 :- op(600,fx,not).
@@ -137,10 +139,17 @@ plsyn_owl(Pl,Owl) :-
 % convert between a plsyn prolog term and an owl2_model.pl prolog term.
 % either one of Pl or Owl must be ground
 plsyn_owl(Pl,Owl,Opts) :-
+        nonvar(Owl),
 	select(use_labels,Opts,Opts2),
 	!,
 	map_IRIs(owl2_util:use_label_as_IRI,[Owl],[Owl2]),
 	plsyn_owl(Pl,Owl2,Opts2).
+plsyn_owl(Pl,Owl,Opts) :-
+        nonvar(Pl),
+	select(use_labels,Opts,Opts2),
+	!,
+	map_IRIs(owl2_util:get_IRI_from_label,[Pl],[Pl2]),
+	plsyn_owl(Pl2,Owl,Opts2).
 plsyn_owl(Pl,Owl,_) :-
         nonvar(Pl),
         plsyn2owl(Pl,Owl),
@@ -353,6 +362,7 @@ plpred2owlpred(inverseOf,inverseProperties).
 plpred2owlpred(::,classAssertion).
 plpred2owlpred(<,subClassOf).
 plpred2owlpred(@<,subPropertyOf).
+plpred2owlpred(label,labelAnnotation_value). 
 
 plpred2owlpred_list(neq,differentIndividuals). 
 %plpred2owlpred_list(\=,disjointClasses). 
