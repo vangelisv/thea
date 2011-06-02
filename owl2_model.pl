@@ -132,6 +132,8 @@
 
 
 :- use_module(library(lists),[member/2]).
+:- use_module(library(semweb/rdf_db)).
+%:- use_module(library(semweb/rdf_db),[rdf_meta/1]).
 
 %% axiompred(?PredSpec)
 % @param PredSpec Predicate/Arity
@@ -517,7 +519,7 @@ axiom_arguments(reflexiveProperty,[objectPropertyExpression]).
 valid_axiom(reflexiveProperty(A)) :- subsumed_by([A],[objectPropertyExpression]).
 
 %% irreflexiveProperty(?ObjectPropertyExpression)
-% An object property reflexivity axiom ReflexiveProperty( OPE ) states that the object property expression OPE is reflexive - that is, no individual is connected by OPE to itsel
+% An object property reflexivity axiom ReflexiveProperty( OPE ) states that the object property expression OPE is reflexive - that is, no individual is connected by OPE to itself
 :- dynamic(irreflexiveProperty/1).
 :- multifile(irreflexiveProperty/1).
 axiompred(irreflexiveProperty/1).
@@ -825,6 +827,10 @@ dataRange(DR) :-
 %    objectExactCardinality/1 | dataSomeValuesFrom/1 |
 %    dataAllValuesFrom/1 | dataHasValue/1 | dataMinCardinality/1 |
 %    dataMaxCardinality/1 | dataExactCardinality/1
+classExpression(CE):-
+        var(CE),
+        !,
+        class(CE).
 classExpression(CE):-
         iri(CE) ;               % NOTE: added to allow cases where class is not imported
     class(CE) ;
@@ -1235,9 +1241,9 @@ retract_axiom(Axiom,Ontology) :-
 
 retract_all_axioms :-
         findall(A,axiom(A),Axioms),
-        maplist(retract,Axioms),
+        maplist(retractall,Axioms),
         findall(ontologyAxiom(O,A),ontologyAxiom(O,A),OAxioms),
-        maplist(retract,OAxioms),
+        maplist(retractall,OAxioms),
 	!.
 
 %% filtered_ontology_axiom(?Ont,?Axiom,+Goal)
