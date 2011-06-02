@@ -13,6 +13,12 @@
 :- multifile user:parse_arg_hook/3.
 :- multifile user:arg_info_hook/3.
 
+user:prolog_exception_hook(_,
+                           _, _, _) :-
+        backtrace(99),
+        fail.
+
+
 main :-
         current_prolog_flag(argv, Arguments),
         append(_SytemArgs, [--|Args], Arguments),
@@ -257,6 +263,7 @@ arg_info(debug,atom,'(developers) debug target').
 parse_arg(['--prolog'|L],L,prolog(true)).
 arg_info(prolog,-,'start prolog shell after loading owl files').
 parse_arg(['--shell'|L],L,prolog(true)) :- ensure_loaded(library(thea2/owl2_shell)).
+parse_arg(['--load_shell'|L],L,null) :- ensure_loaded(library(thea2/owl2_shell)).
 
 parse_arg(['--no_uri_expansion'|L],L,settings(uri_translation(none))).
 
@@ -364,6 +371,8 @@ parse_arg(['--check-consistency'|L],L,check_consistency).
 parse_arg(['--reasoner',A|L],L,reasonername(RN)) :-
         atom_to_term(A,RN,_).
 parse_arg(['--reasoner-opt',OptA|L],L,reasoneropt(Opt)) :- atom_to_term(OptA,Opt,_).
+parse_arg(['--reasoner-profile',Profile|L],L,reasoneropt(filter(A,axiom_profile(A,Profile)))).
+arg_info('reasoner-profle',profile,'Only feed reasoners axioms that are constrained by defined profile. Example: owl2_EL.').
 
 parse_arg(['--reasoner-query',select,TA,where,GA|L],L,reasonerquery( T, G)) :- sformat(A,'q((~w),(~w))',[TA,GA]),atom_to_term(A,q(T,G),_).
 parse_arg(['--reasoner-ask',GA|L],L,reasonerquery( T, G)) :- atom_to_term(GA,G-T,_).
@@ -371,7 +380,9 @@ parse_arg(['--reasoner-ask',GA|L],L,reasonerquery( A, A)) :- atom_to_term(GA,A,_
 parse_arg(['--reasoner-ask-direct',GA|L],L,reasonerquery( A, A, true)) :- atom_to_term(GA,A,_).
 parse_arg(['--reasoner-ask-all'|L],L,reasonerquery( A, A)).
 parse_arg(['--reasoner-ask-all-direct'|L],L,reasonerquery( A, A, true)).
+parse_arg(['--reasoner-ask-all-direct-subclasses'|L],L,reasonerquery( A, A, true)) :- A=subClassOf(_,_).
 parse_arg(['--reasoner-get-superclasses',C|L],L,reasonerquery( P, subClassOf(C,P))).
+parse_arg(['--reasoner-get-direct-superclasses',C|L],L,reasonerquery( P, subClassOf(C,P)), true).
 parse_arg(['--reasoner-cache-query-to',GA,F|L],L,reasonercache( A, F)) :- atom_to_term(GA,A,_).
 parse_arg(['--reasoner-cache-subclass-to',F|L],L,reasonercache( subClassOf(_,_), F)).
 
