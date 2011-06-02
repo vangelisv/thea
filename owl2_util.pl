@@ -268,7 +268,7 @@ use_label_as_IRI(IRI,X) :-
 use_label_as_IRI(X,X).
 
 get_IRI_from_label(X,X) :- var(X),!.
-get_IRI_from_label(X,IRI) :- labelAnnotation_value(IRI,X),!.
+get_IRI_from_label(X,IRI) :- atom(X),labelAnnotation_value(IRI,X),!.
 get_IRI_from_label(X,X).
 
 
