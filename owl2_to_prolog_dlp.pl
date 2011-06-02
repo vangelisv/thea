@@ -503,6 +503,7 @@ owl_as2prolog(description(allValuesFrom(PropertyID,Descr),ID),R,fact) :-  !,
 %
 
 owl_as2prolog(description(someValuesFrom(_,_),_),false,head) :-  !.
+owl_as2prolog(description(someValuesFrom(_,_),_),false,fact) :-  !.
 
 owl_as2prolog(description(someValuesFrom(PropertyID,Descr),_),R,body) :-  !,
         gensym('Ex_',ExV),
@@ -600,7 +601,7 @@ owl_as2prolog(annotationProperty(_),[],_) :- !.
 
 % 
 %  Mapping individuals
-%  a. Generate a C(ID) for each desccription C in the Types list
+%  a. Generate a C(ID) for each description C in the Types list
 %  b. Generate a p(ID,Value) for each value declaration in the Property
 %  list. 
 %
@@ -652,9 +653,11 @@ owl_as2prolog(inverseProperties(P,Inv),[(PE :- IPE),(IPE2 :- PE2)], _) :- !,
 % SWRL
 % (should this go in a separate hooks module?)
 
-owl_as2prolog(implies(A,C),(CP :- AP), _) :- !,
+owl_as2prolog(implies(A,C),(CP :- AP), _) :-
               owl_as2prolog(swrl(A),AP,body),
-              owl_as2prolog(swrl(C),CP,head).
+              owl_as2prolog(swrl(C),CP,head),
+              !.
+owl_as2prolog(implies(_,_),false, _) :- !.
 
 owl_as2prolog(swrl([]), true, _Type) :- !.
 owl_as2prolog(swrl([A]), G, Type) :-
