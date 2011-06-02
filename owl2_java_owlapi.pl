@@ -86,6 +86,11 @@ get_axiom_filter(Opts,A,G) :-
         !.
 get_axiom_filter(_,_,true).
 
+additional_axiom(Opts,A) :-
+        memberchk(adder(A,G),Opts),
+        G.
+
+        
 %% build_ontology(?Ont)
 % create an ontology from the current prolog db
 build_ontology(Ont) :-
@@ -93,6 +98,7 @@ build_ontology(Ont) :-
         build_ontology(Man,Fac,Ont).
 
 %% build_ontology(+Man,+Fac,?Ont)
+%% build_ontology(+Man,+Fac,?Ont,Opts:list)
 % create an ontology from the current prolog db
 build_ontology(Man,Fac,Ont) :-
         build_ontology(Man,Fac,Ont,[]).
@@ -106,7 +112,8 @@ build_ontology(Man,Fac,Ont,Opts) :-
         ;   OntName='http://example.org'),
         create_ontology(Man,OntName,Ont),
         forall((member(OntIRI,OntIRIs),
-                ontologyAxiom(OntIRI,Ax),
+                (   ontologyAxiom(OntIRI,Ax)
+                ;   additional_axiom(Opts,Ax)),
                 valid_axiom(Ax),
                 FilterGoal),
                add_axiom(Man,Fac,Ont,Ax,_)),
@@ -118,12 +125,14 @@ build_ontology(Man,Fac,Ont,Opts) :-
         ->  true
         ;   OntName='http://example.org'),
         create_ontology(Man,OntName,Ont),
-        forall((axiom(Ax),
+        forall(((    axiom(Ax)
+                 ;   additional_axiom(Opts,Ax)),
                 debug(owl2,'Testing axiom against filter: ~w',[Ax]),
                 valid_axiom(Ax),
                 FilterGoal),
                add_axiom(Man,Fac,Ont,Ax,_)),
         debug(owl2,'Built ontology',[]).
+
 /*
 build_ontology(Man,Fac,Ont,_Opts) :-
         require_manager(Man),
@@ -221,10 +230,14 @@ create_reasoner(Ont,jcel,Reasoner) :-
         jpl_call(Reasoner,precomputeInferences,[InfTypeArr],_).
 
 
+wrapped_reasoner(jcel).
+wrapped_reasoner(R) :- reasoner_factory(R,_).
 
 reasoner_factory(pellet,'com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory').
 reasoner_factory(hermit,'org.semanticweb.HermiT.Reasoner$ReasonerFactory').
 reasoner_factory(factpp,'uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory').
+reasoner_factory(cb,'org.semanticweb.cb.owlapi.CBReasonerFactory').
+reasoner_factory(jagr,'owltools.reasoner.GraphReasonerFactory').
 
 % DEPRECATED
 reasoner_classify(Reasoner) :-
@@ -272,6 +285,48 @@ unsatisfiable_class(Reasoner,Class) :-
 java_namedentity(J,C) :-
         jpl_call(J,getIRI,[],IRI),
         jpl_call(IRI,toString,[],C).
+
+jpl_implements_method(JOb,MN) :-
+        jpl_call(JOb,getClass,[],Z),jpl_call(Z,getMethods,[],ML),jpl_array_to_list(ML,Ms),member(M,Ms),jpl_call(M,getName,[],MN).
+
+jpl_instantiates_interface(JOb,IN) :-
+        jpl_call(JOb,getClass,[],JC),
+        jpl_extends_interface(JC,IN).
+
+jpl_extends_interface(JC,IN) :-
+        jpl_call(JC,getInterfaces,[],ML),jpl_array_to_list(ML,Ms),member(M,Ms),jpl_call(M,getName,[],IN).
+jpl_extends_interface(JC,IN) :-
+        jpl_call(JC,getSuperclass,[],SC),
+        SC \= '@'(null),
+        jpl_extends_interface(SC,IN).
+
+% note: currently incomplete
+class_expression_to_prolog(J,C) :-
+        jpl_implements_method(J,getIRI),
+        !,
+        java_namedentity(J,C).
+class_expression_to_prolog(J,intersectionOf(PL)) :-
+        jpl_instantiates_interface(J,'org.semanticweb.owlapi.model.OWLObjectIntersectionOf'),
+        !,
+        jpl_call(J,getOperands,[],OJL),
+        jpl_array_to_list(OJL,OL),
+        maplist(class_expression_to_prolog,OL,PL).
+class_expression_to_prolog(J,unionOf(PL)) :-
+        jpl_instantiates_interface(J,'org.semanticweb.owlapi.model.OWLObjectUnionOf'),
+        !,
+        jpl_call(J,getOperands,[],OJL),
+        jpl_array_to_list(OJL,OL),
+        maplist(class_expression_to_prolog,OL,PL).
+class_expression_to_prolog(J,someValuesFrom(PPr,PF)) :-
+        jpl_instantiates_interface(J,'org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom'),
+        !,
+        jpl_call(J,getFiller,[],JF),
+        class_expression_to_prolog(JF,PF),
+        jpl_call(J,getProperty,[],JPr),
+        class_expression_to_prolog(JPr,PPr).
+
+
+
 
 %% nodeset_entity(+NodeSet,?E) is nondet
 nodeset_entity(NodeSet,E) :-
@@ -389,6 +444,17 @@ reasoner_nr_subClassOf(R,Fac,C,P) :-
         jpl_call(R,getSubClasses,[JP,@(true)],JCSetSet),
         nodeset_entity(JCSetSet,C).
 
+% experimental
+%  gets inferred superclasses of P, where the superclass can be a named class or anon class expression
+reasoner_superClassExpressionOf(R,Fac,P,C) :-
+        class(C),
+        pl2javaref(Fac,C,JC),
+        jpl_call(R,getSuperClassExpressions,[JC,@(false)],JPSet),
+        jpl_call(JPSet,toArray,[],JPArr),
+        jpl_array_to_list(JPArr,JPL),
+        member(JP,JPL),
+        class_expression_to_prolog(JP,P).
+
 %% reasoner_subClassOf(+R,+Fac,?C,?P)
 % ?C ?P - find superclasses for all named classes C
 % +C ?P - find superclasses
@@ -407,7 +473,7 @@ reasoner_subClassOf(R,Fac,C,P,IsDirect) :-
         var(C),
         var(P),
         !,
-        class(C),
+        class(C), % named classes only
         reasoner_subClassOf(R,Fac,C,P,IsDirect).
 
 % reasoner_subClassOf(+R,+Fac,+C,?P,+IsDirect) 
@@ -415,6 +481,7 @@ reasoner_subClassOf(R,Fac,C,P,IsDirect) :-
         nonvar(C),
         !,
         pl2javaref(Fac,C,JC),
+        debug(reasoner,'~w ==> getSuperClasses(~w,@(~w))',[C,JC,IsDirect]),
         jpl_call(R,getSuperClasses,[JC,@(IsDirect)],JPSetSet),
         nodeset_entity(JPSetSet,P).
 
@@ -422,11 +489,22 @@ reasoner_subClassOf(R,Fac,C,P,IsDirect) :-
 reasoner_subClassOf(R,Fac,C,P,IsDirect) :-
         nonvar(P),
         !,
+        % allow queries of form: subClassOf(X,part_of some Y)
+        %  - generate all possible values
+        generate_ground_class_expression(P), 
         debug(reasoner,'getSubClasses( ~w )',[P]),
         pl2javaref(Fac,P,JP),
         jpl_call(R,getSubClasses,[JP,@(IsDirect)],JCSetSet),
         debug(reasoner,'getSubClasses( ~w ) = ~w',[P,JCSetSet]),
         nodeset_entity(JCSetSet,C).
+
+generate_ground_class_expression(X) :-
+        ground(X),
+        !.
+generate_ground_class_expression(X) :-
+        classExpression(X).
+
+
 
 %% reasoner_nr_individualOf(+R,+Fac,?I,?C)
 % ?I ?C - find classes for all named individuals I
@@ -955,10 +1033,6 @@ new_incremental_classifier(pellet_incremental(R)) :-
 :- multifile owl2_reasoner:reasoner_check_consistency_hook/2.
 :- multifile owl2_reasoner:reasoner_unsatisfiable_class_hook/2.
 
-wrapped_reasoner(pellet).
-wrapped_reasoner(hermit).
-wrapped_reasoner(factpp).
-wrapped_reasoner(jcel).
 
 owl2_reasoner:initialize_reasoner_hook(Type,R,Opts) :-
 	wrapped_reasoner(Type), % choose arbitrary if not defined
@@ -989,6 +1063,7 @@ owl2_reasoner:reasoner_tell_all_hook(owlapi_reasoner(OWLReasoner,Fac,Opts)) :-
 %	throw(error(reasoner(R,Axiom))).
 
 owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),subClassOf(A,B)) :-
+        \+ is_jagr(R),
 	reasoner_subClassOf(R,Fac,A,B),
         \+ nothing(A).
 
@@ -997,9 +1072,16 @@ owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),subClassOf(A,B),IsD
 	reasoner_subClassOf(R,Fac,A,B,IsDirect),
         \+ nothing(A).
 
+% experimental
+owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),subClassOf(A,B)) :-
+        is_jagr(R),
+	reasoner_superClassExpressionOf(R,Fac,B,A),
+        \+ nothing(A).
+
 owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),directSubClassOf(A,B)) :-
 	reasoner_subClassOf(R,Fac,A,B,true),
         \+ nothing(A).
+
 
 owl2_reasoner:reasoner_ask_hook(owlapi_reasoner(R,Fac,_Opts),equivalentClasses([A,B])) :-
 	reasoner_equivalent_to(R,Fac,A,B),
@@ -1022,6 +1104,13 @@ owl2_reasoner:reasoner_check_consistency_hook(owlapi_reasoner(R,_Fac,_Opts),V) :
         (   is_consistent(R)
         ->  V=true
         ;   V=false).
+
+% true if R is the experimental java graph reasoner (in owltools)
+%  this allows super class expressions to be anonymous
+is_jagr(R) :-
+        jpl_call(R,getClass,[],JC),jpl_call(JC,getName,[],CN),
+        CN='owltools.reasoner.GraphReasoner'.
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
