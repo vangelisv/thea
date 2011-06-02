@@ -42,6 +42,10 @@ load_axioms(File,Fmt) :-
 %
 % Opts are Fmt specific - see individual modules for details.
 load_axioms(File,Fmt,Opts) :-
+        select(imports(true),Opts,Opts_2),
+        !,
+        load_import_closure(File,Fmt,Opts_2).
+load_axioms(File,Fmt,Opts) :-
         var(Fmt),
         guess_format(File,Fmt,Opts),
         !,
@@ -96,6 +100,20 @@ post_process_prolog_axioms(Opts) :-
         forall(axiom(A),
                assert_axiom(A,Ont)).
 post_process_prolog_axioms(_).
+
+:- dynamic loaded/1.
+load_import_closure(Ont,_,_) :-
+        loaded(Ont),
+        !.
+load_import_closure(Ont,Fmt,Opts) :-
+        load_axioms(Ont,Fmt,Opts),
+        assert(loaded(Ont)),
+        % ontology name may not match file
+        forall((ontology(Loaded),\+loaded(Loaded)),
+               assert(loaded(Loaded))),
+        setof(Imp,X^ontologyImport(X,Imp),Imps),
+        forall(member(Imp,Imps),
+               load_import_closure(Imp,Fmt,Opts)).
 
 
 %% save_axioms(+File,+Fmt)
@@ -183,7 +201,8 @@ write_axiom_as_owlpl(ontologyAxiom(_,_),Opts) :-
         member(exclude(ontologyAxiom),Opts),
         !.
 write_axiom_as_owlpl(A,_) :-
-        format('~q.~n',[A]).
+        write_canonical(A),
+        format('.~n',[]).
 
         
 
