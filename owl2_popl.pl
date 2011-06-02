@@ -58,7 +58,7 @@ preprocess_directives(L,L2,Opts) :-
         !,
         findall(X2,
                 (   member(X,L),
-                    preprocess_directive(X,X2,Opts)),
+                    once(preprocess_directive(X,X2,Opts))),
                 L2).
 preprocess_directives(X,X2,Opts) :-
         preprocess_directive(X,X2,Opts).
@@ -178,15 +178,17 @@ perform_translation(X, Opts) :-
         !,
         perform_translation(X, AxiomTemplate, AxiomTemplate, Opts).
 perform_translation(X, Opts) :-
-        perform_translation(X, A, axiom(A), Opts).
+        perform_translation(X, A, axiom(A), Opts). % default
 
+%% perform_translation(+Tr, +AxiomTemplate, +AxiomGoal, +Opts)
 perform_translation(X, AxiomTemplate, Goal, Opts) :-
-        debug(popl,'collecting axioms...',[]),
+        debug(popl,'collecting axioms... ~w',[X]),
         setof(AxiomTemplate,Goal,Axioms),
         !,
         perform_translation_on_axioms(X, Axioms, Opts).
 perform_translation(_,_,_,_).
 
+%% perform_translation_on_axioms(+Tr, +Axioms:list, +Opts:list)
 perform_translation_on_axioms(X, Axioms, Opts) :-
         debug(popl,'performing: ~w',[X]),
         findall(A-A2,
