@@ -112,23 +112,29 @@ rewrite_axiom(Axiom,Rule,NewAxiom) :-
         debug(visitor,'  rewrote ~w ===> ~w',[Args,Args2]),
         NewAxiom =.. [Pred|Args2].
 
+%% rewrite_axiom_multirule(+AxiomIn,+Rules:list,?NewAxiom)
+%
+% iterates through rules applying each rule on axiom.
+% note: does not attempt to forward chain, but an extension to the rule language
+% could be added for this
+rewrite_axiom_multirule(Axiom,Rules,OutAxiom) :-
+        rewrite_axiom_multirule_sweep(Axiom,Rules,OutAxiom),
+        !.
+        %rewrite_axiom_multirule(NewAxiom,Rules,OutAxiom).
 
-rewrite_axiom_multirule(Axiom,[],Axiom) :- !.
-rewrite_axiom_multirule(Axiom,[Rule|Rules],NewAxiom) :-
+
+rewrite_axiom_multirule_sweep(Axiom,[],Axiom) :- !.
+rewrite_axiom_multirule_sweep(Axiom,[Rule|Rules],NewAxiom) :-
         rewrite_axiom(Axiom,Rule,Axiom_2), % todo - nd
-        (   Axiom\=Axiom_2
-        ->  
-            debug(v2,'  rewriting ~w ***===>*** ~w',[Axiom,Axiom_2]),
-            debug(v2,'     TO GO: ~w',[Rules])
-        ;
-            true),
-        rewrite_axiom_multirule(Axiom_2,Rules,NewAxiom).
+        !,
+        rewrite_axiom_multirule_sweep(Axiom_2,Rules,NewAxiom).
 
+%% rewrite_args(+Axiom,+ArgsIn:list,+Rule,?ArgsOut:list)
 rewrite_args(_,[],_,[]) :- !.
 rewrite_args(Axiom,[Arg|Args],Rule,[NewArg|NewArgs]) :-
         debug(v2,'  XX rewriting ~w',[Arg]),
         rewrite_expression(Axiom,Arg,Rule,NewArg),
-        %debug(v2,'  ===> XX  ~w',[NewArg]),
+        debug(v2,'  ===> XX  ~w',[NewArg]),
         rewrite_args(Axiom,Args,Rule,NewArgs).
 
 
@@ -137,6 +143,10 @@ rewrite_args(Axiom,[Arg|Args],Rule,[NewArg|NewArgs]) :-
 % Rule = visitor(Goal,AxiomTemplate,ExpressionTemplate,Result)
 %
 % Goal is called if the input expression matches the expression template
+rewrite_expression(_,Ex,Rule,_) :-
+        var(Ex),
+        !,
+        throw(error(variable_expression(Rule))).
 rewrite_expression(Axiom,Ex,Rule,NewEx) :-
         nonvar(Ex),
         is_list(Ex),
@@ -158,6 +168,7 @@ rewrite_expression(Axiom,Ex,Rule,NewEx) :-
         NewEx =.. [Pred|NewArgs].
 
 
+%% rule_axiom_template(+TrRule,Goal,InAxiomTemplate,OutAxiomTemplate)
 rule_axiom_template(tr(axiom,In,Out,G,_),G,In,Out).
 rule_axiom_template(tr(_,_,_,_,_),true,Ax,Ax). % pass-through
 rule_axiom_template(Rule,_,_,_) :- Rule\=tr(_,_,_,_,_),throw(error(invalid(Rule))).
