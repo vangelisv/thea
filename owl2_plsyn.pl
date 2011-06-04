@@ -6,6 +6,7 @@
 
                       plsyn_owl/2,
                       plsyn_owl/3,
+                      label/2,
                       
                       op(980,xfy,(--)),
                       op(950,xfy,\^), % disjoint classes
@@ -78,6 +79,8 @@
 :- op(150,xfy,exactly).
 :- op(125,xfy,of).
 :- op(100,fx,(?)).
+
+label(X,N) :- labelAnnotation_value(X,N).
 
 :- multifile owl2_io:load_axioms_hook/3.
 owl2_io:load_axioms_hook(File,plsyn,Opts) :-
