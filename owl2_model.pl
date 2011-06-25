@@ -5,6 +5,8 @@
            entity/1,
            declarationAxiom/1,
            builtin_class/1,
+           owl_thing/1,
+           owl_nothing/1,
            is_class/1,
            class/1,
            datatype/1,
@@ -144,8 +146,11 @@
 :- discontiguous(axiompred/1).
 :- discontiguous(axiom_arguments/2).
 
-builtin_class('http://www.w3.org/2002/07/owl#Thing').
-builtin_class('http://www.w3.org/2002/07/owl#Nothing').
+builtin_class(C) :- owl_thing(C).
+builtin_class(C) :- owl_nothing(C).
+
+owl_thing('http://www.w3.org/2002/07/owl#Thing').
+owl_nothing('http://www.w3.org/2002/07/owl#Nothing').
 is_class(C) :- class(C).
 is_class(C) :- builtin_class(C).
 
@@ -750,6 +755,7 @@ valid_axiom(ontologyVersionInfo(A, B)) :- subsumed_by([A, B],[ontology, iri]).
   EXPRESSIONS
   ****************************************/
 
+subsumed_by('http://www.w3.org/2000/01/rdf-schema#label',annotationProperty).
 subsumed_by(X,_) :- var(X),!.
 subsumed_by([],[]) :- !.
 subsumed_by([I|IL],[T|TL]) :-
@@ -1028,7 +1034,7 @@ dataExactCardinality(cardinality(C,OPE)):-
 % true if Axiom passes typechecking
 
 
-%% is_valid_axiom(?Axiom) is semidet
+%% is_valid_axiom(+Axiom) is semidet
 % true if Axiom passes typechecking
 is_valid_axiom(Axiom) :- \+ \+ valid_axiom(Axiom).
 
