@@ -7,6 +7,8 @@
                       plsyn_owl/2,
                       plsyn_owl/3,
                       label/2,
+                      assert_plsyn_axiom/1,
+                      assert_plsyn_axiom/2,
                       
                       op(980,xfy,(--)),
                       op(950,xfy,\^), % disjoint classes
@@ -176,6 +178,9 @@ plsyn2owl(R1*R2 @< R,subPropertyOf(propertyChain(Chain),R)) :-
         plsyn2owl_ec(R1*R2,(*),Chain),
         !.
 
+plsyn2owl(X,X) :-
+        X = _:_,
+        !.
 plsyn2owl(Pl,Owl) :-
         Pl=..[PlPred,PlProp,of(Num,PlC)],
         cardinality_pred(PlPred),
@@ -184,6 +189,11 @@ plsyn2owl(Pl,Owl) :-
         plsyn2owl(PlProp,Prop),
         plsyn2owl(PlC,C),
         Owl=..[OwlPred,Num,Prop,C].
+plsyn2owl(P value Num,Owl) :-
+        number(Num),
+        Num >= 0,
+        !,
+        plsyn2owl(P value literal(type('http://www.w3.org/2001/XMLSchema#nonNegativeInteger',Num)),Owl).
 plsyn2owl(Pl,Owl) :-
         Pl=..[PlPred|Args],
         plpred2owlpred(PlPred,OwlPred),
@@ -373,6 +383,26 @@ plpred2owlpred_list(neq,differentIndividuals).
 cardinality_pred(min).
 cardinality_pred(max).
 cardinality_pred(exact).
+
+% ----------------------------------------
+% CONVENIENCE COMMANDS
+% ----------------------------------------
+
+%% assert_plsyn_axiom(+PlSynAxiom,+Ont) is det
+% combines plsyn_owl/2 and assert_axiom/2.
+% Example:
+% ==
+% assert_plsyn_axiom(foo < part_of some bar).
+% ==
+assert_plsyn_axiom(A,O) :-
+        plsyn_owl(A,A2),
+        assert_axiom(A2,O).
+%% assert_plsyn_axiom(+PlSynAxiom)
+%
+% as assert_plsyn_axiom/2
+assert_plsyn_axiom(A) :-
+        plsyn_owl(A,A2),
+        assert_axiom(A2).
 
 
 /** <module> prolog-style syntactic sugar for OWL
