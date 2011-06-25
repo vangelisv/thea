@@ -114,7 +114,8 @@ build_ontology(Man,Fac,Ont,Opts) :-
         forall((member(OntIRI,OntIRIs),
                 (   ontologyAxiom(OntIRI,Ax)
                 ;   additional_axiom(Opts,Ax)),
-                valid_axiom(Ax),
+                debug(owl2,'Testing validity of: ~w',[Ax]),
+                test_if_valid_axiom(Ax),
                 FilterGoal),
                add_axiom(Man,Fac,Ont,Ax,_)),
         debug(owl2,'Built ontology',[]).
@@ -128,10 +129,16 @@ build_ontology(Man,Fac,Ont,Opts) :-
         forall(((    axiom(Ax)
                  ;   additional_axiom(Opts,Ax)),
                 debug(owl2,'Testing axiom against filter: ~w',[Ax]),
-                valid_axiom(Ax),
+                test_if_valid_axiom(Ax),
                 FilterGoal),
                add_axiom(Man,Fac,Ont,Ax,_)),
         debug(owl2,'Built ontology',[]).
+
+test_if_valid_axiom(Ax) :- valid_axiom(Ax),!.
+test_if_valid_axiom(Ax) :- !, print_message(error,invalid_axiom(Ax)),fail.
+
+
+
 
 /*
 build_ontology(Man,Fac,Ont,_Opts) :-
@@ -827,6 +834,9 @@ translate_arg_to_java(Fac,Val,literal,Obj) :- % todo - caused by bug in rdf pars
 translate_arg_to_java(Fac,literal(lang(_,Val)),literal,Obj) :- % todo - LANG
         !,
         jpl_call(Fac,getOWLStringLiteral,[Val],Obj).
+translate_arg_to_java(Fac,literal(type('http://www.w3.org/2001/XMLSchema#nonNegativeInteger',Val)),_,Obj) :- % todo - typed constants
+        !,
+        jpl_call(Fac,getOWLTypedLiteral,[Val],Obj). 
 translate_arg_to_java(Fac,literal(type(_,Val)),literal,Obj) :- % todo - typed constants
         !,
         jpl_call(Fac,getOWLStringLiteral,[Val],Obj).
@@ -1145,8 +1155,10 @@ prolog:message(bench(M,T1)) -->
 prolog:message(bench(M,T1,T2)) -->
         {TD is T2-T1},
         ['completed: ',M,' ',T2,' time: ',TD].
-
-
+prolog:message(invalid_axiom(Ax)) -->
+        {sformat(AxQ, '~q', [Ax])},
+        ['Axiom ',AxQ,' is not valid (maybe some entities are not declared?)'].
+        
 /** <module> bridge to java OWLAPI
 
 ---+ Synopsis
