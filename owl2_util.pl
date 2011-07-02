@@ -402,7 +402,8 @@ uniqify([H|L],[H|L2]) :-
 
 inferred_declaration(O,Decl) :-
         ontologyAxiom(O,Axiom),
-        term_implicit_declaration(Axiom,Decl).
+        term_implicit_declaration(Axiom,Decl),
+        debug(util,'inferred_declaration: ~q',[Decl]).
 
 term_implicit_declaration(Axiom,Decl) :-        
         Axiom=..[P|Args],
@@ -423,6 +424,11 @@ inferred_declaration(Arg,ArgType,Decl) :-
         ArgType=individual,
         !,
         Decl=namedIndividual(Arg).
+inferred_declaration(Arg,ArgType,Decl) :-
+        atom(Arg),
+        ArgType=dataPropertyExpression,
+        !,
+        Decl=dataProperty(Arg).
 inferred_declaration(Arg,ArgType,Decl) :-
         atom(Arg),
         ArgType=objectPropertyExpression,
