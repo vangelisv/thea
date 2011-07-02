@@ -5,7 +5,7 @@
 :- use_module(owl2_util).
 :- use_module(owl2_reasoner).
 :- use_module(owl2_text_display).
-:- use_module(owl2_popl,[popl_translate/1]).
+:- use_module(owl2_popl,[popl_translate/1,(=::=)/2]).
 :- use_module(owl2_dotty).
 :- use_module(owl2_profiles).
 
