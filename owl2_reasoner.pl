@@ -11,7 +11,9 @@
 	   reasoner_ask/2,
            reasoner_ask/1,
 	   reasoner_check_consistency/2,
-           reasoner_cache_to_file/3
+           reasoner_cache_to_file/3,
+           assert_inferred_axioms/1,
+           assert_inferred_axioms/2
           ]).
 
 :- use_module(owl2_model).
@@ -75,11 +77,17 @@ project_expression(Ax) :-
 
 initialize_reasoner_hook(path(Type),path(Reasoner),Opts) :-
         initialize_reasoner(Type,Reasoner,[adder(Ax,owl2_reasoner:project_expression(Ax))|Opts]).
-reasoner_tell_hook(path(R),Ax,IsD) :-
+reasoner_tell_hook(R1,Ax,IsD) :-
+        nonvar(R1),
+        R1=path(R),
         reasoner_tell(R,Ax,IsD).
-reasoner_ask_hook(path(R),Ax,IsD) :-
+reasoner_ask_hook(R1,Ax,IsD) :-
+        nonvar(R1),
+        R1=path(R),
         reasoner_ask(R,Ax,IsD).
-reasoner_ask_hook(path(R),Ax) :-
+reasoner_ask_hook(R1,Ax) :-
+        nonvar(R1),
+        R1=path(R),
         reasoner_ask(R,Ax).
 
 % ----------------------------------------
@@ -174,6 +182,13 @@ reasoner_cache_to_stream(Reasoner,AxiomTemplate,Out) :-
 
 write_precomputed_axiom(Ax,Out) :-
         format(Out,'~q.~n',[Ax]).
+
+assert_inferred_axioms(Reasoner,Ont) :-
+        forall(reasoner_ask(Reasoner,Axiom,false),
+               assert_axiom(Axiom,Ont)).
+assert_inferred_axioms(Reasoner) :-
+        forall(reasoner_ask(Reasoner,Axiom,false),
+               assert_axiom(Axiom)).
 
 
 
