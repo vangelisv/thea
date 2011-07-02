@@ -207,7 +207,15 @@ comma_term_to_list((A,B),[A|L]) :-
         !,
         comma_term_to_list(B,L).
 comma_term_to_list(A,[A]).
-        
+
+% ----------------------------------------
+% UTIL
+% ----------------------------------------
+guess_ontology(Ont) :-
+        setof(Ont,A^ontologyAxiom(Ont,A),[Ont]),
+        !.
+guess_ontology(Ont) :- throw(guess_ontology(Ont)).
+
 
 % ----------------------------------------
 % LOOKUP
@@ -240,6 +248,7 @@ codes_to_fact(Codes,Pred) :-
         atom_codes(A,Codes),
         Fact =.. [Pred,A],
         user:assert(Fact).
+
 
 % ----------------------------------------
 % OPTION PROCESSING
@@ -299,6 +308,7 @@ parse_arg(['--ensure-loaded',MA|L],L,ensure_loaded(M)) :- atom_to_term(MA,M,_).
 parse_arg(['--load-app',MA|L],L,null) :- atom_to_term(MA,M,_), ensure_loaded(library(thea2/apps/M)).
 %parse_arg(['--load-mod',MA|L],L,ensure_loaded(library(thea2/M))) :- atom_to_term(MA,M,_).
 parse_arg(['--load-mod',MA|L],L,null) :- atom_to_term(MA,M,_),ensure_loaded(library(thea2/M)).
+parse_arg(['--boot-module',MA|L],L,null) :- atom_to_term(MA,M,_),ensure_loaded(M).
 
 parse_arg(['--read-atoms',F|L],L,null) :- read_file_to_facts(F,input).
 
@@ -385,6 +395,7 @@ parse_arg(['--reasoner-get-superclasses',C|L],L,reasonerquery( P, subClassOf(C,P
 parse_arg(['--reasoner-get-direct-superclasses',C|L],L,reasonerquery( P, subClassOf(C,P)), true).
 parse_arg(['--reasoner-cache-query-to',GA,F|L],L,reasonercache( A, F)) :- atom_to_term(GA,A,_).
 parse_arg(['--reasoner-cache-subclass-to',F|L],L,reasonercache( subClassOf(_,_), F)).
+parse_arg(['--reasoner-assert-inferred-axioms'|L],L,goal((guess_ontology(Ont),nb_current(reasoner,Reasoner),assert_inferred_axioms(Reasoner,Ont)))).
 
 parse_arg(['--sim',A|L],L,
           query(sim(X,Y,LCS),
