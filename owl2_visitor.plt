@@ -116,36 +116,36 @@ test(tr_expr_open3, [true(Axiom = equivalentClasses([z,someValuesFrom(p,intersec
 
 
 
-test(smatch1, [true(smatch(a,a))]) :- true.
-test(smatch2, [true(smatch(someValuesFrom(a,b),someValuesFrom(a,b)))]) :- true.
-test(smatch3, [true(\+smatch(someValuesFrom(a,b),someValuesFrom(b,a)))]) :- true.
-test(smatch4, [true(smatch(intersectionOf([a,b,c]),
+test(structurally_equivalent1, [true(structurally_equivalent(a,a))]) :- true.
+test(structurally_equivalent2, [true(structurally_equivalent(someValuesFrom(a,b),someValuesFrom(a,b)))]) :- true.
+test(structurally_equivalent3, [true(\+structurally_equivalent(someValuesFrom(a,b),someValuesFrom(b,a)))]) :- true.
+test(structurally_equivalent4, [true(structurally_equivalent(intersectionOf([a,b,c]),
                            intersectionOf([b,a,c])))]) :- true.
-test(smatch5, [true(\+smatch(intersectionOf([a,b,c,d]),
+test(structurally_equivalent5, [true(\+structurally_equivalent(intersectionOf([a,b,c,d]),
                              intersectionOf([b,a,c])))]) :- true.
-test(smatch6, [true(smatch(intersectionOf([a,b,c]),
+test(structurally_equivalent6, [true(structurally_equivalent(intersectionOf([a,b,c]),
                            intersectionOf([b,a,tail(_)])))]) :- true.
-test(smatch7, [true(\+smatch(intersectionOf([a,b,c]),
+test(structurally_equivalent7, [true(\+structurally_equivalent(intersectionOf([a,b,c]),
                              intersectionOf([d,tail(_)])))]) :- true.
 
-test(smatch8, [true(A/P/B=a/p/b)]) :-
-        smatch(intersectionOf([a,someValuesFrom(p,b)]),
+test(structurally_equivalent8, [true(A/P/B=a/p/b)]) :-
+        structurally_equivalent(intersectionOf([a,someValuesFrom(p,b)]),
                intersectionOf([someValuesFrom(P,B),A])),
         writeln(sm(A/P/B)).
-test(smatch9, [true(A/P/B=a/p/b)]) :-
-        smatch(intersectionOf([a,someValuesFrom(p,b)]),
+test(structurally_equivalent9, [true(A/P/B=a/p/b)]) :-
+        structurally_equivalent(intersectionOf([a,someValuesFrom(p,b)]),
                intersectionOf([A,someValuesFrom(P,B),tail(_)])),
         writeln(sm(A/P/B)).
-test(smatch10, [true(A/P/B=a/p/b)]) :-
-        smatch(intersectionOf([a,someValuesFrom(p,b),b,c]),
+test(structurally_equivalent10, [true(A/P/B=a/p/b)]) :-
+        structurally_equivalent(intersectionOf([a,someValuesFrom(p,b),b,c]),
                intersectionOf([A,someValuesFrom(P,B),tail(_)])),
         writeln(sm(A/P/B)).
-test(smatch11, [true(P/B/Rest=p/b/[c,someValuesFrom(q,d)])]) :-
-        smatch(intersectionOf([a,someValuesFrom(p,b),c,someValuesFrom(q,d)]),
+test(structurally_equivalent11, [true(P/B/Rest=p/b/[c,someValuesFrom(q,d)])]) :-
+        structurally_equivalent(intersectionOf([a,someValuesFrom(p,b),c,someValuesFrom(q,d)]),
                intersectionOf([a,someValuesFrom(P,B),tail(Rest)])),
         writeln(sm(P/B/Rest)).
-test(smatch12, [true(Q/E/Rest=p/unionOf([e,someValuesFrom(po,e)])/[someValuesFrom(qualifier,abn)])]) :-
-        smatch(intersectionOf([someValuesFrom(inheres_in,unionOf([e,someValuesFrom(po,e)])),
+test(structurally_equivalent12, [true(Q/E/Rest=p/unionOf([e,someValuesFrom(po,e)])/[someValuesFrom(qualifier,abn)])]) :-
+        structurally_equivalent(intersectionOf([someValuesFrom(inheres_in,unionOf([e,someValuesFrom(po,e)])),
                                p,
                                someValuesFrom(qualifier,abn)]),
                intersectionOf([Q,
@@ -153,8 +153,8 @@ test(smatch12, [true(Q/E/Rest=p/unionOf([e,someValuesFrom(po,e)])/[someValuesFro
                                tail(Rest)])),
         writeln(sm12(Q/E/Rest)).
 
-test(smatch13, [true(true)]) :-
-        owl2_visitor:smatch_args_unordered([q, someValuesFrom('http://purl.obolibrary.org/obo/test_inheres_in_part_of', e), someValuesFrom('http://purl.obolibrary.org/obo/test_qualifier', ab)],
+test(structurally_equivalent13, [true(true)]) :-
+        owl2_visitor:structurally_equivalent_args_unordered([q, someValuesFrom('http://purl.obolibrary.org/obo/test_inheres_in_part_of', e), someValuesFrom('http://purl.obolibrary.org/obo/test_qualifier', ab)],
                                            [someValuesFrom('http://purl.obolibrary.org/obo/test_inheres_in_part_of', E), tail(Tail)]).
 
 
