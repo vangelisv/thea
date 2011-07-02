@@ -98,7 +98,7 @@ The result should be:
 % uses blip tabling module to cache reasoner calls
 % (replace with reasoner caching?)
 prepare_optimizations(_) :-
-        ensure_loaded(library(thea2/util/memoization)),
+        ensure_loaded(library(thea/util/memoization)),
         table_pred(is_subsumed_by/3),
         table_pred(reasoner_get_subsumer/3),
         table_pred(class_pair_common_subsumer_ext/4),

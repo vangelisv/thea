@@ -1288,8 +1288,8 @@ disjointClasses([herbivore,carnivore]).
 Example of use:
 
 ==
-:- use_module(library(thea2/owl2_io)).
-:- use_module(library(thea2/owl2_model)).
+:- use_module(library(thea/owl2_io)).
+:- use_module(library(thea/owl2_model)).
 
 show_superclasses(OntFile,Class) :-
         load_axioms(OntFile),

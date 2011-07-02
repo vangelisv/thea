@@ -3,10 +3,10 @@
 :- module(owlmacros,
 	  [expand_all/0]).
 
-:- use_module(library('thea2/owl2_model')).
-:- use_module(library('thea2/owl2_io')).
-:- use_module(library('thea2/owl2_popl')).
-:- use_module(library('thea2/owl2_manchester_parser')).
+:- use_module(library('thea/owl2_model')).
+:- use_module(library('thea/owl2_io')).
+:- use_module(library('thea/owl2_popl')).
+:- use_module(library('thea/owl2_manchester_parser')).
 
 literal_atom(literal(lang(_,A)),A) :- !.
 literal_atom(literal(type(_,A)),A) :- !.

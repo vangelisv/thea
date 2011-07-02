@@ -264,8 +264,8 @@ normalize_term(T,T2) :-
   ---+ Synopsis
 
 ==
-use_module(library(thea2/owl2_io)).
-use_module(library(thea2/owl2_popl)).
+use_module(library(thea/owl2_io)).
+use_module(library(thea/owl2_popl)).
 
 load_axioms('my_test_ont.owl').
 

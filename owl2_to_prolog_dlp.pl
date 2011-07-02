@@ -734,7 +734,7 @@ map_description(Type,X,Description,DMap) :- !,
   Type the following in a prolog session:
   
   ==
-  use_module(library(thea2/owl_io)).
+  use_module(library(thea/owl_io)).
   load_axioms('myont.owl').
   save_axioms('myont.pl',dlp).
   ==

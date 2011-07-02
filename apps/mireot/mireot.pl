@@ -1,6 +1,6 @@
-:- use_module(library(thea2/owl2_model)).
-:- use_module(library(thea2/owl2_io)).
-:- use_module(library(thea2/owl2_graph_reasoner)).
+:- use_module(library(thea/owl2_model)).
+:- use_module(library(thea/owl2_io)).
+:- use_module(library(thea/owl2_graph_reasoner)).
 
 %% ontology_references_class_in(?O,?C,?O2)
 % true of O contains an axiom that references C, and C is declared in O2

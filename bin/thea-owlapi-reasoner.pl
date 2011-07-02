@@ -1,8 +1,8 @@
-:- use_module(library('thea2/owl2_util')).
-:- use_module(library('thea2/swrl_rdf_hooks')).
-:- use_module(library('thea2/swrl')).
-:- use_module(library('thea2/owl2_io')).
-:- use_module(library('thea2/owl2_java_owlapi')).
+:- use_module(library('thea/owl2_util')).
+:- use_module(library('thea/swrl_rdf_hooks')).
+:- use_module(library('thea/swrl')).
+:- use_module(library('thea/owl2_io')).
+:- use_module(library('thea/owl2_java_owlapi')).
 
 
 run(FilesAtom) :-

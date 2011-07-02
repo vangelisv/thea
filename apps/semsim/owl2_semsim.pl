@@ -1,8 +1,8 @@
 /* -*- Mode: Prolog -*- */
 
-:- use_module(library('thea2/owl2_model')).
-:- use_module(library('thea2/owl2_io')).
-:- use_module(library('thea2/owl2_basic_reasoner')).
+:- use_module(library('thea/owl2_model')).
+:- use_module(library('thea/owl2_io')).
+:- use_module(library('thea/owl2_basic_reasoner')).
 
 class_freq(C,Num) :- aggregate(count,I,entailed(classAssertion(C,I)),Num).
 num_individuals(Num) :- aggregate(count,I,C^classAssertion(C,I),Num).

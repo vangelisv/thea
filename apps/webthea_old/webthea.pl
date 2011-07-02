@@ -7,9 +7,9 @@
            start_server/2
           ]).
 
-:- use_module(library('thea2/owl2_model')).
-:- use_module(library('thea2/owl2_io')).
-:- use_module(library('thea2/owl2_to_prolog_dlp')).
+:- use_module(library('thea/owl2_model')).
+:- use_module(library('thea/owl2_io')).
+:- use_module(library('thea/owl2_to_prolog_dlp')).
 
 :- use_module(library('http/thread_httpd')).
 :- use_module(library('http/http_dispatch')).

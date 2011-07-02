@@ -1,9 +1,9 @@
 /* -*- Mode: Prolog -*- */
 
-:- use_module(library('thea2/owl2_model')).
-:- use_module(library('thea2/owl2_plsyn')).
-:- use_module(library('thea2/owl2_io')).
-:- use_module(library('thea2/owl2_reasoner')).
+:- use_module(library('thea/owl2_model')).
+:- use_module(library('thea/owl2_plsyn')).
+:- use_module(library('thea/owl2_io')).
+:- use_module(library('thea/owl2_reasoner')).
 
 :- multifile user:parse_arg_hook/3.
 :- multifile user:arg_info_hook/3.

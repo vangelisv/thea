@@ -196,7 +196,7 @@ assert_inferred_axioms(Reasoner) :-
 
 load_handler(Type,_Opts) :-
         forall(reasoner_module(Type,Mod),
-	       ensure_loaded(library(thea2/Mod))).
+	       ensure_loaded(library(thea/Mod))).
 
 reasoner_module(pellet,owl2_java_owlapi).
 reasoner_module(factpp,owl2_java_owlapi).

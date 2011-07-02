@@ -452,8 +452,8 @@ iri_type(Type,Arg,TypedArg) :-
 Use this module via owl2_io.pl
 
 ==
-:- use_module(library('thea2/owl2_io')).
-:- use_module(library('thea2/owl2_model')).
+:- use_module(library('thea/owl2_io')).
+:- use_module(library('thea/owl2_model')).
 
 test :-
         load_axioms('testfiles/rnao.owlx',owlx),

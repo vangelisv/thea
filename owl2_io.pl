@@ -166,7 +166,7 @@ load_handler(Dir,Fmt) :-
 
 load_thea_modules([]).
 load_thea_modules([Mod|Mods]) :- 
-        ensure_loaded(library(thea2/Mod)),
+        ensure_loaded(library(thea/Mod)),
         load_thea_modules(Mods).
 
         
@@ -261,8 +261,8 @@ format_module(write,owlapi(_),owl2_java_owlapi).
 Allows loading into or saving from an owl2_model.pl database
   
 ==
-:- use_module(library('thea2/owl2_io')).
-:- use_module(library('thea2/owl2_model')).
+:- use_module(library('thea/owl2_io')).
+:- use_module(library('thea/owl2_model')).
 
 % reads in RDF/OWL and serializes to other formats
 test :-
