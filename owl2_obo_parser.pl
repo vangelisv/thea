@@ -40,7 +40,7 @@ obo2owl(In,Out,URI,Opts) :-
         run_obo2owl(In,Out,URI,Opts).
 
 run_obo2owl(In,Out,URI,Opts) :-
-        concat_atom(['obolib-obo2owl --allow-dangling','-o',URI,In,'>/dev/null'],' ',Cmd),
+        concat_atom(['obolib-obo2owl --default-ontology default --allow-dangling','-o',URI,In,'>/dev/null'],' ',Cmd),
         shell(Cmd),
         load_axioms(Out,owl,Opts).
 
