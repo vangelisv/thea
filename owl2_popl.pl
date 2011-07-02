@@ -11,7 +11,9 @@
            op(1100,xfy,===>),
            op(1000,xfy,where),
            op(1000,xfy,forall),
-           op(990,fx,add)
+           op(990,fx,add),
+           op(990,xfy,(=::=)),
+           (=::=)/2
 
           ]).
 
@@ -19,12 +21,21 @@
 :- op(1000,xfy,where).
 :- op(1000,xfy,forall).
 :- op(990,fx,add).
+:- op(990,xfy,(=::=)).
 
 :- use_module(owl2_model).
 :- use_module(owl2_plsyn).
 :- use_module(owl2_util).
 :- use_module(owl2_visitor).
 :- use_module(owl2_reasoner).
+
+'=::='(X,Y) :-
+        plsyn_owl(X,X2),
+        plsyn_owl(Y,Y2),
+        structurally_equivalent(X2,Y2).
+
+{}(X) :-
+        reasoner_ask(X).
 
 
 %% popl_translate(+Directive) is det
@@ -130,6 +141,7 @@ perform_directive(add, (H,T),Opts) :-
         perform_directive(add, T,Opts).
 perform_directive(add, A, Opts) :-
         !,
+        debug(popl,'Asserting: ~w',[A]),
         assert_axiom_wrap(A,Opts).
 
 assert_axiom_wrap(A,Opts) :-
@@ -137,15 +149,14 @@ assert_axiom_wrap(A,Opts) :-
         !,
         map_IRIs(TG,A,A2),
         assert_axiom_wrap(A2,Opts2).
-assert_axiom_wrap(A,_) :-
+assert_axiom_wrap(A,Opts) :-
         plsyn_owl(A,A2),
-        assert_axiom(A2).
-
-
-
-
-
-
+        (   option(ontology(O),Opts)
+        ->  assert_axiom(A2,O)
+        ;   (   ontologyAxiom(_,_)
+            ->  print_message(error,popl('asserting into null ontology'))
+            ;   true),
+            assert_axiom(A2)).
 
 %% execute_popl_file(+File)
 % see execute_popl_file/2,
@@ -169,6 +180,7 @@ execute_popl_file(F, Opts) :-
 
 
 perform_translation(null, _) :- !. % add directives are handled up-front
+perform_translation([null], _) :- !. % add directives are handled up-front
 perform_translation(X, Opts) :-
         memberchk(filter(AxiomTemplate,Goal),Opts),
         !,
