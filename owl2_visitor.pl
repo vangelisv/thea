@@ -6,7 +6,7 @@
            visit_axioms/3,
            axiom_rewrite_list/3,
            rewrite_axiom/3,
-           smatch/2 % only exported for testing purposes..
+           structurally_equivalent/2 % only exported for testing purposes..
            ]).
 
 :- use_module(owl2_model).
@@ -101,8 +101,8 @@ rewrite_axiom(Axiom,Rules,NewAxiom) :-
 rewrite_axiom(Axiom,Rule,NewAxiom) :-
         debug(visitor,'testing ~w using ~w',[Axiom,Rule]),
         rule_axiom_template(Rule,ConditionalGoal,AxiomTemplate,TrAxiom),
-        findall(TrAxiom,(smatch(Axiom,AxiomTemplate),ConditionalGoal),A1L),
-        %findall(TrAxiom,(smatch(Axiom,AxiomTemplate),once(ConditionalGoal)),[A1]),
+        findall(TrAxiom,(structurally_equivalent(Axiom,AxiomTemplate),ConditionalGoal),A1L),
+        %findall(TrAxiom,(structurally_equivalent(Axiom,AxiomTemplate),once(ConditionalGoal)),[A1]),
         %!,
         member(A1,A1L),
         member_or_identity(A1x,A1),
@@ -121,7 +121,6 @@ rewrite_axiom_multirule(Axiom,Rules,OutAxiom) :-
         rewrite_axiom_multirule_sweep(Axiom,Rules,OutAxiom),
         !.
         %rewrite_axiom_multirule(NewAxiom,Rules,OutAxiom).
-
 
 rewrite_axiom_multirule_sweep(Axiom,[],Axiom) :- !.
 rewrite_axiom_multirule_sweep(Axiom,[Rule|Rules],NewAxiom) :-
@@ -154,7 +153,7 @@ rewrite_expression(Axiom,Ex,Rule,NewEx) :-
         rewrite_args(Axiom,Ex,Rule,NewEx).
 rewrite_expression(Axiom,Ex,Rule,NewEx) :-
         rule_expression_template(Rule,ConditionalGoal,ExTemplate,TrEx),
-        findall(TrEx,(smatch(Ex,ExTemplate),once(ConditionalGoal)),[Ex1]),
+        findall(TrEx,(structurally_equivalent(Ex,ExTemplate),once(ConditionalGoal)),[Ex1]),
         !,
         debug(v2,'  ** tr ~q',[Ex1]),
         member_or_identity(Ex1_Single,Ex1),
@@ -182,44 +181,44 @@ member_or_identity(X,L) :-
         ;   X=L).
 
 % structural match
-smatch(Term,Term) :- !.
-smatch(QTerm,MTerm) :-
+structurally_equivalent(Term,Term) :- !.
+structurally_equivalent(QTerm,MTerm) :-
         QTerm =.. [Pred|QArgs],
         MTerm =.. [Pred|MArgs],
-        smatch_args(QArgs,MArgs),
+        structurally_equivalent_args(QArgs,MArgs),
         !.
 
-smatch_args(X,X) :- !.
-smatch_args(propertyChain(L1),propertyChain(L2)) :-
+structurally_equivalent_args(X,X) :- !.
+structurally_equivalent_args(propertyChain(L1),propertyChain(L2)) :-
         !,
         % property chains are the only expressions where order is important
         L1=L2.
-smatch_args([Set1],[Set2]) :- % order of args is unimportant e.g. intersectionOf(Set)
+structurally_equivalent_args([Set1],[Set2]) :- % order of args is unimportant e.g. intersectionOf(Set)
         is_list(Set1),
         !,
-        smatch_args_unordered(Set1,Set2),
+        structurally_equivalent_args_unordered(Set1,Set2),
         !.
 
-smatch_args([],[]).
-smatch_args([A1|Args1],[A2|Args2]) :-
-        smatch(A1,A2),
-        smatch_args(Args1,Args2).
+structurally_equivalent_args([],[]).
+structurally_equivalent_args([A1|Args1],[A2|Args2]) :-
+        structurally_equivalent(A1,A2),
+        structurally_equivalent_args(Args1,Args2).
 
-smatch_args_unordered([],[]) :- !.
-smatch_args_unordered(Tail,[X]) :- nonvar(X),X=tail(Tail),!.
-smatch_args_unordered(_,[]) :- !,fail.
-smatch_args_unordered([],_) :- !,fail.
-smatch_args_unordered(L1,[X,A2|L2_Tail]) :-
+structurally_equivalent_args_unordered([],[]) :- !.
+structurally_equivalent_args_unordered(Tail,[X]) :- nonvar(X),X=tail(Tail),!.
+structurally_equivalent_args_unordered(_,[]) :- !,fail.
+structurally_equivalent_args_unordered([],_) :- !,fail.
+structurally_equivalent_args_unordered(L1,[X,A2|L2_Tail]) :-
         nonvar(X),
         X=tail(_),
         !,
         select(A1,L1,L1_Tail),
-        smatch(A1,A2),
-        smatch_args_unordered(L1_Tail,[X|L2_Tail]).
-smatch_args_unordered(L1,[A2|L2_Tail]) :-
+        structurally_equivalent(A1,A2),
+        structurally_equivalent_args_unordered(L1_Tail,[X|L2_Tail]).
+structurally_equivalent_args_unordered(L1,[A2|L2_Tail]) :-
         select(A1,L1,L1_Tail),
-        smatch(A1,A2),
-        smatch_args_unordered(L1_Tail,L2_Tail).
+        structurally_equivalent(A1,A2),
+        structurally_equivalent_args_unordered(L1_Tail,L2_Tail).
 
 
 % ----------------------------------------
