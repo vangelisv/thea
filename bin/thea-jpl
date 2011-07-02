@@ -19,5 +19,5 @@ CLASSPATH_RELATIVE=$DIRNAME/../jars/*.jar
 	done
 
 #echo CP = $CLASSPATH
-#CLASSPATH="jars/owlapi-bin.jar:" thea --ensure_loaded "library(thea2/owl2_java_owlapi)" "$@"
-$DIRNAME/thea --ensure_loaded "library(thea2/owl2_java_owlapi)" "$@"
+#CLASSPATH="jars/owlapi-bin.jar:" thea --ensure_loaded "library(thea/owl2_java_owlapi)" "$@"
+$DIRNAME/thea --ensure_loaded "library(thea/owl2_java_owlapi)" "$@"

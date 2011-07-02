@@ -6,7 +6,7 @@ if [ -z "$THEA_PATH" ]; then
      echo > /dev/null
    else
      # when running for the first time, make a symlink such that
-     # libs can be accessed via use_module(library(thea2/xxx))
+     # libs can be accessed via use_module(library(thea/xxx))
      (cd $THEA_PATH && ln -s . thea2)
    fi
 fi

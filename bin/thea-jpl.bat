@@ -31,7 +31,7 @@ set CLASSPATH=!CLASSPATH!"
 echo %CLASSPATH%
 
 REM run thea
-swipl.exe -L0 -G0 -T0 -q -g main,halt -t halt -s %THEA_PATH%\bin\thea-owl-i -- --ensure_loaded "library(thea2/owl2_java_owlapi)" %*
+swipl.exe -L0 -G0 -T0 -q -g main,halt -t halt -s %THEA_PATH%\bin\thea-owl-i -- --ensure_loaded "library(thea/owl2_java_owlapi)" %*
 
 REM test with: 
 REM C:\thea2>bin\thea-jpl.bat --reasoner pellet testfiles/country.owl --reasoner-query select "p(P,A,B)" where "propertyAssertion(P,A,B)" --prolog

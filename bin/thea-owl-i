@@ -1,14 +1,14 @@
 /* -*- Mode: Prolog -*- */
 
-:- use_module(library('thea2/owl2_model')).
-:- use_module(library('thea2/owl2_util')).
-:- use_module(library('thea2/swrl_rdf_hooks')).
-:- use_module(library('thea2/swrl')).
-:- use_module(library('thea2/owl2_reasoner')).
-:- use_module(library('thea2/owl2_io')).
-:- use_module(library('thea2/owl2_catalog')).
-:- use_module(library('thea2/owl2_plsyn')).
-:- use_module(library('thea2/owl2_profiles')).
+:- use_module(library('thea/owl2_model')).
+:- use_module(library('thea/owl2_util')).
+:- use_module(library('thea/swrl_rdf_hooks')).
+:- use_module(library('thea/swrl')).
+:- use_module(library('thea/owl2_reasoner')).
+:- use_module(library('thea/owl2_io')).
+:- use_module(library('thea/owl2_catalog')).
+:- use_module(library('thea/owl2_plsyn')).
+:- use_module(library('thea/owl2_profiles')).
 
 :- multifile user:parse_arg_hook/3.
 :- multifile user:arg_info_hook/3.
@@ -49,7 +49,7 @@ main :-
         LoadTime is T2-T1,
         debug(bench,'load_time: ~w',[LoadTime]),
         (   member(reasonername(RN),Opts)
-        ->  ensure_loaded(library(thea2/owl2_reasoner)),
+        ->  ensure_loaded(library(thea/owl2_reasoner)),
             findall(ROpt,member(reasoneropt(ROpt),Opts),ROpts),
             initialize_reasoner(RN,Reasoner,ROpts),
             nb_setval(reasoner,Reasoner),
@@ -271,8 +271,8 @@ arg_info(debug,atom,'(developers) debug target').
 
 parse_arg(['--prolog'|L],L,prolog(true)).
 arg_info(prolog,-,'start prolog shell after loading owl files').
-parse_arg(['--shell'|L],L,prolog(true)) :- ensure_loaded(library(thea2/owl2_shell)).
-parse_arg(['--load_shell'|L],L,null) :- ensure_loaded(library(thea2/owl2_shell)).
+parse_arg(['--shell'|L],L,prolog(true)) :- ensure_loaded(library(thea/owl2_shell)).
+parse_arg(['--load_shell'|L],L,null) :- ensure_loaded(library(thea/owl2_shell)).
 
 parse_arg(['--no_uri_expansion'|L],L,settings(uri_translation(none))).
 
@@ -304,10 +304,10 @@ arg_info(format,atom,'input format: one of {owl,owlpl,owlx,...}').
 
 parse_arg(['--ensure_loaded',MA|L],L,ensure_loaded(M)) :- atom_to_term(MA,M,_).
 parse_arg(['--ensure-loaded',MA|L],L,ensure_loaded(M)) :- atom_to_term(MA,M,_).
-%parse_arg(['--load-app',MA|L],L,ensure_loaded(library(thea2/apps/M))) :- atom_to_term(MA,M,_).
-parse_arg(['--load-app',MA|L],L,null) :- atom_to_term(MA,M,_), ensure_loaded(library(thea2/apps/M)).
-%parse_arg(['--load-mod',MA|L],L,ensure_loaded(library(thea2/M))) :- atom_to_term(MA,M,_).
-parse_arg(['--load-mod',MA|L],L,null) :- atom_to_term(MA,M,_),ensure_loaded(library(thea2/M)).
+%parse_arg(['--load-app',MA|L],L,ensure_loaded(library(thea/apps/M))) :- atom_to_term(MA,M,_).
+parse_arg(['--load-app',MA|L],L,null) :- atom_to_term(MA,M,_), ensure_loaded(library(thea/apps/M)).
+%parse_arg(['--load-mod',MA|L],L,ensure_loaded(library(thea/M))) :- atom_to_term(MA,M,_).
+parse_arg(['--load-mod',MA|L],L,null) :- atom_to_term(MA,M,_),ensure_loaded(library(thea/M)).
 parse_arg(['--boot-module',MA|L],L,null) :- atom_to_term(MA,M,_),ensure_loaded(M).
 
 parse_arg(['--read-atoms',F|L],L,null) :- read_file_to_facts(F,input).
@@ -345,12 +345,12 @@ parse_arg(['--iri-map',A,in,O|L],L,goal(translate_IRIs(T,O))) :- atom_to_term(A,
 parse_arg(['--goal',GA|L],L,goal(G)) :- atom_to_term(GA,G,_).
 arg_info(goal,goal,'execute prolog goal after loading ontologies').
 
-parse_arg(['--diff',F1,F2|L],L,diff(F1,F2)) :- ensure_loaded(library(thea2/owl2_diff)).
+parse_arg(['--diff',F1,F2|L],L,diff(F1,F2)) :- ensure_loaded(library(thea/owl2_diff)).
 arg_info(diff,files,'diff two owl files').
 
 parse_arg(['--popl',GA|L],L,popl(G)) :-
-        ensure_loaded(library(thea2/owl2_popl)),
-        ensure_loaded(library(thea2/owl2_plsyn)),
+        ensure_loaded(library(thea/owl2_popl)),
+        ensure_loaded(library(thea/owl2_plsyn)),
         atom_to_term(GA,G,_).
 arg_info(popl,term,'process using POPL directive. Example: --popl EXPR ').
 
@@ -358,14 +358,14 @@ parse_arg(['--popl-opt',GA|L],L,popl_opt(G)) :-
         atom_to_term(GA,G,_).
 
 parse_arg(['--popl-file',F|L],L,popl_file(F)) :-
-        ensure_loaded(library(thea2/owl2_popl)),
-        ensure_loaded(library(thea2/owl2_plsyn)).
+        ensure_loaded(library(thea/owl2_popl)),
+        ensure_loaded(library(thea/owl2_plsyn)).
 arg_info(popl-file,file,'file containing POPL directives').
 
 parse_arg(['--mireot',Ext,into,Local|L],L,mireot(Local,Ext)) :-
-        ensure_loaded(library(thea2/apps/mireot)).
+        ensure_loaded(library(thea/apps/mireot)).
 parse_arg(['--extract-subset',Obj,into,Ont|L],L,goal(extract_ontology_subset(Obj,Ont))) :-
-        consult(library(thea2/apps/mireot/mireot)).
+        consult(library(thea/apps/mireot/mireot)).
 
 parse_arg(['--query',select,TA,where,GA|L],L,query(T,G)) :- sformat(A,'q((~w),(~w))',[TA,GA]),atom_to_term(A,q(T,G),_).
 parse_arg(['--query',GA|L],L,query(T,G)) :- atom_to_term(GA,G-T,_).
@@ -409,7 +409,7 @@ parse_arg(['--sim',A|L],L,
         atom_to_term(A,V-T,_),
         copy_term(V-T,X-T1),
         copy_term(V-T,Y-T2),
-        ensure_loaded(library(thea2/owl2_lcs)),
+        ensure_loaded(library(thea/owl2_lcs)),
         prepare_optimizations(_). % note - do not prepare a second time!
 arg_info(sim,term,'Find LCS of pairs based on query. Argument should be Template-Goal. ').
 
@@ -418,7 +418,7 @@ parse_arg(['--sim-pair',XN,YN|L],L,
                 (   lookup(XN,X),
                     lookup(YN,Y),
                     class_pair_least_common_subsumer(X,Y,LCS,[])))) :-
-        ensure_loaded(library(thea2/owl2_lcs)),
+        ensure_loaded(library(thea/owl2_lcs)),
         prepare_optimizations(_). 
 parse_arg(['--sim-all'|L],L,
           query(sim(X,Y,LCS),
@@ -426,7 +426,7 @@ parse_arg(['--sim-all'|L],L,
                     class(Y),
                     class_pair_least_common_subsumer(X,Y,LCS,[])))
          ) :-
-        ensure_loaded(library(thea2/owl2_lcs)),
+        ensure_loaded(library(thea/owl2_lcs)),
         prepare_optimizations(_). 
 
 parse_arg(['--load-catalog'|L],L,null) :- load_catalog.
