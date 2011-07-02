@@ -9,7 +9,7 @@
                       label/2,
                       assert_plsyn_axiom/1,
                       assert_plsyn_axiom/2,
-                      
+
                       op(980,xfy,(--)),
                       op(950,xfy,\^), % disjoint classes
                       %op(950,fx,class),
@@ -383,6 +383,9 @@ plpred2owlpred_list(neq,differentIndividuals).
 cardinality_pred(min).
 cardinality_pred(max).
 cardinality_pred(exact).
+
+
+
 
 % ----------------------------------------
 % CONVENIENCE COMMANDS
