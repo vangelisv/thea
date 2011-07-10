@@ -1,9 +1,4 @@
-/*
-
-Hello
-
-*/
-
+/* -*- Mode: Prolog -*- */
 
 :- module(owl2_owllink,
 	  [ owl_link/4 % File
