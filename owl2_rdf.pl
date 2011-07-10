@@ -531,12 +531,12 @@ owl_restriction_type(E, P, hasSelf(PX),M) -->
 % TODO: check if we still need unsupported QCRs
 owl_restriction_type(E, P,exactCardinality(N,PX),M) -->
 	triple(E, owl:cardinality,Lit,M),
-        {literal_integer(Lit,N)},
+        {literal_nonNegativeInteger(Lit,N)},
         owl_property_expression(P, PX,M).
 
 owl_restriction_type(E, P,exactCardinality(N,PX,DX),M) -->
 	triple(E, owl:qualifiedCardinality,Lit,M),
-        {literal_integer(Lit,N)},
+        {literal_nonNegativeInteger(Lit,N)},
 	(   onClass(E,D,M),
             owl_description(D, DX,M)
         ;   triple(E, owl:onDataRange,D,M),
@@ -547,12 +547,12 @@ owl_restriction_type(E, P,exactCardinality(N,PX,DX),M) -->
 
 owl_restriction_type(E, P, minCardinality(N,PX),M) -->
 	triple(E, owl:minCardinality,Lit,M),
-        {literal_integer(Lit,N)},
+        {literal_nonNegativeInteger(Lit,N)},
         owl_property_expression(P, PX,M).
 
 owl_restriction_type(E, P, minCardinality(N,PX,DX),M) -->
 	triple(E, owl:minQualifiedCardinality,Lit,M),
-        {literal_integer(Lit,N)},
+        {literal_nonNegativeInteger(Lit,N)},
 	(   onClass(E,D,M),
             owl_description(D, DX,M)
         ;   
@@ -564,12 +564,12 @@ owl_restriction_type(E, P, minCardinality(N,PX,DX),M) -->
 
 owl_restriction_type(E, P, maxCardinality(N,PX),M) -->
 	triple(E, owl:maxCardinality,Lit,M),
-        {literal_integer(Lit,N)},
+        {literal_nonNegativeInteger(Lit,N)},
         owl_property_expression(P, PX,M).
 
 owl_restriction_type(E, P, maxCardinality(N,PX,DX),M) -->
 	triple(E, owl:maxQualifiedCardinality,Lit,M),
-	{literal_integer(Lit,N)},
+	{literal_nonNegativeInteger(Lit,N)},
 	(   onClass(E,D,M),
             owl_description(D, DX,M)
         ;   triple(E, owl:onDataRange,D,M),
@@ -578,7 +578,7 @@ owl_restriction_type(E, P, maxCardinality(N,PX,DX),M) -->
 
 owl_restriction_type(E, P, maxCardinality(N,PX,DX),M) -->
 	triple(E, owl:maxQualifiedCardinality,Lit,M),
-	{literal_integer(Lit,N)},
+	{literal_nonNegativeInteger(Lit,N)},
 	(   onClass(E,D,M),
             owl_description(D, DX,M)
         ;   triple(E, owl:onDataRange,D,M),
@@ -663,8 +663,8 @@ owl_datatype_restriction_list(X,[facetRestriction(W2,L)|R],M) -->
 % UTILS
 % ----------------------------------------
 
-literal_integer(literal(type,A),N) :- atom_number(A,N).
-literal_integer(literal(type(_,A)),N) :- atom_number(A,N).
+%literal_nonNegativeInteger(literal(type,A),N) :- atom_number(A,N).
+literal_nonNegativeInteger(literal(type(xsd:nonNegativeInteger,A)),N) :- atom_number(A,N).
 
 is_anonymous(X,in) :- rdf_is_bnode(X).
 is_anonymous(X,out(_)) :- \+ atom(X).
