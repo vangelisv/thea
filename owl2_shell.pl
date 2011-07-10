@@ -79,7 +79,7 @@ cmd_doc(edit,redo,[],'Redo last undo').
 
 edit_op(ActIn) :- tr(ActIn,Act), Act,print_message(informational,Act),asserta(transaction(Act)).
 %edit_op(_,_) :- print_message(error,no_current_ontology).
-add AxiomIn where Goal :- !, forall(Goal,add(AxiomIn)).
+add AxiomIn where GoalIn :- !, tr(GoalIn,Goal),forall(Goal,add(AxiomIn)).
 add AxiomIn :- current_ontology(Ont),!,edit_op(assert_axiom(AxiomIn,Ont)).
 add _ :- throw(error(set_current_ont)).
 rm AxiomIn :- edit_op(retract_axiom(AxiomIn)). % todo - to make this undoable we must ground variables within a forall...
