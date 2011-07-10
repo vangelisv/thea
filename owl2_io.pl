@@ -252,6 +252,7 @@ format_module(write,plsyn,owl2_plsyn).
 format_module(write,dl_syntax,owl2_dl_syntax).
 format_module(write,dlp,owl2_to_prolog_dlp).
 format_module(write,owlapi(_),owl2_java_owlapi).
+format_module(write,obo,owl2_obo_writer).
 
 
 /** <module> Input/Output of OWL files
@@ -329,6 +330,14 @@ save_axioms('wine.owl',owlapi(manchester)).
 
 ---++ Hooks
 
+Other modules can define load_axioms_hook/3 and save_axioms_hook/3 to
+provide I/O to other formats.
 
+The following modules provide I/O hooks:
+
+* owl2_rdf.pl
+* owl2_manchester_parser.pl
+* owl2_owlxml.pl
+* owl2_obo_parser.pl
 
 */
