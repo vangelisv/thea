@@ -81,7 +81,7 @@ See also the apps/ directory for example applications.
   * owl2_from_rdf.pl -- requires library(semweb)
   * owl2_export_rdf.pl -- requires library(semweb)
   * owl2_xml.pl -- support for OWL-XML
-  * owl2_manchester_paser.pl -- incomplete support for Manchester syntax
+  * owl2_manchester_parser.pl -- incomplete support for Manchester syntax
   * owl2_plsyn.pl -- infix prolog syntax for OWL
  * owl2_model.pl -- definition of prolog predicates used to embed OWL
  * swrl.pl
@@ -90,7 +90,7 @@ See also the apps/ directory for example applications.
   * owl2_rl_rules.pl
   * owl2_graph_reasoner.pl
  * owl2_java_owlapi.pl (requires JPL)
- * owl2_owllink.pl
+ * owl2_owllink.pl -- implements OWLLink interface
  * owl2_util.pl -- misc utilities
  * owl2_popl.pl -- prolog ontology processing language
  * owl2_metamodel.pl -- information about OWL axiom types
