@@ -255,8 +255,13 @@ term_expansion((owl_axiom(Ax,M) --> Goal),
         (   Goal=(HeadTriple,_),
             !
         ;   Goal=HeadTriple),
-        dcg_translate_rule( (owl_axiom_main_triple(Ax,M,HeadTriple) --> Goal), AnnotRule).
+        expand_triple(HeadTriple,HeadTripleExpanded),
+        dcg_translate_rule( (owl_axiom_main_triple(Ax,M,HeadTripleExpanded) --> Goal), AnnotRule).
 
+expand_triple(triple(S,P,O,M),triple(Sx,Px,Ox,M)) :-
+        rdf_global_id(S,Sx),
+        rdf_global_id(P,Px),
+        rdf_global_id(O,Ox).
 
 % -- DECLARATIONS --
 % each of these matches a single triple and generates a single triple
@@ -436,16 +441,16 @@ owl2_model:ontologyAxiom(Ont,A) :-
 % expansion rules.
 % e.g.
 %  ==
-%  owl_axiom(subClassOf(A,B)) --> triple(S,rdfs:subClassOf,O),....
+%  owl_axiom(subClassOf(A,B),Mode) --> triple(S,rdfs:subClassOf,O,Mode),Goals.
 %      ===>
-%  owl_axiom_main_triple(subClassOf(A,B),triple(S,rdfs:subClassOf,O)) --> triple(S,rdfs:subClassOf,O),....
+%  owl_axiom_main_triple( subClassOf(A,B), Mode, triple(S,rdfs:subClassOf,O)) --> triple(S,rdfs:subClassOf,O),Goals
 %  ==
 owl_axiom_annotations(Ax,Anns,M) -->
         triple(ReifAx,rdf:type,owl:'Axiom',M),
         triple(ReifAx,owl:annotatedProperty,Px,M),
         triple(ReifAx,owl:annotatedSource,Sx,M),
         triple(ReifAx,owl:annotatedTarget,Tx,M),
-        owl_axiom_main_triple(Ax,M,triple(Sx,Px,Tx)),
+        owl_axiom_main_triple(Ax,M,triple(Sx,Px,Tx,M)),
         owl_annotations_for(ReifAx,[],Anns,M).
 
 owl_annotations_for(A,Done,Anns,M) -->
