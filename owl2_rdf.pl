@@ -193,7 +193,7 @@ assert_triples(_Opts,Ont) :-
 %      arguments can be unbound or bound. However, if they are bound they should be to valid rdf/3 arguments -
 %      this is to force complex arguments from owl2_model to be generated as bnodes first
 % out: generates a single triple.
-triple(S,P,O,in) --> {\+compound(S),\+compound(P),(\+compound(O);O=literal(_)),rdf(S,P,O),\+consumed(S,P,O)},[rdf(S,P,O)].
+triple(S,P,O,in) --> {\+compound(S),\+compound(P),(\+compound(O)->true;O=literal(_)),rdf(S,P,O),\+consumed(S,P,O)},[rdf(S,P,O)].
 triple(S,P,O,out(_Src)) --> [rdf(S,P,O)].
 
 % hacky way to temporily project triples - e.g. from sparql results
@@ -397,12 +397,11 @@ owl_axiom(differentIndividuals(L),M) -->
 % Table 17. Parsing of Annotated Axioms
 % ----------------------------------------
 
-owl_axiom(annotationAssertion(P,A,B),M) --> triple(A,P,B,M),{is_annotationProperty(P),\+rdf_is_bnode(A)}.
-%owl_axiom(axiomAnnotation_helper(P,A,B),M) --> triple(A,P,B,M).
+owl_axiom(annotationAssertion(P,A,B),M) --> triple(A,P,B,M),{\+ \+ is_annotationProperty(P),\+rdf_is_bnode(A)}.
 
 % TODO
 owl_axiom(propertyAssertion(PX,A,B),M) -->
-        triple(A,P,B,M),{\+annotationProperty(P),\+rdf_is_bnode(A),\+rdf_is_bnode(B)},
+        triple(A,P,B,M),{\+is_annotationProperty(P),\+rdf_is_bnode(A),\+rdf_is_bnode(B)},
         owl_property_expression(P, PX,M),
         {\+ builtin(PX)}.
 
@@ -491,8 +490,6 @@ generate_owl_axiom_annotation(Ax,P,V,M) -->
         triple(ReifAx,P,V,M).
 
 owl_annotations_for(A,Done,Anns,M) -->
-        %owl_axiom(annotationAssertion(P,A,V),M),
-        %owl_axiom(axiomAnnotation_helper(P,A,V),M),
         triple(A,P,V,M),
         {is_annotationProperty(P)},
         {\+member(P-V,Done)},
