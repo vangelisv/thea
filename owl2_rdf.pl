@@ -203,6 +203,14 @@ triple(S,P,O,in,Triples,_) :- nb_current(rdf_result_set,Triples),member(rdf(S,P,
 optional_triple(S,P,O,M) --> triple(S,P,O,M),!.
 optional_triple(_,_,_,_) --> [].
 
+% when translating sets of pairs into lists we often one to select a
+% canonical pair if the pair is asserted in both directions
+:- rdf_meta is_canonical_triple(-,r,r,o,-).
+is_canonical_triple(S,P,O,TL,Rest) :-
+        \+ ((triple(O,P,S,in,TL,Rest),
+             O @< S)).
+
+
 % ----------------------------------------
 % MATERIALIZATION
 % ----------------------------------------
@@ -309,30 +317,70 @@ owl_axiom(ontologyVersionInfo(O,IRI),M) --> triple(O,owl:versionInfo,IRI,M).
 % these typically generate multiple triples, where arguments are compound terms generated from bNodes
 owl_axiom(subClassOf(AX,BX),M) --> triple(A,rdfs:subClassOf,B,M),owl_description(A,AX,M),owl_description(B,BX,M).
 
-owl_axiom(equivalentClasses([AX,BX]),M) -->
-        % always make pairwise axioms: in future we can add a collection capability
-        triple(A,owl:equivalentClass,B,M),owl_description(A,AX,M),owl_description(B,BX,M). % TODO
 
+% Treatment of disjointClasses/1, equivalentClasses/1 and sameIndividual/1:
+%
+% all of these takes lists as arguments but are represented as pairs in rdf
+%
 % RDF GENERATION: Accepts arbitrarily long lists
-% OWL GENERATION: only makes lists of length 2.
-%  (in future there may be a routine in owl2_model to rewrite all disjointClasses/1 facts into
-%   minimal set with maximally connected subgraphs)
+% OWL GENERATION: only makes lists of length 2 - avoid reciprocal pairs
+%
+% if we have disjointWith pairs a-b, b-a, a-c, c-a, b-c, c-b then
+% there will be 3 disjointClasses/1 axioms generated. Each will have a
+% canonical order (sorted by @<, such that named classes always
+% preceded class expressions)
+%
+%  in future there may be a routine in owl2_model to rewrite all disjointClasses/1 facts into
+%   minimal set with maximally connected subgraphs. 
+
 owl_axiom(disjointClasses(L),out(Src)) -->
-        mk_all_disjoint(L,[],out(Src)).
+        {rdf_global_id(owl:disjointWith,Pred)},
+        mk_all_pairs(L,[],Pred,out(Src)).
 owl_axiom(disjointClasses([AX,BX]),in) -->
         triple(A,owl:disjointWith,B,in),
-        owl_description(A,AX,in),owl_description(B,BX,in).
+        is_canonical_triple(A,owl:disjointWith,B),
+        owl_description(A,AX,in),
+        owl_description(B,BX,in).
 
-mk_all_disjoint(L,Done,M) -->
+owl_axiom(equivalentClasses(L),out(Src)) -->
+        {rdf_global_id(owl:equivalentClass,Pred)},
+        mk_all_pairs(L,[],Pred,out(Src)).
+owl_axiom(equivalentClasses([AX,BX]),in) -->
+        % always make pairwise axioms: in future we can add a collection capability
+        triple(A,owl:equivalentClass,B,in),
+        is_canonical_triple(A,owl:equivalentClass,B),
+        owl_description(A,AX,in),
+        owl_description(B,BX,in).
+
+owl_axiom(sameIndividual(L),out(Src)) -->
+        {rdf_global_id(owl:sameAs,Pred)},
+        mk_all_pairs(L,[],Pred,out(Src)).
+owl_axiom(sameIndividual([X,Y]),in) -->
+        triple(X,owl:sameAs,Y,in),
+        is_canonical_triple(X,owl:equivalentClass,Y).
+
+owl_axiom(differentIndividuals([X,Y]),M) --> triple(X,owl:differentFrom,Y,M).
+
+owl_axiom(differentIndividuals(L),M) -->
+	triple(X,rdf:type,owl:'AllDifferent',M),
+	triple(X,owl:distinctMembers,L1,M), % todo - check if variant deprecated
+        owl_individual_list(L1,L,M).
+
+owl_axiom(differentIndividuals(L),M) -->
+	triple(X,rdf:type,owl:'AllDifferent',M),
+	triple(X,owl:members,L1,M), % todo - check if variant deprecated
+        owl_individual_list(L1,L,M).
+
+mk_all_pairs(L,Done,Pred,M) -->
         {member(AX,L),
          member(BX,L),
          AX@<BX,
          \+member(AX-BX,Done)},
         !,
-        triple(A,owl:disjointWith,B,M),
+        triple(A,Pred,B,M),
         owl_description(A,AX,M),owl_description(B,BX,M),
-        mk_all_disjoint(L,[AX-BX|Done],M).        
-mk_all_disjoint(_,_,_) --> [].
+        mk_all_pairs(L,[AX-BX|Done],Pred,M).        
+mk_all_pairs(_,_,_,_) --> [].
 
 /*
 :-abolish(owl2_model:disjoint_with/2).
@@ -400,20 +448,6 @@ owl_axiom(hasKey(CX,L),M) -->
 
 % --- Individual Axioms ---
 
-owl_axiom(sameIndividual([X,Y]),M) -->        triple(X,owl:sameAs,Y,M).
-
-
-owl_axiom(differentIndividuals([X,Y]),M) --> triple(X,owl:differentFrom,Y,M).
-
-owl_axiom(differentIndividuals(L),M) -->
-	triple(X,rdf:type,owl:'AllDifferent',M),
-	triple(X,owl:distinctMembers,L1,M), % todo - check if variant deprecated
-        owl_individual_list(L1,L,M).
-
-owl_axiom(differentIndividuals(L),M) -->
-	triple(X,rdf:type,owl:'AllDifferent',M),
-	triple(X,owl:members,L1,M), % todo - check if variant deprecated
-        owl_individual_list(L1,L,M).
 
 
 
