@@ -113,7 +113,18 @@ owl2_io:save_axioms_hook(File,rdf_direct,Opts) :-
 % CONVENIENCE PREDICATES
 % ----------------------------------------
 
+% given an axiom (conforming to axiom/1 in owl2_model), translate this
+% to a list of triples.
+% each triple is of the form rdf(S,P,O).
+%
+% bNodes are generated using rdf_bnode/1
 owl_axiom_to_triples(Axiom,Triples) :-
+        owl_axiom_to_triples_1(Axiom,Triples),
+        !.
+owl_axiom_to_triples(Axiom,_) :-
+        print_message(error,no_translation(Axiom)),
+        fail.
+owl_axiom_to_triples_1(Axiom,Triples) :-
         owl_axiom_to_triples_withvars(Axiom,Triples),
         !,
         term_variables(Triples,BNodeVars),
@@ -125,11 +136,23 @@ unify_bnode_vars([N|Ns]) :-
         unify_bnode_vars(Ns).
 
 
-
-
-% bnodes are variables
+% translate an axiom to triples, using prolog variable in place of bNodes.
+% E.g. subClassOf(foo,someValuesFrom(r,bar)) ==>
+%      [rdf(foo,rdfs:subClass,X),rdf(X,owl:onProperty,r),...]
+%
+%  The triples are generated using owl_axiom//2
+% (the mapping DCGs are bi-directional)
 owl_axiom_to_triples_withvars(Axiom,Triples) :- phrase(owl_axiom(Axiom,out(x)),Triples),!.
+owl_axiom_to_triples_withvars(annotation(Ax,P,V),Triples) :-
+        phrase(generate_owl_axiom_annotation(Ax,P,V,out(x)),Triples).
 
+% assert_triples(+Opts:list,?DB)
+% translate an owl2_model Ontology into a list of Triple terms, and
+% then assert these into rdf_db.
+% 
+% the final argument is unified with the rdf db
+% - if ontology(Ont) is passed in the options, then this
+%   is the name of the db, otherwise revert to 'user'.
 assert_triples(Opts,Ont) :-
         member(ontology(Ont),Opts),
         !,
@@ -141,7 +164,6 @@ assert_triples(Opts,Ont) :-
                rdf_assert(S,P,O,Ont)),
         rdf_retractall(_,_,_,Ont).
 
-
 assert_triples(_Opts,Ont) :-
         Ont=user,
         rdf_retractall(_,_,_,Ont),
@@ -152,8 +174,6 @@ assert_triples(_Opts,Ont) :-
                 ),
                rdf_assert(S,P,O,Ont)),
         rdf_retractall(_,_,_,Ont).
-
-
 
 % ----------------------------------------
 % BRIDGE TO SEMWEB
@@ -168,16 +188,20 @@ assert_triples(_Opts,Ont) :-
 
 %% triple//4
 % 
-% generates a single triple, if that triple is in the database
-triple(S,P,O,in) --> {\+compound(S),\+compound(P),\+compound(O),rdf(S,P,O),\+consumed(S,P,O)},[rdf(S,P,O)].
+% final argument is mode - either in or out(Src).
+% in: generates a single triple, if that triple is in the database, and has not been consumed.
+%      arguments can be unbound or bound. However, if they are bound they should be to valid rdf/3 arguments -
+%      this is to force complex arguments from owl2_model to be generated as bnodes first
+% out: generates a single triple.
+triple(S,P,O,in) --> {\+compound(S),\+compound(P),(\+compound(O)->true;O=literal(_)),rdf(S,P,O),\+consumed(S,P,O)},[rdf(S,P,O)].
 triple(S,P,O,out(_Src)) --> [rdf(S,P,O)].
 
 % hacky way to temporily project triples - e.g. from sparql results
 triple(S,P,O,in,Triples,_) :- nb_current(rdf_result_set,Triples),member(rdf(S,P,O),Triples).
 
+% consume a triple if present, or produce a triple. succeeds if triple not present
 optional_triple(S,P,O,M) --> triple(S,P,O,M),!.
 optional_triple(_,_,_,_) --> [].
-
 
 % ----------------------------------------
 % MATERIALIZATION
@@ -203,8 +227,6 @@ mark_consumed([rdf(S,P,O)|T]) :-
         mark_consumed(T).
 mark_consumed(S,P,O) :- assert(consumed(S,P,O)).
 
-
-
 % ----------------------------------------
 % MAPPING OF AXIOMS
 % ----------------------------------------
@@ -221,41 +243,50 @@ mark_consumed(S,P,O) :- assert(consumed(S,P,O)).
 % 
 % -- TERM EXPANSION --
 %
-% these expansions take DCG axiom rules and uses them to additionally generate:
+% these expansions take DCG axiom rules and uses them to additionally generate
+% a bridging clause to owl2_model, plus any axiom annotation clauses
 %
-% * bridge axioms;
+% * bridge axioms:
 %  e.g
 %  ==
-%  owl_axiom(subClassOf(A,B)) --> ...
+%  owl_axiom(subClassOf(A,B),Mode) --> Goal
 %      ===>
-%  owl2_model:subClassOf(A,B) :- phrase(owl_axiom(subClassOf(A,B),_Triples)).
+%  owl2_model:subClassOf(A,B) :- phrase(owl_axiom(subClassOf(A,B),in),_Triples).
+%  owl_axiom(subClassOf(A,B),Mode) --> Goal
 %  ==
 %
-% * axiom annotation phrase clauses
+% * axiom annotation phrase clauses:
 % e.g.
 %  ==
-%  owl_axiom(subClassOf(A,B)) --> triple(S,rdfs:subClassOf,O),....
+%  owl_axiom(subClassOf(A,B),Mode) --> triple(S,rdfs:subClassOf,O,Mode),....
 %      ===>
-%  owl_axiom_main_triple(subClassOf(A,B),triple(S,rdfs:subClassOf,O)) --> triple(S,rdfs:subClassOf,O),....
+%  owl_axiom_main_triple( subClassOf(A,B), Mode, triple(S,rdfs:subClassOf,O)) --> triple(S,rdfs:subClassOf,O),....
 %  ==
-% these are used to defined axiomAnnotation/3 - the 2nd argument is the main triple
+% these are used to defined axiomAnnotation/3 - the 3nd argument is the main triple, and is assumed
+% to be the first triple matched in the DCG body
+%
 % TODO - axioms that don't have a main triple
 term_expansion((owl_axiom(Ax,M) --> Goal),
                [Rule,
                 AnnotRule,
                 (   owl2_model:Ax :- phrase(owl_axiom(Ax,in),_))]
                ):-
-        dcg_translate_rule(owl_axiom(Ax,M) --> Goal, Rule),
+        dcg_translate_rule( (owl_axiom(Ax,M) --> Goal), Rule ), % replicate
         (   Goal=(HeadTriple,_),
             !
         ;   Goal=HeadTriple),
-        dcg_translate_rule(owl_axiom_main_triple(Ax,M,HeadTriple) --> Goal, AnnotRule).
+        expand_triple(HeadTriple,HeadTripleExpanded),
+        dcg_translate_rule( (owl_axiom_main_triple(Ax,M,HeadTripleExpanded) --> Goal), AnnotRule).
 
+expand_triple(triple(S,P,O,M),triple(Sx,Px,Ox,M)) :-
+        rdf_global_id(S,Sx),
+        rdf_global_id(P,Px),
+        rdf_global_id(O,Ox).
 
 % -- DECLARATIONS --
 % each of these matches a single triple and generates a single triple
 owl_axiom(datatype(A),M) --> triple(A,rdf:type,rdfs:'Datatype',M).
-owl_axiom(class(A),M) --> triple(A,rdf:type,owl:'Class',M).
+owl_axiom(class(A),M) --> triple(A,rdf:type,owl:'Class',M),{\+rdf_is_bnode(A)}.
 owl_axiom(objectProperty(A),M) --> triple(A,rdf:type,owl:'ObjectProperty',M).
 owl_axiom(dataProperty(A),M) --> triple(A,rdf:type,owl:'DataProperty',M).
 owl_axiom(annotationProperty(A),M) --> triple(A,rdf:type,owl:'AnnotationProperty',M).
@@ -366,11 +397,11 @@ owl_axiom(differentIndividuals(L),M) -->
 % Table 17. Parsing of Annotated Axioms
 % ----------------------------------------
 
-owl_axiom(annotationAssertion(P,A,B),M) --> triple(A,P,B,M),{is_annotationProperty(P)}.
+owl_axiom(annotationAssertion(P,A,B),M) --> triple(A,P,B,M),{\+ \+ is_annotationProperty(P),\+rdf_is_bnode(A)}.
 
 % TODO
 owl_axiom(propertyAssertion(PX,A,B),M) -->
-        triple(A,P,B,M),{\+annotationProperty(P),\+rdf_is_bnode(A),\+rdf_is_bnode(B)},
+        triple(A,P,B,M),{\+is_annotationProperty(P),\+rdf_is_bnode(A),\+rdf_is_bnode(B)},
         owl_property_expression(P, PX,M),
         {\+ builtin(PX)}.
 
@@ -407,40 +438,89 @@ asserted_equivalent_to(AX,BX,M) --> triple(A,owl:equivalentClass,B,M),owl_descri
 maximal_equivalence_set(EqL,SeedL,in) --> {member(A,SeedL)},(asserted_equivalent_to(A,B,M);asserted_equivalent_to(B,A,M)),{\+member(B,SeedL)},!,maximal_equivalence_set(EqL,[B|SeedL]).
 maximal_equivalence_set(EqSet,EqL,in) --> {sort(EqL,EqSet)},[]. % impossible to add more members; this is the maximal set
 
+% checks if axiom belongs to an ontology by checking the first triple
+% 
 % v. slow for bound Ont..
 owl_ontology_axiom_triples(Ont,A,Triples) :-
         nonvar(Ont),
+        nonvar(A),
         rdf(Ont,rdf:type,owl:'Ontology',Src:_),
-        rdf(S,P,O,Src:_),
+        phrase(owl_axiom(A,in),Triples),
+        Triples=[rdf(S,P,O)|_],
+        \+ \+ rdf(S,P,O,Src:_).
+owl_ontology_axiom_triples(Ont,A,Triples) :-
+        nonvar(Ont),
+        var(A),
+        rdf(Ont,rdf:type,owl:'Ontology',Src:_),
+        % awkward way to query for a unique triple in Src
+        rdf(S,P,O),
+        \+ \+ rdf(S,P,O,Src:_),
         Triples=[rdf(S,P,O)|_],
         phrase(owl_axiom(A,in),Triples).
 owl_ontology_axiom_triples(Ont,A,Triples) :-
         var(Ont),
         phrase(owl_axiom(A,in),Triples),
         Triples=[rdf(S,P,O)|_],
+        setof(Ont,rdf_ont_det(S,P,O,Ont),Onts),
+        member(Ont,Onts).
+
+% there is no way to call rdf/4 without getting duplicate triples;
+rdf_ont_det(S,P,O,Ont) :-
         rdf(S,P,O,Src:_),
         rdf(Ont,rdf:type,owl:'Ontology',Src:_).
 
 owl2_model:ontologyAxiom(Ont,A) :-
         owl_ontology_axiom_triples(Ont,A,_).
+owl2_model:ontologyAxiom(Ont,annotation(Ax,P,V)) :-
+        % TODO: currently we assume axiom annotations in same ontology as the axiom that is annotated;
+        % this assumption is incorrect!
+        % also, should annotation/3 even be treated as an annotation?
+        annotation(Ax,P,V),
+        ontologyAxiom(Ont,Ax).
 
+% in the owl2 rdf mapping, axiom annotations are reified.
+%
+% here we use owl_axiom_main_triple//3 which is generated by the DCG
+% expansion rules.
+% e.g.
+%  ==
+%  owl_axiom(subClassOf(A,B),Mode) --> triple(S,rdfs:subClassOf,O,Mode),Goals.
+%      ===>
+%  owl_axiom_main_triple( subClassOf(A,B), Mode, triple(S,rdfs:subClassOf,O)) --> triple(S,rdfs:subClassOf,O),Goals
+%  ==
 owl_axiom_annotations(Ax,Anns,M) -->
+        {M=in},
         triple(ReifAx,rdf:type,owl:'Axiom',M),
         triple(ReifAx,owl:annotatedProperty,Px,M),
         triple(ReifAx,owl:annotatedSource,Sx,M),
         triple(ReifAx,owl:annotatedTarget,Tx,M),
-        owl_axiom_main_triple(Ax,M,triple(Sx,Px,Tx),M),
+        owl_axiom_main_triple(Ax,M,triple(Sx,Px,Tx,M)),
         owl_annotations_for(ReifAx,[],Anns,M).
 
+generate_owl_axiom_annotation(Ax,P,V,M) -->
+        triple(ReifAx,rdf:type,owl:'Axiom',M),
+        triple(ReifAx,owl:annotatedProperty,Px,M),
+        triple(ReifAx,owl:annotatedSource,Sx,M),
+        triple(ReifAx,owl:annotatedTarget,Tx,M),
+        owl_axiom_main_triple(Ax,M,triple(Sx,Px,Tx,M)),
+        triple(ReifAx,P,V,M).
+
 owl_annotations_for(A,Done,Anns,M) -->
-        owl_axiom(annotationAssertion(P,A,V),M),
+        triple(A,P,V,M),
+        {is_annotationProperty(P)},
         {\+member(P-V,Done)},
         !,
         owl_annotations_for(A,[P-V|Done],Anns,M).
 owl_annotations_for(_,Anns,Anns,_) --> [].
 
+/*
 :- abolish(owl2_model:axiomAnnotation/3).
 owl2_model:axiomAnnotation(Ax,AP,AV) :-
+        phrase(owl_axiom_annotations(Ax,Anns,in),_),
+        member(AP-AV,Anns).
+*/
+
+owl2_model:annotation(Ax,AP,AV) :-
         phrase(owl_axiom_annotations(Ax,Anns,in),_),
         member(AP-AV,Anns).
 
@@ -663,8 +743,10 @@ owl_datatype_restriction_list(X,[facetRestriction(W2,L)|R],M) -->
 % UTILS
 % ----------------------------------------
 
-literal_integer(literal(type,A),N) :- atom_number(A,N).
-literal_integer(literal(type(_,A)),N) :- atom_number(A,N).
+% this is used entirely for cardinality. Preferentially use nonNegativeInteger, but allow int
+literal_integer(literal(type(Type,A)),N) :- atom_number(A,N),xsd_inttype(Type).
+xsd_inttype('http://www.w3.org/2001/XMLSchema#nonNegativeInteger').
+xsd_inttype('http://www.w3.org/2001/XMLSchema#int').
 
 is_anonymous(X,in) :- rdf_is_bnode(X).
 is_anonymous(X,out(_)) :- \+ atom(X).
