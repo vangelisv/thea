@@ -313,9 +313,34 @@ owl_axiom(equivalentClasses([AX,BX]),M) -->
         % always make pairwise axioms: in future we can add a collection capability
         triple(A,owl:equivalentClass,B,M),owl_description(A,AX,M),owl_description(B,BX,M). % TODO
 
-owl_axiom(disjointClasses([AX,BX]),M) -->
-        % TODO - collapse
-        triple(A,owl:disjointWith,B,M),owl_description(A,AX,M),owl_description(B,BX,M).
+% RDF GENERATION: Accepts arbitrarily long lists
+% OWL GENERATION: only makes lists of length 2.
+%  (in future there may be a routine in owl2_model to rewrite all disjointClasses/1 facts into
+%   minimal set with maximally connected subgraphs)
+owl_axiom(disjointClasses(L),out(Src)) -->
+        mk_all_disjoint(L,[],out(Src)).
+owl_axiom(disjointClasses([AX,BX]),in) -->
+        triple(A,owl:disjointWith,B,in),
+        owl_description(A,AX,in),owl_description(B,BX,in).
+
+mk_all_disjoint(L,Done,M) -->
+        {member(AX,L),
+         member(BX,L),
+         AX@<BX,
+         \+member(AX-BX,Done)},
+        !,
+        triple(A,owl:disjointWith,B,M),
+        owl_description(A,AX,M),owl_description(B,BX,M),
+        mk_all_disjoint(L,[AX-BX|Done],M).        
+mk_all_disjoint(_,_,_) --> [].
+
+/*
+:-abolish(owl2_model:disjoint_with/2).
+owl_axiom(disjoint_with(AX,BX),M) -->
+        triple(A,owl:disjointWith,B,M),
+        owl_description(A,AX,M),owl_description(B,BX,M).
+*/
+
 owl_axiom(disjointUnion(AX,LX),M) -->
         triple(A,owl:disjointUnionOf,L,M),
         owl_description(A,AX,M),owl_description_list(L,LX,M).
