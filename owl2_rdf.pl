@@ -321,15 +321,16 @@ owl_axiom(disjointUnion(AX,LX),M) -->
         owl_description(A,AX,M),owl_description_list(L,LX,M).
 
 % -- PROPERTY AXIOMS --
+owl_axiom(subPropertyOf(propertyChain(PL),QX),M) -->
+	triple(Q,owl:propertyChainAxiom,L1,M),
+	owl_property_list(L1,PL,M),
+        owl_property_expression(Q,QX,M).
+
 owl_axiom(subPropertyOf(PX,QX),M) -->
         triple(P,rdfs:subPropertyOf,Q,M),
         owl_property_expression(P,PX,M),
         owl_property_expression(Q,QX,M).
 
-owl_axiom(subPropertyOf(propertyChain(PL),QX),M) -->
-	triple(Q,owl:propertyChainAxiom,L1,M),
-	owl_property_list(L1,PL,M),
-        owl_property_expression(Q,QX,M).
 
 owl_axiom(disjointProperties([PX,QX]),M) -->
         % TODO - check previous module
