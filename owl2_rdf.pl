@@ -352,6 +352,16 @@ owl_axiom(equivalentClasses([AX,BX]),in) -->
         owl_description(A,AX,in),
         owl_description(B,BX,in).
 
+owl_axiom(equivalentProperties(L),out(Src)) -->
+        {rdf_global_id(owl:equivalentProperty,Pred)},
+        mk_all_pairs(L,[],Pred,out(Src)).
+owl_axiom(equivalentProperties([AX,BX]),in) -->
+        % always make pairwise axioms: in future we can add a collection capability
+        triple(A,owl:equivalentProperty,B,in),
+        is_canonical_triple(A,owl:equivalentProperty,B),
+        owl_description(A,AX,in),
+        owl_description(B,BX,in).
+
 owl_axiom(sameIndividual(L),out(Src)) -->
         {rdf_global_id(owl:sameAs,Pred)},
         mk_all_pairs(L,[],Pred,out(Src)).
