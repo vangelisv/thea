@@ -103,6 +103,9 @@ if the combination is not found then the QRs are concatenated
 
 :- multifile exclude_chain_hook/2.
 
+:- multifile owl2_reasoner:reasoner_available_hook/1.
+owl2_reasoner:reasoner_available_hook(graph_reasoner).
+
 owl2_reasoner:initialize_reasoner_hook(graph_reasoner,graph_reasoner,_) :-
         graph_reasoner_memoize.
 

@@ -2,6 +2,7 @@
 
 :- module(owl2_reasoner,
           [
+           reasoner_available/1,
 	   initialize_reasoner/1,
 	   initialize_reasoner/2,
 	   initialize_reasoner/3,
@@ -18,6 +19,7 @@
 
 :- use_module(owl2_model).
 
+:- multifile owl2_reasoner:reasoner_available_hook/1.
 :- multifile owl2_reasoner:initialize_reasoner_hook/3.
 :- multifile owl2_reasoner:reasoner_tell_hook/2.
 :- multifile owl2_reasoner:reasoner_tell_all_hook/1.
@@ -62,6 +64,9 @@ initialize_reasoner(cached(File),cached(File),_) :-
         load_files([File],[qcompile(large)]).
 initialize_reasoner(Type,_,Opts) :- 
         throw(error(initialize_reasoner(Type,Opts))).
+
+reasoner_available(Type) :- reasoner_available_hook(Type).
+
 
 % ----------------------------------------
 % Projects named classes for patterns of class expressions

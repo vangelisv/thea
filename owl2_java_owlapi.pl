@@ -1043,6 +1043,8 @@ new_incremental_classifier(pellet_incremental(R)) :-
 :- multifile owl2_reasoner:reasoner_check_consistency_hook/2.
 :- multifile owl2_reasoner:reasoner_unsatisfiable_class_hook/2.
 
+:- multifile owl2_reasoner:reasoner_available_hook/1.
+owl2_reasoner:reasoner_available_hook(T) :- wrapped_reasoner(T).
 
 owl2_reasoner:initialize_reasoner_hook(Type,R,Opts) :-
 	wrapped_reasoner(Type), % choose arbitrary if not defined
@@ -1118,7 +1120,9 @@ owl2_reasoner:reasoner_check_consistency_hook(owlapi_reasoner(R,_Fac,_Opts),V) :
 % true if R is the experimental java graph reasoner (in owltools)
 %  this allows super class expressions to be anonymous
 is_jagr(R) :-
-        jpl_call(R,getClass,[],JC),jpl_call(JC,getName,[],CN),
+        nonvar(R),
+        jpl_call(R,getClass,[],JC),
+        jpl_call(JC,getName,[],CN),
         CN='owltools.reasoner.GraphReasoner'.
 
 
