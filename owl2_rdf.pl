@@ -180,6 +180,7 @@ assert_triples(_Opts,Ont) :-
 % ----------------------------------------
 
 :- rdf_meta
+	complex_triple(-,r,r,o,-,-),
 	delayed_triple(-,r,r,o,-,-),
 	triple(-,r,r,o,-,-).
 
@@ -203,6 +204,12 @@ triple(S,P,O,in,Triples,_) :- nb_current(rdf_result_set,Triples),member(rdf(S,P,
 % @deprecated
 % instead, for efficiency, try combining triple + owl_description into single goal
 delayed_triple(S,P,O,Dir,Triples,Rest) :- when( (nonvar(S);nonvar(O)), triple(S,P,O,Dir,Triples,Rest)).
+
+complex_triple(SX,P,OX,out(Src)) --> !,triple(S,P,O,out(Src)),owl_description(O,OX,in),owl_description(S,SX,in).
+complex_triple(SX,P,OX,in) --> {nonvar(SX)},!,owl_description(S,SX,in),triple(S,P,O,in),owl_description(O,OX,in).
+complex_triple(SX,P,OX,in) --> {nonvar(OX)},!,owl_description(O,OX,in),triple(S,P,O,in),owl_description(S,SX,in).
+complex_triple(SX,P,OX,in) --> !,triple(S,P,O,in),owl_description(O,OX,in),owl_description(S,SX,in).
+
 
 
 % consume a triple if present, or produce a triple. succeeds if triple not present
@@ -298,6 +305,8 @@ expand_triple(triple(S,P,O,M),triple(Sx,Px,Ox,M)) :-
         rdf_global_id(O,Ox).
 expand_triple(delayed_triple(S,P,O,M),triple(S,Px,O,M)) :-
         rdf_global_id(P,Px).
+expand_triple(complex_triple(S,P,O,M),triple(S,Px,O,M)) :-
+        rdf_global_id(P,Px).
 
 % -- DECLARATIONS --
 % each of these matches a single triple and generates a single triple
@@ -324,9 +333,7 @@ owl_axiom(ontologyVersionInfo(O,IRI),M) --> triple(O,owl:versionInfo,IRI,M).
 % -- CLASS AXIOMS --
 % these typically generate multiple triples, where arguments are compound terms generated from bNodes
 owl_axiom(subClassOf(AX,BX),M) -->
-        triple(A,rdfs:subClassOf,B,M),
-        owl_description(A,AX,M),
-        owl_description(B,BX,M).
+        complex_triple(AX,rdfs:subClassOf,BX,M).
 
 
 % Treatment of disjointClasses/1, equivalentClasses/1 and sameIndividual/1:
@@ -357,11 +364,13 @@ owl_axiom(equivalentClasses(L),out(Src)) -->
         {rdf_global_id(owl:equivalentClass,Pred)},
         mk_all_pairs(L,[],Pred,out(Src)).
 owl_axiom(equivalentClasses([AX,BX]),in) -->
+        triple(AX,owl:equivalentClass,BX,in). % TODO - canonical direction?
+
         % always make pairwise axioms: in future we can add a collection capability
-        triple(A,owl:equivalentClass,B,in),
-        is_canonical_triple(A,owl:equivalentClass,B),
-        owl_description(A,AX,in),
-        owl_description(B,BX,in).
+        %triple(A,owl:equivalentClass,B,in),
+        %is_canonical_triple(A,owl:equivalentClass,B),
+        %owl_description(A,AX,in),
+        %owl_description(B,BX,in).
 
 owl_axiom(equivalentProperties(L),out(Src)) -->
         {rdf_global_id(owl:equivalentProperty,Pred)},
