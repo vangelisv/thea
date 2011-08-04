@@ -180,6 +180,7 @@ assert_triples(_Opts,Ont) :-
 % ----------------------------------------
 
 :- rdf_meta
+	delayed_triple(-,r,r,o,-,-),
 	triple(-,r,r,o,-,-).
 
 % keep a record of 'consumed' triples. this is only used during materialization;
@@ -193,11 +194,16 @@ assert_triples(_Opts,Ont) :-
 %      arguments can be unbound or bound. However, if they are bound they should be to valid rdf/3 arguments -
 %      this is to force complex arguments from owl2_model to be generated as bnodes first
 % out: generates a single triple.
-triple(S,P,O,in) --> {\+compound(S),\+compound(P),(\+compound(O)->true;O=literal(_)),rdf(S,P,O),\+consumed(S,P,O)},[rdf(S,P,O)].
+triple(S,P,O,in) --> {\+compound(S),\+compound(P),(\+compound(O)->true;O=literal(_)),rdf(S,P,O),debug(rdf,'Read triple: ~q',rdf(S,P,O)),\+consumed(S,P,O)},[rdf(S,P,O)].
 triple(S,P,O,out(_Src)) --> [rdf(S,P,O)].
 
 % hacky way to temporily project triples - e.g. from sparql results
 triple(S,P,O,in,Triples,_) :- nb_current(rdf_result_set,Triples),member(rdf(S,P,O),Triples).
+
+% @deprecated
+% instead, for efficiency, try combining triple + owl_description into single goal
+delayed_triple(S,P,O,Dir,Triples,Rest) :- when( (nonvar(S);nonvar(O)), triple(S,P,O,Dir,Triples,Rest)).
+
 
 % consume a triple if present, or produce a triple. succeeds if triple not present
 optional_triple(S,P,O,M) --> triple(S,P,O,M),!.
@@ -290,6 +296,8 @@ expand_triple(triple(S,P,O,M),triple(Sx,Px,Ox,M)) :-
         rdf_global_id(S,Sx),
         rdf_global_id(P,Px),
         rdf_global_id(O,Ox).
+expand_triple(delayed_triple(S,P,O,M),triple(S,Px,O,M)) :-
+        rdf_global_id(P,Px).
 
 % -- DECLARATIONS --
 % each of these matches a single triple and generates a single triple
@@ -315,7 +323,10 @@ owl_axiom(ontologyVersionInfo(O,IRI),M) --> triple(O,owl:versionInfo,IRI,M).
 
 % -- CLASS AXIOMS --
 % these typically generate multiple triples, where arguments are compound terms generated from bNodes
-owl_axiom(subClassOf(AX,BX),M) --> triple(A,rdfs:subClassOf,B,M),owl_description(A,AX,M),owl_description(B,BX,M).
+owl_axiom(subClassOf(AX,BX),M) -->
+        triple(A,rdfs:subClassOf,B,M),
+        owl_description(A,AX,M),
+        owl_description(B,BX,M).
 
 
 % Treatment of disjointClasses/1, equivalentClasses/1 and sameIndividual/1:
