@@ -1,5 +1,11 @@
 /* -*- Mode: Prolog -*- */
 
+%:- module(shell,[
+%                 op(1090,fx,q)
+%                ]).
+% no exports:
+% in order to use this, type "module(shell)" in the top-level
+
 :- use_module(owl2_model).
 :- use_module(owl2_plsyn).
 :- use_module(owl2_util).
@@ -15,13 +21,14 @@
 :- op(1090,fx,init).
 :- op(1090,fx,rm).
 :- op(1090,fx,m).
-:- op(1090,fx,q).
-:- op(1090,fx,qi).
-:- op(1090,fx,pq).
+:- op(1090,xfy,\).
+%:- op(1090,fx,q).
+%:- op(1090,fx,qi).
+%:- op(1090,fx,pq).
 :- op(1090,fx,v).
 :- op(1090,fx,itree).
 :- op(1090,fx,t).
-:- op(1090,fx,l).
+%:- op(1090,fx,l).
 :- op(1090,fx,set).
 :- op(1090,fx,unset).
 :- op(1100,xfy,===>). % from POPL
@@ -39,6 +46,11 @@
 
 :- redefine_system_predicate('>'(_,_)).
 :- redefine_system_predicate(help).
+
+
+% todo - don't hardcode this
+user:file_search_path(cliopatria, '/Users/cjm/cvs/ClioPatria').
+user:file_search_path(blipkit, '/Users/cjm/cvs/blipkit/packages').
 
 user:file_search_path(home, Home) :-
 	getenv('HOME',Home).
@@ -195,7 +207,7 @@ cmd_doc(display,v,[axiom],'Query axioms').
 cmd_doc(display,--,[cmd],'pipe through unix shell. E.g. q _<_ -- \'grep neuron\'.').
 
 t N :- label2iri(N,X), nb_setval(obj,X),current_opts(Opts), display_class_tree(X,Opts).
-l N :-
+l \ N :-
         label2iri(N,X),
         format('% IRI: ~w~n',[X]),
         nb_setval(obj,X),
@@ -208,7 +220,7 @@ l N :-
         forall(member(A,As),
                display_term(A,Opts)),
         fail.
-l _.
+l \ _.
 
 %% trshow(+Term) is det
 %% show(+Term) is det
@@ -267,16 +279,16 @@ g(AxiomIn) :- tr(AxiomIn,Axiom),Axiom.
 
 
 % select from asserted database
-q SelectIn where QueryIn :- !,tr(QueryIn,Query),tr(SelectIn,Select), forall(Query,show(Select)).
-q QueryIn :- !,tr(QueryIn,Query), forall(Query,show(Query)).
+q \ SelectIn where QueryIn :- !,tr(QueryIn,Query),tr(SelectIn,Select), forall(Query,show(Select)).
+q \ QueryIn :- !,tr(QueryIn,Query), forall(Query,show(Query)).
 
 % select from asserted database, no translation
-pq Select where Query :- !, forall(Query,show(Select)).
-pq Query :- !, forall(Query,show(Query)).
+pq \ Select where Query :- !, forall(Query,show(Select)).
+pq \ Query :- !, forall(Query,show(Query)).
 
 % select from reasoned database
-qi SelectIn where QueryIn :- !,tr(QueryIn,Query),tr(SelectIn,Select), forall(reasoner_ask(Query),show(Select)).
-qi QueryIn :- !,tr(QueryIn,Query), forall(reasoner_ask(Query),show(Query)).
+qi \ SelectIn where QueryIn :- !,tr(QueryIn,Query),tr(SelectIn,Select), forall(reasoner_ask(Query),show(Select)).
+qi \ QueryIn :- !,tr(QueryIn,Query), forall(reasoner_ask(Query),show(Query)).
 
 cmd_doc(reasoner,init,[name],'Initialize a reasoner on current ont. E.g. "reasoner pellet.". Stores current reasoner in global variable.').
 init (RN with Opts) :-
@@ -290,8 +302,10 @@ init RN :-
         init(RN with Opts).
 
 clio :-
+        %op(0,fx,q),
         ensure_loaded(library(thea/bin/thea_clio_startup)),
-        cp_server.
+        %op(-1,fx,q),
+        cp_server([]).
 
 
 % HELP
