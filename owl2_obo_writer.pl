@@ -28,7 +28,7 @@ owl_write_obo_syntax_file(File,Opts) :-
 
 owl_write_obo_syntax_file(File,Opts) :-
         atom_concat(File,'.owl',OwlFile),
-        save_axioms(OwlFile,owl,Opts),
+        save_axioms(OwlFile,rdf_direct,Opts),
         concat_atom(['obolib-owl2obo','-o',File,OwlFile,'>/dev/null'],' ',Cmd),
         shell(Cmd).
 
