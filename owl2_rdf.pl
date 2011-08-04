@@ -193,7 +193,7 @@ assert_triples(_Opts,Ont) :-
 %      arguments can be unbound or bound. However, if they are bound they should be to valid rdf/3 arguments -
 %      this is to force complex arguments from owl2_model to be generated as bnodes first
 % out: generates a single triple.
-triple(S,P,O,in) --> {\+compound(S),\+compound(P),(\+compound(O)->true;O=literal(_)),rdf(S,P,O),\+consumed(S,P,O)},[rdf(S,P,O)].
+triple(S,P,O,in) --> {\+compound(S),\+compound(P),(\+compound(O)->true;O=literal(_)),rdf(S,P,O),debug(rdf,'Read triple: ~q',rdf(S,P,O)),\+consumed(S,P,O)},[rdf(S,P,O)].
 triple(S,P,O,out(_Src)) --> [rdf(S,P,O)].
 
 % hacky way to temporily project triples - e.g. from sparql results
