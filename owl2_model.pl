@@ -724,6 +724,7 @@ valid_axiom(ontologyDirective(A, B)) :- subsumed_by([A, B],[ontology, iri]).
 axiompred(ontologyAxiom/2).
 axiom_arguments(ontologyAxiom,[ontology, axiom]).
 valid_axiom(ontologyAxiom(A, B)) :- subsumed_by([A, B],[ontology, axiom]).
+ontologyAxiom(O,ontology(O)) :- ontology(O). % include ontology declaration in list of axioms
 
 %% ontologyImport(?Ontology, ?IRI)
 % True of Ontology imports document IRI
