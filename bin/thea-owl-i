@@ -13,9 +13,10 @@
 :- multifile user:parse_arg_hook/3.
 :- multifile user:arg_info_hook/3.
 
-user:prolog_exception_hook(_,
+user:xxprolog_exception_hook(_,
                            _, _, _) :-
         backtrace(99),
+        !,
         fail.
 
 
@@ -79,7 +80,11 @@ main :-
 
         forall(member(diff(F1,F2),Opts),
                (   owl2_diff_files(F1,F2,Diffs),
-                   maplist(writeln(Diffs)))),
+                   forall(member(Diff,Diffs),
+                          (   Diff =.. [Type,Elts],
+                              format('** ~w~n',[Type]),
+                              forall(member(Elt,Elts),
+                                     show_term(Elt,Opts)))))),
         
 	% QUERIES
         forall(member(reasonerquery(T,G),Opts),
@@ -271,6 +276,7 @@ arg_info(debug,atom,'(developers) debug target').
 
 parse_arg(['--prolog'|L],L,prolog(true)).
 arg_info(prolog,-,'start prolog shell after loading owl files').
+parse_arg(['--enable-clio'|L],L,null) :- ensure_loaded(library(thea/bin/thea_clio_startup)).
 parse_arg(['--shell'|L],L,prolog(true)) :- ensure_loaded(library(thea/owl2_shell)).
 parse_arg(['--load_shell'|L],L,null) :- ensure_loaded(library(thea/owl2_shell)).
 
