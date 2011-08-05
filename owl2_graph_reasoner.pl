@@ -147,7 +147,7 @@ graph_reasoner_memoize :-
         table_pred(class_ancestor_over/3),
         table_pred(individual_ancestor/2),
         table_pred(individual_ancestor_over/3),
-        assert(memoized),
+        assert(is_memoized),
         !.
 graph_reasoner_memoize.
 
