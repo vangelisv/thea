@@ -109,7 +109,6 @@ owl2_reasoner:reasoner_available_hook(graph_reasoner).
 owl2_reasoner:initialize_reasoner_hook(graph_reasoner,graph_reasoner,_) :-
         graph_reasoner_memoize.
 
-
 % TODO: we can use more efficient procedures for finding subclasses between two named classes
 owl2_reasoner:reasoner_ask_hook(graph_reasoner,subClassOf(A,B)) :-
         nonvar(B),
@@ -138,7 +137,9 @@ owl2_reasoner:reasoner_ask_hook(graph_reasoner,propertyAssertion(P,I,J)) :-
 owl2_reasoner:reasoner_ask_hook(graph_reasoner,individual_cs(I,J,CS)) :-
 	individual_pair_common_subsumer(I,J,CS).
 
+:- dynamic is_memoized/0.
 graph_reasoner_memoize :-
+        \+ is_memoized,
         ensure_loaded(library(thea/util/memoization)),
         table_pred(class_descendant/2),
         table_pred(class_descendant_over/3),
@@ -146,7 +147,10 @@ graph_reasoner_memoize :-
         table_pred(class_ancestor_over/3),
         table_pred(individual_ancestor/2),
         table_pred(individual_ancestor_over/3),
+        assert(memoized),
         !.
+graph_reasoner_memoize.
+
 
 % ----------------------------------------
 % SubProperties
@@ -185,8 +189,8 @@ entity_parent_over(someValuesFrom(Prop,Parent),Parent,some-Prop).
 entity_parent_over(allValuesFrom(Prop,Parent),Parent,all-Prop).
 entity_parent_over(hasValue(Prop,Parent),Parent,value-Prop).
 % deliberately omit maxCardinality
-entity_parent_over(minCardinality(N,Prop,Parent),Parent,min(N)-Prop) :- ground(N),N>0.
-entity_parent_over(exactCardinality(N,Prop,Parent),Parent,exact(N)-Prop) :- ground(N),N>0.
+%entity_parent_over(minCardinality(N,Prop,Parent),Parent,min(N)-Prop) :- ground(N),N>0.
+%entity_parent_over(exactCardinality(N,Prop,Parent),Parent,exact(N)-Prop) :- ground(N),N>0.
 entity_parent_over(intersectionOf(CL),Parent,sub) :-
         ground(CL),             % TODO - allow for reverse direction
         member(Parent,CL).
