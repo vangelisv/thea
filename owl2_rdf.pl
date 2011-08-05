@@ -364,7 +364,7 @@ owl_axiom(equivalentClasses(L),out(Src)) -->
         {rdf_global_id(owl:equivalentClass,Pred)},
         mk_all_pairs(L,[],Pred,out(Src)).
 owl_axiom(equivalentClasses([AX,BX]),in) -->
-        triple(AX,owl:equivalentClass,BX,in). % TODO - canonical direction?
+        complex_triple(AX,owl:equivalentClass,BX,in). % TODO - canonical direction?
 
         % always make pairwise axioms: in future we can add a collection capability
         %triple(A,owl:equivalentClass,B,in),
