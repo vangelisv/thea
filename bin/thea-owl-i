@@ -341,6 +341,7 @@ arg_info(out,filepath,'saves to file (default is standard_output)').
 parse_arg(['--rewrite-with-labels'|L],L,goal(use_labels_for_IRIs)).
 arg_info(use-labels,-,'rewrite ontology to switch out all URIs and use labels instead').
 
+parse_arg(['--assume'|L],L,goal(assume_entity_declarations)).
 parse_arg(['--assume-entity-declarations'|L],L,goal(assume_entity_declarations)).
 
 
