@@ -171,8 +171,11 @@ execute_popl_file(F, Opts) :-
         append(FileOpts,Opts,AllOpts),
         forall(member( (Head :- Goal),Terms),
                user:assert( (Head :- Goal) )),
+        forall(member( (:- Goal),Terms),
+               Goal),
         findall(Directive,(member(Directive,Terms),
                            \+Directive= ( _ :- _ ),
+                           \+Directive= ( :- _ ),
                            \+Directive=option(_)),
                 Directives),
         popl_translate(Directives, AllOpts).
@@ -180,7 +183,10 @@ execute_popl_file(F, Opts) :-
 
 
 perform_translation(null, _) :- !. % add directives are handled up-front
-perform_translation([null], _) :- !. % add directives are handled up-front
+perform_translation([H|T], Opts) :-
+        !,
+        perform_translation(H,Opts),
+        perform_translation(T,Opts).
 perform_translation(X, Opts) :-
         memberchk(filter(AxiomTemplate,Goal),Opts),
         !,
