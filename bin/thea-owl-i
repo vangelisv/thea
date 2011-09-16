@@ -13,7 +13,7 @@
 :- multifile user:parse_arg_hook/3.
 :- multifile user:arg_info_hook/3.
 
-user:xxprolog_exception_hook(_,
+user:prolog_exception_hook(_,
                            _, _, _) :-
         backtrace(99),
         !,

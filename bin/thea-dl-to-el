@@ -1,0 +1,2 @@
+#!/bin/sh
+thea --format rdf_direct --load-mod owl2_profiles --load-mod owl2_rdf --goal "materialize_owl_from_rdf,trim_axioms_by_profile(owl2_EL)" "$@" --to owl
