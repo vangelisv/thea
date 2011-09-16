@@ -189,6 +189,10 @@ plsyn2owl(Pl,Owl) :-
         plsyn2owl(PlProp,Prop),
         plsyn2owl(PlC,C),
         Owl=..[OwlPred,Num,Prop,C].
+plsyn2owl(label(E,L),annotationAssertion(RDFS_Label,E,literal(type(XSD_String,L)))) :-
+        RDFS_Label='http://www.w3.org/2000/01/rdf-schema#label',
+        XSD_String='http://www.w3.org/2001/XMLSchema#string',
+        !.
 plsyn2owl(P value Num,Owl) :-
         number(Num),
         Num >= 0,
