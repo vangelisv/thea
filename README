@@ -168,9 +168,6 @@ There is the beginnings of a primitive web front end:
 
 * apps/labelgen/labelgen.pl
 
----+++ MIREOT - selective migration of referenced classes into an ontology
-
-* apps/mireot/mireot.pl
 
 ---++ Authors
 

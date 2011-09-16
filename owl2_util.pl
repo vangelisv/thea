@@ -189,8 +189,16 @@ translate_IRIs_from_obo_ids :-
 %% prefix_IRIs(+NS)
 % attaches a prefix to all names.
 prefix_IRIs(X):-
-        translate_IRIs(prefix_IRI(X)).
-
+        findall(O2-E-E2,
+                (   (   ontologyAxiom(O,objectProperty(E))
+                    ;   ontologyAxiom(O,class(E))),
+                    prefix_IRI(X,E,E2),
+                    prefix_IRI(X,O,O2)
+                    ),
+                OEs),
+        translate_IRIs(prefix_IRI(X)),
+        forall(member(O-L-E,OEs),
+               assert_axiom(annotationAssertion('http://www.w3.org/2000/01/rdf-schema#label',E,literal(L)),O)).
 
 
 %% use_numeric_IRIs_for_classes(NS,Base)
@@ -418,7 +426,8 @@ inferred_declaration(Arg,ArgType,Decl) :-
         atom(Arg),
         ArgType=classExpression,
         !,
-        Decl=class(Arg).
+        Decl=class(Arg),
+        \+ owl_thing(Arg).
 inferred_declaration(Arg,ArgType,Decl) :-
         atom(Arg),
         ArgType=individual,
