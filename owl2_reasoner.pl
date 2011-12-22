@@ -204,6 +204,7 @@ load_handler(Type,_Opts) :-
 	       ensure_loaded(library(thea/Mod))).
 
 reasoner_module(pellet,owl2_java_owlapi).
+reasoner_module(elk,owl2_java_owlapi).
 reasoner_module(factpp,owl2_java_owlapi).
 reasoner_module(hermit,owl2_java_owlapi).
 reasoner_module(jcel,owl2_java_owlapi).

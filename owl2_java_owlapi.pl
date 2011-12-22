@@ -229,6 +229,14 @@ create_reasoner(Ont,RN,Reasoner) :-
         jpl_new(RFacClass,[],RFac),
         debug(owl2,'got reasoner factory: ~w',[RFac]),
         jpl_call(RFac,createReasoner,[Ont],Reasoner).
+create_reasoner(Ont,elk,Reasoner) :-
+        RFacClass = 'org.semanticweb.elk.owlapi.ElkReasonerFactory',
+        !,
+        jpl_new(RFacClass,[],RFac),
+        debug(reasoner,'got reasoner factory: ~w',[RFac]),
+        jpl_call('org.semanticweb.owlapi.reasoner.InferenceType',values,[],InferenceTypes),
+        jpl_call(RFac,createReasoner,[Ont],Reasoner),
+        jpl_call(Reasoner,precomputeInferences,[InferenceTypes],_).
 create_reasoner(Ont,jcel,Reasoner) :-
         !,
         jpl_new('de.tudresden.inf.lat.jcel.owlapi.main.JcelReasoner',[Ont],Reasoner),
@@ -238,13 +246,16 @@ create_reasoner(Ont,jcel,Reasoner) :-
 
 
 wrapped_reasoner(jcel).
+wrapped_reasoner(elk).
 wrapped_reasoner(R) :- reasoner_factory(R,_).
 
+% note: also must be registered in owl2_reasoner
 reasoner_factory(pellet,'com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory').
 reasoner_factory(hermit,'org.semanticweb.HermiT.Reasoner$ReasonerFactory').
 reasoner_factory(factpp,'uk.ac.manchester.cs.factplusplus.owlapiv3.FaCTPlusPlusReasonerFactory').
 reasoner_factory(cb,'org.semanticweb.cb.owlapi.CBReasonerFactory').
 reasoner_factory(jagr,'owltools.reasoner.GraphReasonerFactory').
+%reasoner_factory(elk,'org.semanticweb.elk.owlapi.ElkReasonerFactory').
 
 % DEPRECATED
 reasoner_classify(Reasoner) :-

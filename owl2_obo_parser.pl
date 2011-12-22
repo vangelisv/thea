@@ -18,9 +18,9 @@ owl2_io:load_axioms_hook(File,obo,Opts) :-
 owl_parse_obo_syntax_file(File,Opts) :-
         absolute_file_name(File,Abs),
         atom_concat(Abs,'.owl',OwlFile),
-        atom_concat('file://',OwlFile,OwlURI),
-        debug(obo,'obo2owl ~w ==> ~w URI: ~w',[File,OwlFile,OwlURI]),
-        obo2owl(File,OwlFile,OwlURI,Opts).
+        %atom_concat('file://',OwlFile,OwlURI),
+        debug(obo,'obo2owl ~w ==> ~w URI: ~w',[File,OwlFile,OwlFile]),
+        obo2owl(File,OwlFile,OwlFile,Opts).
 
 %% obo2owl(+In,+Out,URI,Opts) :-
 obo2owl(In,Out,URI,Opts) :-
@@ -42,6 +42,7 @@ obo2owl(In,Out,URI,Opts) :-
 
 run_obo2owl(In,Out,URI,Opts) :-
         concat_atom(['obolib-obo2owl --default-ontology default --allow-dangling','-o',URI,In,'>/dev/null'],' ',Cmd),
+        debug(obo,'CMD: ~w',[Cmd]),
         shell(Cmd),
         load_axioms(Out,rdf_direct,Opts). % USE NEW PARSER
 
