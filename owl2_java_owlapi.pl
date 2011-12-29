@@ -135,7 +135,8 @@ build_ontology(Man,Fac,Ont,Opts) :-
         debug(owl2,'Built ontology',[]).
 
 test_if_valid_axiom(Ax) :- valid_axiom(Ax),!.
-test_if_valid_axiom(Ax) :- !, print_message(error,invalid_axiom(Ax)),fail.
+%test_if_valid_axiom(Ax) :- !, print_message(error,invalid_axiom(Ax)),fail.
+test_if_valid_axiom(Ax) :- !, format(user_error,'~q~n',invalid_axiom(Ax)),fail.
 
 
 
