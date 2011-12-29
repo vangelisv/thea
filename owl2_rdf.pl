@@ -206,8 +206,8 @@ triple(S,P,O,in,Triples,_) :- nb_current(rdf_result_set,Triples),member(rdf(S,P,
 delayed_triple(S,P,O,Dir,Triples,Rest) :- when( (nonvar(S);nonvar(O)), triple(S,P,O,Dir,Triples,Rest)).
 
 complex_triple(SX,P,OX,out(Src)) --> !,triple(S,P,O,out(Src)),owl_description(O,OX,in),owl_description(S,SX,in).
-complex_triple(SX,P,OX,in) --> {nonvar(SX)},!,owl_description(S,SX,in),triple(S,P,O,in),owl_description(O,OX,in).
-complex_triple(SX,P,OX,in) --> {nonvar(OX)},!,owl_description(O,OX,in),triple(S,P,O,in),owl_description(S,SX,in).
+complex_triple(SX,P,OX,in) --> {\+ground(SX)},!,owl_description(S,SX,in),triple(S,P,O,in),owl_description(O,OX,in).
+complex_triple(SX,P,OX,in) --> {\+ground(OX)},!,owl_description(O,OX,in),triple(S,P,O,in),owl_description(S,SX,in).
 complex_triple(SX,P,OX,in) --> !,triple(S,P,O,in),owl_description(O,OX,in),owl_description(S,SX,in).
 
 
