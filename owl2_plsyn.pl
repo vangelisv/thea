@@ -10,6 +10,7 @@
                       assert_plsyn_axiom/1,
                       assert_plsyn_axiom/2,
 
+                      op(990,xfy,in),
                       op(980,xfy,(--)),
                       op(950,xfy,\^), % disjoint classes
                       %op(950,fx,class),
@@ -48,6 +49,7 @@
 :- use_module(swrl).
 :- use_module(library(readutil)).
 
+:- op(990,xfy,in).
 :- op(980,xfy,(--)).
 :- op(950,fx,individual).
 
@@ -172,6 +174,7 @@ plsyn_owl(Pl,Pl,_) :-
 plsyn2owl(V,V) :-
         var(V),
         !.
+plsyn2owl(call(V),V) :- !.  % 'escape' prolog
 
 % e.g. r < r1 * r2 *r3 ...
 plsyn2owl(R1*R2 @< R,subPropertyOf(propertyChain(Chain),R)) :-
@@ -189,10 +192,10 @@ plsyn2owl(Pl,Owl) :-
         plsyn2owl(PlProp,Prop),
         plsyn2owl(PlC,C),
         Owl=..[OwlPred,Num,Prop,C].
-plsyn2owl(label(E,L),annotationAssertion(RDFS_Label,E,literal(type(XSD_String,L)))) :-
-        RDFS_Label='http://www.w3.org/2000/01/rdf-schema#label',
-        XSD_String='http://www.w3.org/2001/XMLSchema#string',
-        !.
+%plsyn2owl(label(E,L),annotationAssertion(RDFS_Label,E,literal(type(XSD_String,L)))) :-
+%        RDFS_Label='http://www.w3.org/2000/01/rdf-schema#label',
+%        XSD_String='http://www.w3.org/2001/XMLSchema#string',
+%        !.
 plsyn2owl(P value Num,Owl) :-
         number(Num),
         Num >= 0,
@@ -214,6 +217,10 @@ plsyn2owl(Pl,Owl) :-
 
 % TODO: entity annotations
 plsyn2owl(Ax--Comments,[PlAx,axiomAnnotation('rdfs:comment',literal(Comments))]) :-
+        !,
+        plsyn2owl(Ax,PlAx).
+
+plsyn2owl(Ax in Ont,ontologyAxiom(Ont,PlAx)) :-
         !,
         plsyn2owl(Ax,PlAx).
 
