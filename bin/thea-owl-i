@@ -354,6 +354,9 @@ parse_arg(['--use-safe-labels'|L],L,goal(use_safe_labels_for_IRIs)).
 
 parse_arg(['--iri-map',A,in,O|L],L,goal(translate_IRIs(T,O))) :- atom_to_term(A,T,_).
 
+parse_arg(['--assert',AxA,into,O|L],L,goal(assert_axiom(Ax,O))) :- atom_to_term(AxA,Ax,_).
+arg_info(assert,axiom,'asserts axiom into ontology').
+
 parse_arg(['--goal',GA|L],L,goal(G)) :- atom_to_term(GA,G,_).
 arg_info(goal,goal,'execute prolog goal after loading ontologies').
 
