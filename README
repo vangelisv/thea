@@ -98,7 +98,7 @@ See also the apps/ directory for example applications.
 ---++ Reasoning support
 
 The DLP subset of OWL2-DL can be translated to logic programs using a
-transormation defined by Grosof. See owl2_to_prolog_dlp.pl
+transformation defined by Grosof. See owl2_to_prolog_dlp.pl
 
 The resulting programs can be used with Prologs such as Yap and
 XSB. There are also hooks for answer set programming and disjunctive
