@@ -17,4 +17,4 @@ if [ -z `which swipl` ]; then
   SWIPL=/opt/local/bin/swipl;
 fi
 
-$SWIPL -q -p library=$THEA_PATH  -g main,halt -t halt -s $THEA_PATH/bin/thea-owl-i -- "$@"
+$SWIPL -q -p library=$THEA_PATH  -g main -t halt -s $THEA_PATH/bin/thea-owl-i -- "$@"
