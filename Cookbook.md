@@ -139,7 +139,7 @@ Yap or XSB:
 
 ```
 :- use_module(library('thea2/owl2_io')).
-:- use_module(library('thea2/owl2_to_prolog_dlp)).
+:- use_module(library('thea2/owl2_to_prolog_dlp')).
 
 demo :-
    load_axioms('testfiles/wine.owl'),
@@ -193,5 +193,5 @@ This is because of the OWL following axiom:
 subClassOf(cell,unionOf([e_cell,n_cell])).
 ```
 
-In the abox we state =|cell(c2)|= but not the specific subtype.
+In the abox we state `cell(c2)` but not the specific subtype.
 
