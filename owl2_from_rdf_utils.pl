@@ -187,18 +187,20 @@ expand_ns(URL, URL).
 
 collapse_ns(FullURL, NSURL,Char,Options) :-
 	nonvar(FullURL),
+        FullURL \= '$VAR'(_),
 	not(FullURL = literal(_)),
 	uri_split(FullURL,LongNS, Term, '#'),
 	concat(LongNS,'#',LongNS1),
 	rdf_db:ns(ShortNS,LongNS1),
-	(   member(no_base(ShortNS),Options), ! , NSURL = Term
-	;
-	concat_atom([ShortNS,Char,Term],NSURL)
+	(   member(no_base(ShortNS),Options)
+        ->  NSURL = Term
+	;   atomic_list_concat([ShortNS,Char,Term],NSURL)
 	),!.
 % CJM
 collapse_ns(FullURL, NSURL,_Char,Options) :-
 	nonvar(FullURL),
-	not(FullURL = literal(_)),
+        FullURL \= '$VAR'(_),
+	FullURL \= literal(_),
 	uri_split(FullURL,LongNS, Term, '#'),
 	member(no_base(LongNS),Options),
         !,

@@ -9,6 +9,7 @@
            owl_write_dlpterm/2,
            owl_write_prolog_code/2
            ]).
+:- use_module(library(debug)).
 
 :- use_module(owl2_model).
 :- use_module(owl2_from_rdf,[collapse_ns/4]).
@@ -144,10 +145,11 @@ owl_write_dlpterm(OwlAsTerm,_) :-
 owl_write_prolog_code([],_) :- !.
 
 
-owl_write_prolog_code([H|T],Options) :-
-	owl_write_prolog_code(H,Options),!,
+owl_write_prolog_code([H|T],Options) :- !,
+        \+ \+ ( number_shared_vars(H),
+                owl_write_prolog_code(H,Options)
+              ),
 	owl_write_prolog_code(T,Options).
-
 
 %
 % Generate code for the or (;) prolog construct.
@@ -233,17 +235,20 @@ owl_write_prolog_code( (H :- B), Options) :-!,
 
 owl_write_prolog_code(class(X,Y),Options) :- !,
 	collapse_ns(X,X1,'_',Options),
-	(   var(Y), !,
-	    writeq(X1), write('(X)')
-	;   Y = y , !,
-	    writeq(X1), write('('), write('Y'), write(')')
-	;   Y=v(VY), !,
-	    writeq(X1), write('('), write('V'),write(VY), write(')')
+	(   var(Y)                              % see number_shared_vars/1
+        ->  format('~q(X)', [X1])
+        ;   Y = '$VAR'(X)
+        ->  assertion(\+ reserved_var(X)),
+            format('~q(~W)', [X1, Y, [numbervars(true)]])
+	;   Y = x
+        ->  writeq(X1), write('('), write('X'), write(')')
+	;   Y = y
+        ->  writeq(X1), write('('), write('Y'), write(')')
+	;   Y=v(VY)
+        ->  writeq(X1), write('('), write('V'),write(VY), write(')')
         ;   uri_to_atom(Y,Y1),
             writeq(X1), write('('), writeq(Y1), write(')')
 	).
-
-
 
 %
 % Generate code for a 'property' predicate: P(X,Y) or
@@ -327,10 +332,36 @@ owl_write_prolog_head_disjunction(H,Options) :-
         owl_write_prolog_code(H,Options).
 
 
+%!      reserved_var(+N) is semidet.
+%
+%       Used to verify that variables we generate using numbervars/3
+%       do not conflict with the hard-coded variable names.
 
+reserved_var(21).                               % V
+reserved_var(23).                               % X
+reserved_var(24).                               % Y
 
+%!      number_shared_vars(+Term) is det.
+%
+%       Number variables that appear multiple  times.   This  is  a work
+%       around for this code that uses   a mixture of unshared variables
+%       and variable indicators such as `x`,   `y`, etc. Eventually this
+%       should be removed, producing a  proper   Prolog  term  and using
+%       portray_clause/1 to write it.
 
+number_shared_vars(Term) :-
+        copy_term(Term, Copy),
+        numbervars(Copy, 0, _, [singletons(true)]),
+        unbind_singletons(Copy, Copy2),
+        Copy2 = Term.
 
+unbind_singletons('$VAR'('_'), _).
+unbind_singletons(Term, Copy) :-
+        compound(Term), !,
+        Term =.. [Name|Args0],
+        maplist(unbind_singletons, Args0, Args),
+        Copy =.. [Name|Args].
+unbind_singletons(Term, Term).
 
 %
 % used in case of conjunction in the head. Used in rewrite rule
@@ -593,14 +624,14 @@ owl_as2prolog(propertyExpression(propertyChain(PL)),ChainGoal, _) :-
 owl_as2prolog(propertyExpression(P),property(P,x,y), _) :- !.
 
 
-owl_as2prolog(propertyDomain(P,D),(L :- property(P,x,var)), _) :- !,
-        map_description(head,_,D,L).
+owl_as2prolog(propertyDomain(P,D),(L :- property(P,X,var)), _) :- !,
+        map_description(head,X,D,L).
 
-owl_as2prolog(propertyRange(P,D),(L :- property(P,var,x)), _) :- !,
-        map_description(head,_,D,L).
+owl_as2prolog(propertyRange(P,D),(L :- property(P,var,X)), _) :- !,
+        map_description(head,X,D,L).
 
 owl_as2prolog(disjointProperties(L),RL,_) :- !,
-        findall( ('owl:Nothing'(x) :- property(C,x,y),property(D,x,y)),
+        findall( ('owl:Nothing'(X) :- property(C,X,Y),property(D,X,Y)),
                 (   member(C,L),
                     member(D,L),
                     C@<D),
