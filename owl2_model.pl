@@ -783,10 +783,9 @@ inverseObjectProperty(inverseOf(OP)) :- objectProperty(OP).
 dataPropertyExpression(E) :- dataProperty(E).
 
 dataPropertyExpression(DPEs) :-
-	(   is_list(DPEs)
-	->  forall(member(DPE,DPEs),
-		   dataPropertyExpression(DPE))
-	;   dataPropertyExpression(DPEs)).
+	is_list(DPEs), !,
+	forall(member(DPE,DPEs),
+	       dataPropertyExpression(DPE)).
 
 % give benefit of doubt; e.g. rdfs:label
 % in the OWL2 spec we have DataProperty := IRI
