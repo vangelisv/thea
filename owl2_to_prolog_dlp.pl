@@ -203,27 +203,22 @@ owl_write_prolog_code( ( ( H1; H2) :- B), Options) :- !,
         ;   true).
 
 owl_write_prolog_code( (H :- B), Options) :-!,
-	(   H = false , !
-	;
-	B = false , !
-	;
-	H = [], !
-	;
-	H = [_|_] , !,
-	    maplist(map_head_conjunction(B),H,R),
+	(   H == false
+        ->  true
+        ;   B == false
+        ->  true
+        ;   H == []
+        ->  true
+        ;   H = [_|_]
+        ->  maplist(map_head_conjunction(B),H,R),
 	    owl_write_prolog_code(R,Options) % rewrite rule (a,b) :- c ==> a :- c and b:-c
-
-	;
-	H = (H1 :- H2) , !,
-	    owl_write_prolog_code(:-(H1,(H2,B)),Options) % rewrite rule a :- b) :- c ==> a :- b,c
-	;
-	H = (H1 ; H2) , !,
-	    owl_write_prolog_head_disjunction(H,Options)
-	;
-	B = none, !, % It is a fact (no body).
-	    owl_write_prolog_code(H,Options), write('.'), nl
-	;
-	owl_write_prolog_code(H,Options), write(':-'), % normal rule H:-B.
+	;   H = (H1 :- H2)
+        ->  owl_write_prolog_code((H1:-(H2,B)),Options) % rewrite rule a :- b) :- c ==> a :- b,c
+	;   H = (_ ; _)
+        ->  owl_write_prolog_head_disjunction(H,Options)
+	;   B = none % It is a fact (no body).
+        ->  owl_write_prolog_code(H,Options), write('.'), nl
+	;   owl_write_prolog_code(H,Options), write(':-'), % normal rule H:-B.
 	    nl, write('     '),
 	    owl_write_prolog_code(B,Options),
 	    write('.'), nl
