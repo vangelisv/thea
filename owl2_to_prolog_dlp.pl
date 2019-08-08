@@ -55,6 +55,13 @@ owl_write_all_dlpterms(Opts) :-
         forall(member(Ax,Axs),
                owl_write_dlpterm(Ax,Opts)).
 
+% we could also consider to use `:- style_check(-discontiguous).`
+write_directives(discontiguous,_Opts) :-
+        format(':- discontiguous(~q/1).~n',['Thing']),
+        forall(class(C),
+               write_discontiguous_class(C,Opts)),
+        forall(property(P),
+               write_discontiguous_property(P,Opts)).
 write_directives(table,Opts) :-
         forall(class(C),
                write_table_class(C,Opts)),
@@ -78,6 +85,12 @@ write_dummy_class(X,Opts) :-
 write_dummy_property(X,Opts) :-
         collapse_ns(X,X1,'_',Opts),
         format('~q(_,_) :- fail.~n',[X1]).
+write_discontiguous_class(X,Opts) :-
+        collapse_ns(X,X1,'_',Opts),
+        format(':- discontiguous(~q/1).~n',[X1]).
+write_discontiguous_property(X,Opts) :-
+        collapse_ns(X,X1,'_',Opts),
+        format(':- discontiguous(~q/2).~n',[X1]).
 
 
 %% owl_dlpterm(+OwlAsTerm,?DlpTerm)
