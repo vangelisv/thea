@@ -9,7 +9,7 @@
     xmlns:owl="&owl;"
 >
 <owl:Ontology rdf:about="http://x.org">
-  <owl:imports rdf:resource="http://y.org"/>
+  <owl:imports rdf:resource="http://hopefully.non.existent.swi-prolog.org"/>
 </owl:Ontology>
 
 </rdf:RDF>
