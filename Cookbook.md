@@ -160,10 +160,10 @@ save_axioms/3
 Once you have generated the above DLP you can query the ABox using SWI-Prolog:
 
 ```
-swipl wine.pl
-   ?- 'DessertWine'(Wine),locatedIn(Wine,'USRegion'),hasBody(Wine,'Light').
-Wine = 'WhitehallLanePrimavera' ? ;
-false
+$ swipl wine.pl
+?- 'DessertWine'(Wine),locatedIn(Wine,'USRegion'),hasBody(Wine,'Light').
+Wine = 'WhitehallLanePrimavera' ;
+false.
 ```
 
 Prolog DLPs can not have disjunctions in the head of
