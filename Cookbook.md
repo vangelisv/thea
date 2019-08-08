@@ -1,6 +1,6 @@
 # Thea2 Cookbook
 
-Here are some recipes for doing common tasks in Thea2
+Here are some recipes for doing common tasks in Thea2.
 
 ## Querying Ontologies
 
@@ -60,7 +60,7 @@ thea-jpl --prolog
 ```
 
 This starts thea with a prolog shell, from which further prolog goals
-can be executed:
+can be executed (see also `cookbook/countries.pl`):
 
 ```
 load_axioms('testfiles/country.owl').
@@ -126,16 +126,16 @@ For more, see
 ### Converting OWL to Logic Programs
 
 The DLP subset of OWL2-DL can be translated to logic programs using a
-transormation defined by Grosof. See owl2_to_prolog_dlp.pl
+transormation defined by Grosof. See `owl2_to_prolog_dlp.pl`
 
-The resulting programs can be used with Prologs such as Yap and
-XSB. There are also hooks for answer set programming and disjunctive
+The resulting programs can be used with Prolog systems that implement
+tabling. There are also hooks for answer set programming and disjunctive
 datalog systems such as DLV. The same programs can also be used in
 inductive logic programming systems such as ProGol. Possibly also
 probabilistic systems such as PRISM, but this has yet to be tested.
 
 The following program will convert an OWL ontology suitable for use in
-Yap or XSB:
+Prolog (see also `cookbook/wine.pl`):
 
 ```
 :- use_module(library('thea2/owl2_io')).
@@ -143,21 +143,27 @@ Yap or XSB:
 
 demo :-
    load_axioms('testfiles/wine.owl'),
-   save_axioms('wine.pl',dlp,[no_base(_),write_directives(table)]).
+   save_axioms('wine.pl',dlp,
+	       [ no_base(_),
+		 write_directives(table),
+		 write_directives(discontiguous),
+		 write_directives(dummy_fact)
+	       ]).
 ```
 
-(You can also use bin/thea-owl-to-dlp-yap)
+(You can also use ``bin/thea-owl-to-dlp-yap testfiles/wine.owl > wine.pl``)
 
-For Yap you need explicit tabling directives (for XSB can you
-table_all), which is specified in the options list for save_axioms/3
+Yap and SWI-Prolog need explicit tabling directives (for XSB can you use
+``:- table_all.``), which is specified in the options list for
+save_axioms/3
 
-Once you have generated the above DLP you can query the ABox using Yap:
+Once you have generated the above DLP you can query the ABox using SWI-Prolog:
 
 ```
-yap -g wine
+swipl wine.pl
    ?- 'DessertWine'(Wine),locatedIn(Wine,'USRegion'),hasBody(Wine,'Light').
 Wine = 'WhitehallLanePrimavera' ? ;
-no
+false
 ```
 
 Prolog DLPs can not have disjunctions in the head of
@@ -171,7 +177,12 @@ The follow will translate an OWL ontology into DLV syntax:
 
 demo :-
    load_axioms('testfiles/cell.owlpl'),
-   save_axioms('cell.dlv',dlp,[disjunctive_datalog(true),head_disjunction_symbol(v),no_base(_),suppress_literals(true)]).
+   save_axioms('cell.dlv',dlp,
+	       [ disjunctive_datalog(true),
+		 head_disjunction_symbol(v),
+		 no_base(_),
+		 suppress_literals(true)
+	       ]).
 ```
 
 (You can also use bin/thea-owl-to-dlv)
