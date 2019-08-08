@@ -167,7 +167,7 @@ The follow will translate an OWL ontology into DLV syntax:
 
 ```
 :- use_module(library('thea2/owl2_io')).
-:- use_module(library('thea2/owl2_to_prolog_dlp)).
+:- use_module(library('thea2/owl2_to_prolog_dlp')).
 
 demo :-
    load_axioms('testfiles/cell.owlpl'),
