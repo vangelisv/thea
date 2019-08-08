@@ -1,4 +1,4 @@
-s/* -*- Mode: Prolog -*- */
+/* -*- Mode: Prolog -*- */
 
 :- module(owl2_java_owlapi,
           [
