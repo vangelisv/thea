@@ -184,10 +184,16 @@ xml_annotation(element(_:'Annotation',Atts,Elts),annotation(P,V)) :-
         Elts=[element(_:'Constant',_,[V])].
 
 atts_iri(Atts,TIRI) :-
-  	(   TIRI = i(IRI) ; TIRI = c(IRI) ; TIRI = op(IRI); TIRI = dp(IRI) ; var(IRI)),!,
+        tiri_iri(TIRI, IRI),
 	iri_att(A),
         member(A=IRI,Atts).
 
+tiri_iri(i(IRI), IRI) :- !.
+tiri_iri(c(IRI), IRI) :- !.
+tiri_iri(op(IRI), IRI) :- !.
+tiri_iri(dp(IRI), IRI) :- !.
+tiri_iri(IRI, IRI) :- % JW: not entirely sure here.  The original code
+        var(IRI).     % is definitely wrong though.
 
 iri_att('URI').  % TODO clarify. P4 uses this
 iri_att('abbreviatedIRI').  % VV add 15/10 for OWLLink support
