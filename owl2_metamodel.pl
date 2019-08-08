@@ -131,7 +131,7 @@ owlpredicate_arguments(negativeDataPropertyAssertion, [dataPropertyExpression, i
 
 % for sql_compiler
 
-:- discontiguous(relation/2,attribute/4).
+:- discontiguous((relation/2,attribute/4)).
 
 relation('class',1).
 attribute(1,'class','IRI',string).
@@ -232,7 +232,7 @@ attribute(1,'ontologyVersionInfo','ontology',string).
 attribute(2,'ontologyVersionInfo','IRI',string).
 
 
-/** <module> 
+/** <module>
 
 ---+ Synopsis
 

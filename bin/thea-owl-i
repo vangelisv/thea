@@ -12,9 +12,7 @@
 :- multifile user:parse_arg_hook/3.
 
 main :-
-        current_prolog_flag(argv, Arguments),
-        append(_SytemArgs, [--|Args], Arguments),
-        !,
+        current_prolog_flag(argv, Args),
         parse_args(Args,Opts_1),
         flatten(Opts_1,Opts),
         findall(X,
@@ -73,7 +71,7 @@ main :-
                (   owl2_diff_files(F1,F2,Diffs),
                    maplist(writeln(Diffs)))),
           */
-        
+
 	% QUERIES
         forall(member(reasonerquery(T,G),Opts),
                forall(reasoner_ask(Reasoner,G),
@@ -100,17 +98,9 @@ main :-
 
         % SHELL
         (   member(prolog(true),Opts)
-        ->  prolog_shell
+        ->  set_prolog_flag(verbose, normal),
+            set_prolog_flag(toplevel_goal, prolog)
         ;   true).
-
-prolog_shell:-
-        format(user_error,'% Starting thea shell~n',[]),
-        repeat,
-        catch(prolog,
-              E,
-              (format('ERROR:~n~w~n',[E]),fail)),
-        !,
-        format('Come back soon!~n').
 
 % ----------------------------------------
 % DISPLAY
@@ -200,7 +190,7 @@ comma_term_to_list((A,B),[A|L]) :-
         !,
         comma_term_to_list(B,L).
 comma_term_to_list(A,[A]).
-        
+
 
 % ----------------------------------------
 % LOOKUP
@@ -373,7 +363,7 @@ parse_arg(['--sim-pair',XN,YN|L],L,
                     lookup(YN,Y),
                     class_pair_least_common_subsumer(X,Y,LCS,[])))) :-
         ensure_loaded(library(thea2/owl2_lcs)),
-        prepare_optimizations(_). 
+        prepare_optimizations(_).
 parse_arg(['--sim-all'|L],L,
           query(sim(X,Y,LCS),
                 (   class(X),
@@ -381,7 +371,7 @@ parse_arg(['--sim-all'|L],L,
                     class_pair_least_common_subsumer(X,Y,LCS,[])))
          ) :-
         ensure_loaded(library(thea2/owl2_lcs)),
-        prepare_optimizations(_). 
+        prepare_optimizations(_).
 
 parse_arg(['--load-catalog'|L],L,null) :- load_catalog.
 

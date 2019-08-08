@@ -1,5 +1,5 @@
 
----+ Using Thea for Reasoning
+# Using Thea for Reasoning
 
 An ontology specified in OWL is amenable to reasoning. Some of the
 uses of reasoning are:
@@ -22,7 +22,7 @@ The alternative to using an external reasoning engine is to reason
 using Prolog. At this time, this means SWI-Prolog, and
 backward-chaining based reasoning.
 
----++ Use of a Java reasoning engine via JPL
+## Use of a Java reasoning engine via JPL
 
   * Module: owl2_java_owlapi.pl
 
@@ -46,7 +46,7 @@ should have access to the full power of these reasoners directly from
 Thea2. However, this has only been tested on a subset of ontologies
 which are of interest to the authors.
 
----++ Use of a reasoning engine over the network
+## Use of a reasoning engine over the network
 
   * Module: owl2_owllink.pl
 
@@ -61,7 +61,7 @@ server too.
 
 Perhaps this should also export more finer grained ask/tell predicates?
 
----++ Reasoning using Prolog
+## Reasoning using Prolog
 
 There are two opposing approaches here:
 
@@ -71,17 +71,17 @@ There are two opposing approaches here:
 The first approach is based on rules defined by Grosof, and will
 rewrite axioms such as:
 
-==
+```
 subClassOf(cat, mammal).
 classAssertion(cat, mr_whiskers).
-==
+```
 
 to programs such as:
 
-==
+```
 mammal(X) :- cat(X).
 cat(mr_whiskers).
-==
+```
 
 See owl2_to_prolog_dlp.pl module documentation for details.
 
@@ -95,9 +95,9 @@ whether backward chaining or a tabled prolog is used.
 If you are using a tabled prolog (e.g. Yap or XSB), you can use the
 module owl2_reasoner_rules.pl which defines rules such as this:
 
-==
+```
 subClassOf(X,Y) :- subClassOf(X,Z),subClassOf(Z,Y).
-==
+```
 
 If you are using SWI-Prolog, you can use owl2_basic_reasoner.pl which
 has backwards chaining rules. Caveat emptor: this module is
@@ -108,7 +108,7 @@ Another implementation is provided in owl2_rl_rules.pl. The module
 implements OWL RL Rules with simple forward and backward chaining engines
 See more in module documentation
 
----++ TODO
+## TODO
 
 Currently each of the modules described above provides their own
 particular predicates. This isn't ideal for the application
@@ -131,30 +131,30 @@ The predicates exported might include:
 
 We are envisioning something whereby the application programmer can write:
 
-==
+```
 load_axioms('myont.owl'),
 initialize_reasoner(pellet,Opts,Reasoner),
 reasoner_tell(Reasoner),
 forall(reasoner_ask(Reasoner,subClassOf(X,Y)),
        writeln(X-Y)).
-==
+```
 
 [VV] Querying an external reasoner via OWLLink with non-ground queries is not trivial.
 OWLLink does not support variables in its Ask specification. One should write the logic
 on how the system should handle free variables: 
 E.g. write something like the following:
 
-==
+```
   reasoner_ask(owllink_external_reasoner(R),subClassOf(X,Y)) :-
 	    var(X),nonvar(Y),
 		owllink(R, getAllClasses(KB),classSet(CL),[]),
 		member(X,CL),
 		owllink(R, isClassSubsumedBy(KB,X,Y),response(true),[]).
 		
-==
+```
 
 
----+++ Modules
+### Modules
 
   * owl2_reasoner.pl
   * owl2_java_owlapi.pl

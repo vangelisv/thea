@@ -55,6 +55,13 @@ owl_write_all_dlpterms(Opts) :-
         forall(member(Ax,Axs),
                owl_write_dlpterm(Ax,Opts)).
 
+% we could also consider to use `:- style_check(-discontiguous).`
+write_directives(discontiguous,_Opts) :-
+        format(':- discontiguous(~q/1).~n',['Thing']),
+        forall(class(C),
+               write_discontiguous_class(C,Opts)),
+        forall(property(P),
+               write_discontiguous_property(P,Opts)).
 write_directives(table,Opts) :-
         forall(class(C),
                write_table_class(C,Opts)),
@@ -78,19 +85,25 @@ write_dummy_class(X,Opts) :-
 write_dummy_property(X,Opts) :-
         collapse_ns(X,X1,'_',Opts),
         format('~q(_,_) :- fail.~n',[X1]).
+write_discontiguous_class(X,Opts) :-
+        collapse_ns(X,X1,'_',Opts),
+        format(':- discontiguous(~q/1).~n',[X1]).
+write_discontiguous_property(X,Opts) :-
+        collapse_ns(X,X1,'_',Opts),
+        format(':- discontiguous(~q/2).~n',[X1]).
 
 
 %% owl_dlpterm(+OwlAsTerm,?DlpTerm)
-owl_dlpterm(OwlAsTerm,R) :- 
+owl_dlpterm(OwlAsTerm,R) :-
 	owl_as2prolog(OwlAsTerm,R,_).
-        
+
 %% owl_dlpterm(+OwlAsTerm,?DlpTerm,+Options:list)
 % (Options currently ignored)
-owl_dlpterm(OwlAsTerm,R,_) :- 
+owl_dlpterm(OwlAsTerm,R,_) :-
 	owl_as2prolog(OwlAsTerm,R,_).
 
 
-%% owl_write_dlpterm(+OwlAsTerm,+Options) 
+%% owl_write_dlpterm(+OwlAsTerm,+Options)
 %
 %	 Converts the prolog OWL abstract syntax term (as parsed by
 %	 OWl parser) into prolog logic code, based on the mapping
@@ -105,52 +118,52 @@ owl_dlpterm(OwlAsTerm,R,_) :-
 
 
 
-owl_write_dlpterm(OwlAsTerm,Options) :- 
+owl_write_dlpterm(OwlAsTerm,Options) :-
 	owl_as2prolog(OwlAsTerm,R,_),
         format('% ~q ~n',[OwlAsTerm]),
 	owl_write_prolog_code(R,Options),
         !.
-owl_write_dlpterm(OwlAsTerm,_) :- 
+owl_write_dlpterm(OwlAsTerm,_) :-
         throw(thea(cannot_write(OwlAsTerm))).
 
 
-%% owl_write_prolog_code(+Term,+Options) 
+%% owl_write_prolog_code(+Term,+Options)
 %
 %	 Term is an intermediate format generated from the
 %	 owl_as2prolog/3 predicate. This predicate handles the
 %	 prolog code generation from this intermediate format
-%	 into prolog code. 
+%	 into prolog code.
 %        For Options see the owl_as2prolog/2 predicate.
 
 
 %
 % Generate code for each item in the list.
-% 
+%
 
 
 owl_write_prolog_code([],_) :- !.
 
 
 owl_write_prolog_code([H|T],Options) :-
-	owl_write_prolog_code(H,Options),!, 
+	owl_write_prolog_code(H,Options),!,
 	owl_write_prolog_code(T,Options).
 
 
 %
 % Generate code for the or (;) prolog construct.
-% 
+%
 
 owl_write_prolog_code(;(A,B),Options) :- !,
-	write('('), owl_write_prolog_code(A,Options), 	write(';'), 
+	write('('), owl_write_prolog_code(A,Options),	write(';'),
 	owl_write_prolog_code(B,Options), write(')').
 
 %
 % Generate code for the and (;) prolog construct.
-% 
+%
 
 owl_write_prolog_code( (A,B), Options ) :- !,
-	owl_write_prolog_code(A,Options), 
-	write(','), 
+	owl_write_prolog_code(A,Options),
+	write(','),
 	owl_write_prolog_code(B,Options).
 
 % we need this because variables may be repeated if there are multiple existential clauses
@@ -163,15 +176,15 @@ owl_write_prolog_code(\+ (A),Options) :- !,
 
 
 %
-% Generate code for a prolog rule Head :- Body 
-% 
+% Generate code for a prolog rule Head :- Body
+%
 
 owl_write_prolog_code( (class('owl:Nothing',_):- B), Options) :-
         member(disjunctive_datalog(true),Options),
         !,
-        write(':-'),            
-        nl, write('     '), 
-        owl_write_prolog_code(B,Options), 
+        write(':-'),
+        nl, write('     '),
+        owl_write_prolog_code(B,Options),
         write('.'), nl.
 
 owl_write_prolog_code( (class('owl:Nothing',_):- _), Options) :-
@@ -181,48 +194,48 @@ owl_write_prolog_code( (class('owl:Nothing',_):- _), Options) :-
 owl_write_prolog_code( ( ( H1; H2) :- B), Options) :- !,
         (   member(disjunctive_datalog(true),Options)
         ->  owl_write_prolog_head_disjunction((H1;H2),Options),
-            write(':-'),            
-	    nl, write('     '), 
-	    owl_write_prolog_code(B,Options), 
+            write(':-'),
+	    nl, write('     '),
+	    owl_write_prolog_code(B,Options),
 	    write('.'), nl
         ;   true).
-        
+
 owl_write_prolog_code( (H :- B), Options) :-!,
-	(   H = false , ! 
-	;   
-	B = false , ! 
-	; 
-	H = [], ! 
-	; 
-	H = [_|_] , !, 
-	    maplist(map_head_conjunction(B),H,R), 
+	(   H = false , !
+	;
+	B = false , !
+	;
+	H = [], !
+	;
+	H = [_|_] , !,
+	    maplist(map_head_conjunction(B),H,R),
 	    owl_write_prolog_code(R,Options) % rewrite rule (a,b) :- c ==> a :- c and b:-c
 
-	; 
-	H = (H1 :- H2) , !, 
+	;
+	H = (H1 :- H2) , !,
 	    owl_write_prolog_code(:-(H1,(H2,B)),Options) % rewrite rule a :- b) :- c ==> a :- b,c
-	; 
-	H = (H1 ; H2) , !, 
+	;
+	H = (H1 ; H2) , !,
 	    owl_write_prolog_head_disjunction(H,Options)
-	;  
+	;
 	B = none, !, % It is a fact (no body).
 	    owl_write_prolog_code(H,Options), write('.'), nl
-	; 
-	owl_write_prolog_code(H,Options), write(':-'), % normal rule H:-B. 
+	;
+	owl_write_prolog_code(H,Options), write(':-'), % normal rule H:-B.
 	    nl, write('     '),
-	    owl_write_prolog_code(B,Options), 
+	    owl_write_prolog_code(B,Options),
 	    write('.'), nl
 	).
 
 %
-% Generate code for a 'class' predicate:  C(X) or C(individual). 
-% 
+% Generate code for a 'class' predicate:  C(X) or C(individual).
+%
 
 owl_write_prolog_code(class(X,Y),Options) :- !,
 	collapse_ns(X,X1,'_',Options),
-	(   var(Y), !, 	
-	    writeq(X1), write('(X)') 
-	;   Y = y , !,  
+	(   var(Y), !,
+	    writeq(X1), write('(X)')
+	;   Y = y , !,
 	    writeq(X1), write('('), write('Y'), write(')')
 	;   Y=v(VY), !,
 	    writeq(X1), write('('), write('V'),write(VY), write(')')
@@ -235,7 +248,7 @@ owl_write_prolog_code(class(X,Y),Options) :- !,
 %
 % Generate code for a 'property' predicate: P(X,Y) or
 % P(class,individual) or P(individual, individual).
-% 
+%
 
 owl_write_prolog_code(property(_,_,literal(_)),Options) :-
         member(suppress_literals(true),Options),
@@ -244,26 +257,26 @@ owl_write_prolog_code(property(_,_,literal(_)),Options) :-
 owl_write_prolog_code(property(P,X,Y),Options) :- !,
 	collapse_ns(P,P1,'_',Options),
 	writeq(P1),  write('('),
-	(   X = x, !, write('X') 
-        ;   X = y, !, write('Y')  
-        ;   X = z, !, write('Z')  
-        ;   X = v(NX), !, write('V'),write(NX)  
-        ;   X = var , !, write('_') 
+	(   X = x, !, write('X')
+        ;   X = y, !, write('Y')
+        ;   X = z, !, write('Z')
+        ;   X = v(NX), !, write('V'),write(NX)
+        ;   X = var , !, write('_')
         ;   uri_to_atom(X,X1),
             writeq(X1)
-	),	
+	),
 	write(','),
-	(   Y = x, !, write('X')  
-	;   Y = y, !, print('Y')  
-	;   Y = z, !, print('Z')  
-        ;   Y = v(NY), !, write('V'),write(NY)  
-	;   Y = var , !, print('_') 
+	(   Y = x, !, write('X')
+	;   Y = y, !, write('Y')
+	;   Y = z, !, write('Z')
+        ;   Y = v(NY), !, write('V'),write(NY)
+	;   Y = var , !, write('_')
 	;   uri_to_atom(Y,Y1),
             writeq(Y1)
 	),
 	write(')').
 
-owl_write_prolog_code(swrlproperty(P,X,Y),Options) :- !, 
+owl_write_prolog_code(swrlproperty(P,X,Y),Options) :- !,
 	collapse_ns(P,P1,'_',Options),collapse_ns(Y,Y1,'_',[no_base(_)]),collapse_ns(X,X1,'_',[no_base(_)]),
         upcase_atom(X1,X2),
         upcase_atom(Y1,Y2),
@@ -273,7 +286,7 @@ owl_write_prolog_code(swrlproperty(P,X,Y),Options) :- !,
 	write(Y2),
 	write(')').
 
-owl_write_prolog_code(swrldescription(P,X),Options) :- !, 
+owl_write_prolog_code(swrldescription(P,X),Options) :- !,
 	collapse_ns(P,P1,'_',Options),collapse_ns(X,X1,'_',[no_base(_)]),
         upcase_atom(X1,X2),
 	writeq(P1),  write('('),
@@ -321,14 +334,14 @@ owl_write_prolog_head_disjunction(H,Options) :-
 
 %
 % used in case of conjunction in the head. Used in rewrite rule
-%( a,b) :- c ==> a :- c and b:-c 
+%( a,b) :- c ==> a :- c and b:-c
 %
 
 map_head_conjunction(B,H, :-(H,B)).
 
 
 
-%% owl_as2prolog(+OwlAsTerm, -ResultTerm, ?Mode) 
+%% owl_as2prolog(+OwlAsTerm, -ResultTerm, ?Mode)
 %
 %	 Predicate to convert a Thea prolog OWL abstract term into
 %	 the intermediate term used for prolog (logic) code generation.
@@ -338,15 +351,15 @@ map_head_conjunction(B,H, :-(H,B)).
 %
 %	 The mappings for the class descriptions are summarised in the
 %	 following table for each mode.
-%   
+%
 % Description	  Head                 Body	        Fact
 % -----------------------------------------------------------------
 % intersectionOf a,b,c, +rewrite rule  a,b,c            -
 % unionOf        -                     a;b;c            a. b. c.
-% compl          -                     -                -  
+% compl          -                     -                -
 % one of                                                -
-% restr value    p(ID,V)               p(ID,V)          p(ID,V) 
-% restr all      C(Y):-P(X,Y),D(X)     -                C(Y):-P(ID,Y). 
+% restr value    p(ID,V)               p(ID,V)          p(ID,V)
+% restr all      C(Y):-P(X,Y),D(X)     -                C(Y):-P(ID,Y).
 % restr some     -		       C(X):-P(X,Y),D(Y) -
 %
 % Mode = head | body | fact
@@ -354,7 +367,7 @@ map_head_conjunction(B,H, :-(H,B)).
 owl_as2prolog(class(_),none,_) :- !.
 
 
-% 
+%
 % A class with no description generates none (no code).
 %
 
@@ -364,9 +377,9 @@ owl_as2prolog(equivalentClasses([_]),none,_) :- !.
 % this is illegal, but pass-through silently anyway
 owl_as2prolog(equivalentClasses([]),none,_) :- !.
 
-% 
+%
 % A complete class declaration with a single descrption element is
-% equivalent to this description 
+% equivalent to this description
 %
 
 owl_as2prolog(equivalentClasses([C,D]),[R1,R2],_) :- !,
@@ -394,17 +407,17 @@ owl_as2prolog(disjointClasses(L),RL,_) :- !,
 owl_as2prolog(differentIndividuals(_),none,_) :- !.
 
 
-% 
+%
 % Subclass(Class,Superclass) ==> C(X) implies S(X) or S(X) :- C(X).
 %
 
 owl_as2prolog(subClassOf(A,B),R,_) :-
-     owl_as2prolog(description(A,_),Rb,body),
-     owl_as2prolog(description(B,_),Rh,head),
-     !,     
+     owl_as2prolog(description(A,X),Rb,body),
+     owl_as2prolog(description(B,X),Rh,head),
+     !,
      R = (:-(Rh,Rb)).
 
-% 
+%
 % Intersection of descriptions does not generate anything in fact mode.
 %
 
@@ -414,16 +427,16 @@ owl_as2prolog(description(intersectionOf(_),_),false,fact):- !.
 owl_as2prolog(description(hasSelf(_),_),false,fact):- !.
 
 
-% 
+%
 % Intersection of descriptions generates a comma separated list of
-% descriptions in either head or body modes. 
+% descriptions in either head or body modes.
 %
 
 owl_as2prolog(description(intersectionOf(DL),X),R,Param):- !,
 	owl_as2prolog(description_list(DL,X,','),R,Param).
 
 
-% 
+%
 % Union (use of Or) cannot be handled in the head of a rule in prolog.
 % However, we allow the possibility of translation to extensions such as disjunctive datalog.
 % Here we create a prolog term with a disjunction in the head; it is up to the prolog writing
@@ -434,7 +447,7 @@ owl_as2prolog(description(intersectionOf(DL),X),R,Param):- !,
 owl_as2prolog(description(unionOf(DL),X),R,head):-!,
         owl_as2prolog(description_list(DL,X,';'),R,body). % hacky-trick to treat head as body for disjunctions
 
-% 
+%
 % Union generates ; separated terms.
 %
 
@@ -463,7 +476,7 @@ owl_as2prolog(description(complementOf(_),_),false,_) :- !.
 % OneOf is handled with membership only in body of rules.
 %
 
-owl_as2prolog(description(oneOf(DL),_),member(_,DL),body) :- !.
+owl_as2prolog(description(oneOf(DL),X),member(X,DL),body) :- !.
 owl_as2prolog(description(oneOf(_),_),false,_) :- !.
 
 
@@ -471,7 +484,7 @@ owl_as2prolog(description(oneOf(_),_),false,_) :- !.
 % Value property description generates a property term (predicate)
 %
 
-owl_as2prolog(description(hasValue(PropertyID,Value),X),R,_) :- 
+owl_as2prolog(description(hasValue(PropertyID,Value),X),R,_) :-
 	R = property(PropertyID,X,Value),!.
 
 %
@@ -543,18 +556,18 @@ owl_as2prolog(description_list([Descr],X,_),R,body) :- !,
 	owl_as2prolog(description(Descr,X),R,body).
 
 owl_as2prolog(description_list([Descr|Rest],X,Separator),T,Param) :-
-	owl_as2prolog(description(Descr,X),H,Param),!,	
+	owl_as2prolog(description(Descr,X),H,Param),!,
 	owl_as2prolog(description_list(Rest,X,Separator),Tail,Param),
-	(   Param = body , ! ,  
+	(   Param = body , ! ,
 	    (H = false, !, T = [false] ; Tail = false, !, T = false
-	    ; 
+	    ;
 	    T =.. [Separator,H,Tail]
-	    ) ; 	    
+	    ) ;
 	T = [H|Tail]
 	).
 
-% 
-%  Mapping properties. 
+%
+%  Mapping properties.
 %  a. Generate a s(X,Y) :- p(X,Y). for each super property p
 %  b. Generate a C(X) :- P(X,Y) for each C in the property domain
 %  c. Generate a c(Y) :- p(X,Y) for each range C
@@ -598,11 +611,11 @@ owl_as2prolog(objectProperty(_),[],_) :- !.
 owl_as2prolog(dataProperty(_),[],_) :- !.
 owl_as2prolog(annotationProperty(_),[],_) :- !.
 
-% 
+%
 %  Mapping individuals
 %  a. Generate a C(ID) for each desccription C in the Types list
 %  b. Generate a p(ID,Value) for each value declaration in the Property
-%  list. 
+%  list.
 %
 
 owl_as2prolog(classAssertion(C,I),L,_) :- !,
@@ -620,12 +633,12 @@ owl_as2prolog(annotationAssertion(_,_,_), [], _) :- !.
 owl_as2prolog(namedIndividual(_), [], _) :- !.
 
 
-	
-% 
+
+%
 %  Mappings generated from the attributes of a property.
-%  a. Functional and inverse functionals generate a 
+%  a. Functional and inverse functionals generate a
 %       sameIndividuals(X,Y) :- p(Z,X), P(Z,Y)
-%  Transitive: p(X,Z) :- p(X,Y), p(Y,Z). 
+%  Transitive: p(X,Z) :- p(X,Y), p(Y,Z).
 %  Symmetric: p(X,Y) :- p(Y,X).
 %  Inverse  : p(X,Y) :- inv(Y,X) and inv(X,Y) :- p(Y,X).
 %
@@ -710,17 +723,17 @@ chain_to_goal([P|PL],V,VN,(Goal,ChainGoal)) :-
         chain_to_goal(PL,VN,v(NPlus1),ChainGoal).
 
 
-% 
+%
 % Mapping functions (Perform convert operations on each element in a
 % list).
-% 
+%
 
 map_description(fact,X,Description,:-(DMap,none)) :- !,
 	owl_as2prolog(description(Description,X),DMap,fact).
 
 map_description(Type,X,Description,DMap) :- !,
 	owl_as2prolog(description(Description,X),DMap,Type).
-                 
+
 
 % TODO
 
@@ -729,7 +742,7 @@ map_description(Type,X,Description,DMap) :- !,
   ---+ Synopsis
 
   Type the following in a prolog session:
-  
+
   ==
   use_module(library(thea2/owl_io)).
   load_axioms('myont.owl').
@@ -754,7 +767,7 @@ map_description(Type,X,Description,DMap) :- !,
   ---++ Example
 
   An ontology which contains the axioms:
-  
+
   ==
   subClassOf(cat, mammal).
   classAssertion(cat, mr_whiskers).
@@ -778,15 +791,15 @@ map_description(Type,X,Description,DMap) :- !,
   ==
 
   Note that you should use a table prolog such as Yap, XSB or B-Prolog
-  
+
     ---++ Options
 
   The following options can be passed in to save_axioms/3
-  
+
   * disjunctive_datalog(DDL:boolean) - if true, will write rules in which head contains disjunctions
   * head_disjunction_symbol(Op:atom) - if true, and if disjunctive_datalog(true) then writes disjunctive head rules using Op as separator. For DLV, set Op='v'
   * write_directives(table) - if true, this will write tabling directives. This is set automatically if the output format is dlp_yap
-  
+
   ---++ Comparison with other ways of Reasoning in Thea2
 
   See Reasoning-using-Thea.txt
@@ -806,13 +819,13 @@ map_description(Type,X,Description,DMap) :- !,
 
   There are also hooks for answer set programming and disjunctive
   datalog systems such as DLV.
-  
-  
+
+
   ---++ Changes from Thea1
-  
+
   This extends Thea1 and the original Grossof rules to allow for certain
   OWL2 features, currently limited to property expressions (inverse
   properties and role chains)
-  
+
 
 */

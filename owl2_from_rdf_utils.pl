@@ -91,7 +91,7 @@ test_use_owl(X1,Y1,Z1,named) :-
 	expand_ns(Y1,Y),
 	expand_ns(Z1,Z),
 	owl(X,Y,Z, not_used),
-	not(sub_string(X,0,2,_,'__')).
+	not(sub_string(X,0,2,_,'_:')).
 
 
 %%       use_owl(+Triples:list)
@@ -122,14 +122,14 @@ use_owl(X1,Y1,Z1) :-
 
 %%	use_owl(?S,?P,?O,+Named)
 %
-%       Named = named: Same as use_owl/3, but marks only if S 	is Named URI (i.e. non blank node).
+%       Named = named: Same as use_owl/3, but marks only if S	is Named URI (i.e. non blank node).
 
 use_owl(X1,Y1,Z1,named) :-
 	expand_ns(X1,X),
 	expand_ns(Y1,Y),
 	expand_ns(Z1,Z),
 	owl(X,Y,Z, not_used),
-	not(sub_string(X,0,2,_,'__')),
+	not(sub_string(X,0,2,_,'_:')),
 	retract(owl(X,Y,Z, not_used)),
 	assert(owl(X,Y,Z,used2)).
 
@@ -149,14 +149,14 @@ use_owl(X1,Y1,Z1,Term) :-
 
 %%	use_owl(?S,?P,?O,+Named,Term)
 %
-%       Named = named: Same as use_owl/3, but marks only if S 	is Named URI (i.e. non blank node).
+%       Named = named: Same as use_owl/3, but marks only if S	is Named URI (i.e. non blank node).
 
 use_owl(X1,Y1,Z1,named,Term) :-
 	expand_ns(X1,X),
 	expand_ns(Y1,Y),
 	expand_ns(Z1,Z),
 	owl(X,Y,Z, not_used),
-	not(sub_string(X,0,2,_,'__')),
+	not(sub_string(X,0,2,_,'_:')),
 	retract(owl(X,Y,Z, not_used)),
 	assert(owl(X,Y,Z,used(Term))).
 
@@ -257,7 +257,7 @@ owl_collect_linked_nodes(_,_,List, List) :- !.
 %	subsequent uses of it will result in structure sharing.
 
 owl_get_bnode(Node,Description) :-
-	sub_string(Node,0,2,_,'__'),!,
+	sub_string(Node,0,2,_,'_:'),!,
 	not( blanknode(Node,_,_)),
 	assert(blanknode(Node,Description, used)).
 

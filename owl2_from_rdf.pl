@@ -178,7 +178,7 @@ owl_canonical_parse_2([IRI|ToProcessRest],Parent,ImportFlag,ProcessedIn,Processe
         ->  Ont = O
         ;   Ont = Parent), % in the include case we may need to remove the import...
         debug(owl_parser,'Commencing rdf_2_owl. Generating owl/4',[]),
-	rdf_2_owl(BaseURI,Ont),  	% move the RDF triples into the owl-Ont/4 facts
+	rdf_2_owl(BaseURI,Ont),		% move the RDF triples into the owl-Ont/4 facts
 	(   ImportFlag = true
         ->  owl_canonical_parse_2(Imports,Ont,ImportFlag,[Ont|ProcessedIn],ProcessedIn1)
         ;   ProcessedIn1=[Ont|ProcessedIn]),
@@ -218,8 +218,7 @@ owl_canonical_parse_3([IRI|Rest]) :-
         % temporary fix to make up for bug in rdf parsing
         % see email to JanW July-1-2009
         forall((test_use_owl(S,P,BNode),
-                atom(BNode),
-                sub_atom(BNode,0,2,_,'__'),
+                is_bnode(BNode),
                 test_use_owl(BNode,'http://www.w3.org/1999/02/22-rdf-syntax-ns#datatype',literal(_))),
                (   use_owl(S,P,BNode,datatype_fix),
                    use_owl(BNode,'http://www.w3.org/1999/02/22-rdf-syntax-ns#datatype',literal(_)),
@@ -332,7 +331,7 @@ owl_parse_nonannotated_axioms(Pred/Arity) :-
 %
 %	This predicate calls the rdf parser to parse the RDF/XML URL
 %	into RDF triples. URL can be a local file or a URL.
-%	The predicate returns all Imports based on the 	owl:imports predicate.
+%	The predicate returns all Imports based on the	owl:imports predicate.
 %	Also the Ontology of the URL if an owl:Ontology exists, var
 %	otherise.
 %
@@ -348,7 +347,7 @@ rdf_load_stream(URL,Ontology,BaseURI,Imports) :-
 
 rdf_load_stream(URL,Ontology,BaseURI,Imports) :-
 	BaseURI = URL,
-  	(   sub_atom(URL,0,4,_,'http')
+	(   sub_atom(URL,0,4,_,'http')
         ->  catch((http_open(URL,RDF_Stream,[]),
 	      rdf_load(RDF_Stream,[if(true),base_uri(BaseURI),blank_nodes(noshare),
 				   result(Action, Triples, MD5),register_namespaces(true)]),
@@ -608,7 +607,7 @@ ann2(_,_,_,_).
 
 is_bnode(C) :-
 	atom(C),
-	sub_atom(C,0,2,_,'__').
+	sub_atom(C,0,_,_,'_:').
 
 
 	% Table 11. Parsing Object Property Expressions
@@ -794,7 +793,7 @@ onDataRange(E,D) :- use_owl(E, 'owl:onDataRange',D,onDatarange(E)).
 owl_restriction(Element,Restriction) :-
 	use_owl(Element,'rdf:type','owl:Restriction',restriction(Element)),
 	(   use_owl(Element, 'owl:onProperty',PropertyID,onProperty(Element,PropertyID)) ;
-    	    use_owl(Element, 'owl:onProperties',PropertyID,onProperties(Element,PropertyID))
+	    use_owl(Element, 'owl:onProperties',PropertyID,onProperties(Element,PropertyID))
 	),
 	owl_restriction_type(Element,PropertyID, Restriction),
         debug(owl_parser_detail,'Restriction: ~w',[Restriction]).

@@ -1,4 +1,4 @@
-s/* -*- Mode: Prolog -*- */
+/* -*- Mode: Prolog -*- */
 
 :- module(owl2_java_owlapi,
           [
@@ -85,7 +85,7 @@ create_ontology(Manager,Name,Ont) :-
 build_ontology(Ont) :-
         create_factory(Man,Fac),
         build_ontology(Man,Fac,Ont).
-        
+
 %% build_ontology(+Man,+Fac,?Ont)
 % create an ontology from the current prolog db
 build_ontology(Man,Fac,Ont) :-
@@ -298,14 +298,14 @@ inferred_axiom(R,Fac,classAssertion(C,I)) :-
 inferred_axiom(R,Fac,propertyAssertion(P,I,I2)) :-
         reasoner_objectPropertyAssertion(R,Fac,I,P,I2).
 
-        
+
 %% reasoner_nr_subClassOf(+R,+Fac,?C,?P)
 % ?C ?P - find superclasses for all named classes C
 % +C ?P - find superclasses
 % ?C +P - find subclasses
 %
 % an unbound variable may be bound to a named class
-% or to a class expression using equivalentClasses/1 -- TODO - this is an axiom not expression        
+% or to a class expression using equivalentClasses/1 -- TODO - this is an axiom not expression
 %
 % DEPRECATED - use reasoner_nr_subClassOf/5 with final argument 'true'
 
@@ -318,7 +318,7 @@ reasoner_nr_subClassOf(R,Fac,C,P) :-
         class(C),
         reasoner_nr_subClassOf(R,Fac,C,P).
 
-% reasoner_nr_subClassOf(+R,+Fac,+C,?P) 
+% reasoner_nr_subClassOf(+R,+Fac,+C,?P)
 reasoner_nr_subClassOf(R,Fac,C,P) :-
         throw(not_implemented),
         nonvar(C),
@@ -327,7 +327,7 @@ reasoner_nr_subClassOf(R,Fac,C,P) :-
         jpl_call(R,getSuperClasses,[JC],JPSetSet),
         ecsets_class(JPSetSet,P).
 
-% reasoner_nr_subClassOf(+R,+Fac,?C,+P) 
+% reasoner_nr_subClassOf(+R,+Fac,?C,+P)
 reasoner_nr_subClassOf(R,Fac,C,P) :-
         throw(not_implemented),
         nonvar(P),
@@ -357,7 +357,7 @@ reasoner_subClassOf(R,Fac,C,P,IsDirect) :-
         class(C),
         reasoner_subClassOf(R,Fac,C,P,IsDirect).
 
-% reasoner_subClassOf(+R,+Fac,+C,?P,+IsDirect) 
+% reasoner_subClassOf(+R,+Fac,+C,?P,+IsDirect)
 reasoner_subClassOf(R,Fac,C,P,IsDirect) :-
         nonvar(C),
         !,
@@ -365,7 +365,7 @@ reasoner_subClassOf(R,Fac,C,P,IsDirect) :-
         jpl_call(R,getSuperClasses,[JC,@(IsDirect)],JPSetSet),
         nodeset_entity(JPSetSet,P).
 
-% reasoner_subClassOf(+R,+Fac,?C,+P,+IsDirect) 
+% reasoner_subClassOf(+R,+Fac,?C,+P,+IsDirect)
 reasoner_subClassOf(R,Fac,C,P,IsDirect) :-
         nonvar(P),
         !,
@@ -592,7 +592,7 @@ owlterm_java(Fac,_,UntypedAxiom,Obj) :- % e.g. subObjectPropertyOf
         nonvar(UntypedPred),
         owlpredicate_typed(UntypedPred,TypedPred),
         axiom_method(TypedPred,M),   % e.g. subObjectPropertyOf
-        TypeCheckGoal =.. [TypedPred|Args],       
+        TypeCheckGoal =.. [TypedPred|Args],
         %(   UntypedPred=propertyAssertion
         %->  trace
         %;   true),
@@ -605,11 +605,11 @@ owlterm_java(Fac,_,UntypedAxiom,Obj) :- % e.g. subObjectPropertyOf
         jpl_call(Fac,M,Objs,Obj).
 
 % on occasion the owlapi has a different ordering of arguments...
-owlterm_java(Fac,_,UntypedAxiom,Obj) :- 
+owlterm_java(Fac,_,UntypedAxiom,Obj) :-
         UntypedAxiom =.. [UntypedPred|Args],
         nonvar(UntypedPred),
         owlpredicate_typed(UntypedPred,TypedPred),
-        TypeCheckGoal =.. [TypedPred|Args],       
+        TypeCheckGoal =.. [TypedPred|Args],
         TypeCheckGoal,
         debug(owl2,'typed axiom: if ~w is ~w',[UntypedAxiom,TypedPred]),
         owlpredicate_arguments(TypedPred,ArgTypes),
@@ -681,7 +681,7 @@ translate_arg_to_java(Fac,X,entity,Obj) :-
         owlterm_java(Fac,_,entity(X),Obj).
 translate_arg_to_java(Fac,Val,literal,Obj) :- % todo - caused by bug in rdf parser
         atom(Val),
-        sub_atom(Val,0,_,_,'__'),
+        sub_atom(Val,0,_,_,'_:'),
         !,
         translate_arg_to_java(Fac,literal(''),literal,Obj).
 translate_arg_to_java(Fac,literal(lang(_,Val)),literal,Obj) :- % todo - LANG
@@ -872,7 +872,7 @@ expr_method(dataExactCardinality,getOWLDataExactCardinality,[N,P],[N,P]).
   TODO - need to detect which changes have been applied
 
   add reasoner_reclassify_hook
-  
+
 new_incremental_classifier(pellet_incremental(R)) :-
 	require_manager(Man),
 	create_factory(Man,Fac),
@@ -918,7 +918,7 @@ owl2_reasoner:reasoner_tell_all_hook(owlapi_reasoner(OWLReasoner,Fac,_Opts)) :-
 	build_ontology(Man,Fac,Ont),
 	reasoner_classify(OWLReasoner,Man,Ont).
 
-	
+
 %owl2_reasoner:reasoner_ask_hook(R,Axiom) :-
 %	var(Axiom), % allow all?
 %	!,
@@ -1001,7 +1001,7 @@ reasoner_test :-
         initialize_reasoner(pellet,R),
         forall(reasoner_ask(subClassOf(A,B)),
                format('~w SubClassOf ~w~n',[A,B])).
-==  
+==
 
 To use this interactively, make sure to start-up prolog with JPL and
 everything in your classpath. You can use the thea-jpl wrapper script.
@@ -1076,4 +1076,4 @@ Note that this module is not required for the rest of Thea2
 
 
 */
-	
+

@@ -161,7 +161,7 @@ test(no_repos) :-
 
 test(with_repos) :-
         retractall(owl2_from_rdf:owl_repository(_,_)),
-        assert(owl2_from_rdf:owl_repository('http://y.org','http://www.w3.org/TR/2003/CR-owl-guide-20030818/wine')),
+        assert(owl2_from_rdf:owl_repository('http://hopefully.non.existent.swi-prolog.org','http://www.w3.org/TR/2003/CR-owl-guide-20030818/wine')),
         owl_parse_rdf('testfiles/import_test.owl',[imports(true)]).
 
 
