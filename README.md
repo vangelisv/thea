@@ -1,4 +1,4 @@
----+ Thea2 : Prolog Modules for OWL2
+# Thea2 : Prolog Modules for OWL2
 
 A collection of modules for parsing and manipulating OWL2 ontologies
 in Prolog. It is developed with SWI-Prolog in mind, but the goal is to
@@ -6,14 +6,14 @@ maximize portability with other prologs, such as Yap and XSB.
 
 This documentation is intended to be read via pldoc
 
----++ Installation
+## Installation
 
 See INSTALL.txt
 
 You can bypass installation and use the 'thea' script directly. See
 below.
 
----++ Overview
+## Overview
 
 The module owl2_io.pl provides a means of loading and saving OWL2
 axioms in a prolog model using predicates such as load_axioms/3 and
@@ -27,7 +27,7 @@ in-memory prolog database.
 
 For example:
 
-==
+```
 :- use_module(library(thea2/owl2_io)).
 :- use_module(library(thea2/owl2_model)).
 
@@ -35,7 +35,7 @@ show_superclasses(OntFile,Class) :-
         load_axioms(OntFile),
         forall(subClassOf(Class,Super),
                writeln(Super)).
-==
+```
 
 The database can be manipulated via assert_axiom/2 and
 retract_axiom/2. For more advanced OWL pattern matching and
@@ -50,16 +50,16 @@ reasoners can be plugged in, both native prolog and non-prolog (the
 latter accessed seamlessly via either owl2_owllink.pl or
 owl2_java_owlapi.pl).
 
----++ Command Line Usage
+## Command Line Usage
 
 The script "thea" in the bin directory should work from anywhere, with
 no installation of thea modules required.
 
 Type
 
-==
+```
 thea --help
-==
+```
 
 for full instructions. Many complex operations can be chained on the
 command line.
@@ -68,14 +68,14 @@ See also the other wrapper scripts in the bin directory
 
 See Command_Line_Usage.txt for more details
 
----++ Further Reading
+## Further Reading
 
  * Cookbook.txt - a collection of recipes for various tasks
  * Reasoning_using_Thea.txt - how to use reasoners
 
 See also the apps/ directory for example applications.
 
----++ Module Manifest
+## Module Manifest
 
  * owl2_io.pl -- reading/writing OWL from different sources, including:
   * owl2_from_rdf.pl -- requires library(semweb)
@@ -95,7 +95,7 @@ See also the apps/ directory for example applications.
  * owl2_popl.pl -- prolog ontology processing language
  * owl2_metamodel.pl -- information about OWL axiom types
 
----++ Reasoning support
+## Reasoning support
 
 The DLP subset of OWL2-DL can be translated to logic programs using a
 transformation defined by Grosof. See owl2_to_prolog_dlp.pl
@@ -116,7 +116,7 @@ owl2_owlapi_java.pl
 
 For more information see Reasoning_using_Thea.txt
 
----++ Relationship to SWI-Prolog SemWeb Library
+## Relationship to SWI-Prolog SemWeb Library
 
 Currently we use rdf_db.pl to translate from OWL RDF-XML to OWL
 axioms. This 'consumes' the triples in the RDF database. Eventually we
@@ -124,7 +124,7 @@ would like a dynamic view over an RDF database, although this will be
 difficult due to the non-monotonic nature of the mapping between RDF
 and OWL.
 
----+++ On namespaces
+### On namespaces
 
 Currently all IRIs are treated as Prolog atoms. This makes for
 slightly verbose axioms, especially if long URLs are used.
@@ -140,7 +140,7 @@ be used, Thea allows you to use any unique atom to identify an
 entity. See remove_namespaces/0 in owl2_util.pl for details. Of course,
 care must be taken when doing this.
 
----++ Prolog Compatibility
+## Prolog Compatibility
 
 The goal is to keep the core ISO compliant and usable across prolog
 systems but this is difficult due to the different implementations of
@@ -154,25 +154,25 @@ syntax such as XSB. Only a subset of Thea functionality will be
 available here, as SWI/Yap specific libraries are used for RDF, XML
 and Java interaction.
 
----++ Sample Applications
+## Sample Applications
 
 See the apps/ director
 
----+++ Web interface
+### Web interface
 
 There is the beginnings of a primitive web front end:
 
 * apps/webthea/webthea.pl
 
----+++ Obol - label parsing and generation
+### Obol - label parsing and generation
 
 * apps/labelgen/labelgen.pl
 
----+++ MIREOT - selective migration of referenced classes into an ontology
+### MIREOT - selective migration of referenced classes into an ontology
 
 * apps/mireot/mireot.pl
 
----++ Authors
+## Authors
 
 This module is a continuation of Thea1, developed by VV.
 
