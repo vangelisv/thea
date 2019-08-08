@@ -6,13 +6,13 @@
            declarationAxiom/1,
            builtin_class/1,
            is_class/1,
-           class/1,
+           (class)/1,
            datatype/1,
            property/1,
            objectProperty/1,
            dataProperty/1,
            annotationProperty/1,
-           individual/1,
+           (individual)/1,
            namedIndividual/1,
            anonymousIndividual/1,
            construct/1,
@@ -176,9 +176,9 @@ declarationAxiom(ontology(A)) :- ontology(A).
 
 %% class(?IRI)
 % Classes can be understood as sets of individuals
-:- dynamic(class/1).
-:- multifile(class/1).
-axiompred(class/1).
+:- dynamic((class)/1).
+:- multifile((class)/1).
+axiompred((class)/1).
 axiom_arguments(class,[iri]).
 valid_axiom(class(A)) :- subsumed_by([A],[iri]).
 
