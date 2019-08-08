@@ -1,6 +1,6 @@
 %TOC%
 
----+ Thea OWLLink interface
+# Thea OWLLink interface
 
 The OWLlink protocol specification (<http://www.owlink.org>) is an implementation-neutral 
 mechanism for communication between OWL 2 components. Thea's OWLLink interface module 
@@ -11,12 +11,12 @@ The interface is implemented via the owl_link/4 predicate:
 
 
 
----++ Examples
+## Examples
 
 See bin/thea_owllink.pl
 
----++ Requests Specification 
-==
+## Requests Specification 
+```
 RequestTerm ::= 
 		ManagementRequest | ReasonerInvocationRequest | GeneralEntailmentRequest | RetrieveingKBEntitiesRequest |
 		ClassAsksRequests | ClassQueriesRequests | ClassHierarchyRequests | IndividualClassQuerysynsetsRequests | 
@@ -104,9 +104,9 @@ IRIMappings 	::= [ 'IRIMapping' (Key = Value) ]
 Attr 		::= Name=Value		 
 
 All other Terms (Axiom, Individual, DataProperty etc.) are the perspective OWL2 Terms
-==
+```
 
----++ Responses Specification
+## Responses Specification
 
 
   * TODO

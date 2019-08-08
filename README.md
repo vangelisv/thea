@@ -8,7 +8,7 @@ This documentation is intended to be read via pldoc
 
 ## Installation
 
-See INSTALL.txt
+See INSTALL.md
 
 You can bypass installation and use the 'thea' script directly. See
 below.

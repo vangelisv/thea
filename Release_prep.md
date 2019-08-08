@@ -1,4 +1,4 @@
----+ Proposal: Bundle Thea2 core with SWI Prolog (and eventually Yap)
+# Proposal: Bundle Thea2 core with SWI Prolog (and eventually Yap)
 
 We propose that Thea2 is bundled with SWI-Prolog. This document
 describes some necessary preparation, such that the bundling is
@@ -14,14 +14,14 @@ using the predicates defined in owl2_model.pl
 
 For example:
 
-==
+```
 use_module(library(thea2/owl_io)).
 use_module(library(thea2/owl_model)).
 
 load_axioms('testfiles/pizza.owl').
 forall(subClassOf(A,B),
        format('~w subClassOf ~w',[A,b])).
-==
+```
 
 This split will involve some change in the current github
 organization. One solution is to have 3 github projects:
@@ -36,7 +36,7 @@ provide the full functionality in one project.
 SWI would have the option of only including thea2_core - or of
 bundling selected contributed modules.
 
----+ Module split
+# Module split
 
 As of 2010/07/01
 
@@ -75,7 +75,7 @@ The following would be in extras/contrib:
 
 * apps/
   
----+ Directory organization
+# Directory organization
 
 It would be good to have a set of recommendations and best practices
 for developing modules intended to be part of SWI, or intended to be
@@ -88,7 +88,7 @@ used by others.
 * all documentation is in pldoc format
  * no entry-point latex .doc file is provided yet
 
----+ Open questions
+# Open questions
 
 should the project / top level dir be called "thea" or "thea2"?
 
@@ -100,7 +100,7 @@ compatible library.
 The git project is currently called "thea" but maybe if we re-organize
 (see above) it could explicitly be thea2?
 
----+ TODO
+# TODO
 
 Make it easier to run the tests
 
