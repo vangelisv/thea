@@ -1,4 +1,13 @@
-#!/usr/bin/swipl -L0 -G0 -A0 -T0 -q -g main -t halt -s
+#!/usr/bin/env swipl
+
+:- initialization(main, main).
+
+:- prolog_load_context(directory, Dir),
+   file_directory_name(Dir, Lib),
+   (   user:file_search_path(library, Lib)
+   ->  true
+   ;   asserta(user:file_search_path(library, Lib))
+   ).
 
 :- use_module(library('thea2/owl2_util')).
 :- use_module(library('thea2/owl2_io')).
@@ -9,11 +18,14 @@
 
 
 main :-
-        current_prolog_flag(argv, Arguments),
-        append(_SytemArgs, [--|Args], Arguments), !,
+        current_prolog_flag(argv, Args),
         set_prolog_flag(verbose,normal),
         debug(owl2_bench),
         forall(member(Arg,Args),
                load_axioms(Arg,_,[])),
         use_labels_for_IRIs,
-        save_axioms(_,dlp,[no_base(_),write_directives(table),write_directives(dummy_fact)]).
+        save_axioms(_,dlp,
+                    [ no_base(_),
+                      write_directives(table),
+                      write_directives(dummy_fact)
+                    ]).
