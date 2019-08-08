@@ -15,21 +15,22 @@
 
 :- use_module(owl2_model).
 
-:- multifile owl2_reasoner:initialize_reasoner_hook/3.
-:- multifile owl2_reasoner:reasoner_tell_hook/2.
-:- multifile owl2_reasoner:reasoner_tell_all_hook/1.
-:- multifile owl2_reasoner:reasoner_ask_hook/2. % (R,Q)
-:- multifile owl2_reasoner:reasoner_ask_hook/3. % (R,Q,IsDirect)
-:- multifile owl2_reasoner:reasoner_check_consistency_hook/2. % (R,IsConsistent)
-:- multifile owl2_reasoner:reasoner_unsatisfiable_class_hook/2. % (R,IsConsistent)
+:- multifile
+	initialize_reasoner_hook/3,
+	reasoner_tell_hook/2,
+	reasoner_tell_all_hook/1,
+	reasoner_ask_hook/2, % (R,Q)
+	reasoner_ask_hook/3, % (R,Q,IsDirect)
+	reasoner_check_consistency_hook/2, % (R,IsConsistent)
+	reasoner_unsatisfiable_class_hook/2, % (R,IsConsistent)
 
-:- multifile owl2_reasoner:cached_subClassOf/2.
-:- multifile owl2_reasoner:cached_classAssertion/2.
-:- multifile owl2_reasoner:cached_propertyAssertion/3.
+	cached_subClassOf/2,
+	cached_classAssertion/2,
+	cached_propertyAssertion/3.
 
 %% initialize_reasoner(+Type,?Reasoner)
 % see initialize_reasoner/2
-initialize_reasoner(Type,Reasoner) :- 
+initialize_reasoner(Type,Reasoner) :-
 	initialize_reasoner(Type,Reasoner,[]).
 
 %% initialize_reasoner(+Type,?Reasoner,+Opts)
@@ -51,19 +52,19 @@ initialize_reasoner(null,null,_) :- !.
 initialize_reasoner(cached(File),cached(File),_) :-
         !,
         load_files([File],[qcompile(large)]).
-initialize_reasoner(Type,_,Opts) :- 
+initialize_reasoner(Type,_,Opts) :-
         throw(error(initialize_reasoner(Type,Opts))).
-	
+
 %% reasoner_tell(+Reasoner,+Axiom)
 % feed an axiom to the reasoner
-reasoner_tell(Reasoner,Axiom) :- 
+reasoner_tell(Reasoner,Axiom) :-
 	reasoner_tell_hook(Reasoner,Axiom).
 
 %% reasoner_tell_all(+Reasoner)
-reasoner_tell_all(Reasoner) :- 
+reasoner_tell_all(Reasoner) :-
 	reasoner_tell_all_hook(Reasoner),
 	!.
-reasoner_tell_all(Reasoner) :- 
+reasoner_tell_all(Reasoner) :-
 	forall(axiom(A),
 	       reasoner_tell(Reasoner,A)).
 
@@ -91,8 +92,8 @@ reasoner_ask(Reasoner,reflexiveSubClassOf(X,Y)) :-
         reasoner_ask(Reasoner,subClassOf(X,Y)).
 reasoner_ask(_,reflexiveSubClassOf(X,X)) :-
         class(X).
-        
-reasoner_ask(Reasoner,Axiom) :- 
+
+reasoner_ask(Reasoner,Axiom) :-
         debug(reasoner,'Reasoner query: ~w',[Axiom]),
 	reasoner_ask_hook(Reasoner,Axiom).
 reasoner_ask(Reasoner,Axiom) :-
@@ -119,12 +120,12 @@ reasoner_ask(Axiom) :-
 
 %% reasoner_check_consistency(+Reasoner)
 %% reasoner_check_consistency(+Reasoner, ?IsConsistent:boolean)
-reasoner_check_consistency(Reasoner) :- 
+reasoner_check_consistency(Reasoner) :-
         reasoner_check_consistency(Reasoner,true).
-reasoner_check_consistency(Reasoner,V) :- 
+reasoner_check_consistency(Reasoner,V) :-
 	reasoner_check_consistency_hook(Reasoner,V).
 
-reasoner_unsatisfiable_class(Reasoner,C) :- 
+reasoner_unsatisfiable_class(Reasoner,C) :-
 	reasoner_unsatisfiable_class_hook(Reasoner,C).
 
 %% reasoner_cache_to_file(+Reasoner,+AxiomTemplate,+File)
@@ -160,7 +161,7 @@ reasoner_module(graph_reasoner,owl2_graph_reasoner).
 
 
 
-/** <module> OWL Reasoning API 
+/** <module> OWL Reasoning API
 
   ---+ Synopsis
 
@@ -193,11 +194,11 @@ your reasoner of choice.
 ---+ Hooks
 
 You can provide a bridge module for your reasoner of choice. You should define the following:
-  
+
 * owl2_reasoner:initialize_reasoner_hook/3
 * owl2_reasoner:reasoner_tell_hook/2
 * owl2_reasoner:reasoner_tell_all_hook/1
 * owl2_reasoner:reasoner_ask_hook/2
-  
-  
+
+
 */
