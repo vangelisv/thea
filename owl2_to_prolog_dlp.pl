@@ -412,8 +412,8 @@ owl_as2prolog(differentIndividuals(_),none,_) :- !.
 %
 
 owl_as2prolog(subClassOf(A,B),R,_) :-
-     owl_as2prolog(description(A,_),Rb,body),
-     owl_as2prolog(description(B,_),Rh,head),
+     owl_as2prolog(description(A,X),Rb,body),
+     owl_as2prolog(description(B,X),Rh,head),
      !,
      R = (:-(Rh,Rb)).
 
@@ -476,7 +476,7 @@ owl_as2prolog(description(complementOf(_),_),false,_) :- !.
 % OneOf is handled with membership only in body of rules.
 %
 
-owl_as2prolog(description(oneOf(DL),_),member(_,DL),body) :- !.
+owl_as2prolog(description(oneOf(DL),X),member(X,DL),body) :- !.
 owl_as2prolog(description(oneOf(_),_),false,_) :- !.
 
 
