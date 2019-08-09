@@ -4,11 +4,20 @@ A collection of modules for parsing and manipulating OWL2 ontologies
 in Prolog. It is developed with SWI-Prolog in mind, but the goal is to
 maximize portability with other prologs, such as Yap and XSB.
 
-This documentation is intended to be read via pldoc
+> __[Aug 9, 2019]__
+> The current implementation has been updated for SWI-Prolog 8.x. As
+> SWI-Prolog now provides tabling it can both be used for its RDF
+> libraries and connectivity as well as for reasoning that requires
+> tabled Prolog. Updates deal with modified bnode syntax in the RDF
+> libraries, changes to command line options, improved documentation
+> based on compatibility between GitHub markdown and PlDoc.
+
+This documentation is intended to be read via SWI-Prolog's PlDoc
+documentation system.
 
 ## Installation
 
-See INSTALL.md
+See [INSTALL.md](INSTALL.md)
 
 You can bypass installation and use the 'thea' script directly. See
 below.
@@ -17,7 +26,7 @@ below.
 
 The module owl2_io.pl provides a means of loading and saving OWL2
 axioms in a prolog model using predicates such as load_axioms/3 and
-save_axioms/3. For example =|load_axioms('pizza.owl').|=
+save_axioms/3. For example `load_axioms('pizza.owl')`
 
 The model is documented in owl2_model.pl, and is based on Structural
 Specification and Functional-Style Syntax for OWL2
@@ -52,7 +61,7 @@ owl2_java_owlapi.pl).
 
 ## Command Line Usage
 
-The script "thea" in the bin directory should work from anywhere, with
+The script `thea` in the `bin` directory should work from anywhere, with
 no installation of thea modules required.
 
 Type
@@ -98,23 +107,24 @@ See also the apps/ directory for example applications.
 ## Reasoning support
 
 The DLP subset of OWL2-DL can be translated to logic programs using a
-transformation defined by Grosof. See owl2_to_prolog_dlp.pl
+transformation defined by Grosof. See `owl2_to_prolog_dlp.pl`
 
-The resulting programs can be used with Prologs such as Yap and
-XSB. There are also hooks for answer set programming and disjunctive
-datalog systems such as DLV.
+The resulting programs can be used with tabled Prolog systems such as
+YAP, XSB or SWI-Prolog. There are also hooks for answer set programming
+and disjunctive datalog systems such as DLV.
 
-There is also a very partial TBox reasoner in owl2_reasoner.pl, and an
-ad-hoc reasoner in owl2_basic_reasoner.pl that can be used with a
-non-tabled prolog such as SWI; however, this gives incomplete results.
+There is also a very partial TBox reasoner in `owl2_reasoner.pl`, and an
+ad-hoc reasoner in `owl2_basic_reasoner.pl` that can be used with
+non-tabled Prolog implementation; however, this gives incomplete
+results.
 
 The DIG interface from Thea1 has yet to be converted. However, as we
 now have OWLLink support, and DIG is being retired in favor of OWLLink.
 
 You can also use java reasoners via the OWLAPI bridge. See
-owl2_owlapi_java.pl
+`owl2_owlapi_java.pl`
 
-For more information see Reasoning_using_Thea.txt
+For more information see [Reasoning_using_Thea.md](Reasoning_using_Thea.md)
 
 ## Relationship to SWI-Prolog SemWeb Library
 
@@ -142,12 +152,12 @@ care must be taken when doing this.
 
 ## Prolog Compatibility
 
-The goal is to keep the core ISO compliant and usable across prolog
+The goal is to keep the core ISO compliant and usable across Prolog
 systems but this is difficult due to the different implementations of
 modules in different Prolog engines. We develop for SWI-Prolog and are
 aiming for full support for Yap in the near future.
 
-See the iso/ directory for a dynamically generated version of some
+See the `iso/` directory for a dynamically generated version of some
 Thea modules, stripped of module declarations. This is usable in
 no-module systems like GNU Prolog and systems with incompatible module
 syntax such as XSB. Only a subset of Thea functionality will be
@@ -181,3 +191,4 @@ Some of the code was developed by CJM
 Contributions from:
 
 * Martin Güther
+* Jan Wielemaker

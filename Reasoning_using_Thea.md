@@ -1,4 +1,3 @@
-
 # Using Thea for Reasoning
 
 An ontology specified in OWL is amenable to reasoning. Some of the
@@ -6,21 +5,20 @@ uses of reasoning are:
 
  * To check for inconsistencies in an ontology
  * To classify the ontology (i.e. find all implied subClassOf/2 relationships)
- * To classify instances using the ontology (i.e. find all implied classAssertuon/2 relationships)
+ * To classify instances using the ontology (i.e. find all implied classAssertion/2 relationships)
 
 Thea2 offers a number of different options for reasoning. These can be
 broken down into the following categories:
 
  * Use of an external reasoning engine
- * Direct use of prolog engine
+ * Direct use of Prolog engine
 
 There are 2 main ways of accessing external reasoning engines - via
 the Java OWLAPI (which requires the JPL bridge) or across a network
 via OWLLink. A third way is via an external Logic Programming engine.
 
 The alternative to using an external reasoning engine is to reason
-using Prolog. At this time, this means SWI-Prolog, and
-backward-chaining based reasoning.
+using Prolog.  See [below](#reasoning-using-prolog).
 
 ## Use of a Java reasoning engine via JPL
 
@@ -83,28 +81,28 @@ mammal(X) :- cat(X).
 cat(mr_whiskers).
 ```
 
-See owl2_to_prolog_dlp.pl module documentation for details.
+See `owl2_to_prolog_dlp.pl` module documentation for details.
 
 This is useful for reasoning over ABoxes (individual), but not TBoxes.
 
-A tabled prolog is recommended here, to avoid non-termination.
+A tabled Prolog is recommended here, to avoid non-termination.
 
 The second approach can actually be further subdivided depending on
 whether backward chaining or a tabled prolog is used.
 
-If you are using a tabled prolog (e.g. Yap or XSB), you can use the
-module owl2_reasoner_rules.pl which defines rules such as this:
+If you are using a tabled prolog, you can use the module
+`owl2_reasoning_rules.pl` which defines rules such as this:
 
 ```
 subClassOf(X,Y) :- subClassOf(X,Z),subClassOf(Z,Y).
 ```
 
-If you are using SWI-Prolog, you can use owl2_basic_reasoner.pl which
-has backwards chaining rules. Caveat emptor: this module is
-experimental, liable to change and could be non-terminating. See the
+The module `owl2_basic_reasoner.pl` provides backwards chaining rules
+for Prolog implementations without tabling. Caveat emptor: this module
+is experimental, liable to change and could be non-terminating. See the
 module docs for details.
 
-Another implementation is provided in owl2_rl_rules.pl. The module
+Another implementation is provided in `owl2_rl_rules.pl`. The module
 implements OWL RL Rules with simple forward and backward chaining engines
 See more in module documentation
 
@@ -112,7 +110,7 @@ See more in module documentation
 
 Currently each of the modules described above provides their own
 particular predicates. This isn't ideal for the application
-programmer. 
+programmer.
 
 We have a prototype of a common API for all reasoning engines, see
 owl2_reasoner.pl (not yet functional).
@@ -141,7 +139,7 @@ forall(reasoner_ask(Reasoner,subClassOf(X,Y)),
 
 [VV] Querying an external reasoner via OWLLink with non-ground queries is not trivial.
 OWLLink does not support variables in its Ask specification. One should write the logic
-on how the system should handle free variables: 
+on how the system should handle free variables:
 E.g. write something like the following:
 
 ```
@@ -150,7 +148,6 @@ E.g. write something like the following:
 		owllink(R, getAllClasses(KB),classSet(CL),[]),
 		member(X,CL),
 		owllink(R, isClassSubsumedBy(KB,X,Y),response(true),[]).
-		
 ```
 
 
@@ -164,7 +161,7 @@ E.g. write something like the following:
   * owl2_rl_rules.pl
   * owl2_basic_reasoner.pl
 
---+++ Reasoner Cookbook
+### Reasoner Cookbook
 
   * TODO
 
