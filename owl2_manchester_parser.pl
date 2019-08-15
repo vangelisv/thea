@@ -208,9 +208,20 @@ expand_curie(Name,_O-NSL,IRI) :-
         memberchk(''-Prefix, NSL),
         !,
         atom_concat(Prefix,Name,IRI).
-expand_curie(inverseOf(X0), O, inverseOf(X)) :-
-        !,
+expand_curie(inverseOf(X0), O, inverseOf(X)) :- !,
         expand_curie(X0, O, X).
+expand_curie(oneOf(L0), O, oneOf(L)) :- !,
+        maplist(expand_curie_o(O), L0, L).
+expand_curie(exactCardinality(C, X0), O, exactCardinality(C, X)) :- !,
+        expand_curie(X0, O, X).
+expand_curie(intersectionOf(L0), O, intersectionOf(L)) :- !,
+        maplist(expand_curie_o(O), L0, L).
+expand_curie(allValuesFrom(P0, CE0), O, allValuesFrom(P,CE)) :-
+        expand_curie(P0, O, P),
+        expand_curie(CE0, O, CE).
+expand_curie(List0, O, List) :-
+        is_list(List0), !,
+        maplist(expand_curie_o(O), List0, List).
 expand_curie(X,_,X).
 
 predefined_prefix(rdfs, 'http://www.w3.org/2000/01/rdf-schema#').
@@ -806,7 +817,7 @@ nni(N) --> nonNegativeInteger(N).
 
 % atomic ::= classIRI | '{' individual { ',' individual } '}' | '(' description ')'
 atomic(X) --> classIRI(X).
-atomic(L) --> ['{'], !, oneOrMore(',',individual,L),['}'].
+atomic(oneOf(L)) --> ['{'], !, oneOrMore(',',individual,L),['}'].
 atomic(X) --> ['('], !, description(X), [')'].
 
 % <NT>AnnotatedList ::= [annotations] <NT> { , [annotations] <NT> }
