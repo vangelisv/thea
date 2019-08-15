@@ -547,10 +547,10 @@ classIRI(X) --> iri(X).
 
 % Datatype ::= datatypeIRI | 'integer' | 'decimal' | 'float' | 'string'
 datatype(X) --> datatypeIRI(X).
-datatype(integer) --> [integer].
-datatype(decimal) --> [decimal].
-datatype(float) --> [float].
-datatype(string) --> [string].
+datatype('http://www.w3.org/2001/XMLSchema#integer') --> [integer].
+datatype('http://www.w3.org/2001/XMLSchema#decimal') --> [decimal].
+datatype('http://www.w3.org/2001/XMLSchema#float') --> [float].
+datatype('http://www.w3.org/2001/XMLSchema#string') --> [string].
 
 % datatypeIRI ::= IRI
 datatypeIRI(X) --> iri(X).
