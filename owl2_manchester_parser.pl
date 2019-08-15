@@ -158,10 +158,12 @@ slot_axiom(range, _, _,
 slot_axiom(types, _, _,
            IRI, V, classAssertion(V,IRI)).
 slot_axiom(facts, _, O,
-           IRI, P-V0, propertyAssertion(P,IRI,V)) :-
+           IRI, P0-V0, propertyAssertion(P,IRI,V)) :-
+        expand_curie(P0,O,P),
         expand_curie(V0,O,V).
 slot_axiom(facts, _, O,
-           IRI, not(P-V0), negativePropertyAssertion(P,IRI,V)) :-
+           IRI, not(P0-V0), negativePropertyAssertion(P,IRI,V)) :-
+        expand_curie(P0,O,P),
         expand_curie(V0,O,V).
 
 %!      slot_axiom(+Attribute, +IRIType) is semidet.
@@ -193,7 +195,9 @@ expand_curie(IRI, _O-NSL, FullIRI) :-
         atom(IRI),
         atomic_list_concat([NS,Name], :, IRI),
         xml_name(Name, utf8),
-        memberchk(NS-Prefix, NSL),
+        (   memberchk(NS-Prefix, NSL)
+        ;   predefined_prefix(NS, Prefix)
+        ),
         !,
         atom_concat(Prefix,Name,FullIRI).
 expand_curie(IRI, _, IRI) :-
@@ -208,6 +212,9 @@ expand_curie(inverseOf(X0), O, inverseOf(X)) :-
         !,
         expand_curie(X0, O, X).
 expand_curie(X,_,X).
+
+predefined_prefix(rdfs, 'http://www.w3.org/2000/01/rdf-schema#').
+predefined_prefix(owl,  'http://www.w3.org/2002/07/owl#').
 
 expand_curie_o(O,AST,RDF) :-
         expand_curie(AST,O,RDF).
@@ -703,7 +710,7 @@ dataAtomic(A) --> datatypeRestriction(A).
 dataAtomic(A) --> datatype(A).
 
 % datatypeRestriction ::= Datatype '[' facet restrictionValue { ',' facet restrictionValue } ']'
-datatypeRestriction(X-[F-V|FVs]) -->
+datatypeRestriction(datatypeRestriction(X,[F-V|FVs])) -->
         datatype(X),['['],!, facet(F),restrictionValue(V),
         zeroOrMore(',',facetRestrictionValue, FVs),[']'].
 facetRestrictionValue(F-V) --> facet(F),restrictionValue(V).
