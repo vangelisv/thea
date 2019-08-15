@@ -104,7 +104,7 @@ process_characteristic(C,IRI,_Type,_,Unary) :-
 	Unary =.. [P,IRI].
 
 process_slot_value(S,V0,IRI,T,O,Ax) :-
-        annotations(V0, V1, _Annotations),
+        value_annotations(V0, V1, _Annotations),
 	expand_curie(V1,O,V),
         (   slot_axiom(S, T, IRI, V, Ax)
         ->  true
@@ -117,12 +117,15 @@ process_slot_value(S,V0,IRI,T,O,Ax) :-
 slot_axiom(disjointWith, objectProperty, IRI, V, disjointProperties([IRI,V])).
 slot_axiom(inverseOf, _, IRI, V, inverseProperties(IRI,V)).
 slot_axiom(domain, _, IRI, V, propertyDomain(IRI,V)).
+slot_axiom(range, _, IRI, V, propertyRange(IRI,V)).
 
-%!      annotations(+Value0, -Value, -Annotations) is det.
+%!      value_annotations(+Value0, -Value, -Annotations) is det.
 %
-%       Split the annotations from the value
+%       Split the annotations from the value.
+%       @see annotated//2.
 
-annotations(Value, Value, []).
+value_annotations(annotated(Value, Annotations), Value, Annotations) :- !.
+value_annotations(Value, Value, []).
 
 %!      expand_curie(+ASTValue, +Ontology, -RDFValue)
 
@@ -367,7 +370,8 @@ node_id_token(nodeID(NodeID)) --> "_:", token_chars(L), { atom_codes(NodeID,L) }
 :- meta_predicate
         zeroOrMore(3,?,+,?),
         zeroOrMore(+,3,?,+,?),
-        oneOrMore(+,3,?,+,?).
+        oneOrMore(+,3,?,+,?),
+        annotated(3,-,+,?).
 
 % <NT>List ::= <NT> { , <NT> }
 %% zeroOrMore( +F, ?List, +InToks, ?Rest )
@@ -397,6 +401,16 @@ oneOrMore(Delim,F,[X|L],In,Rest):-
         ;   Rest = Rest1,
             L = []
         ).
+
+%!      annotated(:F, -Annotated)//
+
+annotated(F, Result) -->
+        annotations(A),
+        !,
+        call(F, R0),
+        { Result = annotated(R0, A) }.
+annotated(F, Result) -->
+        call(F, Result).
 
 % <NT>AnnotatedList ::= [annotations] <NT> { , [annotations]<NT> }
 
@@ -726,8 +740,7 @@ annotatedObjectPropertyExpression(X) --> objectPropertyExpression(X). % TODO
 % <NT>2List ::= <NT> , <NT>List
 description2List(L) --> oneOrMore(',',description,L).
 
-annotatedDescription(A-D) --> annotations(A),description(D).
-annotatedDescription(D) --> description(D).
+annotatedDescription(D) --> annotated(description, D).
 
 objectProperty2List(L) --> oneOrMore(',', objectPropertyExpression, L).
 
@@ -747,8 +760,7 @@ individual2List(L) --> oneOrMore(',', individual, L).
 
 datatypeFrame(frame(datatype,C,EL)) --> [keyword(datatype)],!,classIRI(C),zeroOrMore(datatypeFrameElement,EL).
 datatypeFrameElement(annotation=AL) --> [keyword(annotations)],!,annotationAnnotatedList(AL).
-datatypeFrameElement(equivalentTo=(A-DR)) --> [keyword(equivalentto)], annotations(A), !, dataRange(DR).
-datatypeFrameElement(equivalentTo=(DR)) --> [keyword(equivalentto)], dataRange(DR).
+datatypeFrameElement(equivalentTo=(DR)) --> [keyword(equivalentto)], !, annotated(dataRange, DR).
 
 classFrame( frame(class,C,EL) ) --> [keyword(class)],!,classIRI(C),zeroOrMore(classFrameElement,EL).
 classFrameElement(annotation=AL) --> [keyword(annotations)],!,annotationAnnotatedList(AL).
@@ -756,10 +768,7 @@ classFrameElement(subClassOf=AL) --> [keyword(subclassof)],!,descriptionAnnotate
 classFrameElement(equivalentTo=AL) --> [keyword(equivalentto)],!,descriptionAnnotatedList(AL).
 classFrameElement(disjointWith=AL) --> [keyword(disjointwith)],!,descriptionAnnotatedList(AL).
 classFrameElement(disjointUnionOf=AL) --> [keyword(disjointunionof)],!,descriptionAnnotatedList(AL).
-classFrameElement(hasKey=AL) --> [keyword(haskey)],!, annotatedHasKey(AL).
-
-annotatedHasKey(A-K) --> annotations(A), !, hasKey(K).
-annotatedHasKey(K) --> hasKey(K).
+classFrameElement(hasKey=AL) --> [keyword(haskey)],!, annotated(hasKey, AL).
 
 hasKey(K) --> objectPropertyExpression(K), !.
 hasKey(K) --> dataPropertyExpression(K), !.
@@ -785,7 +794,9 @@ objectPropertyFrameElement(subPropertyOf=AL) --> [keyword(subpropertyof)],!,obje
 objectPropertyFrameElement(equivalentTo=AL) --> [keyword(equivalentto)],!,objectPropertyExpressionAnnotatedList(AL).
 objectPropertyFrameElement(disjointWith=AL) --> [keyword(disjointwith)],!,objectPropertyExpressionAnnotatedList(AL).
 objectPropertyFrameElement(inverseOf=AL) --> [keyword(inverseof)],!,objectPropertyExpressionAnnotatedList(AL).
-objectPropertyFrameElement(subPropertyChain=[As,OPE1,OPE2|OPEs]) --> [keyword(subpropertychain)],!,annotations(As),
+objectPropertyFrameElement(subPropertyChain=Chain) --> [keyword(subpropertychain)],!,annotated(subPropertyChain, Chain).
+
+subPropertyChain([OPE1,OPE2|OPEs]) -->
         objectPropertyExpression(OPE1),[o],objectPropertyExpression(OPE2),[o],zeroOrMore(o,objectPropertyExpression,OPEs).
 
 % objectPropertyCharacteristic ::= 'Functional' | 'InverseFunctional'
@@ -819,15 +830,13 @@ dataPropertyFrameElement(equivalentTo=AL) --> [keyword(equivalentto)],!,dataProp
 dataPropertyFrameElement(disjointWith=AL) --> [keyword(disjointwith)],!,dataPropertyExpressionAnnotatedList(AL).
 
 dataRangeAnnotatedList(AL) --> oneOrMore(',', dataRangeAnnotated, AL).
-dataRangeAnnotated(A-R) --> annotations(A), !, dataRange(R).
-dataRangeAnnotated(R) --> dataRange(R).
+dataRangeAnnotated(R) --> annotated(dataRange, R).
 
 dataPropertyCharacteristicAnnotatedList(P) --> [P],{dataPropertyCharacteristic(P)}.
 dataPropertyCharacteristic('Functional').
 
 dataPropertyExpressionAnnotatedList(AL) --> oneOrMore(',', annotatedDataPropertyExpression, AL).
-annotatedDataPropertyExpression(A-E) --> annotations(A), !, dataPropertyExpression(E).
-annotatedDataPropertyExpression(E) --> dataPropertyExpression(E).
+annotatedDataPropertyExpression(E) --> annotated(dataPropertyExpression, E).
 
 
 % annotationPropertyFrame ::= 'AnnotationProperty:'
@@ -847,12 +856,10 @@ annotationPropertyFrameElement(subPropertyOf=AL) --> [keyword(subpropertyof)],!,
 %   shows `integer`.  We therefore use datatype//1.
 
 iriAnnotatedList(AL) --> oneOrMore(',', annotatedIRI, AL).
-annotatedIRI(A-IRI) --> annotations(A), !, datatype(IRI).
-annotatedIRI(IRI) --> datatype(IRI).
+annotatedIRI(IRI) --> annotated(datatype, IRI).
 
 annotationPropertyIRIAnnotatedList(AL) --> oneOrMore(',', annotatedAnnotationPropertyIRI, AL).
-annotatedAnnotationPropertyIRI(A-E) --> annotations(A), !, annotationPropertyIRI(E).
-annotatedAnnotationPropertyIRI(E) --> annotationPropertyIRI(E).
+annotatedAnnotationPropertyIRI(E) --> annotated(annotationPropertyIRI, E).
 
 
 
@@ -868,12 +875,10 @@ individualFrameElement(sameAs=AL) --> [keyword(sameas)],!,individualAnnotatedLis
 individualFrameElement(differentFrom=AL) --> [keyword(differentfrom)],!,individualAnnotatedList(AL).
 
 factAnnotatedList(AL) --> oneOrMore(',', factAnnotated, AL).
-factAnnotated(A-F) --> annotations(A), !, fact(F).
-factAnnotated(F) --> fact(F).
+factAnnotated(F) --> annotated(fact, F).
 
 individualAnnotatedList(AL) --> oneOrMore(',', individualAnnotated, AL).
-individualAnnotated(A-I) --> annotations(A), !, individual(I).
-individualAnnotated(I) --> individual(I).
+individualAnnotated(I) --> annotated(individual, I).
 
 % fact ::= [ 'not' ] (objectPropertyFact | dataPropertyFact)
 fact(not(F)) --> [not],(objectPropertyFact(F) ;  dataPropertyFact(F)).
@@ -897,8 +902,7 @@ dataPropertyFact( P-L) --> dataPropertyIRI( P), literal(L).
 %dataPropertyExpression ) { objectPropertyExpression |
 %dataPropertyExpression }
 
-misc(A-Misc) --> [keyword(Kwd)], annotations(A), !, misc_content(Kwd, Misc), !.
-misc(Misc) --> [keyword(Kwd)], misc_content(Kwd, Misc), !.
+misc(Misc) --> [keyword(Kwd)], annotated(misc_content(Kwd), Misc), !.
 
 misc_content(equivalentclasses,    equivalentClasses(DL))    --> description2List(DL).
 misc_content(disjointclasses,      disjointClasses(DL))      --> description2List(DL).
