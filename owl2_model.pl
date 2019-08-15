@@ -1221,8 +1221,18 @@ retract_all_axioms :-
 	       retract(ontologyAxiom(O,A))).
 
 owl2_model_init :-
-	assert(annotationProperty('http://www.w3.org/2000/01/rdf-schema#label')),
-	assert(annotationProperty('http://www.w3.org/2000/01/rdf-schema#comment')).
+	u_assert(annotationProperty('http://www.w3.org/2000/01/rdf-schema#label')),
+	u_assert(annotationProperty('http://www.w3.org/2000/01/rdf-schema#comment')),
+	u_assert(datatype('http://www.w3.org/2001/XMLSchema#integer')),
+	u_assert(datatype('http://www.w3.org/2001/XMLSchema#decimal')),
+	u_assert(datatype('http://www.w3.org/2001/XMLSchema#float')),
+	u_assert(datatype('http://www.w3.org/2001/XMLSchema#string')).
+
+u_assert(Clause) :-
+	(   call(Clause)
+	->  true
+	;   assert(Clause)
+	).
 
 consult_axioms(File) :-
         consult(File).
