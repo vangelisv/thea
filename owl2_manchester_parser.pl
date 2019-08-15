@@ -77,20 +77,27 @@ process_frame(_, A,[A]) :-
         debug(man(axioms), 'Skipped (not a frame) ~p', [A]).
 
 process_property_(IRI,Type,O,Prop,Axioms) :-
-        process_property(O,IRI,Type,Prop,Axioms).
+        process_property(Prop,IRI,Type,O,Axioms).
 
+process_property(annotation=AL,IRI,Type,O,Axioms) :-
+        !,
+        maplist(process_annotation(IRI,Type,O), AL, Axioms).
 process_property(characteristics=CL,IRI,Type,O,Axioms) :-
 	!,
 	findall(Axiom,(member(C,CL),
 		       process_characteristic(C,IRI,Type,O,Axiom)),
 		Axioms).
-
-% e.g. subClassOf=[Super1, ...]
 process_property(P=VL,IRI,Type,O,Axioms) :-
 	!,
 	findall(Axiom,(member(V,VL),
 		       process_slot_value(P,V,IRI,Type,O,Axiom)),
 		Axioms).
+
+process_annotation(IRI,_Type,O,
+                   Name-Value,
+                   annotationAssertion(PropertyIRI,IRI,OwlValue)) :-
+        expand_curie(Name, O, PropertyIRI),
+        expand_curie(Value, O, OwlValue).
 
 process_characteristic(C,IRI,_Type,_,Unary) :-
 	slot_predicate(C,P),
@@ -117,9 +124,14 @@ process_slot_value(S,V,IRI,T,O,Ax) :-
 	expand_curie(V,O,VX),
 	Ax =.. [S,IRI,VX].
 
-expand_curie(Name,O-_NSL,IRI) :-
-	atomic_list_concat([O,'#',Name],IRI),
-        !.                      % TODO
+expand_curie(IRI, _, IRI) :-
+        atom(IRI),
+        uri_is_global(IRI), !.
+expand_curie(Name,_O-NSL,IRI) :-
+        atom(Name),
+        memberchk((:)-Prefix, NSL),
+        !,
+        atom_concat(Prefix,Name,IRI).
 expand_curie(X,_,X).
 
 slot_predicate(S,P) :-
@@ -478,16 +490,20 @@ literal(X) --> [float(X)], !.
 
 % typedLiteral ::= lexicalValue '^^' Datatype
 
-typedLiteral(^^(Lexical,Type)) --> [string(Lexical),'^^'],datatype(Type).
+typedLiteral(literal(type(Type,Lexical))) -->
+        [string(Lexical),'^^'],datatype(Type).
 
 % abbreviatedXSDStringLiteral ::= quotedString
 
-abbreviatedXSDStringLiteral(^^(Lexical, string)) --> [string(Lexical)].
+abbreviatedXSDStringLiteral(literal(type(Type,Lexical))) -->
+        [string(Lexical)],
+        { Type = 'http://www.w3.org/2001/XMLSchema#string' }.
 
 % abbreviatedRDFTextLiteral ::= quotedString '@' languageTag
 % languageTag := 'a nonempty (not quoted) string defined as specified in BCP 47 [BCP 47]'
 
-abbreviatedRDFTextLiteral(@(Lexical,Lang)) --> [string(Lexical),'@',Lang], {atom(Lang)}.
+abbreviatedRDFTextLiteral(literal(lang(Lang,Lexical))) -->
+        [string(Lexical),'@',Lang], {atom(Lang)}.
 
 % lexicalValue ::= quotedString
 
