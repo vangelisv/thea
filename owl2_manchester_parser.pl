@@ -114,6 +114,8 @@ process_slot_value(S,V0,IRI,T,O,Ax) :-
 	expand_curie(V1,O,V),
         (   slot_axiom(S, T, O, IRI, V, Ax)
         ->  true
+        ;   slot_axiom(S, T)
+        ->  Ax =.. [S,IRI,V]
         ;   debug(man(axioms), 'guessing for: ~p', [S-T]),
             Ax =.. [S,IRI,V]
         ).
@@ -136,6 +138,31 @@ slot_axiom(facts, _, O,
 slot_axiom(facts, _, O,
            IRI, not(P-V0), negativePropertyAssertion(P,IRI,V)) :-
         expand_curie(V0,O,V).
+slot_axiom(equivalentTo, objectProperty, _,
+           IRI, V, equivalentProperties([IRI,V])).
+slot_axiom(equivalentTo, dataProperty, _,
+           IRI, V, equivalentProperties([IRI,V])).
+slot_axiom(equivalentTo, class, _,
+           IRI, V, equivalentClasses([IRI,V])).
+slot_axiom(disjointWith, objectProperty, _,
+           IRI, V, disjointProperties([IRI,V])).
+slot_axiom(disjointWith, dataProperty, _,
+           IRI, V, disjointProperties([IRI,V])).
+slot_axiom(disjointWith, class, _,
+           IRI, V, disjointClasses([IRI,V])).
+slot_axiom(sameAs, namedIndividual, _,
+           IRI, V, sameIndividual([IRI,V])).
+slot_axiom(differentFrom, namedIndividual, _,
+           IRI, V, differentIndividuals([IRI,V])).
+
+%!      slot_axiom(+Attribute, +IRIType) is semidet.
+%
+%       Indicates that the generic translation is correct.
+
+slot_axiom(subClassOf,    class).
+slot_axiom(subPropertyOf, objectProperty).
+slot_axiom(subPropertyOf, dataProperty).
+slot_axiom(subPropertyOf, annotationProperty).
 
 %!      value_annotations(+Value0, -Value, -Annotations) is det.
 %
@@ -170,15 +197,15 @@ expand_curie(X,_,X).
 expand_curie_o(O,AST,RDF) :-
         expand_curie(AST,O,RDF).
 
-slot_predicate(S,P) :-
-	sub_atom(S,0,1,_,C1),
-	C1 @>= 'A',
-	C1 @=< 'Z',
-	!,
-	downcase_atom(C1,C2),
-	sub_atom(S,1,_,0,S2),
-	atom_concat(C2,S2,P).
-slot_predicate(S,S).
+%!      slot_predicate(+Characteristic, -AxiomName)
+
+slot_predicate('Functional',        functionalProperty).
+slot_predicate('InverseFunctional', inverseFunctionalProperty).
+slot_predicate('Reflexive',         reflexiveProperty).
+slot_predicate('Irreflexive',       irreflexiveProperty).
+slot_predicate('Symmetric',         symmetricProperty).
+slot_predicate('Asymmetric',        asymmetricProperty).
+slot_predicate('Transitive',        transitiveProperty).
 
 % ----------------------------------------
 % Tokenization
