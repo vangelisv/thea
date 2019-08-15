@@ -102,27 +102,29 @@ process_annotation(IRI,_Type,O,
 process_characteristic(C,IRI,_Type,_,Unary) :-
 	slot_predicate(C,P),
 	Unary =.. [P,IRI].
-	%writeln(u=Unary),
-	%assert_axiom(Unary).
 
-%process_slot_value(S,V,IRI,T,O,Ax) :-
-%	process_slot_value(S,V,IRI,T,O,Ax).
-	%writeln(ax=Ax),
-	%assert_axiom(Ax).
+process_slot_value(S,V0,IRI,T,O,Ax) :-
+        annotations(V0, V1, _Annotations),
+	expand_curie(V1,O,V),
+        (   slot_axiom(S, T, IRI, V, Ax)
+        ->  true
+        ;   debug(man(axioms), 'guessing for: ~p', [S-T]),
+            Ax =.. [S,IRI,V]
+        ).
 
-process_slot_value(disjointWith,V,IRI,objectProperty,O,Ax) :-
-	!,
-	expand_curie(V,O,VX),
-	Ax = disjointProperties([IRI,VX]).
-process_slot_value(inverseOf,V,IRI,_,O,Ax) :-
-	!,
-	expand_curie(V,O,VX),
-	Ax = inverseProperties(IRI,VX).
-process_slot_value(S,V,IRI,T,O,Ax) :-
-	%writeln(eh(S,T)),
-        format(user_error,'guessing for: ~w~n',[S-T]),
-	expand_curie(V,O,VX),
-	Ax =.. [S,IRI,VX].
+%!      slot_axiom(+Attribute, +IRIType, +IRI, +Value, -Axiom)
+
+slot_axiom(disjointWith, objectProperty, IRI, V, disjointProperties([IRI,V])).
+slot_axiom(inverseOf, _, IRI, V, inverseProperties(IRI,V)).
+slot_axiom(domain, _, IRI, V, propertyDomain(IRI,V)).
+
+%!      annotations(+Value0, -Value, -Annotations) is det.
+%
+%       Split the annotations from the value
+
+annotations(Value, Value, []).
+
+%!      expand_curie(+ASTValue, +Ontology, -RDFValue)
 
 expand_curie(IRI, _, IRI) :-
         atom(IRI),
