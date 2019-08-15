@@ -93,6 +93,10 @@ process_property(characteristics=CL,IRI,Type,O,Axioms) :-
 	findall(Axiom,(member(C,CL),
 		       process_characteristic(C,IRI,Type,O,Axiom)),
 		Axioms).
+process_property(P=VL0,IRI,Type,O,[Axiom]) :-
+        list_slot_axiom(P, Type, O, IRI, VL, Axiom),
+        !,
+        maplist(expand_value(O), VL0, VL).
 process_property(P=VL,IRI,Type,O,Axioms) :-
 	!,
 	findall(Axiom,(member(V,VL),
@@ -120,10 +124,31 @@ process_slot_value(S,V0,IRI,T,O,Ax) :-
             Ax =.. [S,IRI,V]
         ).
 
+%!      list_slot_axiom(+Attribute, +IRIType, +O, +IRI, +Value, -Axiom)
+
+list_slot_axiom(disjointWith, objectProperty, _,
+                IRI, V, disjointProperties([IRI|V])).
+list_slot_axiom(equivalentTo, objectProperty, _,
+           IRI, V, equivalentProperties([IRI|V])).
+list_slot_axiom(equivalentTo, dataProperty, _,
+           IRI, V, equivalentProperties([IRI|V])).
+list_slot_axiom(equivalentTo, class, _,
+           IRI, V, equivalentClasses([IRI|V])).
+list_slot_axiom(disjointWith, objectProperty, _,
+           IRI, V, disjointProperties([IRI|V])).
+list_slot_axiom(disjointWith, dataProperty, _,
+           IRI, V, disjointProperties([IRI|V])).
+list_slot_axiom(disjointWith, class, _,
+           IRI, V, disjointClasses([IRI|V])).
+list_slot_axiom(sameAs, namedIndividual, _,
+           IRI, V, sameIndividual([IRI|V])).
+list_slot_axiom(differentFrom, namedIndividual, _,
+           IRI, V, differentIndividuals([IRI|V])).
+list_slot_axiom(disjointUnionOf, class, _,
+           IRI, V, disjointUnion(IRI, V)).
+
 %!      slot_axiom(+Attribute, +IRIType, +O, +IRI, +Value, -Axiom)
 
-slot_axiom(disjointWith, objectProperty, _,
-           IRI, V, disjointProperties([IRI,V])).
 slot_axiom(inverseOf, _, _,
            IRI, V, inverseProperties(IRI,V)).
 slot_axiom(domain, _, _,
@@ -138,22 +163,6 @@ slot_axiom(facts, _, O,
 slot_axiom(facts, _, O,
            IRI, not(P-V0), negativePropertyAssertion(P,IRI,V)) :-
         expand_curie(V0,O,V).
-slot_axiom(equivalentTo, objectProperty, _,
-           IRI, V, equivalentProperties([IRI,V])).
-slot_axiom(equivalentTo, dataProperty, _,
-           IRI, V, equivalentProperties([IRI,V])).
-slot_axiom(equivalentTo, class, _,
-           IRI, V, equivalentClasses([IRI,V])).
-slot_axiom(disjointWith, objectProperty, _,
-           IRI, V, disjointProperties([IRI,V])).
-slot_axiom(disjointWith, dataProperty, _,
-           IRI, V, disjointProperties([IRI,V])).
-slot_axiom(disjointWith, class, _,
-           IRI, V, disjointClasses([IRI,V])).
-slot_axiom(sameAs, namedIndividual, _,
-           IRI, V, sameIndividual([IRI,V])).
-slot_axiom(differentFrom, namedIndividual, _,
-           IRI, V, differentIndividuals([IRI,V])).
 
 %!      slot_axiom(+Attribute, +IRIType) is semidet.
 %
@@ -163,6 +172,12 @@ slot_axiom(subClassOf,    class).
 slot_axiom(subPropertyOf, objectProperty).
 slot_axiom(subPropertyOf, dataProperty).
 slot_axiom(subPropertyOf, annotationProperty).
+
+%!      expand_value(+O, +V0, -V)
+
+expand_value(O, V0, V) :-
+        value_annotations(V0, V1, _),
+        expand_curie(V1, O, V).
 
 %!      value_annotations(+Value0, -Value, -Annotations) is det.
 %
