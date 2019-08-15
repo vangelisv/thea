@@ -748,9 +748,7 @@ subsumed_by(L,set(T)):-
         forall(member(I,L),
                subsumed_by(I,T)).
 subsumed_by(I,T):-
-        !,
-	G=..[T,I],
-	G.
+	call(T,I).
 
 
 %% iri(?IRI)
