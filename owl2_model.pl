@@ -1216,12 +1216,9 @@ retract_axiom(Axiom,Ontology) :-
 
 
 retract_all_axioms :-
-        findall(A,axiom(A),Axioms),
-        maplist(retract,Axioms),
-        findall(ontologyAxiom(O,A),ontologyAxiom(O,A),OAxioms),
-        maplist(retract,OAxioms),
-	!.
-
+	forall(axiom(A), retract(A)),
+        forall(ontologyAxiom(O,A),		% JW: why not retractall/1?
+	       retract(ontologyAxiom(O,A))).
 
 owl2_model_init :-
 	assert(annotationProperty('http://www.w3.org/2000/01/rdf-schema#label')),
