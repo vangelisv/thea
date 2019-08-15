@@ -5,10 +5,14 @@
            owl_parse_manchester_syntax_file/1,
            owl_parse_manchester_syntax_file/2,
 	   owl_parse_manchester_expression/2,
-	   owl_parse_manchester_frame/2
+	   owl_parse_manchester_frame/2,
+           owl_parse_manchester_file_axioms/3   % File, Axioms, Options
            ]).
 :- use_module(library(dcg/basics)).
+:- use_module(library(lists)).
+:- use_module(library(apply)).
 :- use_module(library(error)).
+:- use_module(library(debug)).
 
 :- use_module(owl2_model,[assert_axiom/1]).
 
@@ -27,6 +31,12 @@ owl_parse_manchester_syntax_file(File,_Opts) :-
 	ontologyDocument( Ont, Tokens, [] ),
 	process_ontdoc(Ont).
 
+owl_parse_manchester_file_axioms(File, Axioms, _Opts) :-
+        read_file_to_codes(File,Codes,[]),
+	codes_tokens_filtered(Codes,Tokens),
+	ontologyDocument( Ont, Tokens, []),
+        ontdoc_axioms(Ont, Axioms).
+
 %% owl_parse_manchester_expression(+DescAtom,?Desc) is semidet
 owl_parse_manchester_expression(A,X) :-
 	atom_codes(A,L),
@@ -40,35 +50,34 @@ owl_parse_manchester_frame(A,Axioms) :-
 	frame(X,Toks,[]),
 	process_frame(X,'',Axioms).
 
-process_ontdoc( NSL-ontology(O,_L1,_L2,Frames) ) :-
-	process_frames(Frames,O-NSL,Axioms),
+process_ontdoc(Ontology) :-
+        ontdoc_axioms(Ontology, Axioms),
 	maplist(assert_axiom,Axioms).
 
-process_frames([],_,[]).
-process_frames([F|Fs],O,Axioms) :-
-	!,
-	process_frame(F,O,Axioms1),
-	process_frames(Fs,O,Axioms2),
-	append(Axioms1,Axioms2,Axioms).
+%!      ontdoc_axioms(+OntDOc, -Axioms) is det.
+%
+%       Translate the parser AST into a list of axioms.
 
-%% process_frame(+FrameParseTree,Ont,?Axioms)
+ontdoc_axioms(NSL-ontology(O,_L1,_L2,Frames), Axioms) :-
+        maplist(process_frame(O-NSL), Frames, NestedAxioms),
+        append(NestedAxioms, Axioms).
+
+%% process_frame(+Ont, +FrameParseTree, -Axioms)
 %
 % translate the parse tree for a frame into axioms and declarations
 %
 % e.g. frame(class, foo, [subClassOf=[bar]]),
-process_frame(frame(Type,Name,Props),O,[Unary|Axioms]) :-
+process_frame(O, frame(Type,Name,Props),[Unary|Axioms]) :-
 	!,
 	expand_curie(Name,O,IRI),
 	Unary =.. [Type,IRI],
-	assert_axiom(Unary),
-	process_properties(Props,IRI,Type,O,Axioms).
-process_frame(A,_,[A]).
+        maplist(process_property_(IRI,Type,O), Props, NestedAxioms),
+        append(NestedAxioms, Axioms).
+process_frame(_, A,[A]) :-
+        debug(man(axioms), 'Skipped (not a frame) ~p', [A]).
 
-process_properties([],_,_,_,[]).
-process_properties([Prop|Props],IRI,Type,O,Axioms) :-
-	process_property(Prop,IRI,Type,O,Axioms1),
-	process_properties(Props,IRI,Type,O,Axioms2),
-	append(Axioms1,Axioms2,Axioms).
+process_property_(IRI,Type,O,Prop,Axioms) :-
+        process_property(O,IRI,Type,Prop,Axioms).
 
 process_property(characteristics=CL,IRI,Type,O,Axioms) :-
 	!,
