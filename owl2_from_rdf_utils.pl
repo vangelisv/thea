@@ -16,7 +16,10 @@ owl_clear_as :-
 predspec_head(Pred/A,Head) :- functor(Head,Pred,A).
 
 u_assert(Term) :-
-	call(Term), !; assert(Term).
+        (   call(Term)
+        ->  true
+        ;   assert(Term)
+        ).
 
 
 convert(T,V,typed_value(T,V)).
@@ -91,7 +94,7 @@ test_use_owl(X1,Y1,Z1,named) :-
 	expand_ns(Y1,Y),
 	expand_ns(Z1,Z),
 	owl(X,Y,Z, not_used),
-	not(sub_string(X,0,2,_,'_:')).
+	\+ sub_string(X,0,2,_,'_:').
 
 
 %%       use_owl(+Triples:list)
@@ -156,7 +159,7 @@ use_owl(X1,Y1,Z1,named,Term) :-
 	expand_ns(Y1,Y),
 	expand_ns(Z1,Z),
 	owl(X,Y,Z, not_used),
-	not(sub_string(X,0,2,_,'_:')),
+	\+ sub_string(X,0,2,_,'_:'),
 	retract(owl(X,Y,Z, not_used)),
 	assert(owl(X,Y,Z,used(Term))).
 
@@ -167,10 +170,10 @@ use_owl(X1,Y1,Z1,named,Term) :-
 %       substituting the full expansion for ns from the ns/2 facts
 expand_ns(NS_URL, Full_URL) :-
 	nonvar(NS_URL),
-	not(NS_URL = literal(_)),
+	NS_URL \= literal(_),
 	uri_split(NS_URL,Short_NS,Term, ':'),
 	rdf_db:ns(Short_NS,Long_NS),!,
-	concat_atom([Long_NS,Term],Full_URL).
+        atomic_list_concat([Long_NS,Term],Full_URL).
 
 expand_ns(URL, URL).
 
@@ -188,7 +191,7 @@ expand_ns(URL, URL).
 collapse_ns(FullURL, NSURL,Char,Options) :-
 	nonvar(FullURL),
         FullURL \= '$VAR'(_),
-	not(FullURL = literal(_)),
+	FullURL \= literal(_),
 	uri_split(FullURL,LongNS, Term, '#'),
 	concat(LongNS,'#',LongNS1),
 	rdf_db:ns(ShortNS,LongNS1),
@@ -260,7 +263,7 @@ owl_collect_linked_nodes(_,_,List, List) :- !.
 
 owl_get_bnode(Node,Description) :-
 	sub_string(Node,0,2,_,'_:'),!,
-	not( blanknode(Node,_,_)),
+	\+ blanknode(Node,_,_),
 	assert(blanknode(Node,Description, used)).
 
 owl_get_bnode(_,_).
