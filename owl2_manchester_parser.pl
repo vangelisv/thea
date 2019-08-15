@@ -73,8 +73,14 @@ process_frame(O, frame(Type,Name,Props),[Unary|Axioms]) :-
 	Unary =.. [Type,IRI],
         maplist(process_property_(IRI,Type,O), Props, NestedAxioms),
         append(NestedAxioms, Axioms).
-process_frame(_, A,[A]) :-
-        debug(man(axioms), 'Skipped (not a frame) ~p', [A]).
+process_frame(O, AV,[V]) :-
+        value_annotations(AV, V0, _Annotations),
+        V0 =.. [Misc,Values0],
+        !,
+        maplist(expand_curie_o(O), Values0, Values),
+        V =.. [Misc,Values].
+process_frame(_, AV,[]) :-
+        debug(man(axioms), 'Skipped (not a frame) ~p', [AV]).
 
 process_property_(IRI,Type,O,Prop,Axioms) :-
         process_property(Prop,IRI,Type,O,Axioms).
@@ -106,18 +112,30 @@ process_characteristic(C,IRI,_Type,_,Unary) :-
 process_slot_value(S,V0,IRI,T,O,Ax) :-
         value_annotations(V0, V1, _Annotations),
 	expand_curie(V1,O,V),
-        (   slot_axiom(S, T, IRI, V, Ax)
+        (   slot_axiom(S, T, O, IRI, V, Ax)
         ->  true
         ;   debug(man(axioms), 'guessing for: ~p', [S-T]),
             Ax =.. [S,IRI,V]
         ).
 
-%!      slot_axiom(+Attribute, +IRIType, +IRI, +Value, -Axiom)
+%!      slot_axiom(+Attribute, +IRIType, +O, +IRI, +Value, -Axiom)
 
-slot_axiom(disjointWith, objectProperty, IRI, V, disjointProperties([IRI,V])).
-slot_axiom(inverseOf, _, IRI, V, inverseProperties(IRI,V)).
-slot_axiom(domain, _, IRI, V, propertyDomain(IRI,V)).
-slot_axiom(range, _, IRI, V, propertyRange(IRI,V)).
+slot_axiom(disjointWith, objectProperty, _,
+           IRI, V, disjointProperties([IRI,V])).
+slot_axiom(inverseOf, _, _,
+           IRI, V, inverseProperties(IRI,V)).
+slot_axiom(domain, _, _,
+           IRI, V, propertyDomain(IRI,V)).
+slot_axiom(range, _, _,
+           IRI, V, propertyRange(IRI,V)).
+slot_axiom(types, _, _,
+           IRI, V, classAssertion(V,IRI)).
+slot_axiom(facts, _, O,
+           IRI, P-V0, propertyAssertion(P,IRI,V)) :-
+        expand_curie(V0,O,V).
+slot_axiom(facts, _, O,
+           IRI, not(P-V0), negativePropertyAssertion(P,IRI,V)) :-
+        expand_curie(V0,O,V).
 
 %!      value_annotations(+Value0, -Value, -Annotations) is det.
 %
@@ -129,15 +147,28 @@ value_annotations(Value, Value, []).
 
 %!      expand_curie(+ASTValue, +Ontology, -RDFValue)
 
+expand_curie(IRI, _O-NSL, FullIRI) :-
+        atom(IRI),
+        atomic_list_concat([NS,Name], :, IRI),
+        xml_name(Name, utf8),
+        memberchk(NS-Prefix, NSL),
+        !,
+        atom_concat(Prefix,Name,FullIRI).
 expand_curie(IRI, _, IRI) :-
         atom(IRI),
         uri_is_global(IRI), !.
 expand_curie(Name,_O-NSL,IRI) :-
         atom(Name),
-        memberchk((:)-Prefix, NSL),
+        memberchk(''-Prefix, NSL),
         !,
         atom_concat(Prefix,Name,IRI).
+expand_curie(inverseOf(X0), O, inverseOf(X)) :-
+        !,
+        expand_curie(X0, O, X).
 expand_curie(X,_,X).
+
+expand_curie_o(O,AST,RDF) :-
+        expand_curie(AST,O,RDF).
 
 slot_predicate(S,P) :-
 	sub_atom(S,0,1,_,C1),
@@ -432,7 +463,7 @@ full_IRI(IRI) --> [iri(IRI)].
 
 % prefixName := NCName
 
-prefixName(P) --> [P], {atom(P)}.
+prefixName(NS) --> [P], {atom(P), atom_concat(NS, :, P)}.
 
 % reference := irelative-ref
 
@@ -485,7 +516,9 @@ dataPropertyIRI(X) --> iri(X).
 annotationPropertyIRI(X) --> iri(X).
 
 % individual ::= individualIRI | nodeID
-individual(X) --> individualIRI(X) ; nodeID(X).
+individual(X) --> individual(X, _).
+individual(X, namedIndividual) --> individualIRI(X).
+individual(X, anonymousIndividual) --> nodeID(X).
 
 % individualIRI ::= IRI
 individualIRI(X) --> iri(X).
@@ -867,7 +900,7 @@ annotatedAnnotationPropertyIRI(E) --> annotated(annotationPropertyIRI, E).
 %annotationAnnotatedList | 'Types:' descriptionAnnotatedList |
 %'Facts:' factAnnotatedList | 'SameAs:' individualAnnotatedList |
 %'DifferentFrom:' individualAnnotatedList }
-individualFrame(I-EL) --> [keyword(individual)],!, individual(I),zeroOrMore(individualFrameElement,EL).
+individualFrame(frame(Type,I,EL)) --> [keyword(individual)],!, individual(I,Type),zeroOrMore(individualFrameElement,EL).
 individualFrameElement(annotation=AL) --> [keyword(annotations)],!,annotationAnnotatedList(AL).
 individualFrameElement(types=AL) --> [keyword(types)],!,descriptionAnnotatedList(AL).
 individualFrameElement(facts=AL) --> [keyword(facts)],!,factAnnotatedList(AL).
