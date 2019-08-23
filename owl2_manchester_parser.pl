@@ -803,9 +803,8 @@ conjunction(intersectionOf([Genus|DL])) --> classIRI(Genus), [that], !, oneOrMor
 conjunction(D) -->
         primary(P),
         (   [and]
-        ->  primary(D1),
-            zeroOrMore(and, primary, DL),
-            { D = intersectionOf([P,D1|DL]) }
+        ->  oneOrMore(and, primary, DL),
+            { D = intersectionOf([P|DL]) }
         ;   { D = P }
         ).
 
