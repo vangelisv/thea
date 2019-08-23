@@ -28,13 +28,13 @@ owl_parse_manchester_syntax_file(File) :-
 owl_parse_manchester_syntax_file(File,_Opts) :-
         read_file_to_codes(File,Codes,[]),
 	codes_tokens_filtered(Codes,Tokens),
-	ontologyDocument( Ont, Tokens, [] ),
+	phrase(ontologyDocument(Ont), Tokens),
 	process_ontdoc(Ont).
 
 owl_parse_manchester_file_axioms(File, Axioms, _Opts) :-
         read_file_to_codes(File,Codes,[]),
 	codes_tokens_filtered(Codes,Tokens),
-	ontologyDocument( Ont, Tokens, []),
+	phrase(ontologyDocument(Ont), Tokens),
         ontdoc_axioms(Ont, Axioms).
 
 %% owl_parse_manchester_expression(+DescAtom,?Desc) is semidet
@@ -49,6 +49,46 @@ owl_parse_manchester_frame(A,Axioms) :-
 	codes_tokens_filtered(L,Toks),
 	frame(X,Toks,[]),
 	process_frame(X,'',Axioms).
+
+		 /*******************************
+		 *         SYNTAX ERRORS	*
+		 *******************************/
+
+%!      mn_syntax_error(+Error)//
+%
+%       Report a syntax error
+
+mn_syntax_error(Error) -->
+        here(Rest),
+        { exception_term(Error, Rest, Exception),
+          throw(error(Exception, _))
+        }.
+
+exception_term(expected(What), Rest, thea(expected(What, Rest))).
+
+:- multifile prolog:error_message//1.
+
+prolog:error_message(thea(expected(What, Tokens))) -->
+        [ 'Syntax error.  Expected a "~p" but found'-[What], nl,
+          '... '-[]
+        ],
+        error_tokens(10, Tokens).
+
+error_tokens(_, []) --> !.
+error_tokens(0, _) -->
+        [ ' ...'-[] ].
+error_tokens(N, [H|T]) -->
+        error_token(H),
+        { N2 is N - 1 },
+        error_tokens(N2, T).
+
+error_token(T) -->
+        [ ' ~p'-[T] ].
+
+
+		 /*******************************
+		 *         AST TO AXIOM		*
+		 *******************************/
 
 process_ontdoc(Ontology) :-
         ontdoc_axioms(Ontology, Axioms),
@@ -672,7 +712,9 @@ frame(X) --> (   datatypeFrame(X)
              ;   annotationPropertyFrame(X)
              ;   individualFrame(X)
              ;   misc(X)
-             ).
+             ;   \+ eos,
+                 mn_syntax_error(expected(frame))
+             ), !.
 
 % ----------------------------------------
 %      2.3 Property and Datatype Expressions
