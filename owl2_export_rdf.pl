@@ -18,15 +18,23 @@
            owl_generate_rdf/4, % Ontology,FileName, RDF_Load_Mode (complete/not), Opts
            owl_synchronize_to_rdf/0,
            owl_synchronize_to_rdf/1,
-           owl_rdf2n3/0
+           owl_rdf2n3/0,
+                                        % JW: needed in owl2_util.pl
+           owl2_export_list/2,          % +List, -Node
+           owl_rdf_assert/3,            % +S, +P, +O
+           as2rdf_bnode/2               % +X, -Node
 	  ]).
 
 :- use_module(owl2_model).
 :- use_module(owl2_from_rdf).
 :- use_module(swrl_rdf_hooks).
-:- use_module(library('semweb/rdf_db')).
+:- use_module(library(semweb/rdf_db)).
+:- use_module(library(semweb/turtle)).
 
 :- multifile owl2_io:save_axioms_hook/3.
+
+:- dynamic
+        blanknode_gen/2.
 
 owl2_io:save_axioms_hook(File,ttl,Opts) :-
         ensure_loaded(library('semweb/rdf_turtle_write')),
@@ -698,7 +706,7 @@ owl_rdf_assert(S,P,O) :-
 /*
 as2rdf_bnode(+X,-Node).
         It generates a bnode Node for construct X in case it does not
-	exist already as a blanknode/3 clause.
+	exist already as a blanknode/2 clause.
 */
 as2rdf_bnode(X,Node) :-
 	blanknode_gen(Node,X),

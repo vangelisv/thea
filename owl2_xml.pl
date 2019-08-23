@@ -45,7 +45,7 @@ owl_parse_xml(File,_) :-
         throw(no_parse(File)).
 
 xsb_owl_parse_xml(File,_Opts) :-
-        load_structure(file(File),[XML],[dialect(xmlns),space(remove)],_Warn),
+        load_structure(file(File),[XML],[dialect(xmlns),space(remove)]),
         xml_ontology(XML,Ont,Axioms),
         assert_axiom(Ont),
         forall(member(Axiom,Axioms),

@@ -118,8 +118,10 @@
            axiom_type/2,
 
            valid_axiom/1,
-           is_valid_axiom/1
+           is_valid_axiom/1,
 
+	   literal/1,			% JW: Added as needed in swrl
+	   builtin_class/1
 	  ]).
 %:- require([ is_list/1
 %	   , current_prolog_flag/2

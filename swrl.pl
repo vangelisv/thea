@@ -71,8 +71,8 @@ swrlAtom(A):-
         ;   A=differentFrom(X,Y)
         ->  i_object(X),i_object(Y)
         ;   A=builtin(X,L)
-        ->  builtin(X),list_of_d_object(L)
-        ;   A=..[F,X]
+        ->  builtin_class(X),list_of_d_object(L) % JW: was builtin/1.
+        ;   A=..[F,X]                   % builtin_class/1 is in owl_model.pl
         ->  class(F),
             i_object(X)
         ;   A=..[F,X,Y]
@@ -114,7 +114,7 @@ normalize_swrl_atom(A, description(Class,Ob) ) :-
 %        A=..[P,X,Y],
 %        !.
 normalize_swrl_atom(A, A).
-                   
+
 
 %% swrl_to_owl_axioms(+SWRLRule,?OWLAxioms) is semidet
 % true if SWRLRule can be translated into OWLAxiom.
@@ -193,7 +193,7 @@ swrl_to_owl(AL,C,subClassOf(Sub,D)) :- % non-normalized form of above rule
         C=..[Sub,v(X)],
         subgoals_to_intersection(AL,X,[D]),
         !.
-swrl_to_owl(AL,C,subClassOf(Sub,D)) :- 
+swrl_to_owl(AL,C,subClassOf(Sub,D)) :-
         C=..[Sub,v(X)],
         subgoals_to_description(AL,X,D),
         !.
@@ -215,7 +215,7 @@ swrl_to_owl([A],description(R,X),propertyRange(P,R)) :-
 % I believe this is called 'marker properties'
 swrl_to_owl(AL,C,Axiom) :-
         C=..[P,X,Y],            % e.g. hasPet(x,y)
-        select(A1,AL,[A2]),     
+        select(A1,AL,[A2]),
         A1=..[P2,X,Y],          % e.g. owns(x,y)
         A2=description(D,Y),  % e.g. animal(y)
         atom(D),
@@ -274,13 +274,13 @@ subgoal_to_description(description(D,V),V,D).
 %% prolog_clause_to_swrl_rule( +Term, ?SWRLAtom:swrlAtom )
 %
 % Prolog clause terms are clauses of the form
-%== 
+%==
 % hasUncle(X1,X3):- hasParent(X1,X2),hasBrother(X2,X3)
 %==
-% 
+%
 % Are translated to embedded swrl.pl rule terms, using
 % the implies/2 functor.
-% 
+%
 % complex atoms still require wrapping:
 %==
 % description(maxCardinality(1,'style/period'),Z) :-
@@ -363,7 +363,7 @@ prolog_term_to_swrl_atom( A, literal(type('xsd:integer',A)) ) :-
 prolog_term_to_swrl_atom( A, A) :-
         atom(A),
         !.
-        
+
 %% prolog_source_to_swrl_rules(+File,?Rules)
 %
 % TODO: use prolog source in pldoc style to generate annotation axioms
@@ -403,12 +403,12 @@ goal_swrlb(X is A*B,multiply(A,B,X)).
 goal_swrlb(X is A/B,divide(A,B,X)).
 
 % arithmetic TODO
-pred_swrlb(<,lessThan). 
+pred_swrlb(<,lessThan).
 pred_swrlb(=,equal). % TODO: detect type
 pred_swrlb(\=,notEqual). % TODO: detect type
-pred_swrlb(=<,lessThanOrEqual). 
-pred_swrlb(>,greaterThan). 
-pred_swrlb(>=,greaterThanOrEqual). 
+pred_swrlb(=<,lessThanOrEqual).
+pred_swrlb(>,greaterThan).
+pred_swrlb(>=,greaterThanOrEqual).
 
 pred_swrlb(=,stringEqualIgnoreCase). % TODO: detect type
 pred_swrlb(atom_length,stringLength).
@@ -451,7 +451,7 @@ owl2_io:load_axioms_hook(File,pl_swrl_owl,Opts) :-
   ---+ Synopsis
 
   Example SWRL Rule embedded as prolog swrl.pl fact:
-  
+
 ==
 implies([hasParent(v(x),v(y)),hasBrother(v(y),v(z))],[hasUncle(v(x),v(z))]).
 ==
@@ -460,7 +460,7 @@ implies([hasParent(v(x),v(y)),hasBrother(v(y),v(z))],[hasUncle(v(x),v(z))]).
 ---+ Details
 
 This extends the owl2_model.pl collection of allowed axioms (see axiom/1) with the implies/2 axiom.
-    
+
 http://www.w3.org/Submission/SWRL/
 
 This module also intends to allow for easy conversion between a natural prolog style and SWRL axioms.

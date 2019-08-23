@@ -44,18 +44,20 @@
 :- use_module(owl2_xml).
 :- use_module(owl2_catalog).
 :- use_module(owl2_reasoner).
+:- use_module(owl2_export_rdf).
 
 
-:-use_module(library('http/http_open')).
-:-use_module(library('http/http_client')).
-:-use_module(library('http/thread_httpd.pl')).
-:-use_module(library(sgml)).
+:- use_module(library('http/http_open')).
+:- use_module(library('http/http_client')).
+:- use_module(library('http/thread_httpd.pl')).
+:- use_module(library(sgml)).
+:- use_module(library(semweb/rdf11)).
 
 
 % @Deprecated
 % use owl2_io
 owl_parse_pro(F):-
-        owl2_model:consult(F).
+        consult(owl2_model:F).
 
 
 % @Deprecated
@@ -219,7 +221,7 @@ replace_labels_with_IRIs:-
         translate_IRIs(get_IRI_from_label).
 
 remove_ns(IRI,X) :-
-        concat_atom([_,X],'#',IRI),
+        atomic_list_concat([_,X],'#',IRI),
         !.
 remove_ns(X,X).
 
@@ -232,12 +234,12 @@ replace_ns_prefix(_,_,X,X).
 
 contract_ns(URI,ID) :-
         atom(URI),
-        rdf_db:rdf_global_id(NS:Local,URI),
+        rdf_global_id(NS:Local,URI),
         NS \= rdf,
         NS \= rdfs,
         NS \= owl,
         !,
-        concat_atom([NS,Local],':',ID).
+        atomic_list_concat([NS,Local],':',ID).
 contract_ns(X,X).
 
 
@@ -266,7 +268,7 @@ get_IRI_from_label(X,X).
 use_property_as_IRI(Prop,IRI,NewIRI) :-
         anyPropertyAssertion(Prop,IRI,Literal),
 	Literal=literal(type(_,Val)),
-	concat_atom([NS,Local],':',Val),
+	atomic_list_concat([NS,Local],':',Val),
 	rdf_global_id(NS:Local,NewIRI),
         !.
 use_property_as_IRI(X,X).
@@ -395,9 +397,9 @@ collect_orphan_axioms(Ont) :-
         forall((axiom(A),\+ontologyAxiom(_,A)),
                assert_axiom(A,Ont)).
 
-               
-               
-        
+
+
+
 
 %% extract_axiom_template(+Ax,?Template)
 % replaces atoms with variables
@@ -469,7 +471,9 @@ owlpredargs :-
         format('~q.~n',[owlpredicate_arguments(TP,L)]),
         fail.
 
-get_class(Q,C) :- annotationLabel_value(C,Q),!.
+% JW: annotationLabel_value/2 is undefined. As this is not called anyway,
+% this seems safe.
+% get_class(Q,C) :- annotationLabel_value(C,Q),!.
 get_class(C,C).
 
 show_superclasses(R,Q) :-
@@ -554,7 +558,7 @@ isalpha(X) :- X @>= 'A',X @=< 'Z'.
 isalpha(X) :- X @>= '0',X @=< '9'.
 
 
-               
+
 
 stats(File) :- owl_statistics(all,XML), open(File,write,S), xml_write(S,XML,[header(true)]),close(S).
 
